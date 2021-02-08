@@ -9,23 +9,25 @@ import EditorBase, { StateOptions } from '@/base';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 import { getWwCommands } from '@/commands/wwCommands';
 
-import { placeholder } from '@/plugins/placeholder';
-import { tableSelectionPlugin } from '@/wysiwyg/plugins/tableSelection';
-import { tableContextMenuPlugin } from '@/wysiwyg/plugins/tableContextMenu';
-import { taskPlugin } from '@/wysiwyg/plugins/taskPlugin';
-
 import { createTextSelection } from '@/helper/manipulation';
 
-import { createSpecs } from './specCreator';
+import { placeholder } from '@/plugins/placeholder';
+import { dropImage } from '@/plugins/dropImage';
+
+import { tableSelectionPlugin } from './plugins/tableSelection';
+import { tableContextMenuPlugin } from './plugins/tableContextMenu';
+import { taskPlugin } from './plugins/taskPlugin';
+
 import { CustomBlockView } from './nodeview/customBlockView';
+import { changePastedHTML, changePastedSlice } from './clipboard/paste';
+import { pasteToTable } from './clipboard/pasteToTable';
+
+import { createSpecs } from './specCreator';
+import { getToolbarState } from './toolbar';
 
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
 import { LinkAttributes } from '@t/editor';
-
-import { changePastedHTML, changePastedSlice } from '@/wysiwyg/clipboard/paste';
-import { pasteToTable } from '@/wysiwyg/clipboard/pasteToTable';
-import { dropImage } from '@/plugins/dropImage';
 
 const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 
@@ -93,11 +95,75 @@ export default class WysiwygEditor extends EditorBase {
     });
   }
 
+  private getMarkTypeStates({ empty, $from, from, to }: any, schema: any, doc: any) {
+    const markState: any = {};
+
+    ['strong', 'strike', 'emph', 'code'].forEach((markType) => {
+      const type = schema.marks[markType];
+      const mark = empty ? type.isInSet($from.marks()) : doc.rangeHasMark(from, to, type);
+
+      if (mark) {
+        markState[markType] = true;
+      }
+    });
+
+    return markState;
+  }
+
+  private list(type: string, nodeTypeState: any) {
+    nodeTypeState[type] = true;
+
+    ['bulletList', 'orderedList', 'taskList']
+      .filter((listName) => listName !== type)
+      .forEach((list) => {
+        if (nodeTypeState[list]) {
+          delete nodeTypeState[list];
+        }
+      });
+  }
+
+  private getToolbarState(selection: any, doc: any) {
+    const { from, to } = selection;
+    const nodeTypeState: any = {};
+    let markTypeState: any = {};
+
+    // @ts-ignore
+    doc.nodesBetween(from, to, (node, _, parentNode) => {
+      let nodeName = node.type.name;
+
+      if (nodeName === 'customBlock' || nodeName === 'image' || nodeName === 'link') {
+        return;
+      }
+
+      if (nodeName === 'listItem') {
+        nodeName = node.attrs.task ? 'taskList' : parentNode.type.name;
+
+        this.list(nodeName, nodeTypeState);
+      } else if (nodeName === 'paragraph' || nodeName === 'text') {
+        markTypeState = this.getMarkTypeStates(selection, this.schema, doc);
+      } else {
+        nodeTypeState[nodeName] = true;
+      }
+    });
+
+    return { ...nodeTypeState, ...markTypeState };
+  }
+
   createView() {
-    const { toDOMAdaptor } = this;
+    const { toDOMAdaptor, schema } = this;
 
     return new EditorView(this.el, {
       state: this.createState(),
+      dispatchTransaction: (tr) => {
+        const { state } = this.view.state.applyTransaction(tr);
+
+        this.eventEmitter.emit('cursorActivity', {
+          source: 'wysiwyg',
+          toolbarState: getToolbarState(tr.selection, state.doc, schema),
+        });
+
+        this.view.updateState(state);
+      },
       attributes: {
         class: CONTENTS_CLASS_NAME,
       },
