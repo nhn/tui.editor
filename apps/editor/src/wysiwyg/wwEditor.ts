@@ -9,23 +9,25 @@ import EditorBase, { StateOptions } from '@/base';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 import { getWwCommands } from '@/commands/wwCommands';
 
-import { placeholder } from '@/plugins/placeholder';
-import { tableSelectionPlugin } from '@/wysiwyg/plugins/tableSelection';
-import { tableContextMenuPlugin } from '@/wysiwyg/plugins/tableContextMenu';
-import { taskPlugin } from '@/wysiwyg/plugins/taskPlugin';
-
 import { createTextSelection } from '@/helper/manipulation';
 
-import { createSpecs } from './specCreator';
+import { placeholder } from '@/plugins/placeholder';
+import { dropImage } from '@/plugins/dropImage';
+
+import { tableSelectionPlugin } from './plugins/tableSelection';
+import { tableContextMenuPlugin } from './plugins/tableContextMenu';
+import { taskPlugin } from './plugins/taskPlugin';
+
 import { CustomBlockView } from './nodeview/customBlockView';
+import { changePastedHTML, changePastedSlice } from './clipboard/paste';
+import { pasteToTable } from './clipboard/pasteToTable';
+
+import { createSpecs } from './specCreator';
+import { getToolbarState } from './toolbar';
 
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
 import { LinkAttributes } from '@t/editor';
-
-import { changePastedHTML, changePastedSlice } from '@/wysiwyg/clipboard/paste';
-import { pasteToTable } from '@/wysiwyg/clipboard/pasteToTable';
-import { dropImage } from '@/plugins/dropImage';
 
 const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 
@@ -94,10 +96,20 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createView() {
-    const { toDOMAdaptor } = this;
+    const { toDOMAdaptor, schema } = this;
 
     return new EditorView(this.el, {
       state: this.createState(),
+      dispatchTransaction: (tr) => {
+        const { state } = this.view.state.applyTransaction(tr);
+
+        this.eventEmitter.emit('cursorActivity', {
+          source: 'wysiwyg',
+          toolbarState: getToolbarState(tr.selection, state.doc, schema),
+        });
+
+        this.view.updateState(state);
+      },
       attributes: {
         class: CONTENTS_CLASS_NAME,
       },
