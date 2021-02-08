@@ -5,6 +5,8 @@ import { includes } from '@/utils/common';
 
 import { ToolbarState, ToolbarStateKeys } from '@t/ui';
 
+const LIST_TYPES = ['bulletList', 'orderedList', 'taskList'];
+
 function getToolbarStateType(node: Node, parentNode: Node) {
   const type = node.type.name;
 
@@ -22,13 +24,11 @@ function getToolbarStateType(node: Node, parentNode: Node) {
 function setListNodeToolbarState(type: ToolbarStateKeys, nodeTypeState: ToolbarState) {
   nodeTypeState[type] = true;
 
-  ['bulletList', 'orderedList', 'taskList']
-    .filter((listName) => listName !== type)
-    .forEach((listType) => {
-      if (nodeTypeState[listType as ToolbarStateKeys]) {
-        delete nodeTypeState[listType as ToolbarStateKeys];
-      }
-    });
+  LIST_TYPES.filter((listName) => listName !== type).forEach((listType) => {
+    if (nodeTypeState[listType as ToolbarStateKeys]) {
+      delete nodeTypeState[listType as ToolbarStateKeys];
+    }
+  });
 }
 
 function getMarkTypeStates({ empty, $from, from, to }: Selection, doc: Node, schema: Schema) {
@@ -58,7 +58,7 @@ export function getToolbarState(selection: Selection, doc: Node, schema: Schema)
       return;
     }
 
-    if (type === 'listItem') {
+    if (includes(LIST_TYPES, type)) {
       setListNodeToolbarState(type as ToolbarStateKeys, nodeTypeState);
     } else if (type === 'paragraph' || type === 'text') {
       markTypeState = getMarkTypeStates(selection, doc, schema);
