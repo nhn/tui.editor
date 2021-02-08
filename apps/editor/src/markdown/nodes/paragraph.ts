@@ -80,6 +80,7 @@ export class Paragraph extends Node {
         codeStart: { default: null },
         codeEnd: { default: null },
       },
+      selectable: false,
       group: 'block',
       parseDOM: [{ tag: 'div' }],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {

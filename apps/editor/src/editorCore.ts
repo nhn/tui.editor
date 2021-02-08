@@ -411,11 +411,13 @@ class ToastUIEditor {
    * @param {string} style Adding style "over" or "bottom"
    * @param {number} [offset] Offset for adjust position
    */
-  // @TODO: should reimplment the API
-  // @ts-ignore
-  // addWidget(selection, node, style, offset) {
-  //   this.getCurrentModeEditor().addWidget(selection, node, style, offset);
-  // }
+  addWidget(node: Node, style: 'top' | 'bottom', offset: number) {
+    this.getCurrentModeEditor().addWidget(node, style, offset);
+  }
+
+  insertWidgetNode(node: HTMLElement) {
+    this.getCurrentModeEditor().insertWidgetNode(node);
+  }
 
   /**
    * Set editor height

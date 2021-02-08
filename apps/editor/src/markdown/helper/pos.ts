@@ -43,6 +43,20 @@ function getEndOffsetWithBlankLine(doc: ProsemirrorNode, to: number, lineRange: 
   return Math.min(doc.content.size, to + blankLineTagOffset);
 }
 
+function addWidgetNodePos(node: ProsemirrorNode, chPos: number) {
+  let addedPos = 0;
+
+  node.descendants((child, pos) => {
+    if (child.type.name === 'widget') {
+      if (pos + 2 < chPos) {
+        addedPos += child.attrs.id.length - 2;
+      }
+    }
+  });
+
+  return addedPos;
+}
+
 export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from): MdSourcepos {
   const collapsed = from === to;
   const startResolvedPos = doc.resolve(from);
@@ -72,9 +86,12 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
     }
   }
 
+  const added1 = addWidgetNodePos(doc.child(lineRange[0] - 1), Math.max(from - startOffset + 1, 1));
+  const added2 = addWidgetNodePos(doc.child(lineRange[1] - 1), Math.max(to - startOffset + 1, 1));
+
   return [
-    [lineRange[0], Math.max(from - startOffset + 1, 1)],
-    [lineRange[1], Math.max(to - endOffset + 1, 1)],
+    [lineRange[0], Math.max(from - startOffset + 1, 1) + added1],
+    [lineRange[1], Math.max(to - endOffset + 1, 1) + added2],
   ];
 }
 

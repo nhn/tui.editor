@@ -1,4 +1,4 @@
-import { Node, Schema } from 'prosemirror-model';
+import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import css from 'tui-code-snippet/domUtil/css';
@@ -8,7 +8,7 @@ import SpecManager from './spec/specManager';
 import { createTextSelection } from './helper/manipulation';
 
 export interface StateOptions {
-  doc: Node | null;
+  doc: ProsemirrorNode | null;
 }
 
 export default abstract class EditorBase {
@@ -30,6 +30,10 @@ export default abstract class EditorBase {
 
   placeholder: { text: string };
 
+  private widgetSeq = 0;
+
+  protected widgetMap: Record<string, HTMLElement> = {};
+
   constructor(eventEmitter: Emitter) {
     this.el = document.createElement('div');
     this.el.className = 'te-editor';
@@ -37,8 +41,6 @@ export default abstract class EditorBase {
     this.eventEmitter = eventEmitter;
     this.placeholder = { text: '' };
   }
-
-  // abstract addWidget(range: Range, node: Node, style: string, offset?: number): void;
 
   abstract createSpecs(): SpecManager;
 
@@ -118,6 +120,22 @@ export default abstract class EditorBase {
 
   getElement() {
     return this.el;
+  }
+
+  addWidget(node: Node, style: 'top' | 'bottom', offset: number) {
+    const { dispatch, state } = this.view;
+
+    dispatch(state.tr.setMeta('widget', { pos: state.selection.to, node, style, offset }));
+  }
+
+  insertWidgetNode(node: HTMLElement) {
+    const { schema, tr } = this.view.state;
+    const id = `tui-widget${this.widgetSeq}`;
+
+    this.widgetSeq += 1;
+    this.widgetMap[id] = node;
+
+    this.view.dispatch(tr.replaceSelectionWith(schema.nodes.widget.create({ id, node })));
   }
 
   abstract getRange(): any;

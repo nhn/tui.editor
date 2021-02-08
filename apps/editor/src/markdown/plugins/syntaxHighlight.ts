@@ -40,8 +40,7 @@ export function syntaxHighlight({ schema, toastMark }: Context) {
           }
         });
       }
-
-      return newTr;
+      return newTr.setMeta('widget', tr.getMeta('widget'));
     },
   });
 }

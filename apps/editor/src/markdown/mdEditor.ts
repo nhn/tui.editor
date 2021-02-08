@@ -38,6 +38,8 @@ import { Html } from './marks/html';
 import { CustomBlock } from './marks/customBlock';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
 import { smartTask } from './plugins/smartTask';
+import { widgetPlugin } from '@/plugins/widget';
+import { Widget } from './nodes/widget';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -115,6 +117,7 @@ export default class MdEditor extends EditorBase {
     return new SpecManager([
       new Doc(),
       new Paragraph(),
+      new Widget(),
       new Text(),
       new Heading(),
       new BlockQuote(),
@@ -162,6 +165,7 @@ export default class MdEditor extends EditorBase {
         smartTask(this.context),
         dropImage(this.context, 'markdown'),
         placeholder(this.placeholder),
+        widgetPlugin(),
       ],
     });
   }
@@ -206,7 +210,7 @@ export default class MdEditor extends EditorBase {
           const [startPos, endPos] = getEditorToMdPos(doc, from, to);
           const editResult = this.toastMark.editMarkdown(startPos, endPos, changed);
 
-          this.eventEmitter.emit('contentChangedFromMarkdown', editResult);
+          this.eventEmitter.emit('contentChangedFromMarkdown', editResult, this.widgetMap);
 
           tr.setMeta('editResult', editResult);
         }
@@ -230,6 +234,8 @@ export default class MdEditor extends EditorBase {
         changed += node.text!.slice(Math.max(from, pos) - pos, to - pos);
       } else if (node.isBlock && pos > 0) {
         changed += '\n';
+      } else if (node.type.name === 'widget') {
+        changed += node.attrs.id;
       }
     });
 
