@@ -1,4 +1,4 @@
-import { Node, Schema } from 'prosemirror-model';
+import { Node, ResolvedPos, Schema } from 'prosemirror-model';
 import { Selection } from 'prosemirror-state';
 
 import { includes } from '@/utils/common';
@@ -31,12 +31,12 @@ function setListNodeToolbarState(type: ToolbarStateKeys, nodeTypeState: ToolbarS
   });
 }
 
-function getMarkTypeStates({ empty, $from, from, to }: Selection, doc: Node, schema: Schema) {
+function getMarkTypeStates(from: ResolvedPos, schema: Schema) {
   const markTypeState = {} as ToolbarState;
 
   ['strong', 'strike', 'emph', 'code'].forEach((type) => {
     const mark = schema.marks[type];
-    const foundMark = empty ? mark.isInSet($from.marks()) : doc.rangeHasMark(from, to, mark);
+    const foundMark = mark.isInSet(from.marks());
 
     if (foundMark) {
       markTypeState[type as ToolbarStateKeys] = true;
@@ -47,7 +47,7 @@ function getMarkTypeStates({ empty, $from, from, to }: Selection, doc: Node, sch
 }
 
 export function getToolbarState(selection: Selection, doc: Node, schema: Schema) {
-  const { from, to } = selection;
+  const { $from, from, to } = selection;
   const nodeTypeState = {} as ToolbarState;
   let markTypeState = {} as ToolbarState;
 
@@ -61,7 +61,7 @@ export function getToolbarState(selection: Selection, doc: Node, schema: Schema)
     if (includes(LIST_TYPES, type)) {
       setListNodeToolbarState(type as ToolbarStateKeys, nodeTypeState);
     } else if (type === 'paragraph' || type === 'text') {
-      markTypeState = getMarkTypeStates(selection, doc, schema);
+      markTypeState = getMarkTypeStates($from, schema);
     } else {
       nodeTypeState[type as ToolbarStateKeys] = true;
     }
