@@ -252,7 +252,7 @@ describe('wysiwyg commands', () => {
 
       const expected = oneLineTrim`
         <ul>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p><br></p>
           </li>
         </ul>
@@ -269,13 +269,13 @@ describe('wysiwyg commands', () => {
 
       const expected = oneLineTrim`
         <ul>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p>foo</p>
           </li>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p>bar</p>
           </li>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p>baz</p>
           </li>
         </ul>
@@ -298,10 +298,10 @@ describe('wysiwyg commands', () => {
           <li>
             <p>foo</p>
           </li>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p>bar</p>
           </li>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p>baz</p>
           </li>
         </ul>
@@ -314,13 +314,13 @@ describe('wysiwyg commands', () => {
 
       expected = oneLineTrim`
         <ul>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p>foo</p>
           </li>
           <li>
             <p>bar</p>
           </li>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p>baz</p>
           </li>
         </ul>
