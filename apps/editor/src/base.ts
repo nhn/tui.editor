@@ -31,10 +31,6 @@ export default abstract class EditorBase {
 
   placeholder: { text: string };
 
-  private widgetSeq = 0;
-
-  protected widgetMap: Record<string, HTMLElement> = {};
-
   constructor(eventEmitter: Emitter) {
     this.el = document.createElement('div');
     this.el.className = 'te-editor';
@@ -129,14 +125,12 @@ export default abstract class EditorBase {
     dispatch(state.tr.setMeta('widget', { pos: state.selection.to, node, style, offset }));
   }
 
-  insertWidgetNode(node: HTMLElement) {
+  replaceWithWidget(markdownText: string, node: HTMLElement) {
     const { schema, tr } = this.view.state;
-    const id = `tui-widget${this.widgetSeq}`;
 
-    this.widgetSeq += 1;
-    this.widgetMap[id] = node;
-
-    this.view.dispatch(tr.replaceSelectionWith(schema.nodes.widget.create({ id, node })));
+    this.view.dispatch(
+      tr.replaceSelectionWith(schema.nodes.widget.create({ node }, schema.text(markdownText)))
+    );
   }
 
   abstract getRange(): any;

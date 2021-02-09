@@ -11,6 +11,7 @@ import on from 'tui-code-snippet/domEvent/on';
 import { Renderer } from '@toast-ui/toastmark';
 
 import { Emitter } from '@t/event';
+import { LinkAttributes } from '@t/editor';
 import { CustomHTMLRendererMap, EditResult, MdNode, MdPos } from '@t/markdown';
 import Preview from '@/preview';
 import { toggleClass } from '@/utils/dom';
@@ -20,7 +21,6 @@ import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
 import { findAdjacentElementToScrollTop } from './scroll/dom';
 import { removeOffsetInfoByNode } from './scroll/offset';
-import { LinkAttributes } from '@t/editor';
 
 export const CLASS_HIGHLIGHT = 'te-preview-highlight';
 
@@ -163,22 +163,18 @@ class MarkdownPreview extends Preview {
       : null;
   }
 
-  update(changed: EditResult[], widgetMap: Record<string, HTMLElement>) {
-    changed.forEach((editResult) => this.replaceRangeNodes(editResult, widgetMap));
+  update(changed: EditResult[]) {
+    changed.forEach((editResult) => this.replaceRangeNodes(editResult));
     this.eventEmitter.emit('previewRenderAfter', this);
   }
 
-  replaceRangeNodes(editResult: EditResult, widgetMap: Record<string, HTMLElement>) {
+  replaceRangeNodes(editResult: EditResult) {
     const { nodes, removedNodeRange } = editResult;
     const contentEl = this.previewContent;
     let newHtml = this.eventEmitter.emitReduce(
       'convertorAfterMarkdownToHtmlConverted',
       nodes.map((node) => this.renderer.render(node)).join('')
     );
-
-    Object.keys(widgetMap).forEach((id) => {
-      newHtml = newHtml.replace(new RegExp(id, 'g'), widgetMap[id].outerHTML);
-    });
 
     newHtml = sanitizeHTML(newHtml, true);
 

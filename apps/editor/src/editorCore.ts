@@ -414,8 +414,8 @@ class ToastUIEditor {
     this.getCurrentModeEditor().addWidget(node, style, offset);
   }
 
-  insertWidgetNode(node: HTMLElement) {
-    this.getCurrentModeEditor().insertWidgetNode(node);
+  replaceWithWidget(markdownText: string, node: HTMLElement) {
+    this.getCurrentModeEditor().replaceWithWidget(markdownText, node);
   }
 
   /**

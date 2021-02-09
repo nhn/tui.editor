@@ -1,5 +1,5 @@
 import Node from '@/spec/Node';
-import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpecArray } from 'prosemirror-model';
 
 export class Widget extends Node {
   get name() {
@@ -9,7 +9,6 @@ export class Widget extends Node {
   get defaultSchema() {
     return {
       attrs: {
-        id: {},
         node: {},
       },
       group: 'inline',
@@ -17,8 +16,8 @@ export class Widget extends Node {
       content: 'text*',
       selectable: false,
       atom: true,
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
-        return ['span', { class: 'tui-widget' }, attrs.node];
+      toDOM(): DOMOutputSpecArray {
+        return ['span', { class: 'tui-widget' }, 0];
       },
       parseDOM: [{ tag: 'span.tui-widget' }],
     };
