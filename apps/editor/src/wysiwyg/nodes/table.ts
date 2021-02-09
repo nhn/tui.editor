@@ -82,7 +82,7 @@ export class Table extends NodeSchema {
   }
 
   private addTable(): EditorCommand<AddTablePayload> {
-    return (payload = { rowCount: 1, columnCount: 1, data: [] }) => (state, dispatch) => {
+    return (payload = { rowCount: 2, columnCount: 1, data: [] }) => (state, dispatch) => {
       const { rowCount, columnCount, data } = payload;
       const { schema, selection, tr } = state;
       const { from, to, $from } = selection;
@@ -94,7 +94,7 @@ export class Table extends NodeSchema {
         const theadData = data && data.slice(0, columnCount);
         const tbodyData = data && data.slice(columnCount, data.length);
         const tableHeadRow = createTableHeadRow(columnCount, schema, theadData);
-        const tableBodyRows = createTableBodyRows(rowCount, columnCount, schema, tbodyData);
+        const tableBodyRows = createTableBodyRows(rowCount - 1, columnCount, schema, tbodyData);
         const table = schema.nodes.table.create(null, [
           tableHead.create(null, tableHeadRow),
           tableBody.create(null, tableBodyRows),
