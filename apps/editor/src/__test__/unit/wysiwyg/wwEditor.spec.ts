@@ -123,4 +123,19 @@ describe('WysiwygEditor', () => {
       `);
     });
   });
+
+  it(`should emit 'cursorActivity' event when changing cursor`, () => {
+    setContent(oneLineTrim`
+      <p>foo</p>
+      <p>bar</p>
+    `);
+
+    const spy = jest.fn();
+
+    em.listen('cursorActivity', spy);
+
+    wwe.setSelection(3, 3);
+
+    expect(spy).toHaveBeenCalled();
+  });
 });
