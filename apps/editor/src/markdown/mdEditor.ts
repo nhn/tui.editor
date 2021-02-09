@@ -13,6 +13,7 @@ import EditorBase from '@/base';
 import SpecManager from '@/spec/specManager';
 import { toggleClass } from '@/utils/dom';
 import { createParagraph, createTextSelection, nbspToSpace } from '@/helper/manipulation';
+import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
 import { placeholder } from '@/plugins/placeholder';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 import { dropImage } from '@/plugins/dropImage';
@@ -73,12 +74,26 @@ export default class MdEditor extends EditorBase {
   }
 
   private createClipboard() {
+    const { eventEmitter } = this;
+
     this.clipboard = document.createElement('textarea');
     this.clipboard.className = 'te-clipboard';
     this.clipboard.addEventListener('paste', (ev: ClipboardEvent) => {
       ev.preventDefault();
       const clipboardData =
         (ev as ClipboardEvent).clipboardData || (window as WindowWithClipboard).clipboardData;
+      const items = clipboardData && clipboardData.items;
+
+      if (items) {
+        const imageBlob = pasteImageOnly(items);
+
+        if (imageBlob) {
+          emitImageBlobHook(eventEmitter, 'markdown', imageBlob, ev.type);
+
+          return;
+        }
+      }
+
       const text = clipboardData!.getData('text');
 
       this.replaceSelection(text);
