@@ -10,6 +10,7 @@ import { getDefaultCommands } from '@/commands/defaultCommands';
 import { getWwCommands } from '@/commands/wwCommands';
 
 import { createTextSelection } from '@/helper/manipulation';
+import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
 
 import { placeholder } from '@/plugins/placeholder';
 import { dropImage } from '@/plugins/dropImage';
@@ -28,6 +29,10 @@ import { createSpecs } from './specCreator';
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
 import { LinkAttributes } from '@t/editor';
+
+interface WindowWithClipboard extends Window {
+  clipboardData?: DataTransfer | null;
+}
 
 const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 
@@ -112,6 +117,26 @@ export default class WysiwygEditor extends EditorBase {
       transformPastedHTML: changePastedHTML,
       transformPasted: (slice: Slice) => changePastedSlice(slice, this.schema),
       handlePaste: (view: EditorView, _: ClipboardEvent, slice: Slice) => pasteToTable(view, slice),
+      handleDOMEvents: {
+        paste: (_, ev) => {
+          const clipboardData =
+            (ev as ClipboardEvent).clipboardData || (window as WindowWithClipboard).clipboardData;
+          const items = clipboardData && clipboardData.items;
+
+          if (items) {
+            const imageBlob = pasteImageOnly(items);
+
+            if (imageBlob) {
+              ev.preventDefault();
+
+              emitImageBlobHook(this.eventEmitter, 'wysiwyg', imageBlob, ev.type);
+
+              return false;
+            }
+          }
+          return true;
+        },
+      },
     });
   }
 
