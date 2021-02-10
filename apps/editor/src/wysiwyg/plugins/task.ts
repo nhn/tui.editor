@@ -4,7 +4,7 @@ import { EditorView } from 'prosemirror-view';
 import { isPositionInBox } from '@/utils/dom';
 import { findListItem } from '@/wysiwyg/helper/node';
 
-export function taskPlugin() {
+export function task() {
   return new Plugin({
     props: {
       handleDOMEvents: {

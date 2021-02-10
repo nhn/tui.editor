@@ -15,9 +15,9 @@ import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
 import { placeholder } from '@/plugins/placeholder';
 import { dropImage } from '@/plugins/dropImage';
 
-import { tableSelectionPlugin } from './plugins/tableSelection';
-import { tableContextMenuPlugin } from './plugins/tableContextMenu';
-import { taskPlugin } from './plugins/taskPlugin';
+import { tableSelection } from './plugins/tableSelection';
+import { tableContextMenu } from './plugins/tableContextMenu';
+import { task } from './plugins/task';
 import { toolbarActivity } from './plugins/toolbarActivity';
 
 import { CustomBlockView } from './nodeview/customBlockView';
@@ -91,9 +91,9 @@ export default class WysiwygEditor extends EditorBase {
         }),
         history(),
         placeholder(this.placeholder),
-        tableSelectionPlugin(),
-        tableContextMenuPlugin(this.eventEmitter),
-        taskPlugin(),
+        tableSelection(),
+        tableContextMenu(this.eventEmitter),
+        task(),
         dropImage(this.context, 'wysiwyg'),
         toolbarActivity(this.eventEmitter),
       ],

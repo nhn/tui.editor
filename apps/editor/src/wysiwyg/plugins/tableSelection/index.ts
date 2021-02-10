@@ -23,7 +23,7 @@ function drawCellSelection({ selection, doc }: EditorState) {
   return null;
 }
 
-export function tableSelectionPlugin() {
+export function tableSelection() {
   return new Plugin({
     key: pluginKey,
     state: {
