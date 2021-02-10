@@ -1,10 +1,13 @@
 import { Node, ResolvedPos, Schema } from 'prosemirror-model';
-import { Selection } from 'prosemirror-state';
+import { Plugin, Selection } from 'prosemirror-state';
 
 import { includes } from '@/utils/common';
 
 import { ToolbarState, ToolbarStateKeys } from '@t/ui';
+import { Emitter } from '@t/event';
 
+const EXCEPT_TYPES = ['image', 'link', 'customBlock', 'frontMatter'];
+const MARK_TYPES = ['strong', 'strike', 'emph', 'code'] as const;
 const LIST_TYPES = ['bulletList', 'orderedList', 'taskList'];
 
 function getToolbarStateType(node: Node, parentNode: Node) {
@@ -34,7 +37,7 @@ function setListNodeToolbarState(type: ToolbarStateKeys, nodeTypeState: ToolbarS
 function getMarkTypeStates(from: ResolvedPos, schema: Schema) {
   const markTypeState = {} as ToolbarState;
 
-  ['strong', 'strike', 'emph', 'code'].forEach((type) => {
+  MARK_TYPES.forEach((type) => {
     const mark = schema.marks[type];
     const foundMark = mark.isInSet(from.marks());
 
@@ -46,7 +49,7 @@ function getMarkTypeStates(from: ResolvedPos, schema: Schema) {
   return markTypeState;
 }
 
-export function getToolbarState(selection: Selection, doc: Node, schema: Schema) {
+function getToolbarState(selection: Selection, doc: Node, schema: Schema) {
   const { $from, from, to } = selection;
   const nodeTypeState = {} as ToolbarState;
   let markTypeState = {} as ToolbarState;
@@ -54,7 +57,7 @@ export function getToolbarState(selection: Selection, doc: Node, schema: Schema)
   doc.nodesBetween(from, to, (node, _, parentNode) => {
     const type = getToolbarStateType(node, parentNode);
 
-    if (includes(['image', 'link', 'customBlock', 'frontMatter'], type)) {
+    if (includes(EXCEPT_TYPES, type)) {
       return;
     }
 
@@ -68,4 +71,21 @@ export function getToolbarState(selection: Selection, doc: Node, schema: Schema)
   });
 
   return { ...nodeTypeState, ...markTypeState };
+}
+
+export function toolbarActivity(eventEmitter: Emitter) {
+  return new Plugin({
+    view() {
+      return {
+        update(view) {
+          const { selection, doc, schema } = view.state;
+
+          eventEmitter.emit('cursorActivity', {
+            source: 'wysiwyg',
+            toolbarState: getToolbarState(selection, doc, schema),
+          });
+        },
+      };
+    },
+  });
 }

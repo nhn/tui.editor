@@ -17,13 +17,13 @@ import { dropImage } from '@/plugins/dropImage';
 import { tableSelectionPlugin } from './plugins/tableSelection';
 import { tableContextMenuPlugin } from './plugins/tableContextMenu';
 import { taskPlugin } from './plugins/taskPlugin';
+import { toolbarActivity } from './plugins/toolbarActivity';
 
 import { CustomBlockView } from './nodeview/customBlockView';
 import { changePastedHTML, changePastedSlice } from './clipboard/paste';
 import { pasteToTable } from './clipboard/pasteToTable';
 
 import { createSpecs } from './specCreator';
-import { getToolbarState } from './toolbar';
 
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
@@ -90,26 +90,17 @@ export default class WysiwygEditor extends EditorBase {
         tableContextMenuPlugin(this.eventEmitter),
         taskPlugin(),
         dropImage(this.context, 'wysiwyg'),
+        toolbarActivity(this.eventEmitter),
       ],
       ...addedStates,
     });
   }
 
   createView() {
-    const { toDOMAdaptor, schema } = this;
+    const { toDOMAdaptor } = this;
 
     return new EditorView(this.el, {
       state: this.createState(),
-      dispatchTransaction: (tr) => {
-        const { state } = this.view.state.applyTransaction(tr);
-
-        this.eventEmitter.emit('cursorActivity', {
-          source: 'wysiwyg',
-          toolbarState: getToolbarState(tr.selection, state.doc, schema),
-        });
-
-        this.view.updateState(state);
-      },
       attributes: {
         class: CONTENTS_CLASS_NAME,
       },
