@@ -40,8 +40,8 @@ import { EditorCommand } from '@t/spec';
 import { ColumnAlign } from '@t/wysiwyg';
 
 interface AddTablePayload {
-  columns: number;
-  rows: number;
+  rowCount: number;
+  columnCount: number;
   data: string[];
 }
 
@@ -82,8 +82,8 @@ export class Table extends NodeSchema {
   }
 
   private addTable(): EditorCommand<AddTablePayload> {
-    return (payload = { columns: 1, rows: 1, data: [] }) => (state, dispatch) => {
-      const { columns, rows, data } = payload;
+    return (payload = { rowCount: 2, columnCount: 1, data: [] }) => (state, dispatch) => {
+      const { rowCount, columnCount, data } = payload;
       const { schema, selection, tr } = state;
       const { from, to, $from } = selection;
       const collapsed = from === to;
@@ -91,10 +91,10 @@ export class Table extends NodeSchema {
       if (collapsed && !isInTableNode($from)) {
         const { tableHead, tableBody } = schema.nodes;
 
-        const theadData = data && data.slice(0, columns);
-        const tbodyData = data && data.slice(columns, data.length);
-        const tableHeadRow = createTableHeadRow(columns, schema, theadData);
-        const tableBodyRows = createTableBodyRows(rows, columns, schema, tbodyData);
+        const theadData = data?.slice(0, columnCount);
+        const tbodyData = data?.slice(columnCount, data.length);
+        const tableHeadRow = createTableHeadRow(columnCount, schema, theadData);
+        const tableBodyRows = createTableBodyRows(rowCount - 1, columnCount, schema, tbodyData);
         const table = schema.nodes.table.create(null, [
           tableHead.create(null, tableHeadRow),
           tableBody.create(null, tableBodyRows),

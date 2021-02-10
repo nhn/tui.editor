@@ -77,7 +77,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should create table with column and row count', () => {
-      cmd.exec('wysiwyg', 'addTable', { columns: 2, rows: 3 });
+      cmd.exec('wysiwyg', 'addTable', { rowCount: 4, columnCount: 2 });
 
       const expected = oneLineTrim`
         <table>
@@ -108,7 +108,11 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should create table with data', () => {
-      cmd.exec('wysiwyg', 'addTable', { columns: 2, rows: 1, data: ['foo', 'bar', 'baz', 'qux'] });
+      cmd.exec('wysiwyg', 'addTable', {
+        rowCount: 2,
+        columnCount: 2,
+        data: ['foo', 'bar', 'baz', 'qux'],
+      });
 
       const expected = oneLineTrim`
         <table>
@@ -164,8 +168,8 @@ describe('wysiwyg table commands', () => {
   describe('addRowToDown command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
-        columns: 2,
-        rows: 2,
+        rowCount: 3,
+        columnCount: 2,
         data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz'],
       });
     });
@@ -273,8 +277,8 @@ describe('wysiwyg table commands', () => {
   describe('addRowToUp command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
-        columns: 2,
-        rows: 2,
+        rowCount: 3,
+        columnCount: 2,
         data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz'],
       });
     });
@@ -382,8 +386,8 @@ describe('wysiwyg table commands', () => {
   describe('removeRow command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
-        columns: 2,
-        rows: 3,
+        rowCount: 4,
+        columnCount: 2,
         data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', ''],
       });
     });
@@ -512,8 +516,8 @@ describe('wysiwyg table commands', () => {
   describe('addColumnToRight command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
-        columns: 3,
-        rows: 2,
+        rowCount: 3,
+        columnCount: 3,
         data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', ''],
       });
     });
@@ -595,8 +599,8 @@ describe('wysiwyg table commands', () => {
   describe('addColumnToLeft command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
-        columns: 3,
-        rows: 2,
+        rowCount: 3,
+        columnCount: 3,
         data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', ''],
       });
     });
@@ -678,8 +682,8 @@ describe('wysiwyg table commands', () => {
   describe('removeColumn command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
-        columns: 3,
-        rows: 2,
+        rowCount: 3,
+        columnCount: 3,
         data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', ''],
       });
     });
@@ -775,8 +779,8 @@ describe('wysiwyg table commands', () => {
   describe('alignColumn command', () => {
     beforeEach(() => {
       cmd.exec('wysiwyg', 'addTable', {
-        columns: 2,
-        rows: 2,
+        rowCount: 3,
+        columnCount: 2,
         data: ['foo', 'bar', 'baz', 'qux', 'quux', ''],
       });
     });

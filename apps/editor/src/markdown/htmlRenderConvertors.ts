@@ -39,10 +39,11 @@ const baseConvertors: CustomHTMLRendererMap = {
       const classNames = [];
 
       if ((node as ListItemMdNode).listData.task) {
-        attributes['data-te-task'] = '';
+        attributes['data-task'] = '';
         classNames.push('task-list-item');
         if ((node as ListItemMdNode).listData.checked) {
           classNames.push('checked');
+          attributes['data-task-checked'] = '';
         }
       }
 

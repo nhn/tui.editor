@@ -15,8 +15,8 @@ import { invokePlugins, getPluginInfo } from './pluginHelper';
 import { sanitizeLinkAttribute } from './utils/common';
 import EventEmitter from './event/eventEmitter';
 
-const TASK_ATTR_NAME = 'data-te-task';
-const DISABLED_TASK_ATTR_NAME = 'data-te-task-disabled';
+const TASK_ATTR_NAME = 'data-task';
+const DISABLED_TASK_ATTR_NAME = 'data-task-disabled';
 const TASK_CHECKED_CLASS_NAME = 'checked';
 
 /**

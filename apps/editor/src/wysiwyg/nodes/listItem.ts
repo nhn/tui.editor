@@ -25,6 +25,7 @@ export class ListItem extends NodeSchema {
           getAttrs(dom: Node | string) {
             const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
 
+            // @TODO Change all task data attribute names to be the same
             return {
               task: (dom as HTMLElement).hasAttribute('data-task'),
               checked: (dom as HTMLElement).hasAttribute('data-task-checked'),
@@ -37,7 +38,7 @@ export class ListItem extends NodeSchema {
         const { task, checked } = attrs;
 
         if (!task) {
-          return ['li', 0];
+          return [attrs.rawHTML || 'li', 0];
         }
 
         const classNames = ['task-list-item'];
@@ -51,7 +52,7 @@ export class ListItem extends NodeSchema {
           {
             class: classNames.join(' '),
             'data-task': task,
-            'data-task-checked': checked,
+            ...(checked && { 'data-task-checked': checked }),
           },
           0,
         ];

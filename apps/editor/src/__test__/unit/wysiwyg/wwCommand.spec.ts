@@ -246,13 +246,13 @@ describe('wysiwyg commands', () => {
     expect(wwe.getHTML()).toBe(expected);
   });
 
-  describe('task command', () => {
+  describe('taskList command', () => {
     it('should add task to ul element ', () => {
-      cmd.exec('wysiwyg', 'task');
+      cmd.exec('wysiwyg', 'taskList');
 
       const expected = oneLineTrim`
         <ul>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p><br></p>
           </li>
         </ul>
@@ -265,17 +265,17 @@ describe('wysiwyg commands', () => {
       setTextToEditor('foo\nbar\nbaz');
 
       cmd.exec('wysiwyg', 'selectAll');
-      cmd.exec('wysiwyg', 'task');
+      cmd.exec('wysiwyg', 'taskList');
 
       const expected = oneLineTrim`
         <ul>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p>foo</p>
           </li>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p>bar</p>
           </li>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p>baz</p>
           </li>
         </ul>
@@ -288,7 +288,7 @@ describe('wysiwyg commands', () => {
       setTextToEditor('foo\nbar\nbaz');
 
       cmd.exec('wysiwyg', 'selectAll');
-      cmd.exec('wysiwyg', 'task');
+      cmd.exec('wysiwyg', 'taskList');
 
       wwe.setSelection(3, 3); // from 'foo'
       cmd.exec('wysiwyg', 'bulletList');
@@ -298,10 +298,10 @@ describe('wysiwyg commands', () => {
           <li>
             <p>foo</p>
           </li>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p>bar</p>
           </li>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p>baz</p>
           </li>
         </ul>
@@ -310,17 +310,17 @@ describe('wysiwyg commands', () => {
       expect(wwe.getHTML()).toBe(expected);
 
       wwe.setSelection(3, 12); // from 'foo' to 'bar'
-      cmd.exec('wysiwyg', 'task');
+      cmd.exec('wysiwyg', 'taskList');
 
       expected = oneLineTrim`
         <ul>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p>foo</p>
           </li>
           <li>
             <p>bar</p>
           </li>
-          <li class="task-list-item" data-task="true" data-task-checked="false">
+          <li class="task-list-item" data-task="true">
             <p>baz</p>
           </li>
         </ul>

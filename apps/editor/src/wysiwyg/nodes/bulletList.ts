@@ -5,7 +5,7 @@ import { getWwCommands } from '@/commands/wwCommands';
 import { createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
 import { changeList, toggleTask } from '@/wysiwyg/command/list';
 
-import { EditorCommand } from '@t/spec';
+import { Command } from 'prosemirror-commands';
 
 export class BulletList extends NodeSchema {
   get name() {
@@ -26,19 +26,19 @@ export class BulletList extends NodeSchema {
     };
   }
 
-  private changeList(): EditorCommand {
-    return () => (state, dispatch) => changeList(state.schema.nodes.bulletList)(state, dispatch);
+  private changeList(): Command {
+    return (state, dispatch) => changeList(state.schema.nodes.bulletList)(state, dispatch);
   }
 
   commands() {
     return {
-      bulletList: this.changeList(),
-      task: toggleTask,
+      bulletList: this.changeList,
+      taskList: toggleTask,
     };
   }
 
   keymaps() {
-    const bulletListCommand = this.changeList()();
+    const bulletListCommand = this.changeList();
     const { indent, outdent } = getWwCommands();
 
     return {
