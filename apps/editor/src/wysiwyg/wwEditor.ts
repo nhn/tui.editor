@@ -23,7 +23,6 @@ import { toolbarActivity } from './plugins/toolbarActivity';
 import { CustomBlockView } from './nodeview/customBlockView';
 import { changePastedHTML, changePastedSlice } from './clipboard/paste';
 import { pasteToTable } from './clipboard/pasteToTable';
-
 import { createSpecs } from './specCreator';
 
 import { Emitter } from '@t/event';
