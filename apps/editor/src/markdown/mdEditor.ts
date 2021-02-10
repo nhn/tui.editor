@@ -74,8 +74,6 @@ export default class MdEditor extends EditorBase {
   }
 
   private createClipboard() {
-    const { eventEmitter } = this;
-
     this.clipboard = document.createElement('textarea');
     this.clipboard.className = 'te-clipboard';
     this.clipboard.addEventListener('paste', (ev: ClipboardEvent) => {
@@ -88,7 +86,7 @@ export default class MdEditor extends EditorBase {
         const imageBlob = pasteImageOnly(items);
 
         if (imageBlob) {
-          emitImageBlobHook(eventEmitter, 'markdown', imageBlob, ev.type);
+          emitImageBlobHook(this.eventEmitter, 'markdown', imageBlob, ev.type);
 
           return;
         }
