@@ -91,8 +91,8 @@ export class Table extends NodeSchema {
       if (collapsed && !isInTableNode($from)) {
         const { tableHead, tableBody } = schema.nodes;
 
-        const theadData = data && data.slice(0, columnCount);
-        const tbodyData = data && data.slice(columnCount, data.length);
+        const theadData = data?.slice(0, columnCount);
+        const tbodyData = data?.slice(columnCount, data.length);
         const tableHeadRow = createTableHeadRow(columnCount, schema, theadData);
         const tableBodyRows = createTableBodyRows(rowCount - 1, columnCount, schema, tbodyData);
         const table = schema.nodes.table.create(null, [

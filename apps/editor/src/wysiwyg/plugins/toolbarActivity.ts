@@ -6,9 +6,11 @@ import { includes } from '@/utils/common';
 import { ToolbarState, ToolbarStateKeys } from '@t/ui';
 import { Emitter } from '@t/event';
 
+type ListType = 'bulletList' | 'orderedList' | 'taskList';
+
 const EXCEPT_TYPES = ['image', 'link', 'customBlock', 'frontMatter'];
-const MARK_TYPES = ['strong', 'strike', 'emph', 'code'] as const;
-const LIST_TYPES = ['bulletList', 'orderedList', 'taskList'];
+const MARK_TYPES = ['strong', 'strike', 'emph', 'code'];
+const LIST_TYPES: ListType[] = ['bulletList', 'orderedList', 'taskList'];
 
 function getToolbarStateType(node: Node, parentNode: Node) {
   const type = node.type.name;
@@ -28,8 +30,8 @@ function setListNodeToolbarState(type: ToolbarStateKeys, nodeTypeState: ToolbarS
   nodeTypeState[type] = true;
 
   LIST_TYPES.filter((listName) => listName !== type).forEach((listType) => {
-    if (nodeTypeState[listType as ToolbarStateKeys]) {
-      delete nodeTypeState[listType as ToolbarStateKeys];
+    if (nodeTypeState[listType]) {
+      delete nodeTypeState[listType];
     }
   });
 }
