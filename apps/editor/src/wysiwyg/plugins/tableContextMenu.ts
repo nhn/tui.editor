@@ -59,7 +59,7 @@ function getContextMenuGroups(eventEmitter: Emitter, inTableHead: boolean) {
     .concat();
 }
 
-export function tableContextMenuPlugin(eventEmitter: Emitter) {
+export function tableContextMenu(eventEmitter: Emitter) {
   return new Plugin({
     props: {
       handleDOMEvents: {
