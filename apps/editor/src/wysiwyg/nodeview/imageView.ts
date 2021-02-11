@@ -4,14 +4,19 @@ import hasClass from 'tui-code-snippet/domUtil/hasClass';
 
 import { isPositionInBox } from '@/utils/dom';
 
+import { ToDOMAdaptor } from '@t/convertor';
+
 const IMAGE_LINK_CLASS_NAME = 'image-link';
 
 export class ImageView implements NodeView {
   dom: HTMLElement;
 
+  private toDOMAdaptor: ToDOMAdaptor;
+
   private imageLink: boolean;
 
-  constructor(node: ProsemirrorNode) {
+  constructor(node: ProsemirrorNode, toDOMAdaptor: ToDOMAdaptor) {
+    this.toDOMAdaptor = toDOMAdaptor;
     this.imageLink = this.hasLink(node);
     this.dom = this.createElement(node);
 
@@ -34,6 +39,12 @@ export class ImageView implements NodeView {
   }
 
   private createImageElement(node: ProsemirrorNode) {
+    const toDOMNode = this.toDOMAdaptor.getToDOMNode('image');
+
+    if (toDOMNode) {
+      return toDOMNode(node) as HTMLElement;
+    }
+
     const image = document.createElement('img');
     const { imageUrl, altText } = node.attrs;
 

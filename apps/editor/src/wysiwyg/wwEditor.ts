@@ -115,7 +115,7 @@ export default class WysiwygEditor extends EditorBase {
           return new CustomBlockView(node, view, getPos, toDOMAdaptor);
         },
         image(node) {
-          return new ImageView(node);
+          return new ImageView(node, toDOMAdaptor);
         },
       },
       transformPastedHTML: changePastedHTML,
