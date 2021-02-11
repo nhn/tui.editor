@@ -62,19 +62,19 @@ export class Link extends Mark {
       const { schema, tr, selection } = state;
       const { empty, from, to } = selection;
 
-      if (!linkUrl || !linkText) {
-        return false;
-      }
-
-      if (empty) {
+      if (from && to && linkUrl && linkText) {
         const attrs = {
           linkUrl: replaceMarkdownText(decodeURIGraceful(linkUrl), true),
           linkText: replaceMarkdownText(linkText, false),
         };
-        const marks = [schema.mark('link', attrs)];
-        const node = createText(schema, linkText, marks, false);
+        const mark = schema.mark('link', attrs);
+        const node = createText(schema, linkText, mark, false);
 
-        tr.replaceRangeWith(from, to, node);
+        if (empty) {
+          tr.replaceRangeWith(from, to, node);
+        } else {
+          tr.addMark(from, to, mark);
+        }
 
         dispatch!(tr.scrollIntoView());
 

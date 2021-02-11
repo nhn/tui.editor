@@ -21,6 +21,7 @@ import { taskPlugin } from './plugins/taskPlugin';
 import { toolbarActivity } from './plugins/toolbarActivity';
 
 import { CustomBlockView } from './nodeview/customBlockView';
+import { ImageView } from './nodeview/imageView';
 import { changePastedHTML, changePastedSlice } from './clipboard/paste';
 import { pasteToTable } from './clipboard/pasteToTable';
 
@@ -112,6 +113,9 @@ export default class WysiwygEditor extends EditorBase {
       nodeViews: {
         customBlock(node, view, getPos) {
           return new CustomBlockView(node, view, getPos, toDOMAdaptor);
+        },
+        image(node) {
+          return new ImageView(node);
         },
       },
       transformPastedHTML: changePastedHTML,

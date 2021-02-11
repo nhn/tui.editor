@@ -488,29 +488,53 @@ describe('wysiwyg commands', () => {
       );
     });
 
-    describe('', () => {
-      beforeEach(() => {
-        const linkAttributes = {
-          target: '_blank',
-          rel: 'noopener noreferrer',
-        };
-        const adaptor = new WwToDOMAdaptor({}, {});
-
-        em = new EventEmitter();
-        wwe = new WysiwygEditor(em, adaptor, linkAttributes);
-        cmd = new CommandManager(em, {}, wwe.commands);
+    it('should change link url in selection', () => {
+      cmd.exec('wysiwyg', 'addLink', {
+        linkUrl: '#',
+        linkText: 'foo bar baz',
       });
 
-      it('should add link element with link attributes', () => {
-        cmd.exec('wysiwyg', 'addLink', {
-          linkUrl: '#',
-          linkText: 'foo',
-        });
+      wwe.setSelection(5, 8);
 
-        expect(wwe.getHTML()).toBe(
-          '<p><a href="#" target="_blank" rel="noopener noreferrer">foo</a></p>'
-        );
+      cmd.exec('wysiwyg', 'addLink', {
+        linkUrl: 'http://test.com',
+        linkText: 'bar',
       });
+
+      const expected = oneLineTrim`
+        <p>
+          <a href="#">foo </a>
+          <a href="http://test.com">bar</a>
+          <a href="#"> baz</a>
+        </p>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+  });
+
+  describe(`addLink command with 'linkAttributes' option`, () => {
+    beforeEach(() => {
+      const linkAttributes = {
+        target: '_blank',
+        rel: 'noopener noreferrer',
+      };
+      const adaptor = new WwToDOMAdaptor({}, {});
+
+      em = new EventEmitter();
+      wwe = new WysiwygEditor(em, adaptor, linkAttributes);
+      cmd = new CommandManager(em, {}, wwe.commands);
+    });
+
+    it('should add link element with link attributes', () => {
+      cmd.exec('wysiwyg', 'addLink', {
+        linkUrl: '#',
+        linkText: 'foo',
+      });
+
+      expect(wwe.getHTML()).toBe(
+        '<p><a href="#" target="_blank" rel="noopener noreferrer">foo</a></p>'
+      );
     });
   });
 
