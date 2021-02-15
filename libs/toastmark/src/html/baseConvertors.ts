@@ -220,5 +220,19 @@ export const baseConvertors: HTMLConvertorMap = {
       { type: 'text', content: node.literal! },
       { type: 'closeTag', tagName: 'div', outerNewLine: true }
     ];
+  },
+
+  customInline(node, context, convertors) {
+    const info = (node as CustomBlockNode).info!;
+    const customConvertor = convertors![info];
+
+    if (customConvertor) {
+      return customConvertor!(node, context);
+    }
+
+    return {
+      type: context.entering ? 'openTag' : 'closeTag',
+      tagName: 'span'
+    };
   }
 };

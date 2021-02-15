@@ -1,4 +1,14 @@
-import { Node, BlockNode, SourcePos, isHeading, LinkNode, createNode, text } from './node';
+import {
+  Node,
+  BlockNode,
+  SourcePos,
+  isHeading,
+  LinkNode,
+  createNode,
+  text,
+  CustomInilneNode,
+  InlineNodeType
+} from './node';
 import { repeat, normalizeURI, unescapeString, ESCAPABLE, ENTITY } from './common';
 import { reHtmlTag } from './rawHtml';
 import fromCodePoint from './from-code-point';
@@ -25,6 +35,7 @@ const C_CLOSE_PAREN = 41;
 const C_COLON = 58;
 const C_SINGLEQUOTE = 39;
 const C_DOUBLEQUOTE = 34;
+const C_DOLLAR = 36;
 
 // Some regexps used in inline parser:
 const ESCAPED_CHAR = `\\\\${ESCAPABLE}`;
@@ -59,14 +70,15 @@ const reSpaceAtEndOfLine = /^ *(?:\n|$)/;
 const reLinkLabel = /^\[(?:[^\\\[\]]|\\.){0,1000}\]/;
 
 // Matches a string of non-special characters.
-const reMain = /^[^\n`\[\]\\!<&*_'"~]+/m;
+const reMain = /^[^\n`\[\]\\!<&*_'"~$]+/m;
 
 type DelimiterCC =
   | typeof C_ASTERISK
   | typeof C_UNDERSCORE
   | typeof C_SINGLEQUOTE
   | typeof C_DOUBLEQUOTE
-  | typeof C_TILDE;
+  | typeof C_TILDE
+  | typeof C_DOLLAR;
 
 type Delimiter = {
   cc: DelimiterCC;
@@ -286,11 +298,10 @@ export class InlineParser {
       }
     }
 
-    if (numdelims === 0 || (numdelims < 2 && cc === C_TILDE)) {
+    if (numdelims === 0 || (numdelims < 2 && (cc === C_TILDE || cc === C_DOLLAR))) {
       this.pos = startpos;
       return null;
     }
-
     const charBefore = startpos === 0 ? '\n' : this.subject.charAt(startpos - 1);
     const ccAfter = this.peek();
     let charAfter: string;
@@ -405,7 +416,8 @@ export class InlineParser {
       [C_ASTERISK]: [stackBottom, stackBottom, stackBottom],
       [C_SINGLEQUOTE]: [stackBottom],
       [C_DOUBLEQUOTE]: [stackBottom],
-      [C_TILDE]: [stackBottom]
+      [C_TILDE]: [stackBottom],
+      [C_DOLLAR]: [stackBottom]
     };
 
     // find first closer above stackBottom:
@@ -443,7 +455,7 @@ export class InlineParser {
         }
         oldCloser = closer;
 
-        if (closerEmph || closercc === C_TILDE) {
+        if (closerEmph || closercc === C_TILDE || closercc === C_DOLLAR) {
           if (!openerFound) {
             closer = closer.next;
           } else if (opener) {
@@ -456,9 +468,15 @@ export class InlineParser {
             closerInl = closer.node;
 
             // build contents for new emph element
-            const newNode = createNode(
-              closerEmph ? (useDelims === 1 ? 'emph' : 'strong') : 'strike'
-            );
+            let nodeType: InlineNodeType = closerEmph
+              ? useDelims === 1
+                ? 'emph'
+                : 'strong'
+              : 'strike';
+            if (closercc === C_DOLLAR) {
+              nodeType = 'customInline';
+            }
+            const newNode = createNode(nodeType);
             const openerEndPos = openerInl.sourcepos![1];
             const closerStartPos = closerInl.sourcepos![0];
             newNode.sourcepos = [
@@ -481,6 +499,21 @@ export class InlineParser {
               tmp.unlink();
               newNode.appendChild(tmp);
               tmp = next;
+            }
+
+            // build custom inline node
+            if (closercc === C_DOLLAR) {
+              const textNode = newNode.firstChild!;
+              const literal = textNode.literal!;
+              const [info] = literal.split(/\s/)!;
+
+              (newNode as CustomInilneNode).info = info;
+              if (literal.length === info.length + 1) {
+                textNode.unlink();
+              } else {
+                textNode.sourcepos![0][1] += info.length;
+                textNode.literal = literal.replace(`${info} `, '');
+              }
             }
 
             openerInl.insertAfter(newNode);
@@ -1051,6 +1084,7 @@ export class InlineParser {
       case C_ASTERISK:
       case C_UNDERSCORE:
       case C_TILDE:
+      case C_DOLLAR:
         res = this.handleDelim(c, block);
         break;
       case C_SINGLEQUOTE:

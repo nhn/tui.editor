@@ -31,7 +31,8 @@ export type InlineNodeType =
   | 'image'
   | 'htmlInline'
   | 'linebreak'
-  | 'softbreak';
+  | 'softbreak'
+  | 'customInline';
 
 export type NodeType = BlockNodeType | InlineNodeType;
 
@@ -56,6 +57,7 @@ export function isContainer(node: Node) {
     case 'tableRow':
     case 'tableCell':
     case 'tableDelimRow':
+    case 'customInline':
       return true;
     default:
       return false;
@@ -188,6 +190,22 @@ export class Node {
   walker() {
     return new NodeWalker(this);
   }
+
+  inlineToMark() {
+    const text = this.firstChild!.literal;
+    switch (this.type) {
+      case 'emph':
+        return `*${text}*`;
+      case 'strong':
+        return `**${text}**`;
+      case 'strike':
+        return `~~${text}~~`;
+      case 'code':
+        return `\`${text}\``;
+      default:
+        return null;
+    }
+  }
 }
 
 export class BlockNode extends Node {
@@ -231,6 +249,14 @@ export class LinkNode extends Node {
   public destination: string | null = null;
   public title: string | null = null;
   public extendedAutolink = false;
+
+  inlineToMark() {
+    const text = this.firstChild!.literal;
+    const { destination, title } = this as LinkNode;
+    const delim = this.type === 'link' ? '' : '!';
+
+    return `${delim}[${text}](${destination}${title ? ` "${title}"` : ''})`;
+  }
 }
 
 export class CodeBlockNode extends BlockNode {
@@ -275,6 +301,10 @@ export class RefDefNode extends BlockNode {
 export class CustomBlockNode extends BlockNode {
   public syntaxLength = 0;
   public offset = -1;
+  public info = '';
+}
+
+export class CustomInilneNode extends Node {
   public info = '';
 }
 
@@ -323,6 +353,8 @@ export function createNode(type: NodeType, sourcepos?: SourcePos) {
       return new RefDefNode(type, sourcepos);
     case 'customBlock':
       return new CustomBlockNode(type, sourcepos);
+    case 'customInline':
+      return new CustomInilneNode(type, sourcepos);
     default:
       return new Node(type, sourcepos) as Node;
   }
@@ -354,6 +386,10 @@ export function isRefDef(node: Node): node is RefDefNode {
 
 export function isCustomBlock(node: Node): node is CustomBlockNode {
   return node.type === 'customBlock';
+}
+
+export function isCustomInline(node: Node) {
+  return node.type === 'customInline';
 }
 
 export function text(s: string, sourcepos?: SourcePos) {
