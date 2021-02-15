@@ -10,7 +10,7 @@ import {
   CustomInlineMdNode,
 } from '@t/markdown';
 import { LinkAttributes } from '@t/editor';
-import { getWidgetMdContent, widgetRuleMap } from '@/widget/widgetNode';
+import { getWidgetContent, widgetToDOM } from '@/widget/rules';
 
 type TokenAttrs = Record<string, any>;
 
@@ -100,25 +100,19 @@ const baseConvertors: CustomHTMLRendererMap = {
     ];
   },
 
-  customInline(node: MdNode, { origin, entering }: Context) {
+  customInline(node: MdNode, { origin, entering, skipChildren }: Context) {
     const { info } = node as CustomInlineMdNode;
 
-    if (info.indexOf('widget') !== -1) {
-      if (entering) {
-        const content = getWidgetMdContent(node as CustomInlineMdNode);
+    if (info.indexOf('widget') !== -1 && entering) {
+      skipChildren();
+      const content = getWidgetContent(node as CustomInlineMdNode);
+      const htmlInline = widgetToDOM(info, content).outerHTML;
 
-        return {
-          type: 'openTag',
-          tagName: 'span',
-          content: widgetRuleMap[info].toHTML(content).outerHTML,
-          classNames: ['tui-widget'],
-        };
-      }
-
-      return {
-        type: 'closeTag',
-        tagName: 'span',
-      };
+      return [
+        { type: 'openTag', tagName: 'span', classNames: ['tui-widget'] },
+        { type: 'html', content: htmlInline },
+        { type: 'closeTag', tagName: 'span' },
+      ];
     }
     return origin!();
   },
