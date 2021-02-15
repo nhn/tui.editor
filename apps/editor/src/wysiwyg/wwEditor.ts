@@ -103,7 +103,7 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createView() {
-    const { toDOMAdaptor } = this;
+    const { toDOMAdaptor, eventEmitter } = this;
 
     return new EditorView(this.el, {
       state: this.createState(),
@@ -115,7 +115,7 @@ export default class WysiwygEditor extends EditorBase {
           return new CustomBlockView(node, view, getPos, toDOMAdaptor);
         },
         image(node) {
-          return new ImageView(node, toDOMAdaptor);
+          return new ImageView(node, toDOMAdaptor, eventEmitter);
         },
       },
       transformPastedHTML: changePastedHTML,

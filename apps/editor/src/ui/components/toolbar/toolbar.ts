@@ -12,12 +12,13 @@ import {
 } from '@t/ui';
 import html from '@/ui/vdom/template';
 import { Component } from '@/ui/vdom/component';
-import { createElementWith, getOuterWidth } from '@/utils/dom';
+import { createElementWith, getOuterWidth, closest, getTotalOffset } from '@/utils/dom';
 import {
   createToolbarItemInfo,
   toggleScrollSync,
   groupToolbarItems,
   setGroupState,
+  createPopupInfo,
 } from '@/ui/toolbarItemFactory';
 import { Popup } from '../popup';
 import { Tabs } from '../tabs';
@@ -111,9 +112,29 @@ export class Toolbar extends Component<Props, State> {
   }
 
   addEvent() {
+    this.props.eventEmitter.listen('openPopup', this.openPopup);
     this.handleResize = throttle(() => this.setState(this.classifyToolbarItems()), 200);
     window.addEventListener('resize', this.handleResize);
   }
+
+  private openPopup = (popupName: string) => {
+    const el = document.querySelector(`.te-toolbar-group .tui-${popupName}`) as HTMLElement;
+    const { offsetLeft, offsetTop } = getTotalOffset(
+      el,
+      closest(el, '.te-toolbar-section') as HTMLElement
+    );
+
+    if (el) {
+      const info = createPopupInfo(popupName, {
+        el,
+        pos: { left: offsetLeft, top: el.offsetHeight + offsetTop },
+      });
+
+      if (info) {
+        this.setPopupInfo(info);
+      }
+    }
+  };
 
   private appendTooltipToBody() {
     const tooltip = `<div class="tui-tooltip" style="display:none">

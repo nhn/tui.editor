@@ -5,6 +5,7 @@ import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import { isPositionInBox } from '@/utils/dom';
 
 import { ToDOMAdaptor } from '@t/convertor';
+import { Emitter } from '@t/event';
 
 const IMAGE_LINK_CLASS_NAME = 'image-link';
 
@@ -17,10 +18,13 @@ export class ImageView implements NodeView {
 
   private toDOMAdaptor: ToDOMAdaptor;
 
+  private eventEmitter: Emitter;
+
   private hasLink: boolean;
 
-  constructor(node: ProsemirrorNode, toDOMAdaptor: ToDOMAdaptor) {
+  constructor(node: ProsemirrorNode, toDOMAdaptor: ToDOMAdaptor, eventEmitter: Emitter) {
     this.toDOMAdaptor = toDOMAdaptor;
+    this.eventEmitter = eventEmitter;
     this.hasLink = hasLink(node);
     this.dom = this.createElement(node);
 
@@ -67,7 +71,7 @@ export class ImageView implements NodeView {
     }
   }
 
-  private handleMousedown(ev: MouseEvent) {
+  private handleMousedown = (ev: MouseEvent) => {
     ev.preventDefault();
 
     const { target, offsetX, offsetY } = ev;
@@ -75,12 +79,13 @@ export class ImageView implements NodeView {
     if (hasClass(target as HTMLElement, IMAGE_LINK_CLASS_NAME)) {
       const style = getComputedStyle(target as HTMLElement, ':before');
 
+      ev.stopPropagation();
+
       if (isPositionInBox(style, offsetX, offsetY)) {
-        // @TODO add logic to open link popup layer
-        console.log('open popup');
+        this.eventEmitter.emit('openPopup', 'image');
       }
     }
-  }
+  };
 
   stopEvent() {
     return true;

@@ -27,11 +27,11 @@ export class Popup extends Component<Props> {
   };
 
   mounted() {
-    document.addEventListener('click', this.handleClickDocument);
+    document.addEventListener('mousedown', this.handleClickDocument);
   }
 
   beforeDestroy() {
-    document.removeEventListener('click', this.handleClickDocument);
+    document.removeEventListener('mousedown', this.handleClickDocument);
   }
 
   render() {
