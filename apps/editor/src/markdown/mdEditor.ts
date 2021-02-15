@@ -9,6 +9,7 @@ import { history } from 'prosemirror-history';
 import { ToastMark } from '@toast-ui/toastmark';
 import { Emitter } from '@t/event';
 import { MdPos } from '@t/markdown';
+import { WidgetStyle } from '@t/editor';
 import EditorBase from '@/base';
 import SpecManager from '@/spec/specManager';
 import { toggleClass } from '@/utils/dom';
@@ -39,7 +40,7 @@ import { CustomBlock } from './marks/customBlock';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
 import { smartTask } from './plugins/smartTask';
 import { widgetPlugin } from '@/plugins/widget';
-import { Widget } from '../widget/widgetNode';
+import { extract, getWidgetContent, Widget, widgetRules, widgetView } from '@/widget/widgetNode';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -180,7 +181,7 @@ export default class MdEditor extends EditorBase {
 
         this.view.updateState(state);
       },
-      clipboardTextSerializer: (slice) => this.getChanged(slice),
+      clipboardTextSerializer: (slice) => this.getChanged(slice, true),
       handleKeyDown: (_, ev) => {
         if ((ev.metaKey || ev.ctrlKey) && ev.key.toUpperCase() === 'V') {
           this.clipboard.focus();
@@ -194,14 +195,7 @@ export default class MdEditor extends EditorBase {
         },
       },
       nodeViews: {
-        widget: (node) => {
-          const dom = document.createElement('span');
-
-          dom.className = 'tui-widget';
-          dom.appendChild(node.attrs.node);
-
-          return { dom };
-        },
+        widget: widgetView,
       },
     });
   }
@@ -234,7 +228,7 @@ export default class MdEditor extends EditorBase {
     return resolvedPos || [step.from, step.to];
   }
 
-  private getChanged(slice: Slice) {
+  private getChanged(slice: Slice, trailing = false) {
     let changed = '';
     const from = 0;
     const to = slice.content.size;
@@ -246,6 +240,10 @@ export default class MdEditor extends EditorBase {
         changed += '\n';
       }
     });
+
+    if (trailing) {
+      changed = getWidgetContent(changed);
+    }
 
     return nbspToSpace(changed);
   }
@@ -261,10 +259,15 @@ export default class MdEditor extends EditorBase {
   replaceSelection(text: string) {
     const { tr, schema } = this.view.state;
     const lineTexts = text.split('\n');
-    const nodes = lineTexts.map((lineText) => createParagraph(schema, lineText));
+    // const newNodes = lineTexts.map((lineText) => createParagraph(schema, lineText));
+    const newNodes = lineTexts.map((lineText) =>
+      this.schema.nodes.paragraph.create(null, extract(lineText, schema, widgetRules))
+    );
 
     this.focus();
-    this.view.dispatch(tr.replaceSelection(new Slice(Fragment.from(nodes), 1, 1)).scrollIntoView());
+    this.view.dispatch(
+      tr.replaceSelection(new Slice(Fragment.from(newNodes), 1, 1)).scrollIntoView()
+    );
   }
 
   getRange() {
@@ -276,13 +279,33 @@ export default class MdEditor extends EditorBase {
   setMarkdown(markdown: string, cursorToEnd = true) {
     const contents = markdown.split('\n');
     const { tr, doc } = this.view.state;
-    const newNodes = contents.map((content) => createParagraph(this.schema, content));
+    // const newNodes = contents.map((content) => createParagraph(this.schema, content));
+    const newNodes = contents.map((content) => {
+      const nodes = extract(content, this.schema, widgetRules);
+
+      return this.schema.nodes.paragraph.create(null, nodes);
+    });
 
     this.view.dispatch(tr.replaceWith(0, doc.content.size, newNodes));
 
     if (cursorToEnd) {
       this.moveCursorToEnd();
     }
+  }
+
+  addWidget(node: Node, style: WidgetStyle, mdPos?: MdPos) {
+    const { tr, doc, selection } = this.view.state;
+    const pos = mdPos ? getMdToEditorPos(doc, this.toastMark, mdPos, mdPos)[0] : selection.to;
+
+    this.view.dispatch(tr.setMeta('widget', { pos, node, style }));
+  }
+
+  replaceWithWidget(from: MdPos, to: MdPos, content: string) {
+    const { tr, schema, doc } = this.view.state;
+    const pos = getMdToEditorPos(doc, this.toastMark, from, to);
+    const nodes = extract(content, schema, widgetRules);
+
+    this.view.dispatch(tr.replaceWith(pos[0], pos[1], nodes));
   }
 
   getMarkdown() {
