@@ -1,7 +1,7 @@
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import { Emitter } from '@t/event';
-import { ExecCommand, HidePopup } from '@t/ui';
+import { ExecCommand, HidePopup, PopupInitialValues } from '@t/ui';
 import i18n from '@/i18n/i18n';
 import html from '@/ui/vdom/template';
 import { Component } from '@/ui/vdom/component';
@@ -11,7 +11,7 @@ interface Props {
   execCommand: ExecCommand;
   hidePopup: HidePopup;
   show: boolean;
-  initialValues: Record<string, string>;
+  initialValues: PopupInitialValues;
 }
 
 export class LinkPopupBody extends Component<Props> {

@@ -9,6 +9,7 @@ import {
   ToolbarGroupInfo,
   ToolbarItem,
   ToolbarItemOptions,
+  PopupInitialValues,
 } from '@t/ui';
 import html from '@/ui/vdom/template';
 import { Component } from '@/ui/vdom/component';
@@ -40,7 +41,7 @@ interface State {
   activeTab: TabType;
   items: ToolbarGroupInfo[];
   dropdownItems: ToolbarGroupInfo[];
-  initialValues: Record<string, string>;
+  initialValues: PopupInitialValues;
 }
 
 interface ItemWidthMap {
@@ -119,25 +120,6 @@ export class Toolbar extends Component<Props, State> {
     window.addEventListener('resize', this.handleResize);
   }
 
-  private openPopup = (popupName: string, initialValues?: any) => {
-    const el = document.querySelector(`.te-toolbar-group .tui-${popupName}`) as HTMLElement;
-    const { offsetLeft, offsetTop } = getTotalOffset(
-      el,
-      closest(el, '.te-toolbar-section') as HTMLElement
-    );
-
-    if (el) {
-      const info = createPopupInfo(popupName, {
-        el,
-        pos: { left: offsetLeft, top: el.offsetHeight + offsetTop },
-      });
-
-      if (info) {
-        this.setPopupInfo(info, initialValues);
-      }
-    }
-  };
-
   private appendTooltipToBody() {
     const tooltip = `<div class="tui-tooltip" style="display:none">
         <div class="arrow"></div>
@@ -168,6 +150,25 @@ export class Toolbar extends Component<Props, State> {
 
   private setPopupInfo = (popupInfo: PopupInfo, initialValues = {}) => {
     this.setState({ showPopup: true, popupInfo, initialValues });
+  };
+
+  private openPopup = (popupName: string, initialValues = {}) => {
+    const el = document.querySelector(`.te-toolbar-group .tui-${popupName}`) as HTMLElement;
+    const { offsetLeft, offsetTop } = getTotalOffset(
+      el,
+      closest(el, '.te-toolbar-section') as HTMLElement
+    );
+
+    if (el) {
+      const info = createPopupInfo(popupName, {
+        el,
+        pos: { left: offsetLeft, top: el.offsetHeight + offsetTop },
+      });
+
+      if (info) {
+        this.setPopupInfo(info, initialValues);
+      }
+    }
   };
 
   private hidePopup = () => {

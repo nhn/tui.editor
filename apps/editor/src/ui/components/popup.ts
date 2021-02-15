@@ -1,4 +1,4 @@
-import { ExecCommand, HidePopup, PopupInfo, Pos } from '@t/ui';
+import { ExecCommand, HidePopup, PopupInfo, Pos, PopupInitialValues } from '@t/ui';
 import { Emitter } from '@t/event';
 import { closest } from '@/utils/dom';
 import html from '../vdom/template';
@@ -14,7 +14,7 @@ interface Props {
   eventEmitter: Emitter;
   hidePopup: HidePopup;
   execCommand: ExecCommand;
-  initialValues: Record<string, string>;
+  initialValues: PopupInitialValues;
 }
 
 export class Popup extends Component<Props> {
