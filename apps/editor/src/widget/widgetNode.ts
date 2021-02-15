@@ -41,6 +41,8 @@ export function getWidgetContent(text: string) {
 export function extract(content: string, schema: Schema, rules: WidgetRule[]) {
   let nodes: ProsemirrorNode[] = [];
 
+  content = getWidgetContent(content);
+
   if (rules.length) {
     rules.forEach((ruleInfo, ruleIndex) => {
       const { rule } = ruleInfo;
