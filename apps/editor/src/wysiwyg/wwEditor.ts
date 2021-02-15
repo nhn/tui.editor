@@ -1,6 +1,6 @@
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { Schema, Node, Slice, Fragment } from 'prosemirror-model';
+import { Schema, Node as ProsemirrorNode, Slice, Fragment } from 'prosemirror-model';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 import { history } from 'prosemirror-history';
@@ -14,6 +14,7 @@ import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
 
 import { placeholder } from '@/plugins/placeholder';
 import { dropImage } from '@/plugins/dropImage';
+import { extract, widgetRules, widgetView } from '@/widget/widgetNode';
 
 import { tableSelection } from './plugins/tableSelection';
 import { tableContextMenu } from './plugins/tableContextMenu';
@@ -28,7 +29,7 @@ import { createSpecs } from './specCreator';
 
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
-import { LinkAttributes } from '@t/editor';
+import { LinkAttributes, WidgetStyle } from '@t/editor';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -116,6 +117,7 @@ export default class WysiwygEditor extends EditorBase {
         image(node, view, getPos) {
           return new ImageView(node, view, getPos, toDOMAdaptor, eventEmitter);
         },
+        widget: widgetView,
       },
       transformPastedHTML: changePastedHTML,
       transformPasted: (slice: Slice) => changePastedSlice(slice, this.schema),
@@ -173,7 +175,7 @@ export default class WysiwygEditor extends EditorBase {
     this.focus();
   }
 
-  setModel(newDoc: Node, cursorToEnd = false) {
+  setModel(newDoc: ProsemirrorNode, cursorToEnd = false) {
     const { tr, doc } = this.view.state;
 
     this.view.dispatch(tr.replaceWith(0, doc.content.size, newDoc));
@@ -188,5 +190,18 @@ export default class WysiwygEditor extends EditorBase {
     const selection = createTextSelection(tr, start, end);
 
     this.view.dispatch(tr.setSelection(selection));
+  }
+
+  addWidget(node: Node, style: WidgetStyle, pos?: number) {
+    const { dispatch, state } = this.view;
+
+    dispatch(state.tr.setMeta('widget', { pos: pos ?? state.selection.to, node, style }));
+  }
+
+  replaceWithWidget(from: number, to: number, content: string) {
+    const { tr, schema } = this.view.state;
+    const nodes = extract(content, schema, widgetRules);
+
+    this.view.dispatch(tr.replaceWith(from, to, nodes));
   }
 }
