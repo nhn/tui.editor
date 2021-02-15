@@ -13,8 +13,8 @@ import { WidgetStyle } from '@t/editor';
 import EditorBase from '@/base';
 import SpecManager from '@/spec/specManager';
 import { toggleClass } from '@/utils/dom';
-import { createParagraph, createTextSelection, nbspToSpace } from '@/helper/manipulation';
 import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
+import { createTextSelection, nbspToSpace } from '@/helper/manipulation';
 import { placeholder } from '@/plugins/placeholder';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 import { dropImage } from '@/plugins/dropImage';
@@ -39,8 +39,9 @@ import { Html } from './marks/html';
 import { CustomBlock } from './marks/customBlock';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
 import { smartTask } from './plugins/smartTask';
-import { widgetPlugin } from '@/plugins/widget';
-import { extract, Widget, widgetRules, widgetView } from '@/widget/widgetNode';
+import { addWidget } from '@/plugins/popupWidget';
+import { createNodesWithWidget } from '@/widget/rules';
+import { Widget, widgetNodeView } from '@/widget/widgetNode';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -166,7 +167,7 @@ export default class MdEditor extends EditorBase {
         smartTask(this.context),
         dropImage(this.context, 'markdown'),
         placeholder(this.placeholder),
-        widgetPlugin(),
+        addWidget(),
       ],
     });
   }
@@ -195,7 +196,7 @@ export default class MdEditor extends EditorBase {
         },
       },
       nodeViews: {
-        widget: widgetView,
+        widget: widgetNodeView,
       },
     });
   }
@@ -255,15 +256,12 @@ export default class MdEditor extends EditorBase {
   replaceSelection(text: string) {
     const { tr, schema } = this.view.state;
     const lineTexts = text.split('\n');
-    // const newNodes = lineTexts.map((lineText) => createParagraph(schema, lineText));
-    const newNodes = lineTexts.map((lineText) =>
-      this.schema.nodes.paragraph.create(null, extract(lineText, schema, widgetRules))
+    const nodes = lineTexts.map((lineText) =>
+      schema.nodes.paragraph.create(null, createNodesWithWidget(lineText, schema))
     );
 
     this.focus();
-    this.view.dispatch(
-      tr.replaceSelection(new Slice(Fragment.from(newNodes), 1, 1)).scrollIntoView()
-    );
+    this.view.dispatch(tr.replaceSelection(new Slice(Fragment.from(nodes), 1, 1)).scrollIntoView());
   }
 
   getRange() {
@@ -274,15 +272,12 @@ export default class MdEditor extends EditorBase {
 
   setMarkdown(markdown: string, cursorToEnd = true) {
     const contents = markdown.split('\n');
-    const { tr, doc } = this.view.state;
-    // const newNodes = contents.map((content) => createParagraph(this.schema, content));
-    const newNodes = contents.map((content) => {
-      const nodes = extract(content, this.schema, widgetRules);
+    const { tr, doc, schema } = this.view.state;
+    const nodes = contents.map((content) =>
+      schema.nodes.paragraph.create(null, createNodesWithWidget(content, schema))
+    );
 
-      return this.schema.nodes.paragraph.create(null, nodes);
-    });
-
-    this.view.dispatch(tr.replaceWith(0, doc.content.size, newNodes));
+    this.view.dispatch(tr.replaceWith(0, doc.content.size, nodes));
 
     if (cursorToEnd) {
       this.moveCursorToEnd();
@@ -299,7 +294,7 @@ export default class MdEditor extends EditorBase {
   replaceWithWidget(from: MdPos, to: MdPos, content: string) {
     const { tr, schema, doc } = this.view.state;
     const pos = getMdToEditorPos(doc, this.toastMark, from, to);
-    const nodes = extract(content, schema, widgetRules);
+    const nodes = createNodesWithWidget(content, schema);
 
     this.view.dispatch(tr.replaceWith(pos[0], pos[1], nodes));
   }

@@ -33,7 +33,7 @@ import { ToastMark } from '@toast-ui/toastmark';
 import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
 import { ScrollSync } from './markdown/scroll/scrollSync';
 import { addDefaultImageBlobHook } from './helper/image';
-import { setWidgetRule } from './widget/widgetNode';
+import { setWidgetRules } from './widget/rules';
 
 /**
  * ToastUI Editor
@@ -145,7 +145,7 @@ class ToastUIEditor {
 
     this.eventEmitter = new EventEmitter();
 
-    setWidgetRule(this.options.widgetRules);
+    setWidgetRules(this.options.widgetRules);
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
     const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);

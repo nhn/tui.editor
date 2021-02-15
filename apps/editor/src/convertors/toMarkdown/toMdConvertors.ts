@@ -15,7 +15,6 @@ import {
   MarkInfo,
 } from '@t/convertor';
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
-import { getWidgetContent } from '@/widget/widgetNode';
 
 function addBackticks(node: ProsemirrorNode, side: number) {
   const { text } = node;

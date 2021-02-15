@@ -9,7 +9,7 @@ export type EditorType = 'markdown' | 'wysiwyg';
 export type WidgetStyle = 'top' | 'bottom';
 export interface WidgetRule {
   rule: RegExp;
-  toHTML: (text: string) => HTMLElement;
+  toDOM: (text: string) => HTMLElement;
 }
 
 export type WidgetRuleMap = Record<string, WidgetRule>;

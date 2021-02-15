@@ -14,7 +14,6 @@ import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
 
 import { placeholder } from '@/plugins/placeholder';
 import { dropImage } from '@/plugins/dropImage';
-import { extract, widgetRules, widgetView } from '@/widget/widgetNode';
 
 import { tableSelection } from './plugins/tableSelection';
 import { tableContextMenu } from './plugins/tableContextMenu';
@@ -30,6 +29,9 @@ import { createSpecs } from './specCreator';
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
 import { LinkAttributes, WidgetStyle } from '@t/editor';
+import { addWidget } from '@/plugins/popupWidget';
+import { createNodesWithWidget } from '@/widget/rules';
+import { widgetNodeView } from '@/widget/widgetNode';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -97,6 +99,7 @@ export default class WysiwygEditor extends EditorBase {
         task(),
         dropImage(this.context, 'wysiwyg'),
         toolbarActivity(this.eventEmitter),
+        addWidget(),
       ],
       ...addedStates,
     });
@@ -117,7 +120,7 @@ export default class WysiwygEditor extends EditorBase {
         image(node, view, getPos) {
           return new ImageView(node, view, getPos, toDOMAdaptor, eventEmitter);
         },
-        widget: widgetView,
+        widget: widgetNodeView,
       },
       transformPastedHTML: changePastedHTML,
       transformPasted: (slice: Slice) => changePastedSlice(slice, this.schema),
@@ -200,7 +203,7 @@ export default class WysiwygEditor extends EditorBase {
 
   replaceWithWidget(from: number, to: number, content: string) {
     const { tr, schema } = this.view.state;
-    const nodes = extract(content, schema, widgetRules);
+    const nodes = createNodesWithWidget(content, schema);
 
     this.view.dispatch(tr.replaceWith(from, to, nodes));
   }

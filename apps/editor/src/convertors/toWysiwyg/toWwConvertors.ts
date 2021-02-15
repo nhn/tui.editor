@@ -17,7 +17,7 @@ import {
   CustomBlockMdNode,
   CustomInlineMdNode,
 } from '@t/markdown';
-import { getWidgetMdContent } from '@/widget/widgetNode';
+import { createWidgetContent, getWidgetContent } from '@/widget/rules';
 
 function isBRTag(node: MdNode) {
   return node.type === 'htmlInline' && /<br ?\/?>/.test(node.literal!);
@@ -318,10 +318,13 @@ export const toWwConvertors: ToWwConvertorMap = {
     const { schema } = state;
 
     if (info.indexOf('widget') !== -1 && entering) {
-      const content = getWidgetMdContent(node as CustomInlineMdNode);
+      const content = getWidgetContent(node as CustomInlineMdNode);
 
       skipChildren();
-      state.addNode(schema.nodes.widget, { info }, [schema.text(`$$${info} ${content}$$`)]);
+
+      state.addNode(schema.nodes.widget, { info }, [
+        schema.text(createWidgetContent(info, content)),
+      ]);
     }
   },
 };
