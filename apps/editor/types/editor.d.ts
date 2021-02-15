@@ -7,6 +7,12 @@ import { DefaultUI, ToolbarItemOptions } from './ui';
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
 export type WidgetStyle = 'top' | 'bottom';
+export interface WidgetRule {
+  rule: RegExp;
+  toHTML: (text: string) => HTMLElement;
+}
+
+export type WidgetRuleMap = Record<string, WidgetRule>;
 
 export interface EventMap {
   load?: (param: Editor) => void;
@@ -119,8 +125,7 @@ export interface EditorOptions {
   customHTMLSanitizer?: CustomHTMLSanitizer;
   previewHighlight?: boolean;
   frontMatter?: boolean;
-  // @TODO: should remove UI option
-  UI: any;
+  widgetRules?: WidgetRule[];
 }
 
 interface Slots {

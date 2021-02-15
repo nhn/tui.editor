@@ -92,6 +92,7 @@ export function isInlineNode(mdNode: MdNode) {
     case 'htmlInline':
     case 'linebreak':
     case 'softbreak':
+    case 'customInline':
       return true;
     default:
       return false;

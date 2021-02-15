@@ -107,14 +107,14 @@ export function getMdToEditorPos(
   for (let i = 0; i < endPos[0] - 1; i += 1) {
     const len = lineTexts[i].length;
     const child = doc.child(i);
-    const added = getWidgetNodePos(child, child.content.size);
+    const additionalPos = getWidgetNodePos(child, child.content.size);
 
     // should plus 2(end tag, start tag) to consider line breaking
     if (i < startPos[0] - 1) {
-      from += len + 2 + added;
+      from += len + 2 + additionalPos;
     }
 
-    to += len + 2 + added;
+    to += len + 2 + additionalPos;
   }
 
   const startNode = doc.child(startPos[0] - 1);
