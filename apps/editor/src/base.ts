@@ -4,6 +4,7 @@ import { EditorView } from 'prosemirror-view';
 import css from 'tui-code-snippet/domUtil/css';
 import { WidgetStyle } from '@t/editor';
 import { Emitter } from '@t/event';
+import { MdPos } from '@t/markdown';
 import { Context, EditorAllCommandMap } from '@t/spec';
 import SpecManager from './spec/specManager';
 import { createTextSelection } from './helper/manipulation';
@@ -119,21 +120,11 @@ export default abstract class EditorBase {
     return this.el;
   }
 
-  addWidget(node: Node, style: WidgetStyle, offset: number) {
-    const { dispatch, state } = this.view;
+  abstract replaceWithWidget(from: MdPos | number, to: MdPos | number, content: string): void;
 
-    dispatch(state.tr.setMeta('widget', { pos: state.selection.to, node, style, offset }));
-  }
-
-  replaceWithWidget(markdownText: string, node: HTMLElement) {
-    const { schema, tr } = this.view.state;
-
-    this.view.dispatch(
-      tr.replaceSelectionWith(schema.nodes.widget.create({ node }, schema.text(markdownText)))
-    );
-  }
-
-  abstract getRange(): any;
+  abstract addWidget(node: Node, style: WidgetStyle, pos?: MdPos | number): void;
 
   abstract replaceSelection(content: string, range: Range): void;
+
+  abstract getRange(): any;
 }

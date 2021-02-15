@@ -12,6 +12,7 @@ import isString from 'tui-code-snippet/type/isString';
 import { Emitter, Handler } from '@t/event';
 import { EditorOptions, EditorType, PreviewStyle, ViewerOptions, WidgetStyle } from '@t/editor';
 import { EditorCommandFn } from '@t/spec';
+import { MdPos } from '@t/markdown';
 
 import { sendHostName, sanitizeLinkAttribute } from './utils/common';
 
@@ -32,6 +33,7 @@ import { ToastMark } from '@toast-ui/toastmark';
 import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
 import { ScrollSync } from './markdown/scroll/scrollSync';
 import { addDefaultImageBlobHook } from './helper/image';
+import { setWidgetRule } from './widget/widgetNode';
 
 /**
  * ToastUI Editor
@@ -133,6 +135,7 @@ class ToastUIEditor {
         referenceDefinition: false,
         customHTMLSanitizer: null,
         frontMatter: false,
+        widgetRules: [],
       },
       options
     );
@@ -141,6 +144,8 @@ class ToastUIEditor {
     this.mode = this.options.initialEditType || 'markdown';
 
     this.eventEmitter = new EventEmitter();
+
+    setWidgetRule(this.options.widgetRules);
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
     const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
@@ -408,14 +413,22 @@ class ToastUIEditor {
    * Add widget to selection
    * @param {Node} node widget node
    * @param {string} style Adding style "top" or "bottom"
-   * @param {number} [offset] Offset for adjust position
+   * @param {number|Array.<number>} [pos] position
    */
-  addWidget(node: Node, style: WidgetStyle, offset: number) {
-    this.getCurrentModeEditor().addWidget(node, style, offset);
+  addWidget(node: Node, style: WidgetStyle, pos?: MdPos | number) {
+    // @ts-ignore
+    this.getCurrentModeEditor().addWidget(node, style, pos);
   }
 
-  replaceWithWidget(markdownText: string, node: HTMLElement) {
-    this.getCurrentModeEditor().replaceWithWidget(markdownText, node);
+  /**
+   * replace node with widget to range
+   * @param {number|Array.<number>} from start position
+   * @param {number|Array.<number>} to end position
+   * @param {string} content widget text content
+   */
+  replaceWithWidget(from: MdPos | number, to: MdPos | number, content: string) {
+    // @ts-ignore
+    this.getCurrentModeEditor().replaceWithWidget(from, to, content);
   }
 
   /**
