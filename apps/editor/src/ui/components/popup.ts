@@ -14,6 +14,7 @@ interface Props {
   eventEmitter: Emitter;
   hidePopup: HidePopup;
   execCommand: ExecCommand;
+  initialValues: Record<string, string>;
 }
 
 export class Popup extends Component<Props> {
@@ -35,7 +36,7 @@ export class Popup extends Component<Props> {
   }
 
   render() {
-    const { info, show, hidePopup, eventEmitter, execCommand } = this.props;
+    const { info, show, hidePopup, eventEmitter, execCommand, initialValues } = this.props;
     const { className = '', style, headerText, render, pos } = info || {};
     const popupStyle: PopupStyle = { display: show ? 'block' : 'none', ...style };
 
@@ -53,7 +54,7 @@ export class Popup extends Component<Props> {
           </div>
         </div>
         <div class="tui-popup-body">
-          ${render && render({ eventEmitter, show, hidePopup, execCommand })}
+          ${render && render({ eventEmitter, show, hidePopup, execCommand, initialValues })}
         </div>
       </div>
     `;

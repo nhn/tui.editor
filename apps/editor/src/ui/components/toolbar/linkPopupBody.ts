@@ -11,18 +11,21 @@ interface Props {
   execCommand: ExecCommand;
   hidePopup: HidePopup;
   show: boolean;
+  initialValues: Record<string, string>;
 }
 
 export class LinkPopupBody extends Component<Props> {
   private initialize() {
-    const linkUrl = this.refs.url as HTMLInputElement;
-    const linkText = this.refs.text as HTMLInputElement;
+    const linkUrlEl = this.refs.url as HTMLInputElement;
+    const linkTextEl = this.refs.text as HTMLInputElement;
 
-    removeClass(linkUrl, 'wrong');
-    removeClass(linkText, 'wrong');
+    removeClass(linkUrlEl, 'wrong');
+    removeClass(linkTextEl, 'wrong');
 
-    linkUrl.value = '';
-    linkText.value = '';
+    const { linkUrl = '', linkText = '' } = this.props.initialValues;
+
+    linkUrlEl.value = linkUrl;
+    linkTextEl.value = linkText;
   }
 
   private execCommand = () => {
@@ -46,6 +49,10 @@ export class LinkPopupBody extends Component<Props> {
       linkText: linkText.value,
     });
   };
+
+  mounted() {
+    this.initialize();
+  }
 
   updated() {
     if (!this.props.show) {

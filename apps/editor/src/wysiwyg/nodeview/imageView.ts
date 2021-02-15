@@ -1,5 +1,5 @@
 import { NodeView } from 'prosemirror-view';
-import { Node as ProsemirrorNode } from 'prosemirror-model';
+import { Node as ProsemirrorNode, Mark } from 'prosemirror-model';
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
 
 import { isPositionInBox } from '@/utils/dom';
@@ -9,32 +9,35 @@ import { Emitter } from '@t/event';
 
 const IMAGE_LINK_CLASS_NAME = 'image-link';
 
-function hasLink(node: ProsemirrorNode) {
-  return !!node.marks.find(({ type }) => type.name === 'link');
-}
-
 export class ImageView implements NodeView {
   dom: HTMLElement;
+
+  private node: ProsemirrorNode;
 
   private toDOMAdaptor: ToDOMAdaptor;
 
   private eventEmitter: Emitter;
 
-  private hasLink: boolean;
+  private imageLink: Mark | null;
 
   constructor(node: ProsemirrorNode, toDOMAdaptor: ToDOMAdaptor, eventEmitter: Emitter) {
+    this.node = node;
     this.toDOMAdaptor = toDOMAdaptor;
     this.eventEmitter = eventEmitter;
-    this.hasLink = hasLink(node);
-    this.dom = this.createElement(node);
+    this.imageLink = this.findLink();
+    this.dom = this.createElement();
 
     this.bindEvent();
   }
 
-  private createElement(node: ProsemirrorNode) {
-    const image = this.createImageElement(node);
+  private findLink() {
+    return this.node.marks.find(({ type }) => type.name === 'link') || null;
+  }
 
-    if (this.hasLink) {
+  private createElement() {
+    const image = this.createImageElement(this.node);
+
+    if (this.imageLink) {
       const wrapper = document.createElement('span');
 
       wrapper.className = IMAGE_LINK_CLASS_NAME;
@@ -66,7 +69,7 @@ export class ImageView implements NodeView {
   }
 
   private bindEvent() {
-    if (this.hasLink) {
+    if (this.imageLink) {
       this.dom.addEventListener('mousedown', this.handleMousedown);
     }
   }
@@ -76,13 +79,18 @@ export class ImageView implements NodeView {
 
     const { target, offsetX, offsetY } = ev;
 
-    if (hasClass(target as HTMLElement, IMAGE_LINK_CLASS_NAME)) {
+    if (this.imageLink && hasClass(target as HTMLElement, IMAGE_LINK_CLASS_NAME)) {
       const style = getComputedStyle(target as HTMLElement, ':before');
 
       ev.stopPropagation();
 
       if (isPositionInBox(style, offsetX, offsetY)) {
-        this.eventEmitter.emit('openPopup', 'image');
+        const { linkUrl, linkText } = this.imageLink.attrs;
+
+        this.eventEmitter.emit('openPopup', 'link', {
+          linkUrl,
+          linkText,
+        });
       }
     }
   };
@@ -92,7 +100,7 @@ export class ImageView implements NodeView {
   }
 
   destroy() {
-    if (this.hasLink) {
+    if (this.imageLink) {
       this.dom.removeEventListener('mousedown', this.handleMousedown);
     }
   }

@@ -40,6 +40,7 @@ interface State {
   activeTab: TabType;
   items: ToolbarGroupInfo[];
   dropdownItems: ToolbarGroupInfo[];
+  initialValues: Record<string, string>;
 }
 
 interface ItemWidthMap {
@@ -75,6 +76,7 @@ export class Toolbar extends Component<Props, State> {
       showPopup: false,
       popupInfo: {} as PopupInfo,
       activeTab: 'write',
+      initialValues: {},
     };
     this.addEvent();
     this.appendTooltipToBody();
@@ -117,7 +119,7 @@ export class Toolbar extends Component<Props, State> {
     window.addEventListener('resize', this.handleResize);
   }
 
-  private openPopup = (popupName: string) => {
+  private openPopup = (popupName: string, initialValues?: any) => {
     const el = document.querySelector(`.te-toolbar-group .tui-${popupName}`) as HTMLElement;
     const { offsetLeft, offsetTop } = getTotalOffset(
       el,
@@ -131,7 +133,7 @@ export class Toolbar extends Component<Props, State> {
       });
 
       if (info) {
-        this.setPopupInfo(info);
+        this.setPopupInfo(info, initialValues);
       }
     }
   };
@@ -164,8 +166,8 @@ export class Toolbar extends Component<Props, State> {
     this.itemWidthMap[name] = width;
   };
 
-  private setPopupInfo = (popupInfo: PopupInfo) => {
-    this.setState({ showPopup: true, popupInfo });
+  private setPopupInfo = (popupInfo: PopupInfo, initialValues = {}) => {
+    this.setState({ showPopup: true, popupInfo, initialValues });
   };
 
   private hidePopup = () => {
@@ -249,7 +251,7 @@ export class Toolbar extends Component<Props, State> {
 
   render() {
     const { previewStyle, eventEmitter, editorType } = this.props;
-    const { popupInfo, showPopup, activeTab, items, dropdownItems } = this.state;
+    const { popupInfo, showPopup, activeTab, items, dropdownItems, initialValues } = this.state;
     const props = {
       eventEmitter,
       tooltipEl: this.tooltipEl,
@@ -291,6 +293,7 @@ export class Toolbar extends Component<Props, State> {
           eventEmitter=${eventEmitter}
           hidePopup=${this.hidePopup}
           execCommand=${this.execCommand}
+          initialValues=${initialValues}
         />
       </div>
     `;
