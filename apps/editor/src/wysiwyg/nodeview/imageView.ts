@@ -95,7 +95,7 @@ export class ImageView implements NodeView {
     ev.preventDefault();
 
     if (!this.imageLink || !isFunction(this.getPos)) {
-      return false;
+      return;
     }
 
     const { target, offsetX, offsetY } = ev;
