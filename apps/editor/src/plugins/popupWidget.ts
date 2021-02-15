@@ -10,15 +10,29 @@ interface Widget {
 
 const pluginKey = new PluginKey('widget');
 
-class WidgetView {
-  private widgetNode: HTMLElement | null = null;
+class PopupWidget {
+  private popup: HTMLElement | null = null;
+
+  private view: EditorView;
+
+  constructor(view: EditorView) {
+    view.dom.addEventListener('blur', this.removeWidget);
+    this.view = view;
+  }
+
+  private removeWidget = () => {
+    if (this.popup) {
+      document.body.removeChild(this.popup);
+      this.popup = null;
+    }
+  };
 
   update(view: EditorView) {
     const widget: Widget | null = pluginKey.getState(view.state);
 
-    if (this.widgetNode) {
-      document.body.removeChild(this.widgetNode);
-      this.widgetNode = null;
+    if (this.popup) {
+      document.body.removeChild(this.popup);
+      this.popup = null;
     }
 
     if (widget) {
@@ -34,13 +48,17 @@ class WidgetView {
 
       node.style.top = `${style === 'bottom' ? top + height : top - node.clientHeight - height}px`;
       node.style.opacity = '1';
-      this.widgetNode = node;
+      this.popup = node;
     }
     view.focus();
   }
+
+  destroy() {
+    this.view.dom.removeEventListener('blur', this.removeWidget);
+  }
 }
 
-export function widgetPlugin() {
+export function addWidget() {
   return new Plugin({
     key: pluginKey,
     state: {
@@ -51,8 +69,8 @@ export function widgetPlugin() {
         return tr.getMeta('widget');
       },
     },
-    view() {
-      return new WidgetView();
+    view(editorView: EditorView) {
+      return new PopupWidget(editorView);
     },
   });
 }
