@@ -68,16 +68,16 @@ export function createDummyCells(columnCount: number, rowIndex: number, schema: 
   return cells;
 }
 
-export function isInCellElement(node: HTMLElement, root: Element) {
+export function findCellElement(node: HTMLElement, root: Element) {
   while (node && node !== root) {
     if (node.nodeName === 'TD' || node.nodeName === 'TH') {
-      return true;
+      return node;
     }
 
     node = node.parentNode as HTMLElement;
   }
 
-  return false;
+  return null;
 }
 
 export function findCell(pos: ResolvedPos) {

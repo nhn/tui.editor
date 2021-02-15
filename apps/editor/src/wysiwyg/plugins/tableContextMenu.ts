@@ -1,7 +1,7 @@
 import { Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
-import { isInCellElement } from '@/wysiwyg/helper/table';
+import { findCellElement } from '@/wysiwyg/helper/table';
 import i18n from '@/i18n/i18n';
 
 import { Emitter } from '@t/event';
@@ -64,15 +64,14 @@ export function tableContextMenuPlugin(eventEmitter: Emitter) {
     props: {
       handleDOMEvents: {
         contextmenu: (view: EditorView, ev: Event) => {
-          const inTable = isInCellElement(ev.target as HTMLElement, view.dom);
+          const foundCell = findCellElement(ev.target as HTMLElement, view.dom);
 
-          if (inTable) {
+          if (foundCell) {
             ev.preventDefault();
 
             const { clientX, clientY } = ev as MouseEvent;
             const { left, top } = (view.dom.parentNode as HTMLElement).getBoundingClientRect();
-
-            const inTableHead = (ev.target as HTMLElement).nodeName === 'TH';
+            const inTableHead = foundCell.nodeName === 'TH';
 
             eventEmitter.emit('contextmenu', {
               pos: { left: `${clientX - left + 10}px`, top: `${clientY - top + 30}px` },
