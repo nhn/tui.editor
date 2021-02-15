@@ -52,10 +52,17 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
   let endOffset = startOffset;
 
   if (!collapsed) {
-    // To resolve the end offset for blank line
-    to = getEndOffsetWithBlankLine(doc, to, lineRange);
+    // resolve the end offset for blank line
+    if (lineRange[1] - lineRange[0] === 1) {
+      to = getEndOffsetWithBlankLine(doc, to, lineRange);
+    }
 
-    const endResolvedPos = doc.resolve(to);
+    let endResolvedPos = doc.resolve(to);
+
+    // resolve the end start pos
+    if (to === doc.content.size) {
+      endResolvedPos = doc.resolve(to - 1);
+    }
 
     endOffset = endResolvedPos.start();
 
