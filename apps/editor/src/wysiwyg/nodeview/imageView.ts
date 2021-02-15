@@ -8,16 +8,20 @@ import { ToDOMAdaptor } from '@t/convertor';
 
 const IMAGE_LINK_CLASS_NAME = 'image-link';
 
+function hasLink(node: ProsemirrorNode) {
+  return !!node.marks.find(({ type }) => type.name === 'link');
+}
+
 export class ImageView implements NodeView {
   dom: HTMLElement;
 
   private toDOMAdaptor: ToDOMAdaptor;
 
-  private imageLink: boolean;
+  private hasLink: boolean;
 
   constructor(node: ProsemirrorNode, toDOMAdaptor: ToDOMAdaptor) {
     this.toDOMAdaptor = toDOMAdaptor;
-    this.imageLink = this.hasLink(node);
+    this.hasLink = hasLink(node);
     this.dom = this.createElement(node);
 
     this.bindEvent();
@@ -26,7 +30,7 @@ export class ImageView implements NodeView {
   private createElement(node: ProsemirrorNode) {
     const image = this.createImageElement(node);
 
-    if (this.imageLink) {
+    if (this.hasLink) {
       const wrapper = document.createElement('span');
 
       wrapper.className = IMAGE_LINK_CLASS_NAME;
@@ -58,13 +62,9 @@ export class ImageView implements NodeView {
   }
 
   private bindEvent() {
-    if (this.imageLink) {
+    if (this.hasLink) {
       this.dom.addEventListener('mousedown', this.handleMousedown);
     }
-  }
-
-  private hasLink(node: ProsemirrorNode) {
-    return !!node.marks.find(({ type }) => type.name === 'link');
   }
 
   private handleMousedown(ev: MouseEvent) {
@@ -87,7 +87,7 @@ export class ImageView implements NodeView {
   }
 
   destroy() {
-    if (this.imageLink) {
+    if (this.hasLink) {
       this.dom.removeEventListener('mousedown', this.handleMousedown);
     }
   }
