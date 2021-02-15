@@ -1,11 +1,16 @@
-import { NodeView } from 'prosemirror-view';
+import { EditorView, NodeView } from 'prosemirror-view';
 import { Node as ProsemirrorNode, Mark } from 'prosemirror-model';
+
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
+import isFunction from 'tui-code-snippet/type/isFunction';
 
 import { isPositionInBox } from '@/utils/dom';
+import { createTextSelection } from '@/helper/manipulation';
 
 import { ToDOMAdaptor } from '@t/convertor';
 import { Emitter } from '@t/event';
+
+type GetPos = (() => number) | boolean;
 
 const IMAGE_LINK_CLASS_NAME = 'image-link';
 
@@ -14,14 +19,26 @@ export class ImageView implements NodeView {
 
   private node: ProsemirrorNode;
 
+  private view: EditorView;
+
+  private getPos: GetPos;
+
   private toDOMAdaptor: ToDOMAdaptor;
 
   private eventEmitter: Emitter;
 
   private imageLink: Mark | null;
 
-  constructor(node: ProsemirrorNode, toDOMAdaptor: ToDOMAdaptor, eventEmitter: Emitter) {
+  constructor(
+    node: ProsemirrorNode,
+    view: EditorView,
+    getPos: GetPos,
+    toDOMAdaptor: ToDOMAdaptor,
+    eventEmitter: Emitter
+  ) {
     this.node = node;
+    this.view = view;
+    this.getPos = getPos;
     this.toDOMAdaptor = toDOMAdaptor;
     this.eventEmitter = eventEmitter;
     this.imageLink = this.findLink();
@@ -77,14 +94,24 @@ export class ImageView implements NodeView {
   private handleMousedown = (ev: MouseEvent) => {
     ev.preventDefault();
 
+    if (!this.imageLink || !isFunction(this.getPos)) {
+      return false;
+    }
+
     const { target, offsetX, offsetY } = ev;
 
-    if (this.imageLink && hasClass(target as HTMLElement, IMAGE_LINK_CLASS_NAME)) {
+    if (hasClass(target as HTMLElement, IMAGE_LINK_CLASS_NAME)) {
       const style = getComputedStyle(target as HTMLElement, ':before');
 
       ev.stopPropagation();
 
       if (isPositionInBox(style, offsetX, offsetY)) {
+        const { tr } = this.view.state;
+        const pos = this.getPos();
+
+        tr.setSelection(createTextSelection(tr, pos, pos + 1));
+        this.view.dispatch(tr);
+
         const { linkUrl, linkText } = this.imageLink.attrs;
 
         this.eventEmitter.emit('openPopup', 'link', {
