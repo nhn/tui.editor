@@ -18,7 +18,7 @@ interface Props {
 }
 
 export class Popup extends Component<Props> {
-  private handleClickDocument = (ev: MouseEvent) => {
+  private handleMousedown = (ev: MouseEvent) => {
     if (
       !closest(ev.target as HTMLElement, '.tui-popup-wrapper') &&
       !closest(ev.target as HTMLElement, this.props.info.fromEl)
@@ -28,11 +28,11 @@ export class Popup extends Component<Props> {
   };
 
   mounted() {
-    document.addEventListener('mousedown', this.handleClickDocument);
+    document.addEventListener('mousedown', this.handleMousedown);
   }
 
   beforeDestroy() {
-    document.removeEventListener('mousedown', this.handleClickDocument);
+    document.removeEventListener('mousedown', this.handleMousedown);
   }
 
   render() {

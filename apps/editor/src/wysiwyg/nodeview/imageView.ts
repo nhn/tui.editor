@@ -41,14 +41,10 @@ export class ImageView implements NodeView {
     this.getPos = getPos;
     this.toDOMAdaptor = toDOMAdaptor;
     this.eventEmitter = eventEmitter;
-    this.imageLink = this.findLink();
+    this.imageLink = node.marks.find(({ type }) => type.name === 'link') || null;
     this.dom = this.createElement();
 
     this.bindEvent();
-  }
-
-  private findLink() {
-    return this.node.marks.find(({ type }) => type.name === 'link') || null;
   }
 
   private createElement() {
@@ -94,13 +90,13 @@ export class ImageView implements NodeView {
   private handleMousedown = (ev: MouseEvent) => {
     ev.preventDefault();
 
-    if (!this.imageLink || !isFunction(this.getPos)) {
-      return;
-    }
-
     const { target, offsetX, offsetY } = ev;
 
-    if (hasClass(target as HTMLElement, IMAGE_LINK_CLASS_NAME)) {
+    if (
+      this.imageLink &&
+      isFunction(this.getPos) &&
+      hasClass(target as HTMLElement, IMAGE_LINK_CLASS_NAME)
+    ) {
       const style = getComputedStyle(target as HTMLElement, ':before');
 
       ev.stopPropagation();
@@ -111,13 +107,7 @@ export class ImageView implements NodeView {
 
         tr.setSelection(createTextSelection(tr, pos, pos + 1));
         this.view.dispatch(tr);
-
-        const { linkUrl, linkText } = this.imageLink.attrs;
-
-        this.eventEmitter.emit('openPopup', 'link', {
-          linkUrl,
-          linkText,
-        });
+        this.eventEmitter.emit('openPopup', 'link', this.imageLink.attrs);
       }
     }
   };

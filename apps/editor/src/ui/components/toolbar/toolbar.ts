@@ -153,13 +153,13 @@ export class Toolbar extends Component<Props, State> {
   };
 
   private openPopup = (popupName: string, initialValues = {}) => {
-    const el = document.querySelector(`.te-toolbar-group .tui-${popupName}`) as HTMLElement;
-    const { offsetLeft, offsetTop } = getTotalOffset(
-      el,
-      closest(el, '.te-toolbar-section') as HTMLElement
-    );
+    const el = document.querySelector<HTMLElement>(`.te-toolbar-group .tui-${popupName}`)!;
 
     if (el) {
+      const { offsetLeft, offsetTop } = getTotalOffset(
+        el,
+        closest(el, '.te-toolbar-section') as HTMLElement
+      );
       const info = createPopupInfo(popupName, {
         el,
         pos: { left: offsetLeft, top: el.offsetHeight + offsetTop },

@@ -739,8 +739,8 @@ describe('event', () => {
       const urlText = getElement('.te-popup-add-link .te-url-input') as HTMLInputElement;
       const linkText = getElement('.te-popup-add-link .te-link-text-input') as HTMLInputElement;
 
-      expect(urlText.value).toBe('http://test.com');
-      expect(linkText.value).toBe('foo');
+      expect(urlText).toHaveValue('http://test.com');
+      expect(linkText).toHaveValue('foo');
     });
   });
 });

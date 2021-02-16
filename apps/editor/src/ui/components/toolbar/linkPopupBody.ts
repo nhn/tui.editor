@@ -65,8 +65,10 @@ export class LinkPopupBody extends Component<Props> {
     this.initialize();
   }
 
-  updated() {
-    this.initialize();
+  updated(prevProps: Props) {
+    if (!prevProps.show && this.props.show) {
+      this.initialize();
+    }
   }
 
   render() {
