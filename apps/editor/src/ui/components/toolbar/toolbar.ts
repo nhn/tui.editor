@@ -9,7 +9,6 @@ import {
   ToolbarGroupInfo,
   ToolbarItem,
   ToolbarItemOptions,
-  PopupInitialValues,
 } from '@t/ui';
 import html from '@/ui/vdom/template';
 import { Component } from '@/ui/vdom/component';
@@ -41,7 +40,6 @@ interface State {
   activeTab: TabType;
   items: ToolbarGroupInfo[];
   dropdownItems: ToolbarGroupInfo[];
-  initialValues: PopupInitialValues;
 }
 
 interface ItemWidthMap {
@@ -77,7 +75,6 @@ export class Toolbar extends Component<Props, State> {
       showPopup: false,
       popupInfo: {} as PopupInfo,
       activeTab: 'write',
-      initialValues: {},
     };
     this.addEvent();
     this.appendTooltipToBody();
@@ -148,8 +145,8 @@ export class Toolbar extends Component<Props, State> {
     this.itemWidthMap[name] = width;
   };
 
-  private setPopupInfo = (popupInfo: PopupInfo, initialValues = {}) => {
-    this.setState({ showPopup: true, popupInfo, initialValues });
+  private setPopupInfo = (popupInfo: PopupInfo) => {
+    this.setState({ showPopup: true, popupInfo });
   };
 
   private openPopup = (popupName: string, initialValues = {}) => {
@@ -163,10 +160,11 @@ export class Toolbar extends Component<Props, State> {
       const info = createPopupInfo(popupName, {
         el,
         pos: { left: offsetLeft, top: el.offsetHeight + offsetTop },
+        initialValues,
       });
 
       if (info) {
-        this.setPopupInfo(info, initialValues);
+        this.setPopupInfo(info);
       }
     }
   };
@@ -252,7 +250,7 @@ export class Toolbar extends Component<Props, State> {
 
   render() {
     const { previewStyle, eventEmitter, editorType } = this.props;
-    const { popupInfo, showPopup, activeTab, items, dropdownItems, initialValues } = this.state;
+    const { popupInfo, showPopup, activeTab, items, dropdownItems } = this.state;
     const props = {
       eventEmitter,
       tooltipEl: this.tooltipEl,
@@ -294,7 +292,6 @@ export class Toolbar extends Component<Props, State> {
           eventEmitter=${eventEmitter}
           hidePopup=${this.hidePopup}
           execCommand=${this.execCommand}
-          initialValues=${initialValues}
         />
       </div>
     `;
