@@ -245,6 +245,41 @@ describe('widgetNode', () => {
 
       expect(getWwEditorHTML()).toBe(expectedEditor);
     });
+
+    it('should keep "$" character in case of plain text other than widget node', () => {
+      editor.setMarkdown('@test1 $$myText @test2');
+
+      const expectedEditor = oneLineTrim`
+        <div>
+          <span class="tui-widget">
+            <span><a href="www.google.com">@test1</a></span>
+          </span> 
+          $$myText 
+          <span class="tui-widget">
+            <span>
+              <a href="www.google.com">@test2</a>
+            </span>
+          </span>
+          <br>
+        </div>
+      `;
+      const expectedPreview = oneLineTrim`
+        <p>
+          <span class="tui-widget">
+            <span>
+              <a href="www.google.com">@test1</a>
+            </span>
+          </span> 
+          $$myText 
+          <span class="tui-widget">
+            <span><a href="www.google.com">@test2</a></span>
+          </span>
+        </p>
+      `;
+
+      expect(getEditorHTML()).toBe(expectedEditor);
+      expect(getPreviewHTML()).toBe(expectedPreview);
+    });
   });
 
   describe('in wysiwyg', () => {

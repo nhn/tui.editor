@@ -6,8 +6,19 @@ let widgetRules: WidgetRule[] = [];
 
 const widgetRuleMap: WidgetRuleMap = {};
 
+const reWidgetPrefix = /\$\$widget\d{1,}\s/;
+
 function trailingWidgetSyntax(text: string) {
-  return text.replace(/\$\$widget\d{1,}\s|\$\$/g, '');
+  const index = text.search(reWidgetPrefix);
+
+  if (index !== -1) {
+    const rest = text.substring(index);
+    const replaced = rest.replace(reWidgetPrefix, '').replace('$$', '');
+
+    text = text.substring(0, index);
+    text += trailingWidgetSyntax(replaced);
+  }
+  return text;
 }
 
 export function createWidgetContent(info: string, content: string) {
