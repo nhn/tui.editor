@@ -2,7 +2,7 @@ import { Schema, ProsemirrorNode } from 'prosemirror-model';
 import { WidgetRule, WidgetRuleMap } from '@t/editor';
 import { CustomInlineMdNode } from '@t/markdown';
 
-let widgetRules: WidgetRule[];
+let widgetRules: WidgetRule[] = [];
 
 const widgetRuleMap: WidgetRuleMap = {};
 
@@ -17,7 +17,7 @@ export function createWidgetContent(info: string, content: string) {
 export function widgetToDOM(info: string, content: string) {
   const { rule, toDOM } = widgetRuleMap[info];
 
-  content = content.match(rule)![0];
+  content = trailingWidgetSyntax(content).match(rule)![0];
   return toDOM(content);
 }
 
@@ -28,22 +28,26 @@ export function setWidgetRules(rules: WidgetRule[]) {
   });
 }
 
+function mergeNodes(nodes: ProsemirrorNode[], content: string, schema: Schema, ruleIndex: number) {
+  return nodes.concat(createNodesWithWidget(content, schema, ruleIndex));
+}
+
 export function createNodesWithWidget(content: string, schema: Schema, ruleIndex = 0) {
   let nodes: ProsemirrorNode[] = [];
   const { rule } = widgetRules[ruleIndex] || {};
+  const nextRuleIndex = ruleIndex + 1;
 
   content = trailingWidgetSyntax(content);
 
   if (rule && rule.test(content)) {
     let index;
-    const nextRuleIndex = ruleIndex + 1;
 
     while ((index = content.search(rule)) !== -1) {
       const prev = content.substring(0, index);
 
       // get widget node on first splitted node using next widget rule
       if (prev) {
-        nodes = nodes.concat(createNodesWithWidget(prev, schema, nextRuleIndex));
+        nodes = mergeNodes(nodes, prev, schema, nextRuleIndex);
       }
 
       // build widget node using current widget rule
@@ -59,10 +63,13 @@ export function createNodesWithWidget(content: string, schema: Schema, ruleIndex
     }
     // get widget node on last splitted node using next widget rule
     if (content) {
-      nodes = nodes.concat(createNodesWithWidget(content, schema, nextRuleIndex));
+      nodes = mergeNodes(nodes, content, schema, nextRuleIndex);
     }
   } else if (content) {
-    nodes = [schema.text(content)];
+    nodes =
+      ruleIndex < widgetRules.length - 1
+        ? mergeNodes(nodes, content, schema, nextRuleIndex)
+        : [schema.text(content)];
   }
 
   return nodes;
@@ -79,6 +86,7 @@ export function getWidgetContent(widgetNode: CustomInlineMdNode) {
     if (entering) {
       if (node !== widgetNode && node.type !== 'text') {
         text += node.inlineToMark();
+        // skip the children
         walker.resumeAt(widgetNode, false);
         walker.next();
       } else if (node.type === 'text') {
