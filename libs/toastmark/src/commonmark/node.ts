@@ -304,7 +304,7 @@ export class CustomBlockNode extends BlockNode {
   public info = '';
 }
 
-export class CustomInilneNode extends Node {
+export class CustomInlineNode extends Node {
   public info = '';
 }
 
@@ -354,7 +354,7 @@ export function createNode(type: NodeType, sourcepos?: SourcePos) {
     case 'customBlock':
       return new CustomBlockNode(type, sourcepos);
     case 'customInline':
-      return new CustomInilneNode(type, sourcepos);
+      return new CustomInlineNode(type, sourcepos);
     default:
       return new Node(type, sourcepos) as Node;
   }

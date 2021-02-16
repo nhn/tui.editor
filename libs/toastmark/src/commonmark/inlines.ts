@@ -6,7 +6,7 @@ import {
   LinkNode,
   createNode,
   text,
-  CustomInilneNode,
+  CustomInlineNode,
   InlineNodeType
 } from './node';
 import { repeat, normalizeURI, unescapeString, ESCAPABLE, ENTITY } from './common';
@@ -504,10 +504,10 @@ export class InlineParser {
             // build custom inline node
             if (closercc === C_DOLLAR) {
               const textNode = newNode.firstChild!;
-              const literal = textNode.literal!;
+              const literal = textNode.literal || '';
               const [info] = literal.split(/\s/)!;
 
-              (newNode as CustomInilneNode).info = info;
+              (newNode as CustomInlineNode).info = info;
               if (literal.length === info.length + 1) {
                 textNode.unlink();
               } else {
