@@ -8,6 +8,7 @@ import { createSpecs } from '@/wysiwyg/specCreator';
 
 import Convertor from '@/convertors/convertor';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
+import EventEmitter from '@/event/eventEmitter';
 
 import { ToMdConvertorMap, ToMdConvertorContext, NodeInfo, MarkInfo } from '@t/convertor';
 
@@ -40,7 +41,7 @@ describe('Convertor', () => {
 
   beforeEach(() => {
     schema = createSchema();
-    convertor = new Convertor(schema, {});
+    convertor = new Convertor(schema, {}, new EventEmitter());
   });
 
   describe('should convert between markdown and wysiwyg node to', () => {
@@ -674,7 +675,7 @@ describe('Convertor', () => {
   describe('should custom convertor when converting from wysiwyg to markdown', () => {
     function createCustomConvertor(customConvertor: ToMdConvertorMap) {
       schema = createSchema();
-      convertor = new Convertor(schema, customConvertor);
+      convertor = new Convertor(schema, customConvertor, new EventEmitter());
     }
 
     it('should change delimeter', () => {

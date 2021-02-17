@@ -2,6 +2,7 @@ import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 
 import { MdNode } from '@t/markdown';
 import { ToWwConvertorMap, ToMdConvertors, ToMdConvertorMap } from '@t/convertor';
+import { Emitter } from '@t/event';
 
 import { toWwConvertors } from './toWysiwyg/toWwConvertors';
 import ToWwConvertorState from './toWysiwyg/toWwConvertorState';
@@ -16,9 +17,12 @@ export default class Convertor {
 
   private readonly toMdConvertors: ToMdConvertors;
 
-  constructor(schema: Schema, toMdCustomConvertors: ToMdConvertorMap) {
+  private readonly eventEmitter: Emitter;
+
+  constructor(schema: Schema, toMdCustomConvertors: ToMdConvertorMap, eventEmitter: Emitter) {
     this.schema = schema;
     this.toWwConvertors = toWwConvertors;
+    this.eventEmitter = eventEmitter;
     this.toMdConvertors = createConvertors(toMdCustomConvertors || {});
   }
 
@@ -30,7 +34,10 @@ export default class Convertor {
 
   toMarkdownText(wwNode: ProsemirrorNode) {
     const state = new ToMdConvertorState(this.toMdConvertors);
+    let markdownText = state.convertNode(wwNode);
 
-    return state.convertNode(wwNode);
+    markdownText = this.eventEmitter.emitReduce('beforeConvertWysiwygToMarkdown', markdownText);
+
+    return markdownText;
   }
 }

@@ -48,11 +48,10 @@ import { setWidgetRules } from './widget/rules';
  *     @param {Object} [options.events] - Events
  *         @param {function} [options.events.load] - It would be emitted when editor fully load
  *         @param {function} [options.events.change] - It would be emitted when content changed
- *         @param {function} [options.events.stateChange] - It would be emitted when format change by cursor position
+ *         @param {function} [options.events.caretChange] - It would be emitted when format change by cursor position
  *         @param {function} [options.events.focus] - It would be emitted when editor get focus
  *         @param {function} [options.events.blur] - It would be emitted when editor loose focus
  *     @param {Object} [options.hooks] - Hooks
- *         @param {function} [options.hooks.previewBeforeHook] - Submit preview to hook URL before preview be shown
  *         @param {addImageBlobHook} [options.hooks.addImageBlobHook] - hook for image upload
  *     @param {string} [options.language='en-US'] - language
  *     @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
@@ -62,10 +61,10 @@ import { setWidgetRules } from './widget/rules';
  *     @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
  *     @param {Array.<function|Array>} [options.plugins] - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
  *     @param {Object} [options.extendedAutolinks] - Using extended Autolinks specified in GFM spec
- *     @param {Object} [options.customConvertor] - convertor extension
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
  *     @param {Object} [options.linkAttributes] - Attributes of anchor element that should be rel, target, hreflang, type
- *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
+ *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to change markdown node to preview HTML or wysiwyg node
+ *     @param {Object} [options.customMarkdownRenderer] - Object containing custom renderer functions correspond to change wysiwyg node to markdown text
  *     @param {boolean} [options.referenceDefinition=false] - whether use the specification of link reference definition
  *     @param {function} [options.customHTMLSanitizer=null] - custom HTML sanitizer
  *     @param {boolean} [options.frontMatter=false] - whether use the front matter
@@ -196,7 +195,11 @@ class ToastUIEditor {
 
     this.wwEditor = new WysiwygEditor(this.eventEmitter, wwToDOMAdaptor, linkAttributes!);
 
-    this.convertor = new Convertor(this.wwEditor.getSchema(), customMarkdownRenderer);
+    this.convertor = new Convertor(
+      this.wwEditor.getSchema(),
+      customMarkdownRenderer,
+      this.eventEmitter
+    );
 
     if (plugins) {
       invokePlugins(plugins, this);
@@ -216,8 +219,6 @@ class ToastUIEditor {
       this.setHTML(this.initialHtml, false);
     }
 
-    this.eventEmitter.emit('load', this);
-
     this.commandManager = new CommandManager(
       this.eventEmitter,
       this.mdEditor.commands,
@@ -231,6 +232,8 @@ class ToastUIEditor {
     this.getCurrentModeEditor().focus();
     this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
     this.addInitEvent();
+
+    this.eventEmitter.emit('load', this);
   }
 
   private addInitEvent() {
@@ -546,8 +549,6 @@ class ToastUIEditor {
       return;
     }
 
-    this.eventEmitter.emit('changeModeBefore', this.mode);
-
     this.mode = mode;
 
     if (this.isWysiwygMode()) {
@@ -555,13 +556,10 @@ class ToastUIEditor {
       const wwNode = this.convertor.toWysiwygModel(mdNode);
 
       this.wwEditor.setModel(wwNode!);
-
-      this.eventEmitter.emit('changeModeToWysiwyg');
     } else {
       const wwNode = this.wwEditor.getModel();
 
       this.mdEditor.setMarkdown(this.convertor.toMarkdownText(wwNode), !isWithoutFocus);
-      this.eventEmitter.emit('changeModeToMarkdown');
     }
 
     this.eventEmitter.emit('changeMode', mode);
@@ -579,10 +577,8 @@ class ToastUIEditor {
     this.mdEditor.destroy();
     this.preview.destroy();
     this.scrollSync.destroy();
-    this.eventEmitter.emit('removeEditor');
-    this.eventEmitter.getEvents().forEach((_, type: string) => {
-      this.off(type);
-    });
+    this.eventEmitter.emit('destroy');
+    this.eventEmitter.getEvents().forEach((_, type: string) => this.off(type));
   }
 
   /**

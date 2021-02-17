@@ -27,11 +27,9 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *     @param {Object} [options.events] - Events
  *         @param {function} [options.events.load] - It would be emitted when editor fully load
  *         @param {function} [options.events.change] - It would be emitted when content changed
- *         @param {function} [options.events.stateChange] - It would be emitted when format change by cursor position
+ *         @param {function} [options.events.caretChange] - It would be emitted when format change by cursor position
  *         @param {function} [options.events.focus] - It would be emitted when editor get focus
  *         @param {function} [options.events.blur] - It would be emitted when editor loose focus
- *     @param {Object} [options.hooks] - Hooks
- *         @param {function} [options.hooks.previewBeforeHook] - Submit preview to hook URL before preview be shown
  *     @param {Array.<function|Array>} [options.plugins] - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
  *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
  *     @param {Object} [options.extendedAutolinks] - Using extended Autolinks specified in GFM spec
@@ -88,12 +86,6 @@ class ToastUIEditorViewer {
       frontMatter,
     };
 
-    if (this.options.hooks) {
-      forEachOwnProperties(this.options.hooks, (fn, key) => {
-        this.addHook(key, fn);
-      });
-    }
-
     if (this.options.events) {
       forEachOwnProperties(this.options.events, (fn, key) => {
         this.on(key, fn);
@@ -140,10 +132,6 @@ class ToastUIEditorViewer {
       domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)
     ) {
       domUtils.toggleClass(element, TASK_CHECKED_CLASS_NAME);
-      this.eventEmitter.emit('change', {
-        source: 'viewer',
-        data: ev,
-      });
     }
   }
 
@@ -188,9 +176,9 @@ class ToastUIEditorViewer {
    * Remove Viewer preview from document
    */
   destroy() {
-    this.eventEmitter.emit('removeEditor');
-    off(this.preview.el!, 'mousedown', this.toggleTask.bind(this));
     this.preview.destroy();
+    this.eventEmitter.emit('destroy');
+    off(this.preview.el!, 'mousedown', this.toggleTask.bind(this));
   }
 
   /**
