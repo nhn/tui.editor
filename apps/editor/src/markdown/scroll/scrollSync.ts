@@ -62,19 +62,19 @@ export class ScrollSync {
   }
 
   private addScrollSyncEvent() {
-    this.eventEmitter.listen('previewRenderAfter', () => {
-      // Immediately after the 'previewRenderAfter' event has occurred,
+    this.eventEmitter.listen('afterPreviewRendered', () => {
+      // Immediately after the 'afterPreviewRendered' event has occurred,
       // browser rendering is not yet complete.
       // So the size of elements can not be accurately measured.
       setTimeout(() => {
         this.syncPreviewScrollTop(true);
       }, 200);
     });
-    this.eventEmitter.listen('scroll', ({ source, data }) => {
+    this.eventEmitter.listen('scroll', (type, data) => {
       if (this.active) {
-        if (source === 'editor' && this.blockedScroll !== 'editor') {
+        if (type === 'editor' && this.blockedScroll !== 'editor') {
           this.syncPreviewScrollTop();
-        } else if (source === 'preview' && this.blockedScroll !== 'preview') {
+        } else if (type === 'preview' && this.blockedScroll !== 'preview') {
           this.syncEditorScrollTop(data);
         }
       }
@@ -236,6 +236,6 @@ export class ScrollSync {
 
   destroy() {
     this.eventEmitter.removeEventHandler('scroll');
-    this.eventEmitter.removeEventHandler('previewRenderAfter');
+    this.eventEmitter.removeEventHandler('afterPreviewRendered');
   }
 }
