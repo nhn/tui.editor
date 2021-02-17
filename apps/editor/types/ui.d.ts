@@ -101,7 +101,10 @@ export interface PopupInfo {
   fromEl: HTMLElement;
   pos: Pos;
   render: (props: Record<string, any>) => VNode | VNode[];
+  initialValues?: PopupInitialValues;
 }
+
+export type PopupInitialValues = Record<string, any>;
 
 export interface TabInfo {
   name: string;
@@ -148,6 +151,7 @@ export interface IndexList {
   groupIndex: number;
   itemIndex: number;
 }
+
 export interface DefaultUI {
   destroy: () => void;
   insertToolbarItem: (indexList: IndexList, item: string | ToolbarItemOptions) => void;

@@ -1,7 +1,9 @@
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+
 import { Emitter } from '@t/event';
-import { ExecCommand, HidePopup } from '@t/ui';
+import { ExecCommand, HidePopup, PopupInitialValues } from '@t/ui';
 import i18n from '@/i18n/i18n';
 import html from '@/ui/vdom/template';
 import { Component } from '@/ui/vdom/component';
@@ -11,44 +13,60 @@ interface Props {
   execCommand: ExecCommand;
   hidePopup: HidePopup;
   show: boolean;
+  initialValues: PopupInitialValues;
 }
 
 export class LinkPopupBody extends Component<Props> {
   private initialize() {
-    const linkUrl = this.refs.url as HTMLInputElement;
-    const linkText = this.refs.text as HTMLInputElement;
+    const { linkUrl, linkText } = this.props.initialValues;
 
-    removeClass(linkUrl, 'wrong');
-    removeClass(linkText, 'wrong');
+    const linkUrlEl = this.refs.url as HTMLInputElement;
+    const linkTextEl = this.refs.text as HTMLInputElement;
 
-    linkUrl.value = '';
-    linkText.value = '';
+    removeClass(linkUrlEl, 'wrong');
+    removeClass(linkTextEl, 'wrong', 'disabled');
+    linkTextEl.removeAttribute('disabled');
+
+    if (linkUrl) {
+      addClass(linkTextEl, 'disabled');
+      linkTextEl.setAttribute('disabled', 'disabled');
+    }
+
+    linkUrlEl.value = linkUrl || '';
+    linkTextEl.value = linkText || '';
   }
 
   private execCommand = () => {
-    const linkUrl = this.refs.url as HTMLInputElement;
-    const linkText = this.refs.text as HTMLInputElement;
+    const linkUrlEl = this.refs.url as HTMLInputElement;
+    const linkTextEl = this.refs.text as HTMLInputElement;
 
-    removeClass(linkUrl, 'wrong');
-    removeClass(linkText, 'wrong');
+    removeClass(linkTextEl, 'wrong');
+    removeClass(linkTextEl, 'wrong');
 
-    if (linkUrl.value.length < 1) {
-      addClass(linkUrl, 'wrong');
+    if (linkUrlEl.value.length < 1) {
+      addClass(linkUrlEl, 'wrong');
       return;
     }
-    if (linkText.value.length < 1) {
-      addClass(linkText, 'wrong');
+
+    const checkLinkText = isUndefined(this.props.initialValues.linkUrl);
+
+    if (checkLinkText && linkTextEl.value.length < 1) {
+      addClass(linkTextEl, 'wrong');
       return;
     }
 
     this.props.execCommand('addLink', {
-      linkUrl: linkUrl.value,
-      linkText: linkText.value,
+      linkUrl: linkUrlEl.value,
+      linkText: linkTextEl.value,
     });
   };
 
-  updated() {
-    if (!this.props.show) {
+  mounted() {
+    this.initialize();
+  }
+
+  updated(prevProps: Props) {
+    if (!prevProps.show && this.props.show) {
       this.initialize();
     }
   }

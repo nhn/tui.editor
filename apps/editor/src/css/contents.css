@@ -289,6 +289,24 @@ table.ProseMirror-selectednode {
   color: #1f70de;
 }
 
+.tui-editor-contents .image-link {
+  position: relative;
+}
+
+.tui-editor-contents .image-link::before {
+  content: '';
+  position: absolute;
+  margin: 0;
+  width: 20px;
+  height: 20px;
+  top: 2px;
+  right: 2px;
+  background-repeat: no-repeat;
+  /* @TODO change to svg image */
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAFKADAAQAAAABAAAAFAAAAACy3fD9AAAA/0lEQVQ4Ee2UIY6FQAyG/91wAQQJDg8SSwI3QIFAcQHuwFHQoOAEEFAELB6H4wIku+9vQgIP9zLyVbTTTufLtJ3MzzRNf1AoGlmu6ypBzvOMXyWkC+QLvDTjw6VM+Xr2OA6UZYmu67Dvu2zleX6zuq7D933EcQxNuyPu3usYYXVdw/M8mKYpIMMwxEZRJHbbNsmhkySJxE71APJmhGVZhnVdURQFlmU585GmKSzLEp+570Dlz+ZxQ/aGJVNYsm3bCIJA/LZtMY4jmqbBMAwIw1DiV/UAstEUltP3vawdxxFbVZVYDoWwM1eCp+LnoErIUt7DL/Ac1edWng1/WlXyD380myY5A34sAAAAAElFTkSuQmCC');
+  cursor: pointer;
+}
+
 .tui-editor-contents .task-list-item {
   border: 0;
   list-style: none;

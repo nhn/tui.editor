@@ -58,23 +58,24 @@ export class Link extends Mark {
 
   private addLink(): EditorCommand {
     return (payload) => (state, dispatch) => {
-      const { linkUrl, linkText } = payload!;
+      const { linkUrl, linkText = '' } = payload!;
       const { schema, tr, selection } = state;
       const { empty, from, to } = selection;
 
-      if (!linkUrl || !linkText) {
-        return false;
-      }
-
-      if (empty) {
+      if (from && to && linkUrl) {
         const attrs = {
           linkUrl: replaceMarkdownText(decodeURIGraceful(linkUrl), true),
           linkText: replaceMarkdownText(linkText, false),
         };
-        const marks = [schema.mark('link', attrs)];
-        const node = createText(schema, linkText, marks, false);
+        const mark = schema.mark('link', attrs);
 
-        tr.replaceRangeWith(from, to, node);
+        if (empty && linkText) {
+          const node = createText(schema, linkText, mark, false);
+
+          tr.replaceRangeWith(from, to, node);
+        } else {
+          tr.addMark(from, to, mark);
+        }
 
         dispatch!(tr.scrollIntoView());
 

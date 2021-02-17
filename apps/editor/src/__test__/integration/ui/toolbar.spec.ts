@@ -695,3 +695,52 @@ describe('API', () => {
     assertToNotContainElement('.tui-bold');
   });
 });
+
+describe('event', () => {
+  beforeEach(() => {
+    const toolbarItems = [['image', 'link']];
+
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
+    em = new EventEmitter();
+
+    destroy = render(
+      container,
+      html`
+        <${Toolbar}
+          eventEmitter=${em}
+          previewStyle="vertical"
+          toolbarItems=${toolbarItems}
+          editorType="wysiwyg"
+        />
+      ` as VNode
+    );
+  });
+
+  afterEach(() => {
+    destroy();
+  });
+
+  describe('openPopup', () => {
+    it('should open popup corresponding to name', () => {
+      em.emit('openPopup', 'image');
+
+      const imagePopup = getElement('.te-popup-add-image');
+
+      expect(imagePopup).toHaveStyle({ display: 'block' });
+    });
+
+    it('should render popup with initial values', () => {
+      const initialValues = { linkUrl: 'http://test.com', linkText: 'foo' };
+
+      em.emit('openPopup', 'link', initialValues);
+
+      const urlText = getElement('.te-popup-add-link .te-url-input') as HTMLInputElement;
+      const linkText = getElement('.te-popup-add-link .te-link-text-input') as HTMLInputElement;
+
+      expect(urlText).toHaveValue('http://test.com');
+      expect(linkText).toHaveValue('foo');
+    });
+  });
+});

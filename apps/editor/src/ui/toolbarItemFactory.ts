@@ -8,6 +8,7 @@ import {
   ToolbarItem,
   ToolbarItemInfo,
   ToolbarItemOptions,
+  PopupInitialValues,
 } from '@t/ui';
 import i18n from '@/i18n/i18n';
 import html from './vdom/template';
@@ -196,11 +197,12 @@ interface Payload {
   el: HTMLElement;
   pos: Pos;
   popup?: PopupOptions;
+  initialValues?: PopupInitialValues;
 }
 
 // eslint-disable-next-line consistent-return
 export function createPopupInfo(type: string, payload: Payload): PopupInfo | undefined {
-  const { el, pos, popup } = payload;
+  const { el, pos, popup, initialValues } = payload;
 
   switch (type) {
     case 'heading':
@@ -217,6 +219,7 @@ export function createPopupInfo(type: string, payload: Payload): PopupInfo | und
         headerText: i18n.get('Insert link'),
         fromEl: el,
         pos,
+        initialValues,
       };
     case 'image':
       return {

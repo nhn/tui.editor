@@ -192,7 +192,6 @@
   padding: 18px 25px;
 }
 
-
 .tui-editor-contents td.te-cell-selected {
   background-color: #d8dfec;
 }
@@ -482,6 +481,12 @@
   width: 100%;
 }
 
+.tui-editor-popup .tui-popup-body input[type='text'].disabled {
+  border-color: #e5e5e5;
+  background-color: #eee;
+  color: #e5e5e5;
+}
+
 .tui-editor-popup .tui-popup-body input.wrong {
   border-color: #ff0000;
 }
@@ -527,7 +532,7 @@
   background: #fff;
 }
 
-.te-popup-add-table  {
+.te-popup-add-table {
   width: auto;
 }
 

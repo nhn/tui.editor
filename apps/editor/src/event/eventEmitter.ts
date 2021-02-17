@@ -83,6 +83,7 @@ const eventTypeList: EventTypes[] = [
   'requireScrollIntoView',
   'setCodeBlockLanguages',
   'toggleScrollSync',
+  'openPopup',
   'closePopup',
 ];
 

@@ -21,6 +21,7 @@ import { task } from './plugins/task';
 import { toolbarActivity } from './plugins/toolbarActivity';
 
 import { CustomBlockView } from './nodeview/customBlockView';
+import { ImageView } from './nodeview/imageView';
 import { changePastedHTML, changePastedSlice } from './clipboard/paste';
 import { pasteToTable } from './clipboard/pasteToTable';
 import { createSpecs } from './specCreator';
@@ -101,7 +102,7 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createView() {
-    const { toDOMAdaptor } = this;
+    const { toDOMAdaptor, eventEmitter } = this;
 
     return new EditorView(this.el, {
       state: this.createState(),
@@ -111,6 +112,9 @@ export default class WysiwygEditor extends EditorBase {
       nodeViews: {
         customBlock(node, view, getPos) {
           return new CustomBlockView(node, view, getPos, toDOMAdaptor);
+        },
+        image(node, view, getPos) {
+          return new ImageView(node, view, getPos, toDOMAdaptor, eventEmitter);
         },
       },
       transformPastedHTML: changePastedHTML,
