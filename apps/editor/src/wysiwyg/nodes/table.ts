@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
-import { TextSelection, NodeSelection } from 'prosemirror-state';
+import { TextSelection } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 
 import NodeSchema from '@/spec/node';
@@ -27,11 +27,12 @@ import {
 } from '@/wysiwyg/helper/table';
 import {
   CursorDirection,
-  CellDirection,
-  canBeOutOfTableStart,
-  canBeOutOfTableEnd,
-  addParagraphBeforeTable,
-  addParagraphAfterTable,
+  canBeOutOfTable,
+  canMoveBetweenCells,
+  canSelectTable,
+  selectNode,
+  addParagraphBeforeAfterTable,
+  moveToCell,
 } from '@/wysiwyg/command/table';
 
 import { createTextSelection } from '@/helper/manipulation';
@@ -52,7 +53,7 @@ interface AlignColumnPayload {
 type CellOffsetFn = ([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) => number | null;
 
 type CellOffsetFnMap = {
-  [key in CellDirection]: CellOffsetFn;
+  [key in CursorDirection]: CellOffsetFn;
 };
 
 const cellOffsetFnMap: CellOffsetFnMap = {
@@ -294,33 +295,14 @@ export class Table extends NodeSchema {
     };
   }
 
-  private moveToCell(direction: CellDirection): Command {
+  private moveToCell(direction: CursorDirection): Command {
     return (state, dispatch) => {
-      const { selection, tr, schema } = state;
+      const { selection, tr } = state;
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
         const cellsInfo = getTableCellsInfo(anchor);
         const cellIndex = getCellIndexInfo(anchor);
-
-        const cursorInTableStart = canBeOutOfTableStart(direction, cellIndex);
-        const cursorInTableEnd = canBeOutOfTableEnd(direction, cellsInfo, cellIndex);
-
-        let newTr;
-
-        // When there is no content before or after the table,
-        // an empty line('paragraph') is created by pressing the arrow keys.
-        if (cursorInTableStart) {
-          newTr = addParagraphBeforeTable(tr, cellsInfo, schema);
-        } else if (cursorInTableEnd) {
-          newTr = addParagraphAfterTable(tr, cellsInfo, schema);
-        }
-
-        if (newTr) {
-          dispatch!(newTr);
-
-          return true;
-        }
 
         const cellOffsetFn = cellOffsetFnMap[direction];
         const offset = cellOffsetFn(cellIndex, cellsInfo);
@@ -338,29 +320,53 @@ export class Table extends NodeSchema {
 
   private moveInCell(direction: CursorDirection): Command {
     return (state, dispatch) => {
-      const { selection, tr } = state;
+      const { selection, tr, doc, schema } = state;
+      const { $from } = selection;
       const { view } = this.context;
 
-      if (view.endOfTextblock(direction)) {
-        const { head } = getResolvedSelection(selection);
+      if (!view.endOfTextblock(direction)) {
+        return false;
+      }
 
-        if (!head) {
-          return false;
-        }
+      const cell = findNodeBy(
+        $from,
+        ({ type }) => type.name === 'tableHeadCell' || type.name === 'tableBodyCell'
+      );
 
-        const cellsInfo = getTableCellsInfo(head);
-        const rowCount = cellsInfo.length;
-        const columnCount = cellsInfo[0].length;
+      if (cell) {
+        const para = findNodeBy($from, ({ type }) => type.name === 'paragraph');
 
-        const { offset } =
-          direction === 'left' ? cellsInfo[0][0] : cellsInfo[rowCount - 1][columnCount - 1];
+        if (para) {
+          const { depth: cellDepth } = cell;
+          const { depth: paraDepth } = para;
 
-        if (head.pos === offset) {
-          const tablePos = tr.doc.resolve(head.before(head.depth - 2));
+          if (!canMoveBetweenCells(direction, [cellDepth, paraDepth], $from, doc)) {
+            return false;
+          }
 
-          dispatch!(tr.setSelection(new NodeSelection(tablePos)));
+          const { anchor } = getResolvedSelection(selection);
+          const cellIndex = getCellIndexInfo(anchor);
+          const cellsInfo = getTableCellsInfo(anchor);
 
-          return true;
+          let newTr;
+
+          if (canSelectTable(direction, cellsInfo, cellIndex, $from, paraDepth)) {
+            // When the cursor position is at the end of the cell,
+            // the table is selected when the left / right arrow keys are pressed.
+            newTr = selectNode(tr, $from, cellDepth);
+          } else if (canBeOutOfTable(direction, cellsInfo, cellIndex[0])) {
+            // When there is no content before or after the table,
+            // an empty line('paragraph') is created by pressing the arrow keys.
+            newTr = addParagraphBeforeAfterTable(direction, tr, cellsInfo, schema);
+          } else {
+            newTr = moveToCell(direction, tr, cellIndex, cellsInfo);
+          }
+
+          if (newTr) {
+            dispatch!(newTr);
+
+            return true;
+          }
         }
       }
 
@@ -423,8 +429,8 @@ export class Table extends NodeSchema {
       Tab: this.moveToCell('right'),
       'Shift-Tab': this.moveToCell('left'),
 
-      ArrowUp: this.moveToCell('up'),
-      ArrowDown: this.moveToCell('down'),
+      ArrowUp: this.moveInCell('up'),
+      ArrowDown: this.moveInCell('down'),
 
       ArrowLeft: this.moveInCell('left'),
       ArrowRight: this.moveInCell('right'),
