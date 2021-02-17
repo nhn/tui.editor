@@ -2,6 +2,7 @@
  * @fileoverview Implements Editor
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+import { DOMParser } from 'prosemirror-model';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import extend from 'tui-code-snippet/object/extend';
 import css from 'tui-code-snippet/domUtil/css';
@@ -371,9 +372,18 @@ class ToastUIEditor {
    * @param {string} html - html syntax text
    * @param {boolean} [cursorToEnd=true] - move cursor to contents end
    */
-  // @TODO: should implement API
-  // eslint-disable-next-line
-  setHTML(html: string, cursorToEnd = true) {}
+  setHTML(html = '', cursorToEnd = true) {
+    const container = document.createElement('div');
+
+    container.innerHTML = html;
+    const wwNode = DOMParser.fromSchema(this.wwEditor.schema).parse(container);
+
+    if (this.isMarkdownMode()) {
+      this.mdEditor.setMarkdown(this.convertor.toMarkdownText(wwNode), cursorToEnd);
+    } else {
+      this.wwEditor.setModel(wwNode, cursorToEnd);
+    }
+  }
 
   /**
    * Get content to markdown
