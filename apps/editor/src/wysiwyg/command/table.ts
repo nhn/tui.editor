@@ -47,12 +47,10 @@ function isInLastListItem(pos: ResolvedPos, doc: ProsemirrorNode, limitedDepth: 
     if (parentNode.type.name === 'listItem') {
       const { nodeAfter } = doc.resolve(pos.after(depth));
       const hasChildren = parentNode.lastChild?.type.name !== 'paragraph';
+      const notLeafChild = !lastState && (nodeAfter || hasChildren);
+      const notLeafParent = lastState && nodeAfter;
 
-      if (!lastState && (nodeAfter || hasChildren)) {
-        return false;
-      }
-
-      if (lastState && nodeAfter) {
+      if (notLeafChild || notLeafParent) {
         return false;
       }
 
