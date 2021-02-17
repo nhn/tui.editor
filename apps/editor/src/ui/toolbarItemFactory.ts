@@ -228,7 +228,6 @@ export function createPopupInfo(type: string, payload: Payload): PopupInfo | und
         headerText: i18n.get('Insert image'),
         fromEl: el,
         pos,
-        initialValues,
       };
     case 'table':
       return {
