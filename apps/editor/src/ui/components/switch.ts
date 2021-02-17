@@ -39,7 +39,7 @@ export class Switch extends Component<Props, State> {
             class="te-switch-button markdown${editorType === 'markdown' ? ' active' : ''}"
             type="button"
             onClick=${() => {
-              eventEmitter.emit('changeModeByEvent', 'markdown');
+              eventEmitter.emit('needChangeMode', 'markdown');
             }}
           >
             ${i18n.get('Markdown')}
@@ -48,7 +48,7 @@ export class Switch extends Component<Props, State> {
             class="te-switch-button wysiwyg${editorType === 'wysiwyg' ? ' active' : ''}"
             type="button"
             onClick=${() => {
-              eventEmitter.emit('changeModeByEvent', 'wysiwyg');
+              eventEmitter.emit('needChangeMode', 'wysiwyg');
             }}
           >
             ${i18n.get('WYSIWYG')}

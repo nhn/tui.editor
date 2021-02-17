@@ -11,7 +11,7 @@ const eventTypeList: EventTypes[] = [
   'afterPreviewRendered',
   'updatePreview',
   'changeMode',
-  'changeModeByEvent',
+  'needChangeMode',
   'command',
   'changePreviewStyle',
   'changePreviewTabPreview',

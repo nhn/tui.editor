@@ -63,8 +63,8 @@ import { setWidgetRules } from './widget/rules';
  *     @param {Object} [options.extendedAutolinks] - Using extended Autolinks specified in GFM spec
  *     @param {string} [options.placeholder] - The placeholder text of the editable element.
  *     @param {Object} [options.linkAttributes] - Attributes of anchor element that should be rel, target, hreflang, type
- *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to change markdown node to preview HTML or wysiwyg node
- *     @param {Object} [options.customMarkdownRenderer] - Object containing custom renderer functions correspond to change wysiwyg node to markdown text
+ *     @param {Object} [options.customHTMLRenderer=null] - Object containing custom renderer functions correspond to change markdown node to preview HTML or wysiwyg node
+ *     @param {Object} [options.customMarkdownRenderer=null] - Object containing custom renderer functions correspond to change wysiwyg node to markdown text
  *     @param {boolean} [options.referenceDefinition=false] - whether use the specification of link reference definition
  *     @param {function} [options.customHTMLSanitizer=null] - custom HTML sanitizer
  *     @param {boolean} [options.frontMatter=false] - whether use the front matter
@@ -237,7 +237,7 @@ class ToastUIEditor {
   }
 
   private addInitEvent() {
-    this.on('changeModeByEvent', this.changeMode.bind(this));
+    this.on('needChangeMode', this.changeMode.bind(this));
     this.addCommand('markdown', 'toggleScrollSync', (payload) => {
       this.eventEmitter.emit('toggleScrollSync', payload!.active);
     });
@@ -364,8 +364,6 @@ class ToastUIEditor {
 
       this.wwEditor.setModel(wwNode!, cursorToEnd);
     }
-
-    this.eventEmitter.emit('setMarkdownAfter', markdown);
   }
 
   /**
