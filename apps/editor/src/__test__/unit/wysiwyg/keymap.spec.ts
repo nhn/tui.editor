@@ -75,7 +75,7 @@ describe('keymap', () => {
       setContent(html);
     });
 
-    describe('moveInCell keymap with right', () => {
+    describe('moveToCell keymap with right (tap key)', () => {
       it('should move to end of right cell', () => {
         wwe.setSelection(7, 7); // in 'foo' cell
 
@@ -93,7 +93,7 @@ describe('keymap', () => {
       });
     });
 
-    describe('moveInCell keymap with left', () => {
+    describe('moveToCell keymap with left (shift + tab key)', () => {
       it('should move to end of left cell', () => {
         wwe.setSelection(13, 13); // in 'bar' cell
 
@@ -115,7 +115,7 @@ describe('keymap', () => {
       it('should move to end of up cell', () => {
         wwe.setSelection(26, 26); // in 'baz' cell
 
-        forceKeymapFn('table', 'moveToCell', ['up']);
+        forceKeymapFn('table', 'moveInCell', ['up']);
 
         expect(wwe.getRange()).toEqual([8, 8]);
       });
@@ -123,7 +123,7 @@ describe('keymap', () => {
       it('should add paragraph when there is no content before table and cursor is in first row', () => {
         wwe.setSelection(13, 13); // in 'bar' cell
 
-        forceKeymapFn('table', 'moveToCell', ['up']);
+        forceKeymapFn('table', 'moveInCell', ['up']);
 
         const expected = oneLineTrim`
           <p><br></p>
@@ -168,7 +168,7 @@ describe('keymap', () => {
         setContent(html);
 
         wwe.setSelection(15, 15); // in 'foo' cell
-        forceKeymapFn('table', 'moveToCell', ['up']);
+        forceKeymapFn('table', 'moveInCell', ['up']);
 
         expect(wwe.getRange()).toEqual([7, 7]); // 'before' paragraph
       });
@@ -178,7 +178,7 @@ describe('keymap', () => {
       it('should move to start of down cell', () => {
         wwe.setSelection(7, 7); // in 'foo' cell
 
-        forceKeymapFn('table', 'moveToCell', ['down']);
+        forceKeymapFn('table', 'moveInCell', ['down']);
 
         expect(wwe.getRange()).toEqual([23, 23]);
       });
@@ -186,7 +186,7 @@ describe('keymap', () => {
       it('should add paragraph when there is no content after table and cursor is in last row', () => {
         wwe.setSelection(26, 26); // in 'baz' cell
 
-        forceKeymapFn('table', 'moveToCell', ['down']);
+        forceKeymapFn('table', 'moveInCell', ['down']);
 
         const expected = oneLineTrim`
           <table>
@@ -231,13 +231,13 @@ describe('keymap', () => {
         setContent(html);
 
         wwe.setSelection(32, 32); // in 'qux' cell
-        forceKeymapFn('table', 'moveToCell', ['down']);
+        forceKeymapFn('table', 'moveInCell', ['down']);
 
         expect(wwe.getRange()).toEqual([39, 39]); // 'after' paragraph
       });
     });
 
-    describe('moveInCell keymap', () => {
+    describe('moveInCell keymap with left and right', () => {
       let expected: string;
 
       beforeEach(() => {
