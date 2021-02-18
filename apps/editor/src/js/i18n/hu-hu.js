@@ -1,0 +1,52 @@
+/**
+ * @fileoverview I18N for Hungarian
+ * @author Peter Nagy <nagylakas@gmail.com>
+ */
+import Editor from '../editor';
+
+Editor.setLanguage(['hu', 'hu-HU'], {
+  Markdown: 'Markdown',
+  WYSIWYG: 'WYSIWYG',
+  Write: 'Szerkesztés',
+  Preview: 'Előnézet',
+  Headings: 'Címsorok',
+  Paragraph: 'Bekezdés',
+  Bold: 'Félkövér',
+  Italic: 'Dőlt',
+  Strike: 'Áthúzott',
+  Code: 'Beágyazott kód',
+  Line: 'Vonal',
+  Blockquote: 'Idézet blokk',
+  'Unordered list': 'Pontozott lista',
+  'Ordered list': 'Számozott lista',
+  Task: 'Feladatok',
+  Indent: 'Behúzás',
+  Outdent: 'Behúzás csökkentése',
+  'Insert link': 'Hivatkozás beszúrása',
+  'Insert CodeBlock': 'Kódblokk beszúrása',
+  'Insert table': 'Tábla beillesztése',
+  'Insert image': 'Kép beillesztése',
+  Heading: 'Fejlécek',
+  'Image URL': 'Kép URL',
+  'Select image file': 'Képfájl választása',
+  Description: 'Leírás',
+  OK: 'OK',
+  More: 'További',
+  Cancel: 'Mégsem',
+  File: 'Fájl',
+  URL: 'URL',
+  'Link text': 'Hivatkozás szöveg',
+  'Add row': 'Sor hozzáadása',
+  'Add col': 'Oszlop hozzáadása',
+  'Remove row': 'Sor törlése',
+  'Remove col': 'Oszlop törlése',
+  'Align left': 'Igazítás balra',
+  'Align center': 'Igazítás középre',
+  'Align right': 'Igazítás jobbra',
+  'Remove table': 'Táblázat törlése',
+  'Would you like to paste as table?': 'Szeretné beilleszteni, mint táblázat?',
+  'Text color': 'Szöveg színe',
+  'Auto scroll enabled': 'Automatikus görgetés engedélyezve',
+  'Auto scroll disabled': 'Automatikus görgetés letiltva',
+  'Choose language': 'Nyelvváltás'
+});
