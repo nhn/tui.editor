@@ -22,6 +22,8 @@ import { toolbarState } from './plugins/toolbarState';
 
 import { CustomBlockView } from './nodeview/customBlockView';
 import { ImageView } from './nodeview/imageView';
+import { CodeBlockView } from './nodeview/codeBlockView';
+
 import { changePastedHTML, changePastedSlice } from './clipboard/paste';
 import { pasteToTable } from './clipboard/pasteToTable';
 import { createSpecs } from './specCreator';
@@ -121,6 +123,9 @@ export default class WysiwygEditor extends EditorBase {
         },
         image(node, view, getPos) {
           return new ImageView(node, view, getPos, toDOMAdaptor, eventEmitter);
+        },
+        codeBlock(node, view, getPos) {
+          return new CodeBlockView(node, view, getPos, toDOMAdaptor);
         },
         widget: widgetNodeView,
       },

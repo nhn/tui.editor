@@ -151,6 +151,7 @@ export function changePastedSlice(slice: Slice, schema: Schema) {
   const nodes: Node[] = [];
 
   slice.content.forEach((node) => {
+    console.log(node);
     if (node.type.name === 'table') {
       const tableContent = getTableContentFromSlice(new Slice(Fragment.from(node), 0, 0));
 

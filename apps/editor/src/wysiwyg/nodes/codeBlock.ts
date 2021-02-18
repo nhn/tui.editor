@@ -10,6 +10,7 @@ export class CodeBlock extends NodeSchema {
     return 'codeBlock';
   }
 
+  // @ts-ignore
   get defaultSchema() {
     return {
       content: 'text*',
@@ -25,6 +26,7 @@ export class CodeBlock extends NodeSchema {
       parseDOM: [
         {
           tag: 'pre',
+          preserveWhitespace: 'full',
           getAttrs(dom: Node | string) {
             const className = (dom as HTMLElement).getAttribute('class');
             const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
@@ -43,6 +45,17 @@ export class CodeBlock extends NodeSchema {
           { class: attrs.class || null },
           ['code', { 'data-language': attrs.language || null }, 0],
         ];
+
+        // return [
+        //   'div',
+        //   { class: 'tui-code-block' },
+        //   [
+        //     'pre',
+        //     { class: attrs.class || null },
+        //     ['code', { 'data-language': attrs.language || null }, 0],
+        //   ],
+        //   ['span', { class: 'tui-code-block-tool' }, ['span', attrs.language || 'text']],
+        // ];
       },
     };
   }

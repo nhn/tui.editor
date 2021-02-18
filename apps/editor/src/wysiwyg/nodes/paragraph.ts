@@ -1,8 +1,8 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 
-import Node from '@/spec/node';
+import NodeSchema from '@/spec/node';
 
-export class Paragraph extends Node {
+export class Paragraph extends NodeSchema {
   get name() {
     return 'paragraph';
   }
@@ -11,7 +11,16 @@ export class Paragraph extends Node {
     return {
       content: 'inline*',
       group: 'block listGroup',
-      parseDOM: [{ tag: 'p' }],
+      parseDOM: [
+        {
+          tag: 'p',
+          getAttrs(dom: Node | string) {
+            console.log(dom);
+
+            return {};
+          },
+        },
+      ],
       toDOM(): DOMOutputSpecArray {
         return ['p', 0];
       },
