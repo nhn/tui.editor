@@ -129,10 +129,10 @@ describe('layout component', () => {
   });
 
   describe('changing editor mode', () => {
-    it('should trigger changeModeByEvent when clicking the switch button', () => {
+    it('should trigger needChangeMode when clicking the switch button', () => {
       const spy = jest.fn();
 
-      em.listen('changeModeByEvent', spy);
+      em.listen('needChangeMode', spy);
 
       clickWwSwitch();
 

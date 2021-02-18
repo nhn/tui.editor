@@ -68,8 +68,6 @@ export class Viewer {
 
   constructor(options: ViewerOptions);
 
-  addHook(type: string, handler: Handler): void;
-
   isMarkdownMode(): boolean;
 
   isViewer(): boolean;
@@ -81,8 +79,6 @@ export class Viewer {
   on(type: string, handler: Handler): void;
 
   destroy(): void;
-
-  setHTML(html: string): void;
 
   setMarkdown(markdown: string): void;
 

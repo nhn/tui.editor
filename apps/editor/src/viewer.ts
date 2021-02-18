@@ -2,6 +2,8 @@
  * @fileoverview Implements editor preivew
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+// @ts-ignore
+import { ToastMark } from '@toast-ui/toastmark';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import extend from 'tui-code-snippet/object/extend';
 import on from 'tui-code-snippet/domEvent/on';
@@ -35,13 +37,22 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *     @param {Object} [options.extendedAutolinks] - Using extended Autolinks specified in GFM spec
  *     @param {Object} [options.customConvertor] - convertor extention
  *     @param {Object} [options.linkAttributes] - Attributes of anchor element that should be rel, target, hreflang, type
- *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
+ *     @param {Object} [options.customHTMLRenderer=null] - Object containing custom renderer functions correspond to change markdown node to preview HTML or wysiwyg node
  *     @param {boolean} [options.referenceDefinition=false] - whether use the specification of link reference definition
  *     @param {function} [options.customHTMLSanitizer=null] - custom HTML sanitizer
  *     @param {boolean} [options.frontMatter=false] - whether use the front matter
  */
 class ToastUIEditorViewer {
+  /**
+   * Check whether is viewer (using in plugins)
+   * @type {boolean}
+   * @ignore
+   */
+  static isViewer = true;
+
   private options: Required<ViewerOptions>;
+
+  private toastMark: ToastMark;
 
   private codeBlockLanguages: string[];
 
@@ -63,7 +74,6 @@ class ToastUIEditorViewer {
       },
       options
     );
-
     this.codeBlockLanguages = [];
 
     this.eventEmitter = new EventEmitter();
@@ -97,6 +107,13 @@ class ToastUIEditorViewer {
 
     el.innerHTML = '';
 
+    this.toastMark = new ToastMark('', {
+      disallowedHtmlBlockTags: ['br', 'img'],
+      extendedAutolinks,
+      referenceDefinition,
+      disallowDeepHeading: true,
+      frontMatter,
+    });
     this.preview = new MarkdownPreview(this.eventEmitter, {
       ...rendererOptions,
       isViewer: true,
@@ -114,6 +131,7 @@ class ToastUIEditorViewer {
       this.preview.setHTML(existingHTML);
     }
 
+    el.appendChild(this.preview.previewContent);
     this.eventEmitter.emit('load', this);
   }
 
@@ -136,23 +154,16 @@ class ToastUIEditorViewer {
   }
 
   /**
-   * Set html value.
-   * @param {string} html - html syntax text
-   * @param {boolean} [cursorToEnd=true] - move cursor to contents end
-   */
-  // @TODO: should implement API
-  // eslint-disable-next-line
-  setHTML(html: string) {}
-
-  /**
    * Set content for preview
    * @param {string} markdown Markdown text
    */
   setMarkdown(markdown: string) {
-    markdown = markdown || '';
+    const lineTexts = this.toastMark.getLineTexts();
+    const { length } = lineTexts;
+    const endSourcepos = [length, lineTexts[length - 1].length + 1];
+    const editResult = this.toastMark.editMarkdown([1, 1], endSourcepos, markdown || '');
 
-    this.preview.refresh();
-    this.eventEmitter.emit('setMarkdownAfter', markdown);
+    this.eventEmitter.emit('updatePreview', editResult);
   }
 
   /**
@@ -176,19 +187,9 @@ class ToastUIEditorViewer {
    * Remove Viewer preview from document
    */
   destroy() {
+    off(this.preview.el!, 'mousedown', this.toggleTask.bind(this));
     this.preview.destroy();
     this.eventEmitter.emit('destroy');
-    off(this.preview.el!, 'mousedown', this.toggleTask.bind(this));
-  }
-
-  /**
-   * Add hook to Viewer preview's event
-   * @param {string} type Event type
-   * @param {function} handler Event handler
-   */
-  addHook(type: string, handler: Handler) {
-    this.eventEmitter.removeEventHandler(type);
-    this.eventEmitter.listen(type, handler);
   }
 
   /**
@@ -227,12 +228,5 @@ class ToastUIEditorViewer {
     });
   }
 }
-
-// /**
-//  * Check whether is viewer (using in plugins)
-//  * @type {boolean}
-//  * @ignore
-//  */
-// ToastUIEditorViewer.isViewer = true;
 
 export default ToastUIEditorViewer;
