@@ -2,7 +2,7 @@ import { ResolvedPos } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 import { PluginKey } from 'prosemirror-state';
 
-import { findCell, isInCellElement } from '@/wysiwyg/helper/table';
+import { findCell, findCellElement } from '@/wysiwyg/helper/table';
 
 import CellSelection from './cellSelection';
 
@@ -42,14 +42,14 @@ export default class TableSelection {
   }
 
   handleMousedown(ev: Event) {
-    const inCell = isInCellElement(ev.target as HTMLElement, this.view.dom);
+    const foundCell = findCellElement(ev.target as HTMLElement, this.view.dom);
 
     if ((ev as MouseEvent).button === MOUSE_RIGHT_BUTTON) {
       ev.preventDefault();
       return;
     }
 
-    if (inCell) {
+    if (foundCell) {
       const startCellPos = this.getCellPos(ev as MouseEvent);
 
       if (startCellPos) {
