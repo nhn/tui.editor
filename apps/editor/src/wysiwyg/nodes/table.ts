@@ -8,7 +8,6 @@ import { isInTableNode, findNodeBy, createDOMInfoParsedRawHTML } from '@/wysiwyg
 
 // @TODO Separate the clipboard and command file, leaving only those commonly used in `helper/table`.
 import {
-  CellInfo,
   createTableHeadRow,
   createTableBodyRows,
   createDummyCells,
@@ -20,16 +19,12 @@ import {
   getPrevRowOffset,
   getNextColumnOffsets,
   getPrevColumnOffsets,
-  getRightCellOffset,
-  getLeftCellOffset,
-  getUpCellOffset,
-  getDownCellOffset,
 } from '@/wysiwyg/helper/table';
 import {
   CursorDirection,
   canBeOutOfTable,
   canMoveBetweenCells,
-  canSelectTable,
+  canSelectTableNode,
   selectNode,
   addParagraphBeforeAfterTable,
   moveToCell,
@@ -49,19 +44,6 @@ interface AddTablePayload {
 interface AlignColumnPayload {
   align: ColumnAlign;
 }
-
-type CellOffsetFn = ([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) => number | null;
-
-type CellOffsetFnMap = {
-  [key in CursorDirection]: CellOffsetFn;
-};
-
-const cellOffsetFnMap: CellOffsetFnMap = {
-  left: getLeftCellOffset,
-  right: getRightCellOffset,
-  up: getUpCellOffset,
-  down: getDownCellOffset,
-};
 
 export class Table extends NodeSchema {
   get name() {
@@ -303,12 +285,10 @@ export class Table extends NodeSchema {
       if (anchor && head) {
         const cellsInfo = getTableCellsInfo(anchor);
         const cellIndex = getCellIndexInfo(anchor);
+        const newTr = moveToCell(direction, tr, cellIndex, cellsInfo);
 
-        const cellOffsetFn = cellOffsetFnMap[direction];
-        const offset = cellOffsetFn(cellIndex, cellsInfo);
-
-        if (offset) {
-          dispatch!(tr.setSelection(createTextSelection(tr, offset)));
+        if (newTr) {
+          dispatch!(newTr);
 
           return true;
         }
@@ -350,7 +330,7 @@ export class Table extends NodeSchema {
 
           let newTr;
 
-          if (canSelectTable(direction, cellsInfo, cellIndex, $from, paraDepth)) {
+          if (canSelectTableNode(direction, cellsInfo, cellIndex, $from, paraDepth)) {
             // When the cursor position is at the end of the cell,
             // the table is selected when the left / right arrow keys are pressed.
             newTr = selectNode(tr, $from, cellDepth);
