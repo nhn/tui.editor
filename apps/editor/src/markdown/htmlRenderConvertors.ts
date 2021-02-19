@@ -7,8 +7,10 @@ import {
   CustomHTMLRendererMap,
   Context,
   OpenTagToken,
+  CustomInlineMdNode,
 } from '@t/markdown';
 import { LinkAttributes } from '@t/editor';
+import { getWidgetContent, widgetToDOM } from '@/widget/rules';
 
 type TokenAttrs = Record<string, any>;
 
@@ -96,6 +98,23 @@ const baseConvertors: CustomHTMLRendererMap = {
       { type: 'closeTag', tagName: 'code' },
       { type: 'closeTag', tagName: 'pre' },
     ];
+  },
+
+  customInline(node: MdNode, { origin, entering, skipChildren }: Context) {
+    const { info } = node as CustomInlineMdNode;
+
+    if (info.indexOf('widget') !== -1 && entering) {
+      skipChildren();
+      const content = getWidgetContent(node as CustomInlineMdNode);
+      const htmlInline = widgetToDOM(info, content).outerHTML;
+
+      return [
+        { type: 'openTag', tagName: 'span', classNames: ['tui-widget'] },
+        { type: 'html', content: htmlInline },
+        { type: 'closeTag', tagName: 'span' },
+      ];
+    }
+    return origin!();
   },
 };
 

@@ -220,6 +220,10 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
     state.text(text!, false);
     state.closeBlock(node);
   },
+
+  widget(state, _, { text }) {
+    state.write(text);
+  },
 };
 
 export function write(

@@ -1,14 +1,16 @@
-import { Node, Schema } from 'prosemirror-model';
+import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
 import { Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import css from 'tui-code-snippet/domUtil/css';
+import { WidgetStyle } from '@t/editor';
 import { Emitter } from '@t/event';
+import { MdPos, MdSourcepos } from '@t/markdown';
 import { Context, EditorAllCommandMap } from '@t/spec';
 import SpecManager from './spec/specManager';
 import { createTextSelection } from './helper/manipulation';
 
 export interface StateOptions {
-  doc: Node | null;
+  doc: ProsemirrorNode | null;
 }
 
 export default abstract class EditorBase {
@@ -37,8 +39,6 @@ export default abstract class EditorBase {
     this.eventEmitter = eventEmitter;
     this.placeholder = { text: '' };
   }
-
-  // abstract addWidget(range: Range, node: Node, style: string, offset?: number): void;
 
   abstract createSpecs(): SpecManager;
 
@@ -120,7 +120,11 @@ export default abstract class EditorBase {
     return this.el;
   }
 
-  abstract getRange(): any;
+  abstract replaceWithWidget(from: MdPos | number, to: MdPos | number, content: string): void;
+
+  abstract addWidget(node: Node, style: WidgetStyle, pos?: MdPos | number): void;
 
   abstract replaceSelection(content: string, range: Range): void;
+
+  abstract getRange(): MdSourcepos | [number, number];
 }

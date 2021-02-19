@@ -43,6 +43,19 @@ function getEndOffsetWithBlankLine(doc: ProsemirrorNode, to: number, lineRange: 
   return Math.min(doc.content.size, to + blankLineTagOffset);
 }
 
+function getWidgetNodePos(node: ProsemirrorNode, chPos: number, direction: 1 | -1 = 1) {
+  let additionalPos = 0;
+
+  node.forEach((child, pos) => {
+    // add or subtract widget node tag
+    if (child.type.name === 'widget' && pos + 2 < chPos) {
+      additionalPos += 2 * direction;
+    }
+  });
+
+  return additionalPos;
+}
+
 export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from): MdSourcepos {
   const collapsed = from === to;
   const startResolvedPos = doc.resolve(from);
@@ -72,9 +85,12 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
     }
   }
 
+  const startCh = Math.max(from - startOffset + 1, 1);
+  const endCh = Math.max(to - endOffset + 1, 1);
+
   return [
-    [lineRange[0], Math.max(from - startOffset + 1, 1)],
-    [lineRange[1], Math.max(to - endOffset + 1, 1)],
+    [lineRange[0], startCh + getWidgetNodePos(doc.child(lineRange[0] - 1), startCh, -1)],
+    [lineRange[1], endCh + getWidgetNodePos(doc.child(lineRange[1] - 1), endCh, -1)],
   ];
 }
 
@@ -90,15 +106,22 @@ export function getMdToEditorPos(
 
   for (let i = 0; i < endPos[0] - 1; i += 1) {
     const len = lineTexts[i].length;
+    const child = doc.child(i);
+    const additionalPos = getWidgetNodePos(child, child.content.size);
 
     // should plus 2(end tag, start tag) to consider line breaking
     if (i < startPos[0] - 1) {
-      from += len + 2;
+      from += len + 2 + additionalPos;
     }
-    to += len + 2;
+
+    to += len + 2 + additionalPos;
   }
-  from += startPos[1];
-  to += endPos[1];
+
+  const startNode = doc.child(startPos[0] - 1);
+  const endNode = doc.child(endPos[0] - 1);
+
+  from += startPos[1] + getWidgetNodePos(startNode, startPos[1] - 1);
+  to += endPos[1] + getWidgetNodePos(endNode, endPos[1] - 1);
 
   return [from, Math.min(to, doc.content.size)];
 }

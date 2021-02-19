@@ -115,4 +115,17 @@ describe('MarkdownEditor', () => {
 
     expect(minHeight).toBe('100px');
   });
+
+  it('addWidget API', () => {
+    const ul = document.createElement('ul');
+
+    ul.innerHTML = `
+      <li>Ryu</li>
+      <li>Lee</li>
+    `;
+
+    mde.addWidget(ul, 'top');
+
+    expect(document.body).toContainElement(ul);
+  });
 });

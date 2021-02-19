@@ -1,4 +1,4 @@
-import { Node, NodeType, isContainer, isCustomBlock } from '../commonmark/node';
+import { Node, NodeType, isContainer, isCustomBlock, isCustomInline } from '../commonmark/node';
 import { escapeXml } from '../commonmark/common';
 import { last } from '../helper';
 import { baseConvertors } from './baseConvertors';
@@ -152,9 +152,10 @@ export class Renderer {
         }
       };
 
-      const converted = isCustomBlock(node)
-        ? convertor(node, context, this.convertors)
-        : convertor(node, context);
+      const converted =
+        isCustomBlock(node) || isCustomInline(node)
+          ? convertor(node, context, this.convertors)
+          : convertor(node, context);
       if (converted) {
         const htmlNodes = Array.isArray(converted) ? converted : [converted];
         htmlNodes.forEach((htmlNode, index) => {

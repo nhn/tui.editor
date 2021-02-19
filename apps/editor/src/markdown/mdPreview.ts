@@ -11,6 +11,7 @@ import on from 'tui-code-snippet/domEvent/on';
 import { Renderer } from '@toast-ui/toastmark';
 
 import { Emitter } from '@t/event';
+import { LinkAttributes } from '@t/editor';
 import { CustomHTMLRendererMap, EditResult, MdNode, MdPos } from '@t/markdown';
 import Preview from '@/preview';
 import { toggleClass } from '@/utils/dom';
@@ -20,7 +21,6 @@ import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
 import { findAdjacentElementToScrollTop } from './scroll/dom';
 import { removeOffsetInfoByNode } from './scroll/offset';
-import { LinkAttributes } from '@t/editor';
 
 export const CLASS_HIGHLIGHT = 'te-preview-highlight';
 
@@ -171,13 +171,12 @@ class MarkdownPreview extends Preview {
   replaceRangeNodes(editResult: EditResult) {
     const { nodes, removedNodeRange } = editResult;
     const contentEl = this.previewContent;
-    const newHtml = sanitizeHTML(
-      this.eventEmitter.emitReduce(
-        'convertorAfterMarkdownToHtmlConverted',
-        nodes.map((node) => this.renderer.render(node)).join('')
-      ),
-      true
-    ) as string;
+    let newHtml = this.eventEmitter.emitReduce(
+      'convertorAfterMarkdownToHtmlConverted',
+      nodes.map((node) => this.renderer.render(node)).join('')
+    );
+
+    newHtml = sanitizeHTML(newHtml, true);
 
     if (!removedNodeRange) {
       contentEl.insertAdjacentHTML('afterbegin', newHtml);

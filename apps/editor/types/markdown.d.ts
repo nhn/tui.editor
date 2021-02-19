@@ -31,7 +31,8 @@ type InlineNodeType =
   | 'image'
   | 'htmlInline'
   | 'linebreak'
-  | 'softbreak';
+  | 'softbreak'
+  | 'customInline';
 
 interface NodeWalker {
   current: MdNode | null;
@@ -66,6 +67,7 @@ export interface MdNode {
   appendChild(child: MdNode): void;
   prependChild(child: MdNode): void;
   walker(): NodeWalker;
+  getInlineMarkdownText(): string | null;
 }
 
 export interface CodeBlockMdNode extends MdNode {
@@ -167,6 +169,11 @@ export interface CustomBlockMdNode extends MdNode {
   info: string;
   offset: number;
   syntaxLength: number;
+}
+
+export interface CustomInlineMdNode extends MdNode {
+  parent: NonNullable<MdNode>;
+  info: string;
 }
 
 /* ToastMark Parser type */

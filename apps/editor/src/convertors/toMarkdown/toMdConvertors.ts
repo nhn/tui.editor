@@ -185,6 +185,12 @@ export const toMdConvertors: ToMdConvertorMap = {
     };
   },
 
+  widget({ node }) {
+    return {
+      text: (node as ProsemirrorNode).textContent,
+    };
+  },
+
   strong({ node }, { entering }) {
     const { rawHTML } = node.attrs;
 
