@@ -75,15 +75,14 @@ function getToolbarState(selection: Selection, doc: Node, schema: Schema) {
   return { ...nodeTypeState, ...markTypeState };
 }
 
-export function toolbarActivity(eventEmitter: Emitter) {
+export function toolbarState(eventEmitter: Emitter) {
   return new Plugin({
     view() {
       return {
         update(view) {
           const { selection, doc, schema } = view.state;
 
-          eventEmitter.emit('cursorActivity', {
-            source: 'wysiwyg',
+          eventEmitter.emit('changeToolbarState', {
             toolbarState: getToolbarState(selection, doc, schema),
           });
         },

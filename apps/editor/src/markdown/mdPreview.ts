@@ -92,12 +92,10 @@ class MarkdownPreview extends Preview {
   }
 
   private initEvent(highlight: boolean) {
-    this.eventEmitter.listen('contentChangedFromMarkdown', this.update.bind(this));
-    // need to implement a listener function for 'previewNeedsRefresh' event
-    // to support third-party plugins which requires re-executing script for every re-render
+    this.eventEmitter.listen('updatePreview', this.update.bind(this));
 
     if (highlight) {
-      this.eventEmitter.listen('cursorActivity', ({ mdNode, cursorPos }) => {
+      this.eventEmitter.listen('changeToolbarState', ({ mdNode, cursorPos }) => {
         this.updateCursorNode(mdNode, cursorPos);
       });
 
@@ -107,10 +105,11 @@ class MarkdownPreview extends Preview {
     }
 
     on(this.el!, 'scroll', (event) => {
-      this.eventEmitter.emit('scroll', {
-        source: 'preview',
-        data: findAdjacentElementToScrollTop(event.target.scrollTop, this.previewContent),
-      });
+      this.eventEmitter.emit(
+        'scroll',
+        'preview',
+        findAdjacentElementToScrollTop(event.target.scrollTop, this.previewContent)
+      );
     });
     this.eventEmitter.listen('changePreviewTabPreview', () => this.toggleActive(true));
     this.eventEmitter.listen('changePreviewTabWrite', () => this.toggleActive(false));
@@ -165,18 +164,19 @@ class MarkdownPreview extends Preview {
 
   update(changed: EditResult[]) {
     changed.forEach((editResult) => this.replaceRangeNodes(editResult));
-    this.eventEmitter.emit('previewRenderAfter', this);
+    this.eventEmitter.emit('afterPreviewRender', this);
   }
 
   replaceRangeNodes(editResult: EditResult) {
     const { nodes, removedNodeRange } = editResult;
     const contentEl = this.previewContent;
-    let newHtml = this.eventEmitter.emitReduce(
-      'convertorAfterMarkdownToHtmlConverted',
-      nodes.map((node) => this.renderer.render(node)).join('')
-    );
-
-    newHtml = sanitizeHTML(newHtml, true);
+    const newHtml = sanitizeHTML(
+      this.eventEmitter.emitReduce(
+        'beforePreviewRender',
+        nodes.map((node) => this.renderer.render(node)).join('')
+      ),
+      true
+    ) as string;
 
     if (!removedNodeRange) {
       contentEl.insertAdjacentHTML('afterbegin', newHtml);
@@ -213,17 +213,6 @@ class MarkdownPreview extends Preview {
 
   getRenderer() {
     return this.renderer;
-  }
-
-  /**
-   * render
-   * @param {string} html - html string to render
-   * @override
-   */
-  render(html: string) {
-    super.render(html);
-
-    this.eventEmitter.emit('previewRenderAfter', this);
   }
 
   destroy() {

@@ -27,10 +27,10 @@ describe('MarkdownEditor', () => {
     document.body.removeChild(el);
   });
 
-  it('should emit contentChangedFromMarkdown event when editing the content', () => {
+  it('should emit updatePreview event when editing the content', () => {
     const spy = jest.fn();
 
-    em.listen('contentChangedFromMarkdown', spy);
+    em.listen('updatePreview', spy);
 
     mde.setMarkdown('# myText');
 

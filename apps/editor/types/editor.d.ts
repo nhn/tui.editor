@@ -16,20 +16,19 @@ export type WidgetRuleMap = Record<string, WidgetRule>;
 
 export interface EventMap {
   load?: (param: Editor) => void;
-  change?: (param: { source: EditorType | 'viewer'; data: MouseEvent }) => void;
-  // @TODO: should change the toolbar option
-  stateChange?: (param: any) => void;
-  focus?: (param: { source: EditorType }) => void;
-  blur?: (param: { source: EditorType }) => void;
-}
-
-export interface ViewerHookMap {
-  previewBeforeHook?: (html: string) => void | string;
+  change?: (editorType: EditorType) => void;
+  caretChange?: (editorType: EditorType) => void;
+  focus?: (editorType: EditorType) => void;
+  blur?: (editorType: EditorType) => void;
+  keydown?: (editorType: EditorType, ev: KeyboardEvent) => void;
+  keyup?: (editorType: EditorType, ev: KeyboardEvent) => void;
+  beforePreviewRender?: (html: string) => string;
+  beforeConvertWysiwygToMarkdown?: (markdownText: string) => string;
 }
 
 type HookCallback = (url: string, text?: string) => void;
 
-export type EditorHookMap = ViewerHookMap & {
+export type EditorHookMap = {
   addImageBlobHook?: (blob: Blob | File, callback: HookCallback) => void;
 };
 
@@ -54,7 +53,6 @@ export interface ViewerOptions {
   el: HTMLElement;
   initialValue?: string;
   events?: EventMap;
-  hooks?: ViewerHookMap;
   plugins?: (EditorPlugin | EditorPluginInfo)[];
   useDefaultHTMLSanitizer?: boolean;
   extendedAutolinks?: ExtendedAutolinks;
@@ -70,8 +68,6 @@ export class Viewer {
 
   constructor(options: ViewerOptions);
 
-  addHook(type: string, handler: Handler): void;
-
   isMarkdownMode(): boolean;
 
   isViewer(): boolean;
@@ -83,8 +79,6 @@ export class Viewer {
   on(type: string, handler: Handler): void;
 
   destroy(): void;
-
-  setHTML(html: string): void;
 
   setMarkdown(markdown: string): void;
 

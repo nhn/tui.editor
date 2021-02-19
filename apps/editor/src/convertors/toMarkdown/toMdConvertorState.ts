@@ -1,6 +1,6 @@
 import { Node, Mark } from 'prosemirror-model';
 
-import { includes, escape } from '@/utils/common';
+import { includes, escape, last } from '@/utils/common';
 
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 import {
@@ -176,7 +176,7 @@ export default class ToMdConvertorState {
         }
       }
 
-      const lastMark = marks.length && marks[marks.length - 1];
+      const lastMark = marks.length && last(marks);
       const markConvertor = lastMark && this.markTypeConvertors[lastMark.type.name as WwMarkType];
       const markType = markConvertor && markConvertor();
 

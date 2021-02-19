@@ -46,7 +46,7 @@ export class ToolbarButtonComp extends Component<Props, State> {
 
   addEvent() {
     if (this.props.item.state) {
-      this.props.eventEmitter.listen('cursorActivity', ({ toolbarState }: Payload) => {
+      this.props.eventEmitter.listen('changeToolbarState', ({ toolbarState }: Payload) => {
         const active = !!toolbarState[this.props.item.state!];
 
         this.setState({ active });

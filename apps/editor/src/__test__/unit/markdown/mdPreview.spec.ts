@@ -26,20 +26,11 @@ describe('Preview', () => {
     preview.destroy();
   });
 
-  it('render() emits previewRenderAfter', () => {
-    const spy = jest.fn();
-
-    eventEmitter.listen('previewRenderAfter', spy);
-    preview.render('');
-
-    expect(spy).toHaveBeenCalled();
-  });
-
-  it('listen to contentChangedFromMarkdown and update the preview', () => {
+  it('listen to updatePreview and update the preview', () => {
     const doc = new ToastMark();
     const editResult = doc.editMarkdown([1, 7], [1, 7], 'changed');
 
-    eventEmitter.emit('contentChangedFromMarkdown', editResult);
+    eventEmitter.emit('updatePreview', editResult);
 
     expect(preview.getHTML()).toBe(`<p data-nodeid="${editResult[0].nodes[0].id}">changed</p>\n`);
   });
@@ -54,7 +45,7 @@ describe('Preview', () => {
       `<TABLE BACKGROUND="javascript:alert('XSS')">`
     );
 
-    eventEmitter.emit('contentChangedFromMarkdown', editResult);
+    eventEmitter.emit('updatePreview', editResult);
 
     expect(sanitizer.sanitizeHTML).toHaveBeenCalledTimes(1);
   });

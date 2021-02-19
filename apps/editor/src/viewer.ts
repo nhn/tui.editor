@@ -2,6 +2,8 @@
  * @fileoverview Implements editor preivew
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
+// @ts-ignore
+import { ToastMark } from '@toast-ui/toastmark';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import extend from 'tui-code-snippet/object/extend';
 import on from 'tui-code-snippet/domEvent/on';
@@ -12,7 +14,7 @@ import { Emitter, Handler } from '@t/event';
 import MarkdownPreview from './markdown/mdPreview';
 import domUtils from './utils/dom-legacy';
 import { invokePlugins, getPluginInfo } from './pluginHelper';
-import { sanitizeLinkAttribute } from './utils/common';
+import { last, sanitizeLinkAttribute } from './utils/common';
 import EventEmitter from './event/eventEmitter';
 
 const TASK_ATTR_NAME = 'data-task';
@@ -27,23 +29,30 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *     @param {Object} [options.events] - Events
  *         @param {function} [options.events.load] - It would be emitted when editor fully load
  *         @param {function} [options.events.change] - It would be emitted when content changed
- *         @param {function} [options.events.stateChange] - It would be emitted when format change by cursor position
+ *         @param {function} [options.events.caretChange] - It would be emitted when format change by cursor position
  *         @param {function} [options.events.focus] - It would be emitted when editor get focus
  *         @param {function} [options.events.blur] - It would be emitted when editor loose focus
- *     @param {Object} [options.hooks] - Hooks
- *         @param {function} [options.hooks.previewBeforeHook] - Submit preview to hook URL before preview be shown
  *     @param {Array.<function|Array>} [options.plugins] - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
  *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
  *     @param {Object} [options.extendedAutolinks] - Using extended Autolinks specified in GFM spec
  *     @param {Object} [options.customConvertor] - convertor extention
  *     @param {Object} [options.linkAttributes] - Attributes of anchor element that should be rel, target, hreflang, type
- *     @param {Object} [options.customHTMLRenderer] - Object containing custom renderer functions correspond to markdown node
+ *     @param {Object} [options.customHTMLRenderer=null] - Object containing custom renderer functions correspond to change markdown node to preview HTML or wysiwyg node
  *     @param {boolean} [options.referenceDefinition=false] - whether use the specification of link reference definition
  *     @param {function} [options.customHTMLSanitizer=null] - custom HTML sanitizer
  *     @param {boolean} [options.frontMatter=false] - whether use the front matter
  */
 class ToastUIEditorViewer {
+  /**
+   * Check whether is viewer (using in plugins)
+   * @type {boolean}
+   * @ignore
+   */
+  static isViewer = true;
+
   private options: Required<ViewerOptions>;
+
+  private toastMark: ToastMark;
 
   private codeBlockLanguages: string[];
 
@@ -65,7 +74,6 @@ class ToastUIEditorViewer {
       },
       options
     );
-
     this.codeBlockLanguages = [];
 
     this.eventEmitter = new EventEmitter();
@@ -88,12 +96,6 @@ class ToastUIEditorViewer {
       frontMatter,
     };
 
-    if (this.options.hooks) {
-      forEachOwnProperties(this.options.hooks, (fn, key) => {
-        this.addHook(key, fn);
-      });
-    }
-
     if (this.options.events) {
       forEachOwnProperties(this.options.events, (fn, key) => {
         this.on(key, fn);
@@ -105,6 +107,13 @@ class ToastUIEditorViewer {
 
     el.innerHTML = '';
 
+    this.toastMark = new ToastMark('', {
+      disallowedHtmlBlockTags: ['br', 'img'],
+      extendedAutolinks,
+      referenceDefinition,
+      disallowDeepHeading: true,
+      frontMatter,
+    });
     this.preview = new MarkdownPreview(this.eventEmitter, {
       ...rendererOptions,
       isViewer: true,
@@ -122,6 +131,7 @@ class ToastUIEditorViewer {
       this.preview.setHTML(existingHTML);
     }
 
+    el.appendChild(this.preview.previewContent);
     this.eventEmitter.emit('load', this);
   }
 
@@ -140,31 +150,21 @@ class ToastUIEditorViewer {
       domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)
     ) {
       domUtils.toggleClass(element, TASK_CHECKED_CLASS_NAME);
-      this.eventEmitter.emit('change', {
-        source: 'viewer',
-        data: ev,
-      });
     }
   }
-
-  /**
-   * Set html value.
-   * @param {string} html - html syntax text
-   * @param {boolean} [cursorToEnd=true] - move cursor to contents end
-   */
-  // @TODO: should implement API
-  // eslint-disable-next-line
-  setHTML(html: string) {}
 
   /**
    * Set content for preview
    * @param {string} markdown Markdown text
    */
   setMarkdown(markdown: string) {
-    markdown = markdown || '';
+    const lineTexts: string[] = this.toastMark.getLineTexts();
+    const { length } = lineTexts;
+    const lastLine = last(lineTexts);
+    const endSourcepos = [length, lastLine.length + 1];
+    const editResult = this.toastMark.editMarkdown([1, 1], endSourcepos, markdown || '');
 
-    this.preview.refresh();
-    this.eventEmitter.emit('setMarkdownAfter', markdown);
+    this.eventEmitter.emit('updatePreview', editResult);
   }
 
   /**
@@ -188,19 +188,9 @@ class ToastUIEditorViewer {
    * Remove Viewer preview from document
    */
   destroy() {
-    this.eventEmitter.emit('removeEditor');
     off(this.preview.el!, 'mousedown', this.toggleTask.bind(this));
     this.preview.destroy();
-  }
-
-  /**
-   * Add hook to Viewer preview's event
-   * @param {string} type Event type
-   * @param {function} handler Event handler
-   */
-  addHook(type: string, handler: Handler) {
-    this.eventEmitter.removeEventHandler(type);
-    this.eventEmitter.listen(type, handler);
+    this.eventEmitter.emit('destroy');
   }
 
   /**
@@ -239,12 +229,5 @@ class ToastUIEditorViewer {
     });
   }
 }
-
-// /**
-//  * Check whether is viewer (using in plugins)
-//  * @type {boolean}
-//  * @ignore
-//  */
-// ToastUIEditorViewer.isViewer = true;
 
 export default ToastUIEditorViewer;

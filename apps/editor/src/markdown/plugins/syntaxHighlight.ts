@@ -3,7 +3,7 @@ import { Schema } from 'prosemirror-model';
 import { Context } from '@t/spec';
 import { EditResult, MdNode, MdPos } from '@t/markdown';
 import { getMdStartLine, getMdEndLine, getMdStartCh, getMdEndCh } from '@/utils/markdown';
-import { includes } from '@/utils/common';
+import { includes, last } from '@/utils/common';
 import { getMarkInfo } from './helper/markInfo';
 import { getMdToEditorPos } from '../helper/pos';
 
@@ -72,7 +72,7 @@ function removeCodeBlockBackground(
 
 function removeMark(nodes: MdNode[], toastMark: any, newTr: Transaction, schema: Schema) {
   const [start] = nodes[0].sourcepos!;
-  const [, end] = nodes[nodes.length - 1].sourcepos!;
+  const [, end] = last(nodes).sourcepos!;
   const startPos: MdPos = [start[0], start[1]];
   const endPos: MdPos = [end[0], end[1] + 1];
   const pos = getMdToEditorPos(newTr.doc, toastMark, startPos, endPos);

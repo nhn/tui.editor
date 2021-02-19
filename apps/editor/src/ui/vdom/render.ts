@@ -2,6 +2,7 @@ import isFunction from 'tui-code-snippet/type/isFunction';
 import { ComponentClass } from '@t/ui';
 import { VNode } from './vnode';
 import { createNode } from './dom';
+import { last } from '@/utils/common';
 
 export function createComponent(Comp: ComponentClass, vnode: VNode) {
   const { props, component } = vnode;
@@ -94,7 +95,7 @@ function buildChildrenVNode(parent: VNode) {
     prev = vnode;
   });
 
-  const lastChild = children[children.length - 1];
+  const lastChild = last(children);
 
   if (!children.length) {
     while (old) {

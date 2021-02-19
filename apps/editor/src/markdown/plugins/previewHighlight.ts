@@ -64,8 +64,7 @@ export function previewHighlight({ toastMark, eventEmitter }: Context) {
           const mdNode = toastMark.findNodeAtPosition(cursorPos);
           const toolbarState = getToolbarState(mdNode);
 
-          eventEmitter.emit('cursorActivity', {
-            source: 'markdown',
+          eventEmitter.emit('changeToolbarState', {
             cursorPos,
             mdNode,
             toolbarState,

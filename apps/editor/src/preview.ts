@@ -101,8 +101,6 @@ class Preview {
   render(html: string) {
     const { previewContent } = this;
 
-    html = this.eventEmitter.emitReduce('previewBeforeHook', html) || html;
-
     domUtils.empty(previewContent);
     previewContent.innerHTML = html;
   }
