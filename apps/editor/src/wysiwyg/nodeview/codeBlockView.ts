@@ -118,6 +118,7 @@ export class CodeBlockView implements NodeView {
 
   private handleKeydown = (ev: KeyboardEvent) => {
     if (ev.key === 'Enter' && this.input) {
+      ev.preventDefault();
       this.input.blur();
     }
   };
