@@ -14,7 +14,7 @@ import { Emitter, Handler } from '@t/event';
 import MarkdownPreview from './markdown/mdPreview';
 import domUtils from './utils/dom-legacy';
 import { invokePlugins, getPluginInfo } from './pluginHelper';
-import { sanitizeLinkAttribute } from './utils/common';
+import { last, sanitizeLinkAttribute } from './utils/common';
 import EventEmitter from './event/eventEmitter';
 
 const TASK_ATTR_NAME = 'data-task';
@@ -158,9 +158,10 @@ class ToastUIEditorViewer {
    * @param {string} markdown Markdown text
    */
   setMarkdown(markdown: string) {
-    const lineTexts = this.toastMark.getLineTexts();
+    const lineTexts: string[] = this.toastMark.getLineTexts();
     const { length } = lineTexts;
-    const endSourcepos = [length, lineTexts[length - 1].length + 1];
+    const lastLine = last(lineTexts);
+    const endSourcepos = [length, lastLine.length + 1];
     const editResult = this.toastMark.editMarkdown([1, 1], endSourcepos, markdown || '');
 
     this.eventEmitter.emit('updatePreview', editResult);

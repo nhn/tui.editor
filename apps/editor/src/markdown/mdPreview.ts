@@ -164,7 +164,7 @@ class MarkdownPreview extends Preview {
 
   update(changed: EditResult[]) {
     changed.forEach((editResult) => this.replaceRangeNodes(editResult));
-    this.eventEmitter.emit('afterPreviewRendered', this);
+    this.eventEmitter.emit('afterPreviewRender', this);
   }
 
   replaceRangeNodes(editResult: EditResult) {
@@ -172,7 +172,7 @@ class MarkdownPreview extends Preview {
     const contentEl = this.previewContent;
     const newHtml = sanitizeHTML(
       this.eventEmitter.emitReduce(
-        'beforePreviewRendered',
+        'beforePreviewRender',
         nodes.map((node) => this.renderer.render(node)).join('')
       ),
       true

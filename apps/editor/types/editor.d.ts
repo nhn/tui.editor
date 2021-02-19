@@ -22,7 +22,7 @@ export interface EventMap {
   blur?: (editorType: EditorType) => void;
   keydown?: (editorType: EditorType, ev: KeyboardEvent) => void;
   keyup?: (editorType: EditorType, ev: KeyboardEvent) => void;
-  beforePreviewRendered?: (html: string) => string;
+  beforePreviewRender?: (html: string) => string;
   beforeConvertWysiwygToMarkdown?: (markdownText: string) => string;
 }
 

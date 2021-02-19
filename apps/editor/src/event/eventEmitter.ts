@@ -8,7 +8,7 @@ import { Emitter, EventTypes, Handler } from '@t/event';
 import Map from '@/utils/map';
 
 const eventTypeList: EventTypes[] = [
-  'afterPreviewRendered',
+  'afterPreviewRender',
   'updatePreview',
   'changeMode',
   'needChangeMode',
@@ -32,7 +32,7 @@ const eventTypeList: EventTypes[] = [
   'openPopup',
   'closePopup',
   'addImageBlobHook',
-  'beforePreviewRendered',
+  'beforePreviewRender',
   'beforeConvertWysiwygToMarkdown',
   'load',
   'change',

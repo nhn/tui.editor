@@ -83,3 +83,7 @@ export function shallowEqual(o1: Record<string, any>, o2: Record<string, any>) {
 
   return true;
 }
+
+export function last<T>(arr: T[]) {
+  return arr[arr.length - 1];
+}

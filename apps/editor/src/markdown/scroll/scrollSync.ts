@@ -62,8 +62,8 @@ export class ScrollSync {
   }
 
   private addScrollSyncEvent() {
-    this.eventEmitter.listen('afterPreviewRendered', () => {
-      // Immediately after the 'afterPreviewRendered' event has occurred,
+    this.eventEmitter.listen('afterPreviewRender', () => {
+      // Immediately after the 'afterPreviewRender' event has occurred,
       // browser rendering is not yet complete.
       // So the size of elements can not be accurately measured.
       setTimeout(() => {
@@ -236,6 +236,6 @@ export class ScrollSync {
 
   destroy() {
     this.eventEmitter.removeEventHandler('scroll');
-    this.eventEmitter.removeEventHandler('afterPreviewRendered');
+    this.eventEmitter.removeEventHandler('afterPreviewRender');
   }
 }

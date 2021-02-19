@@ -2,6 +2,7 @@ import { Schema, Node, NodeType, Mark, MarkType, DOMParser } from 'prosemirror-m
 
 import { ToWwConvertorMap, StackItem, Attrs } from '@t/convertor';
 import { MdNode } from '@t/markdown';
+import { last } from '@/utils/common';
 
 export function mergeMarkText(a: Node, b: Node) {
   if (a.isText && b.isText && Mark.sameSet(a.marks, b.marks)) {
@@ -30,7 +31,7 @@ export default class ToWwConvertorState {
   }
 
   top() {
-    return this.stack[this.stack.length - 1];
+    return last(this.stack);
   }
 
   push(node: Node) {
@@ -42,9 +43,9 @@ export default class ToWwConvertorState {
   addText(text: string) {
     if (text) {
       const nodes = this.top().content;
-      const last = nodes[nodes.length - 1];
+      const lastNode = last(nodes);
       const node = this.schema.text(text, this.marks);
-      const merged = last && mergeMarkText(last, node);
+      const merged = lastNode && mergeMarkText(lastNode, node);
 
       if (merged) {
         nodes[nodes.length - 1] = merged;

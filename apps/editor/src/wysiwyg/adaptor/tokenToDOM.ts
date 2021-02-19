@@ -1,5 +1,6 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { HTMLToken, OpenTagToken, RawHTMLToken, TextToken } from '@t/markdown';
+import { last } from '@/utils/common';
 
 export type SpecArray = DOMOutputSpecArray & {
   push: typeof Array.prototype.push;
@@ -13,7 +14,7 @@ interface TokenToDOM<T> {
 }
 
 function getTop<T>(stack: T[]) {
-  return stack[stack.length - 1];
+  return last(stack);
 }
 
 export const tokenToPmDOM: TokenToDOM<SpecArray> = {

@@ -19,7 +19,7 @@ export interface EmitterConstructor {
 }
 
 export type EventTypes =
-  | 'afterPreviewRendered'
+  | 'afterPreviewRender'
   | 'updatePreview'
   | 'changeMode'
   | 'needChangeMode'
@@ -43,7 +43,7 @@ export type EventTypes =
   | 'openPopup'
   | 'closePopup'
   | 'addImageBlobHook'
-  | 'beforePreviewRendered'
+  | 'beforePreviewRender'
   | 'beforeConvertWysiwygToMarkdown'
   | 'load'
   | 'change'
