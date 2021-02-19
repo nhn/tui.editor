@@ -342,71 +342,6 @@ table.ProseMirror-selectednode {
   margin-top: 3px;
 }
 
-.tui-code-block {
-  position: relative;
-}
-
-.tui-code-block.language {
-  position: absolute;
-  display: inline-block;
-  width: 100px;
-  height: 28px;
-  top: 10px;
-  right: 10px;
-  z-index: 100;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  border-radius: 2px;
-}
-
-.tui-code-block.language input {
-  margin: 0;
-  padding: 0 10px;
-  width: 80px;
-  height: 100%;
-  background-color: none;
-  border: none;
-  outline: none;
-}
-
-.tui-code-block-tool {
-  text-align: right;
-  position: absolute;
-  width: 200px;
-  height: 30px;
-  top: 10px;
-  right: 10px;
-}
-
-.tui-code-block-tool-in {
-  display: inline-block;
-  height: 25px;
-  padding: 4px 0 0px 10px;
-  border-radius: 2px;
-  background-color: #e5e9ea;
-  cursor: pointer;
-}
-
-.tui-code-block-tool-lang {
-  vertical-align: middle;
-  font-weight: bold;
-  font-size: 13px;
-  font-weight: bold;
-  user-select: none;
-}
-
-.tui-code-block-tool i {
-  display: inline-block;
-  vertical-align: middle;
-  width: 15px;
-  height: 15px;
-  margin-left: 8px;
-  padding: 3px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23555'%3E%3Cg%3E%3Cg%3E%3Cg%3E%3Cpath d='M5.5 2.5l2 2L2 10H0V8l5.5-5.5zM8 0l2 2-1.5 1.5-2-2L8 0z' transform='translate(-940 -712) translate(60 647) translate(875 60) translate(5 5)'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E")
-    no-repeat;
-  background-position: 5px 5px;
-}
-
 .custom-block .custom-block-editor {
   background: #f9f7fd;
   color: #452d6b;
@@ -450,6 +385,50 @@ table.ProseMirror-selectednode {
   font-weight: bold;
   color: #5200d0;
   vertical-align: middle;
+}
+
+.tui-editor-contents .tui-wysiwyg-code-block {
+  position: relative;
+}
+
+.tui-editor-contents .tui-wysiwyg-code-block:after {
+  content: attr(data-lang);
+  position: absolute;
+  display: inline-block;
+  top: 10px;
+  right: 10px;
+  height: 24px;
+  padding: 3px 17px 0 10px;
+  font-weight: bold;
+  font-size: 13px;
+  background-color: #e5e9ea;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23555'%3E%3Cg%3E%3Cg%3E%3Cg%3E%3Cpath d='M5.5 2.5l2 2L2 10H0V8l5.5-5.5zM8 0l2 2-1.5 1.5-2-2L8 0z' transform='translate(-940 -712) translate(60 647) translate(875 60) translate(5 5)'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.tui-wysiwyg-code-block-language {
+  position: absolute;
+  display: inline-block;
+  min-width: 100px;
+  height: 26px;
+  right: 35px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  background-color: #fff;
+  z-index: 100;
+}
+
+.tui-wysiwyg-code-block-language input {
+  margin: 0;
+  padding: 0 5px;
+  width: 90px;
+  height: 100%;
+  background-color: none;
+  border: none;
+  outline: none;
 }
 
 .tui-editor-contents-placeholder::before {

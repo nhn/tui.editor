@@ -11,16 +11,7 @@ export class Paragraph extends NodeSchema {
     return {
       content: 'inline*',
       group: 'block listGroup',
-      parseDOM: [
-        {
-          tag: 'p',
-          getAttrs(dom: Node | string) {
-            console.log(dom);
-
-            return {};
-          },
-        },
-      ],
+      parseDOM: [{ tag: 'p' }],
       toDOM(): DOMOutputSpecArray {
         return ['p', 0];
       },

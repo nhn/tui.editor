@@ -45,17 +45,6 @@ export class CodeBlock extends NodeSchema {
           { class: attrs.class || null },
           ['code', { 'data-language': attrs.language || null }, 0],
         ];
-
-        // return [
-        //   'div',
-        //   { class: 'tui-code-block' },
-        //   [
-        //     'pre',
-        //     { class: attrs.class || null },
-        //     ['code', { 'data-language': attrs.language || null }, 0],
-        //   ],
-        //   ['span', { class: 'tui-code-block-tool' }, ['span', attrs.language || 'text']],
-        // ];
       },
     };
   }
