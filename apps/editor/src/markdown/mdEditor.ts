@@ -1,6 +1,6 @@
 import { Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { Fragment, Schema, Slice } from 'prosemirror-model';
+import { Fragment, Slice } from 'prosemirror-model';
 import { Step, ReplaceAroundStep } from 'prosemirror-transform';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
@@ -45,7 +45,7 @@ export default class MdEditor extends EditorBase {
 
   private clipboard!: HTMLTextAreaElement;
 
-  constructor(toastMark: ToastMark, eventEmitter: Emitter) {
+  constructor(toastMark: ToastMark, eventEmitter: Emitter, useCommandShortcut: boolean) {
     super(eventEmitter);
 
     this.editorType = 'markdown';
@@ -53,7 +53,7 @@ export default class MdEditor extends EditorBase {
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
-    this.keymaps = this.createKeymaps();
+    this.keymaps = this.createKeymaps(useCommandShortcut);
     this.view = this.createView();
     this.commands = this.createCommands();
     this.specs.setContext({ ...this.context, view: this.view });
@@ -106,10 +106,6 @@ export default class MdEditor extends EditorBase {
     };
   }
 
-  createKeymaps() {
-    return this.specs.keymaps();
-  }
-
   createSpecs() {
     return new SpecManager([
       new Doc(),
@@ -135,13 +131,6 @@ export default class MdEditor extends EditorBase {
       new Meta(),
       new Html(),
     ]);
-  }
-
-  createSchema() {
-    return new Schema({
-      nodes: this.specs.nodes,
-      marks: this.specs.marks,
-    });
   }
 
   createPlugins() {

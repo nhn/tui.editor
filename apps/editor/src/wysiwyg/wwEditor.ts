@@ -1,13 +1,11 @@
 import { EditorView } from 'prosemirror-view';
-import { Schema, Node as ProsemirrorNode, Slice, Fragment } from 'prosemirror-model';
+import { Node as ProsemirrorNode, Slice, Fragment } from 'prosemirror-model';
 
 import EditorBase from '@/base';
 import { getWwCommands } from '@/commands/wwCommands';
 
 import { createTextSelection } from '@/helper/manipulation';
 import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
-
-import { placeholder } from '@/plugins/placeholder';
 
 import { tableSelection } from './plugins/tableSelection';
 import { tableContextMenu } from './plugins/tableContextMenu';
@@ -40,7 +38,12 @@ export default class WysiwygEditor extends EditorBase {
 
   private linkAttributes: LinkAttributes;
 
-  constructor(eventEmitter: Emitter, toDOMAdaptor: ToDOMAdaptor, linkAttributes = {}) {
+  constructor(
+    eventEmitter: Emitter,
+    toDOMAdaptor: ToDOMAdaptor,
+    useCommandShortcut: boolean,
+    linkAttributes = {}
+  ) {
     super(eventEmitter);
 
     this.editorType = 'wysiwyg';
@@ -49,7 +52,7 @@ export default class WysiwygEditor extends EditorBase {
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
-    this.keymaps = this.createKeymaps();
+    this.keymaps = this.createKeymaps(useCommandShortcut);
     this.view = this.createView();
     this.commands = this.createCommands();
     this.specs.setContext({ ...this.context, view: this.view });
@@ -58,17 +61,6 @@ export default class WysiwygEditor extends EditorBase {
 
   createSpecs() {
     return createSpecs(this.toDOMAdaptor, this.linkAttributes);
-  }
-
-  createKeymaps() {
-    return this.specs.keymaps();
-  }
-
-  createSchema() {
-    return new Schema({
-      nodes: this.specs.nodes,
-      marks: this.specs.marks,
-    });
   }
 
   createContext() {
