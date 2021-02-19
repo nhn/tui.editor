@@ -59,7 +59,7 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
 
     let endResolvedPos = doc.resolve(to);
 
-    // resolve the end start pos
+    // prevent the end offset from pointing to the root document position
     if (to === doc.content.size) {
       endResolvedPos = doc.resolve(to - 1);
     }
