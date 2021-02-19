@@ -20,7 +20,7 @@ let mde: MarkdownEditor, em: EventEmitter;
 
 beforeEach(() => {
   em = new EventEmitter();
-  mde = new MarkdownEditor(new ToastMark(), em);
+  mde = new MarkdownEditor(new ToastMark(), em, true);
 });
 
 // @TODO: should add test case after developing the markdown editor API

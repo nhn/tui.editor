@@ -72,7 +72,7 @@ beforeEach(() => {
 
   toDOMAdaptor = new WwToDOMAdaptor({}, convertors);
   em = new EventEmitter();
-  wwe = new WysiwygEditor(em, toDOMAdaptor);
+  wwe = new WysiwygEditor(em, toDOMAdaptor, true);
 });
 
 afterEach(() => {
