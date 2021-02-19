@@ -5,7 +5,7 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 import isString from 'tui-code-snippet/type/isString';
 
-import domUtils from '@/utils/dom-legacy';
+import { finalizeHtml, findNodes, removeNode } from '@/utils/dom';
 
 type GlobalEventTypes = keyof Omit<
   Omit<GlobalEventHandlers, 'addEventListener'>,
@@ -59,17 +59,17 @@ export function sanitizeHTML(html: string | Node, needHtmlText = false) {
   removeUnnecessaryTags(root);
   leaveOnlyWhitelistAttribute(root);
 
-  return domUtils.finalizeHtml(root, needHtmlText);
+  return finalizeHtml(root, needHtmlText);
 }
 
 function removeUnnecessaryTags(html: HTMLElement) {
-  const removedTags = domUtils.findAll(
+  const removedTags = findNodes(
     html,
     'script, iframe, textarea, form, button, select, input, meta, style, link, title, embed, object, details, summary'
   );
 
   removedTags.forEach((node) => {
-    domUtils.remove(node);
+    removeNode(node);
   });
 }
 
@@ -90,7 +90,7 @@ function removeBlacklistAttributes(node: HTMLElement, blacklistAttrs: Attr[]) {
 }
 
 function leaveOnlyWhitelistAttribute(html: HTMLElement) {
-  domUtils.findAll(html, '*').forEach((node) => {
+  findNodes(html, '*').forEach((node) => {
     const { attributes } = node as HTMLElement;
     const blacklist = toArray(attributes).filter((attr) => {
       const { name, value } = attr;

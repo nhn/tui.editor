@@ -1,4 +1,4 @@
-import domUtils from './dom';
+import { isElemNode, removeNode, findNodes, prepend, append } from './dom';
 
 const MSO_CLASS_NAME_LIST_RX = /MsoListParagraph/;
 const MSO_CLASS_NAME_NORMAL_RX = /MsoNormal/;
@@ -24,15 +24,12 @@ function getListItemContents(para) {
   while (walker.nextNode()) {
     const node = walker.currentNode;
 
-    if (
-      domUtils.isElemNode(node) &&
-      (isFromMso(node.outerHTML) || MSO_TAG_NAME_RX.test(node.nodeName))
-    ) {
+    if (isElemNode(node) && (isFromMso(node.outerHTML) || MSO_TAG_NAME_RX.test(node.nodeName))) {
       removedNodes.push(node);
     }
   }
 
-  removedNodes.forEach(domUtils.remove);
+  removedNodes.forEach(removeNode);
 
   return para.innerHTML.trim();
 }
@@ -128,7 +125,7 @@ function makeListFromParagraphs(paras) {
 export function convertMsoParagraphsToList(container) {
   let paras = [];
 
-  domUtils.findAll(container, 'p').forEach((para) => {
+  findNodes(container, 'p').forEach((para) => {
     const { className, nextSibling } = para;
 
     if (MSO_CLASS_NAME_LIST_RX.test(className)) {
@@ -139,12 +136,12 @@ export function convertMsoParagraphsToList(container) {
         const target = nextSibling || container;
 
         if (nextSibling) {
-          domUtils.prepend(target, list);
+          prepend(target, list);
         } else {
-          domUtils.append(target, list);
+          append(target, list);
         }
 
-        paras.forEach(domUtils.remove);
+        paras.forEach(removeNode);
         paras = [];
       }
     }
