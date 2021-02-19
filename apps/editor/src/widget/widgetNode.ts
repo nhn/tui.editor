@@ -35,7 +35,7 @@ export class Widget extends SpecNode {
           tag: 'span.tui-widget',
           getAttrs(dom: Node | string) {
             const text = (dom as HTMLElement).textContent!;
-            const [, info] = text.match(/\$\$(widget\d{1,})/)!;
+            const [, info] = text.match(/\$\$(widget\d+)/)!;
 
             return { info };
           },

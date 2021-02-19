@@ -6,7 +6,7 @@ let widgetRules: WidgetRule[] = [];
 
 const widgetRuleMap: WidgetRuleMap = {};
 
-const reWidgetPrefix = /\$\$widget\d{1,}\s/;
+const reWidgetPrefix = /\$\$widget\d+\s/;
 
 function trailingWidgetSyntax(text: string) {
   const index = text.search(reWidgetPrefix);
@@ -43,6 +43,24 @@ function mergeNodes(nodes: ProsemirrorNode[], content: string, schema: Schema, r
   return nodes.concat(createNodesWithWidget(content, schema, ruleIndex));
 }
 
+/**
+ * create nodes with plain text and replace text matched to the widget rules with the widget node
+ * For example, in case the text and widget rules as below
+ *
+ * text: $test plain text #test
+ * widget rules: [{ rule: /$.+/ }, { rule: /#.+/ }]
+ *
+ * The creating node process is recursive and is as follows.
+ *
+ * in first widget rule(/$.+/)
+ *  $test -> widget node
+ *  plain text -> match with next widget rule
+ *  #test -> match with next widget rule
+ *
+ * in second widget rule(/#.+/)
+ *  plain text -> text node(no rule for matching)
+ *  #test -> widget node
+ */
 export function createNodesWithWidget(content: string, schema: Schema, ruleIndex = 0) {
   let nodes: ProsemirrorNode[] = [];
   const { rule } = widgetRules[ruleIndex] || {};
@@ -56,7 +74,7 @@ export function createNodesWithWidget(content: string, schema: Schema, ruleIndex
     while ((index = content.search(rule)) !== -1) {
       const prev = content.substring(0, index);
 
-      // get widget node on first splitted node using next widget rule
+      // get widget node on first splitted text using next widget rule
       if (prev) {
         nodes = mergeNodes(nodes, prev, schema, nextRuleIndex);
       }
@@ -72,7 +90,7 @@ export function createNodesWithWidget(content: string, schema: Schema, ruleIndex
       );
       content = content.substring(literal.length);
     }
-    // get widget node on last splitted node using next widget rule
+    // get widget node on last splitted text using next widget rule
     if (content) {
       nodes = mergeNodes(nodes, content, schema, nextRuleIndex);
     }
@@ -96,7 +114,7 @@ export function getWidgetContent(widgetNode: CustomInlineMdNode) {
 
     if (entering) {
       if (node !== widgetNode && node.type !== 'text') {
-        text += node.inlineToMark();
+        text += node.getInlineMarkdownText();
         // skip the children
         walker.resumeAt(widgetNode, false);
         walker.next();

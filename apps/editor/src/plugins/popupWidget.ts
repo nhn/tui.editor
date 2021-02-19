@@ -1,6 +1,7 @@
 import { EditorView } from 'prosemirror-view';
 import { Plugin, PluginKey } from 'prosemirror-state';
 import { WidgetStyle } from '@t/editor';
+import css from 'tui-code-snippet/domUtil/css';
 
 interface Widget {
   node: HTMLElement;
@@ -30,24 +31,19 @@ class PopupWidget {
   update(view: EditorView) {
     const widget: Widget | null = pluginKey.getState(view.state);
 
-    if (this.popup) {
-      document.body.removeChild(this.popup);
-      this.popup = null;
-    }
+    this.removeWidget();
 
     if (widget) {
       const { node, style } = widget;
       const { top, left, bottom } = view.coordsAtPos(widget.pos);
       const height = bottom - top;
 
-      node.style.position = 'absolute';
-      node.style.left = `${left}px`;
-      node.style.opacity = '0';
-
+      css(node, { position: 'absolute', left: `${left}px`, opacity: '0' });
       document.body.appendChild(node);
-
-      node.style.top = `${style === 'bottom' ? top + height : top - node.clientHeight - height}px`;
-      node.style.opacity = '1';
+      css(node, {
+        top: `${style === 'bottom' ? top + height : top - node.clientHeight - height}px`,
+        opacity: '1',
+      });
       this.popup = node;
     }
     view.focus();

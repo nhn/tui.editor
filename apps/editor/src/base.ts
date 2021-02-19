@@ -4,7 +4,7 @@ import { EditorView } from 'prosemirror-view';
 import css from 'tui-code-snippet/domUtil/css';
 import { WidgetStyle } from '@t/editor';
 import { Emitter } from '@t/event';
-import { MdPos } from '@t/markdown';
+import { MdPos, MdSourcepos } from '@t/markdown';
 import { Context, EditorAllCommandMap } from '@t/spec';
 import SpecManager from './spec/specManager';
 import { createTextSelection } from './helper/manipulation';
@@ -126,5 +126,5 @@ export default abstract class EditorBase {
 
   abstract replaceSelection(content: string, range: Range): void;
 
-  abstract getRange(): any;
+  abstract getRange(): MdSourcepos | [number, number];
 }

@@ -1,6 +1,6 @@
 import { Parser } from '../../blocks';
 import { Renderer } from '../../../html/render';
-import { CustomInlineNode } from '../../../commonmark/node';
+import { CustomInlineNode } from '../../node';
 
 const reader = new Parser();
 const renderer = new Renderer();

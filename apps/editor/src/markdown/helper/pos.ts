@@ -47,7 +47,7 @@ function getWidgetNodePos(node: ProsemirrorNode, chPos: number, direction: 1 | -
   let additionalPos = 0;
 
   node.forEach((child, pos) => {
-    // add or substract widget node tag
+    // add or subtract widget node tag
     if (child.type.name === 'widget' && pos + 2 < chPos) {
       additionalPos += 2 * direction;
     }

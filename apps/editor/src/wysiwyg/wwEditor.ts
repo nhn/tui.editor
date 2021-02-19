@@ -158,7 +158,7 @@ export default class WysiwygEditor extends EditorBase {
     return this.view.state.doc;
   }
 
-  getRange() {
+  getRange(): [number, number] {
     const { from, to } = this.view.state.selection;
 
     return [from, to];

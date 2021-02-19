@@ -191,7 +191,7 @@ export class Node {
     return new NodeWalker(this);
   }
 
-  inlineToMark() {
+  getInlineMarkdownText() {
     const text = this.firstChild!.literal;
     switch (this.type) {
       case 'emph':
@@ -250,7 +250,7 @@ export class LinkNode extends Node {
   public title: string | null = null;
   public extendedAutolink = false;
 
-  inlineToMark() {
+  getInlineMarkdownText() {
     const text = this.firstChild!.literal;
     const { destination, title } = this as LinkNode;
     const delim = this.type === 'link' ? '' : '!';

@@ -15,7 +15,7 @@ describe('widgetNode', () => {
   function getPreviewHTML() {
     return mdPreview
       .querySelector('.tui-editor-contents')!
-      .innerHTML.replace(/\sdata-nodeid="\d{1,}"/g, '')
+      .innerHTML.replace(/\sdata-nodeid="\d+"/g, '')
       .trim();
   }
 
