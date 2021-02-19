@@ -61,6 +61,7 @@ function removeCodeBlockBackground(
 
     if (codeStart && codeEnd && !includes(skipLines, codeStart[0])) {
       skipLines.push(codeStart[0]);
+      codeEnd[0] = Math.min(codeEnd[0], newTr.doc.content.childCount);
       const pos = getMdToEditorPos(newTr.doc, toastMark, codeStart, codeEnd);
 
       newTr = newTr.setBlockType(pos[0], pos[1], schema.nodes.paragraph);

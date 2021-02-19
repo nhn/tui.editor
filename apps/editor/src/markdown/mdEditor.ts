@@ -1,7 +1,7 @@
 import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { DOMParser, Fragment, Schema, Slice } from 'prosemirror-model';
-import { Step } from 'prosemirror-transform';
+import { Step, ReplaceAroundStep } from 'prosemirror-transform';
 import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 import { history } from 'prosemirror-history';
@@ -199,7 +199,7 @@ export default class MdEditor extends EditorBase {
   private updateMarkdown(tr: Transaction) {
     if (tr.docChanged) {
       tr.steps.forEach((step, index) => {
-        if (step.slice) {
+        if (step.slice && !(step instanceof ReplaceAroundStep)) {
           const doc = tr.docs[index];
           const [from, to] = this.getResolvedRange(tr, step);
           const changed = this.getChanged(step.slice);
