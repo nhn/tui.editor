@@ -52,6 +52,10 @@ import { setWidgetRules } from './widget/rules';
  *         @param {function} [options.events.caretChange] - It would be emitted when format change by cursor position
  *         @param {function} [options.events.focus] - It would be emitted when editor get focus
  *         @param {function} [options.events.blur] - It would be emitted when editor loose focus
+ *         @param {function} [options.events.keydown] - It would be emitted when the key is pressed in editor
+ *         @param {function} [options.events.keyup] - It would be emitted when the key is released in editor
+ *         @param {function} [options.events.beforePreviewRender] - It would be emitted before rendering the markdown preview with html string
+ *         @param {function} [options.events.beforeConvertWysiwygToMarkdown] - It would be emitted before converting wysiwyg to markdown with markdown text
  *     @param {Object} [options.hooks] - Hooks
  *         @param {addImageBlobHook} [options.hooks.addImageBlobHook] - hook for image upload
  *     @param {string} [options.language='en-US'] - language
