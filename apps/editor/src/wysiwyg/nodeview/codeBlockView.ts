@@ -26,15 +26,20 @@ export class CodeBlockView implements NodeView {
 
   private toDOMAdaptor: ToDOMAdaptor;
 
+  private tool: HTMLElement | null = null;
+
   private button: HTMLElement | null = null;
 
   private input: HTMLElement | null = null;
+
+  private editing: boolean;
 
   constructor(node: ProsemirrorNode, view: EditorView, getPos: GetPos, toDOMAdaptor: ToDOMAdaptor) {
     this.node = node;
     this.view = view;
     this.getPos = getPos;
     this.toDOMAdaptor = toDOMAdaptor;
+    this.editing = false;
 
     this.createElement();
     this.bindEvent();
@@ -42,10 +47,8 @@ export class CodeBlockView implements NodeView {
 
   private createElement() {
     const wrapper = document.createElement('div');
-    const tool = this.createToolElement();
 
-    wrapper.appendChild(tool);
-
+    wrapper.className = 'tui-code-block';
     wrapper.style.position = 'relative';
 
     const pre = document.createElement('pre');
@@ -59,31 +62,103 @@ export class CodeBlockView implements NodeView {
     this.contentDOM = code;
   }
 
-  private createToolElement() {
-    const toolWrapper = document.createElement('span');
+  private createToolElement({ top, left }: ToolPos) {
+    const toolWrapper = document.createElement('div');
 
     toolWrapper.className = 'tui-code-block-tool';
+    toolWrapper.style.top = `${top + 8}px`;
+    toolWrapper.style.right = `35px`;
+
+    const tool = document.createElement('span');
+
+    tool.className = 'tui-code-block-tool-in';
 
     const lang = document.createElement('span');
 
     lang.textContent = this.node.attrs.language || 'text';
+    lang.className = 'tui-code-block-tool-lang';
 
-    toolWrapper.appendChild(lang);
+    const icon = document.createElement('i');
 
-    const button = document.createElement('button');
+    tool.appendChild(lang);
+    tool.appendChild(icon);
+    toolWrapper.appendChild(tool);
 
-    toolWrapper.appendChild(button);
+    this.button = tool;
 
-    this.button = button;
+    this.button.addEventListener('mousedown', this.handleMousedown);
 
     return toolWrapper;
   }
 
+  private createLanguageEditor({ top, left }: ToolPos) {
+    const wrapper = document.createElement('span');
+
+    wrapper.className = 'tui-code-block language';
+    wrapper.style.top = `${top}px`;
+    wrapper.style.right = `35px`;
+
+    const input = document.createElement('input');
+
+    input.type = 'text';
+    input.value = this.node.attrs.language;
+
+    wrapper.appendChild(input);
+
+    this.view.dom.parentNode!.appendChild(wrapper);
+
+    this.input = input;
+    this.input.addEventListener('focus', this.handleInputFocus);
+    this.input.addEventListener('blur', this.handleInputBlur);
+    this.input.addEventListener('keydown', this.handleKeydown);
+  }
+
   private bindEvent() {
-    if (this.button) {
-      this.button.addEventListener('mousedown', this.handleMousedown);
+    if (this.dom) {
+      this.dom.addEventListener('mouseover', this.handleMouseover);
+      this.dom.addEventListener('mouseout', this.handleMouseout);
     }
   }
+
+  private handleMouseover = (ev: MouseEvent) => {
+    const target = ev.target as HTMLElement;
+    const code = closest(target, '.tui-code-block') as HTMLElement;
+
+    const close = closest(ev.relatedTarget as HTMLElement, '.tui-code-block-tool');
+
+    if (close) {
+      return;
+    }
+
+    if (code && !this.editing) {
+      // @TODO fix top offset
+      const { offsetLeft, offsetTop } = getTotalOffset(
+        code,
+        this.view.dom.parentElement as HTMLElement
+      );
+
+      const { width } = code.getBoundingClientRect();
+
+      const toolEl = this.createToolElement({ top: offsetTop, left: offsetLeft + width });
+
+      this.tool = toolEl;
+
+      this.view.dom.parentNode!.appendChild(toolEl);
+    }
+  };
+
+  private handleMouseout = (ev: MouseEvent) => {
+    const close =
+      ev.relatedTarget && closest(ev.relatedTarget as HTMLElement, '.tui-code-block-tool');
+
+    if (close) {
+      return;
+    }
+
+    if (ev.relatedTarget && this.tool && this.tool.parentElement) {
+      this.tool.parentElement.removeChild(this.tool);
+    }
+  };
 
   private handleMousedown = (ev: MouseEvent) => {
     ev.preventDefault();
@@ -109,9 +184,19 @@ export class CodeBlockView implements NodeView {
     }
   };
 
+  private handleInputFocus = () => {
+    this.editing = true;
+
+    if (this.tool) {
+      this.tool.style.display = 'none';
+    }
+  };
+
   private handleInputBlur = () => {
     if (this.input && isFunction(this.getPos)) {
       const { value } = this.input as HTMLInputElement;
+
+      this.editing = false;
 
       this.reset();
 
@@ -129,31 +214,16 @@ export class CodeBlockView implements NodeView {
     }
   };
 
-  private createLanguageEditor({ top, left }: ToolPos) {
-    const wrapper = document.createElement('span');
-
-    wrapper.className = 'tui-code-block language';
-    wrapper.style.top = `${top}px`;
-    wrapper.style.left = `${left - 100}px`;
-
-    const input = document.createElement('input');
-
-    input.type = 'text';
-    input.value = this.node.attrs.language;
-
-    wrapper.appendChild(input);
-
-    this.view.dom.parentNode!.appendChild(wrapper);
-
-    this.input = input;
-    this.input.addEventListener('blur', this.handleInputBlur);
-    this.input.addEventListener('keydown', this.handleKeydown);
-  }
-
   private reset() {
-    if (this.input && this.input.parentElement) {
-      this.input.parentElement.remove();
+    if (this.tool && this.tool.parentElement) {
+      this.tool.parentElement.removeChild(this.tool);
+    }
+
+    if (this.input && this.input.parentElement && this.input.parentElement.parentElement) {
+      this.input.removeEventListener('focus', this.handleInputFocus);
       this.input.removeEventListener('blur', this.handleInputBlur);
+      this.input.removeEventListener('keydown', this.handleKeydown);
+      this.input.parentElement.parentElement!.removeChild(this.input.parentElement);
     }
   }
 
@@ -174,8 +244,9 @@ export class CodeBlockView implements NodeView {
   destroy() {
     this.reset();
 
-    if (this.button) {
-      this.button.removeEventListener('mousedown', this.handleMousedown);
+    if (this.dom) {
+      this.dom.removeEventListener('mouseover', this.handleMouseover);
+      this.dom.removeEventListener('mouseout', this.handleMouseout);
     }
   }
 }

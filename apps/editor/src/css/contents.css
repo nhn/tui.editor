@@ -370,16 +370,24 @@ table.ProseMirror-selectednode {
 }
 
 .tui-code-block-tool {
+  text-align: right;
   position: absolute;
-  height: 25px;
+  width: 200px;
+  height: 30px;
   top: 10px;
   right: 10px;
-  padding: 3px 0 2px 10px;
-  border-radius: 2px;
-  background-color: #e5e9ea;
 }
 
-.tui-code-block-tool span {
+.tui-code-block-tool-in {
+  display: inline-block;
+  height: 25px;
+  padding: 4px 0 0px 10px;
+  border-radius: 2px;
+  background-color: #e5e9ea;
+  cursor: pointer;
+}
+
+.tui-code-block-tool-lang {
   vertical-align: middle;
   font-weight: bold;
   font-size: 13px;
@@ -387,7 +395,8 @@ table.ProseMirror-selectednode {
   user-select: none;
 }
 
-.tui-code-block-tool button {
+.tui-code-block-tool i {
+  display: inline-block;
   vertical-align: middle;
   width: 15px;
   height: 15px;
