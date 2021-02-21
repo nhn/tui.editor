@@ -316,22 +316,16 @@ export class Table extends NodeSchema {
 
       if (cell) {
         const para = findNodeBy($from, ({ type }) => type.name === 'paragraph');
+        const { depth: cellDepth } = cell;
 
-        if (para) {
-          const { depth: cellDepth } = cell;
-          const { depth: paraDepth } = para;
-
-          if (!canMoveBetweenCells(direction, [cellDepth, paraDepth], $from, doc)) {
-            return false;
-          }
-
+        if (para && canMoveBetweenCells(direction, [cellDepth, para.depth], $from, doc)) {
           const { anchor } = getResolvedSelection(selection);
           const cellIndex = getCellIndexInfo(anchor);
           const cellsInfo = getTableCellsInfo(anchor);
 
           let newTr;
 
-          if (canSelectTableNode(direction, cellsInfo, cellIndex, $from, paraDepth)) {
+          if (canSelectTableNode(direction, cellsInfo, cellIndex, $from, para.depth)) {
             // When the cursor position is at the end of the cell,
             // the table is selected when the left / right arrow keys are pressed.
             newTr = selectNode(tr, $from, cellDepth);
