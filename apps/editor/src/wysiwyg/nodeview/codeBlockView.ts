@@ -13,6 +13,9 @@ type InputPos = {
   width: number;
 };
 
+const WRAPPER_CLASS_NAME = 'tui-wysiwyg-code-block';
+const CODE_BLOCK_LANG_CLASS_NAME = 'tui-wysiwyg-code-block-language';
+
 export class CodeBlockView implements NodeView {
   dom: HTMLElement | null = null;
 
@@ -39,25 +42,44 @@ export class CodeBlockView implements NodeView {
   }
 
   private createElement() {
+    const { language } = this.node.attrs;
     const wrapper = document.createElement('div');
 
-    wrapper.setAttribute('data-lang', this.node.attrs.language || 'text');
-    wrapper.className = 'tui-wysiwyg-code-block';
+    wrapper.setAttribute('data-lang', language || 'text');
+    wrapper.className = WRAPPER_CLASS_NAME;
 
-    const pre = document.createElement('pre');
-    const code = document.createElement('code');
+    const pre = this.createCodeBlockElement();
+    const code = pre.firstChild as HTMLElement;
 
-    pre.appendChild(code);
     wrapper.appendChild(pre);
 
     this.dom = wrapper;
-    this.contentDOM = code;
+    this.contentDOM = code!;
+  }
+
+  private createCodeBlockElement() {
+    const toDOMNode = this.toDOMAdaptor.getToDOMNode('codeBlock');
+
+    if (toDOMNode) {
+      return toDOMNode(this.node) as HTMLElement;
+    }
+
+    const pre = document.createElement('pre');
+    const code = document.createElement('code');
+    const { language } = this.node.attrs;
+
+    if (language) {
+      code.setAttribute('data-language', language);
+    }
+    pre.appendChild(code);
+
+    return pre;
   }
 
   private createLanguageEditor({ top, width }: InputPos) {
     const wrapper = document.createElement('span');
 
-    wrapper.className = 'tui-wysiwyg-code-block-language';
+    wrapper.className = CODE_BLOCK_LANG_CLASS_NAME;
     wrapper.style.top = `${top}px`;
     wrapper.style.width = `${width}px`;
 

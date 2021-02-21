@@ -10,13 +10,11 @@ export class CodeBlock extends NodeSchema {
     return 'codeBlock';
   }
 
-  // @ts-ignore
   get defaultSchema() {
     return {
       content: 'text*',
       group: 'block',
       attrs: {
-        class: { default: null },
         language: { default: null },
         rawHTML: { default: null },
       },
@@ -26,25 +24,25 @@ export class CodeBlock extends NodeSchema {
       parseDOM: [
         {
           tag: 'pre',
-          preserveWhitespace: 'full',
+          preserveWhitespace: 'full' as const,
           getAttrs(dom: Node | string) {
-            const className = (dom as HTMLElement).getAttribute('class');
             const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
+            const child = (dom as HTMLElement).firstElementChild;
+            let language = null;
+
+            if (child && child.hasAttribute('data-language')) {
+              language = child.getAttribute('data-language');
+            }
 
             return {
-              class: className,
-              language: className?.split('lang-'),
+              language,
               ...(rawHTML && { rawHTML }),
             };
           },
         },
       ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
-        return [
-          attrs.rawHTML || 'pre',
-          { class: attrs.class || null },
-          ['code', { 'data-language': attrs.language || null }, 0],
-        ];
+        return [attrs.rawHTML || 'pre', ['code', { 'data-language': attrs.language || null }, 0]];
       },
     };
   }
