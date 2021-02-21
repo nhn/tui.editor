@@ -26,7 +26,8 @@ import {
   canMoveBetweenCells,
   canSelectTableNode,
   selectNode,
-  addParagraphBeforeAfterTable,
+  addParagraphBeforeTable,
+  addParagraphAfterTable,
   moveToCell,
 } from '@/wysiwyg/command/table';
 
@@ -337,7 +338,11 @@ export class Table extends NodeSchema {
           } else if (canBeOutOfTable(direction, cellsInfo, cellIndex[0])) {
             // When there is no content before or after the table,
             // an empty line('paragraph') is created by pressing the arrow keys.
-            newTr = addParagraphBeforeAfterTable(direction, tr, cellsInfo, schema);
+            if (direction === 'up') {
+              newTr = addParagraphBeforeTable(tr, cellsInfo, schema);
+            } else if (direction === 'down') {
+              newTr = addParagraphAfterTable(tr, cellsInfo, schema);
+            }
           } else {
             newTr = moveToCell(direction, tr, cellIndex, cellsInfo);
           }

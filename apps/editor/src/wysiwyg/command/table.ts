@@ -35,31 +35,33 @@ function isInFirstListItem(
   return listDepth === paraDepth && !listItemNode.nodeBefore;
 }
 
-function isInLastListItem(pos: ResolvedPos, doc: ProsemirrorNode, limitedDepth: number) {
+function isInLastListItem(pos: ResolvedPos) {
   let { depth } = pos;
-  let lastState = false;
   let parentNode;
 
-  while (depth && depth >= limitedDepth) {
-    parentNode = pos.parent;
+  while (depth) {
+    parentNode = pos.node(depth);
+
+    if (parentNode.type.name === 'tableBodyCell') {
+      break;
+    }
 
     if (parentNode.type.name === 'listItem') {
-      const { nodeAfter } = doc.resolve(pos.after(depth));
+      const grandParent = pos.node(depth - 1);
+      const lastListItem = grandParent.lastChild === parentNode;
       const hasChildren = parentNode.lastChild?.type.name !== 'paragraph';
-      const notLeafChild = !lastState && (nodeAfter || hasChildren);
-      const notLeafParent = lastState && nodeAfter;
 
-      if (notLeafChild || notLeafParent) {
+      if (!lastListItem) {
         return false;
       }
 
-      lastState = true;
+      return !hasChildren;
     }
 
     depth -= 1;
   }
 
-  return lastState;
+  return false;
 }
 
 function canMoveToBeforeCell(
@@ -87,13 +89,13 @@ function canMoveToBeforeCell(
 
 function canMoveToAfterCell(
   direction: CursorDirection,
-  [cellDepth, curDepth]: number[],
+  curDepth: number,
   from: ResolvedPos,
   doc: ProsemirrorNode,
   inList: boolean
 ) {
   if (direction === 'right' || direction === 'down') {
-    if (inList && !isInLastListItem(from, doc, cellDepth)) {
+    if (inList && !isInLastListItem(from)) {
       return false;
     }
 
@@ -125,7 +127,7 @@ export function canMoveBetweenCells(
     doc,
     inList
   );
-  const moveAfterCell = canMoveToAfterCell(direction, [cellDepth, curDepth], from, doc, inList);
+  const moveAfterCell = canMoveToAfterCell(direction, curDepth, from, doc, inList);
 
   return moveBeforeCell && moveAfterCell;
 }
@@ -147,7 +149,7 @@ function addParagraph(tr: Transaction, { pos }: ResolvedPos, schema: Schema) {
   return tr.setSelection(createTextSelection(tr, pos + 1));
 }
 
-function addParagraphBeforeTable(tr: Transaction, cellsInfo: CellInfo[][], schema: Schema) {
+export function addParagraphBeforeTable(tr: Transaction, cellsInfo: CellInfo[][], schema: Schema) {
   // 3 is position value of <table><thead><tr>
   const tableStartPos = tr.doc.resolve(cellsInfo[0][0].offset - 3);
 
@@ -158,7 +160,7 @@ function addParagraphBeforeTable(tr: Transaction, cellsInfo: CellInfo[][], schem
   return tr.setSelection(Selection.near(tableStartPos, -1));
 }
 
-function addParagraphAfterTable(tr: Transaction, cellsInfo: CellInfo[][], schema: Schema) {
+export function addParagraphAfterTable(tr: Transaction, cellsInfo: CellInfo[][], schema: Schema) {
   const rowCount = cellsInfo.length;
   const columnCount = cellsInfo[0].length;
   const lastCell = cellsInfo[rowCount - 1][columnCount - 1];
@@ -171,23 +173,6 @@ function addParagraphAfterTable(tr: Transaction, cellsInfo: CellInfo[][], schema
   }
 
   return tr.setSelection(Selection.near(tableEndPos, 1));
-}
-
-export function addParagraphBeforeAfterTable(
-  direction: CursorDirection,
-  tr: Transaction,
-  cellsInfo: CellInfo[][],
-  schema: Schema
-) {
-  let newTr;
-
-  if (direction === 'up') {
-    newTr = addParagraphBeforeTable(tr, cellsInfo, schema);
-  } else if (direction === 'down') {
-    newTr = addParagraphAfterTable(tr, cellsInfo, schema);
-  }
-
-  return newTr;
 }
 
 export function getRightCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: CellInfo[][]) {
@@ -282,20 +267,14 @@ export function canSelectTableNode(
   from: ResolvedPos,
   paraDepth: number
 ) {
-  const rowCount = cellsInfo.length;
-  const columnCount = cellsInfo[0].length;
   const curOffset = from.pos;
 
-  let endCell = false;
-  let endCursor = false;
+  const endRowIndex = direction === 'left' ? 0 : cellsInfo.length - 1;
+  const endColIndex = direction === 'left' ? 0 : cellsInfo[0].length - 1;
+  const endCursorPos = direction === 'left' ? from.start(paraDepth) : from.end(paraDepth);
 
-  if (direction === 'left') {
-    endCell = rowIndex === 0 && columnIndex === 0;
-    endCursor = from.start(paraDepth) === curOffset;
-  } else if (direction === 'right') {
-    endCell = rowIndex === rowCount - 1 && columnIndex === columnCount - 1;
-    endCursor = from.end(paraDepth) === curOffset;
-  }
+  const endCell = rowIndex === endRowIndex && columnIndex === endColIndex;
+  const endCursor = curOffset === endCursorPos;
 
   return endCell && endCursor;
 }

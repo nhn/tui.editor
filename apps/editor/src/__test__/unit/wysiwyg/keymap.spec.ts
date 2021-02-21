@@ -9,6 +9,7 @@ import CellSelection from '@/wysiwyg/plugins/tableSelection/cellSelection';
 
 describe('keymap', () => {
   let wwe: WysiwygEditor, em: EventEmitter;
+  let html;
 
   function setContent(content: string) {
     const wrapper = document.createElement('div');
@@ -29,6 +30,17 @@ describe('keymap', () => {
     keymapFn[methodName](...args)(view.state, view.dispatch);
   }
 
+  function selectCells(from: number, to: number) {
+    const { state, dispatch } = wwe.view;
+    const { doc, tr } = state;
+
+    const startCellPos = doc.resolve(from);
+    const endCellPos = doc.resolve(to);
+    const selection = new CellSelection(startCellPos, endCellPos);
+
+    dispatch!(tr.setSelection(selection));
+  }
+
   beforeEach(() => {
     const adaptor = new WwToDOMAdaptor({}, {});
 
@@ -41,19 +53,6 @@ describe('keymap', () => {
   });
 
   describe('table', () => {
-    let html;
-
-    function selectCells(from: number, to: number) {
-      const { state, dispatch } = wwe.view;
-      const { doc, tr } = state;
-
-      const startCellPos = doc.resolve(from);
-      const endCellPos = doc.resolve(to);
-      const selection = new CellSelection(startCellPos, endCellPos);
-
-      dispatch!(tr.setSelection(selection));
-    }
-
     beforeEach(() => {
       html = oneLineTrim`
         <table>
@@ -299,6 +298,88 @@ describe('keymap', () => {
       `;
 
       expect(wwe.getHTML()).toBe(expected);
+    });
+  });
+
+  describe('table with list and multiple lines', () => {
+    beforeEach(() => {
+      html = oneLineTrim`
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <p>foo</p>
+                <p>bar</p>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <ul>
+                  <li><p>baz</p></li>
+                  <li><p>qux</p></li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <ul>
+                  <li>
+                    <p>quux</p>
+                    <ul>
+                      <li><p>quuz</p></li>
+                    </ul>
+                  </li>
+                </ul>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <p>corge</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      `;
+
+      setContent(html);
+    });
+
+    describe('moveInCell keymap with up', () => {
+      it('should move from first paragraph to end list item of up cell', () => {
+        wwe.setSelection(65, 65); // in 'corge' cell
+
+        forceKeymapFn('table', 'moveInCell', ['up']);
+
+        expect(wwe.getRange()).toEqual([55, 55]); // in 'quux'
+      });
+
+      it('should move from first list item to end list item of up cell', () => {
+        wwe.setSelection(44, 44); // in 'quux' cell
+
+        forceKeymapFn('table', 'moveInCell', ['up']);
+
+        expect(wwe.getRange()).toEqual([33, 33]); // in 'qux'
+      });
+    });
+
+    describe('moveInCell keymap with down', () => {
+      it('should move from last paragraph to start list item of down cell', () => {
+        wwe.setSelection(10, 10); // in 'bar'
+
+        forceKeymapFn('table', 'moveInCell', ['down']);
+
+        expect(wwe.getRange()).toEqual([23, 23]); // in 'baz'
+      });
+
+      it('should move from last list item to start list item of down cell', () => {
+        wwe.setSelection(30, 30); // in 'qux'
+
+        forceKeymapFn('table', 'moveInCell', ['down']);
+
+        expect(wwe.getRange()).toEqual([43, 43]); // in 'quux'
+      });
     });
   });
 });
