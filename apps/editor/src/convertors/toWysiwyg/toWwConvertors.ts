@@ -3,7 +3,12 @@ import toArray from 'tui-code-snippet/collection/toArray';
 import { includes } from '@/utils/common';
 import { isElemNode } from '@/utils/dom';
 
-import { reHTMLTag, htmlToWwConvertors, getTextWithoutTrailingNewline } from './htmlToWwConvertors';
+import {
+  reHTMLTag,
+  htmlToWwConvertors,
+  getTextWithoutTrailingNewline,
+  isInlineNode,
+} from './htmlToWwConvertors';
 
 import { ToWwConvertorMap } from '@t/convertor';
 import {
@@ -21,10 +26,6 @@ import { createWidgetContent, getWidgetContent } from '@/widget/rules';
 
 function isBRTag(node: MdNode) {
   return node.type === 'htmlInline' && /<br ?\/?>/.test(node.literal!);
-}
-
-function isInlineNode({ type }: MdNode) {
-  return includes(['text', 'strong', 'emph', 'strike', 'image', 'link', 'code'], type);
 }
 
 function addRawHTMLAttributeToDOM(parent: Node) {

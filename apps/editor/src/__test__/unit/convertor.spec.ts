@@ -451,12 +451,16 @@ describe('Convertor', () => {
         | ----- | ----- |
         | tbody<br>tbody | tbody |
         | tbody | tbody<br>tbody<br>tbody |
+        | tbody | **tbody**<br>_tbody_<br>~~tbody~~<br>\`tbody\` |
+        | tbody | ![img](imgUrl)<br>[link](linkUrl) |
       `;
       const expected = source`
         | thead<br>thead | thead |
         | ---------- | ----- |
         | tbody<br>tbody | tbody |
         | tbody | tbody<br>tbody<br>tbody |
+        | tbody | **tbody**<br>*tbody*<br>~~tbody~~<br>\`tbody\` |
+        | tbody | ![img](imgUrl)<br>[link](linkUrl) |
       `;
 
       assertConverting(markdown, `${expected}\n`);
