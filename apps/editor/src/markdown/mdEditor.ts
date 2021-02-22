@@ -225,21 +225,58 @@ export default class MdEditor extends EditorBase {
     const [from, to] = getMdToEditorPos(tr.doc, this.toastMark, start, end);
 
     this.view.dispatch(tr.setSelection(createTextSelection(tr, from, to)));
-    this.focus();
   }
 
-  replaceSelection(text: string) {
-    const { tr, schema } = this.view.state;
-    const lineTexts = text.split('\n');
+  replaceSelection(content: string, start?: MdPos, end?: MdPos) {
+    let newTr;
+    const { tr, schema, doc } = this.view.state;
+    const lineTexts = content.split('\n');
     const nodes = lineTexts.map((lineText) =>
       schema.nodes.paragraph.create(null, createNodesWithWidget(lineText, schema))
     );
+    const slice = new Slice(Fragment.from(nodes), 1, 1);
 
     this.focus();
-    this.view.dispatch(tr.replaceSelection(new Slice(Fragment.from(nodes), 1, 1)).scrollIntoView());
+
+    if (start && end) {
+      const [from, to] = getMdToEditorPos(doc, this.toastMark, start, end);
+
+      newTr = tr.replaceRange(from, to, slice);
+    } else {
+      newTr = tr.replaceSelection(slice);
+    }
+    this.view.dispatch(newTr.scrollIntoView());
   }
 
-  getRange() {
+  deleteSelection(start?: MdPos, end?: MdPos) {
+    let newTr;
+    const { tr, doc } = this.view.state;
+
+    if (start && end) {
+      const [from, to] = getMdToEditorPos(doc, this.toastMark, start, end);
+
+      newTr = tr.deleteRange(from, to);
+    } else {
+      newTr = tr.deleteSelection();
+    }
+    this.view.dispatch(newTr.scrollIntoView());
+  }
+
+  getSelectedContent(start?: MdPos, end?: MdPos) {
+    const { doc, selection } = this.view.state;
+    let { from, to } = selection;
+
+    if (start && end) {
+      const pos = getMdToEditorPos(doc, this.toastMark, start, end);
+
+      from = pos[0];
+      to = pos[1];
+    }
+
+    return doc.textBetween(from, to, '\n');
+  }
+
+  getSelection() {
     const { from, to } = this.view.state.selection;
 
     return getEditorToMdPos(this.view.state.tr.doc, from, to);
@@ -266,9 +303,9 @@ export default class MdEditor extends EditorBase {
     this.view.dispatch(tr.setMeta('widget', { pos, node, style }));
   }
 
-  replaceWithWidget(from: MdPos, to: MdPos, content: string) {
+  replaceWithWidget(start: MdPos, end: MdPos, content: string) {
     const { tr, schema, doc } = this.view.state;
-    const pos = getMdToEditorPos(doc, this.toastMark, from, to);
+    const pos = getMdToEditorPos(doc, this.toastMark, start, end);
     const nodes = createNodesWithWidget(content, schema);
 
     this.view.dispatch(tr.replaceWith(pos[0], pos[1], nodes));

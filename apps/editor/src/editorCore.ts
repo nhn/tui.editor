@@ -11,9 +11,16 @@ import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import isString from 'tui-code-snippet/type/isString';
 
 import { Emitter, Handler } from '@t/event';
-import { EditorOptions, EditorType, PreviewStyle, ViewerOptions, WidgetStyle } from '@t/editor';
+import {
+  Base,
+  EditorOptions,
+  EditorPos,
+  EditorType,
+  PreviewStyle,
+  ViewerOptions,
+  WidgetStyle,
+} from '@t/editor';
 import { EditorCommandFn } from '@t/spec';
-import { MdPos } from '@t/markdown';
 
 import { sendHostName, sanitizeLinkAttribute } from './utils/common';
 
@@ -434,32 +441,68 @@ class ToastUIEditor {
 
   /**
    * Insert text
-   * @param {string} text - text string to insert
+   * @param {string} content - text content
    */
-  insertText(text: string) {
-    this.getCurrentModeEditor().replaceSelection(text);
+  insertText(content: string) {
+    this.getCurrentModeEditor().replaceSelection(content);
+  }
+
+  /**
+   * Set selection range
+   * @param {number|Array.<number>} [start] - start position
+   * @param {number|Array.<number>} [end] - end position
+   */
+  setSelection(start: EditorPos, end: EditorPos) {
+    this.getCurrentModeEditor().setSelection(start, end);
+  }
+
+  /**
+   * Replace selection range with given text content
+   * @param {string} content - widget text content
+   * @param {number|Array.<number>} [start] - start position
+   * @param {number|Array.<number>} [end] - end position
+   */
+  replaceSelection(content: string, start?: EditorPos, end?: EditorPos) {
+    this.getCurrentModeEditor().replaceSelection(content, start, end);
+  }
+
+  /**
+   * Delete the content of selection range
+   * @param {number|Array.<number>} [start] - start position
+   * @param {number|Array.<number>} [end] - end position
+   */
+  deleteSelection(start: EditorPos, end: EditorPos) {
+    this.getCurrentModeEditor().deleteSelection(start, end);
+  }
+
+  /**
+   * Get selected text content
+   * @param {number|Array.<number>} [start] - start position
+   * @param {number|Array.<number>} [end] - end position
+   * @returns {string} - selected text content
+   */
+  getSelectedContent(start?: EditorPos, end?: EditorPos) {
+    return this.getCurrentModeEditor().getSelectedContent(start, end);
   }
 
   /**
    * Add widget to selection
-   * @param {Node} node widget node
-   * @param {string} style Adding style "top" or "bottom"
-   * @param {number|Array.<number>} [pos] position
+   * @param {Node} node - widget node
+   * @param {string} style - Adding style "top" or "bottom"
+   * @param {number|Array.<number>} [pos] - position
    */
-  addWidget(node: Node, style: WidgetStyle, pos?: MdPos | number) {
-    // @ts-ignore
+  addWidget(node: Node, style: WidgetStyle, pos?: EditorPos) {
     this.getCurrentModeEditor().addWidget(node, style, pos);
   }
 
   /**
-   * replace node with widget to range
-   * @param {number|Array.<number>} from start position
-   * @param {number|Array.<number>} to end position
-   * @param {string} content widget text content
+   * Replace node with widget to range
+   * @param {number|Array.<number>} start - start position
+   * @param {number|Array.<number>} end - end position
+   * @param {string} content - widget text content
    */
-  replaceWithWidget(from: MdPos | number, to: MdPos | number, content: string) {
-    // @ts-ignore
-    this.getCurrentModeEditor().replaceWithWidget(from, to, content);
+  replaceWithWidget(start: EditorPos, end: EditorPos, content: string) {
+    this.getCurrentModeEditor().replaceWithWidget(start, end, content);
   }
 
   /**
@@ -524,7 +567,7 @@ class ToastUIEditor {
    * @returns {Object} MarkdownEditor or WysiwygEditor
    */
   getCurrentModeEditor() {
-    let editor;
+    let editor: Base;
 
     if (this.isMarkdownMode()) {
       editor = this.mdEditor;
@@ -598,7 +641,7 @@ class ToastUIEditor {
   }
 
   /**
-   * Remove TUIEditor from document
+   * Destroy TUIEditor from document
    */
   destroy() {
     this.wwEditor.destroy();
@@ -643,48 +686,26 @@ class ToastUIEditor {
    * Reset TUIEditor
    */
   reset() {
-    // @ts-ignore
     this.wwEditor.setModel([]);
     this.mdEditor.setMarkdown('');
   }
 
   /**
-   * Get current range
-   * @returns {Array.<string[]>|Array.<string>} Returns the range of the selection depending on the editor mode
+   * Get current selection range
+   * @returns {Array.<number[]>|Array.<number>} Returns the range of the selection depending on the editor mode
    * @example
    * // Markdown mode
-   * const mdRange = editor.getRange();
+   * const mdSelection = editor.getSelection();
    *
-   * console.log(mdRange); // [[startLineOffset, startCurorOffset], [endLineOffset, endCurorOffset]]
+   * console.log(mdSelection); // [[startLineOffset, startCurorOffset], [endLineOffset, endCurorOffset]]
    *
    * // WYSIWYG mode
-   * const wwRange = editor.getRange();
+   * const wwSelection = editor.getSelection();
    *
-   * console.log(mdRange); // [startCursorOffset, endCursorOffset]]
+   * console.log(wwSelection); // [startCursorOffset, endCursorOffset]]
    */
-  getRange() {
-    return this.getCurrentModeEditor().getRange();
-  }
-
-  /**
-   * Get text object of current range
-   * @param {{start, end}|Range} range Range object of each editor
-   * @returns {MdTextObject|WwTextObject} TextObject class
-   */
-  // @TODO: change the way to provide API
-  // eslint-disable-next-line
-  getTextObject() {}
-
-  /**
-   * get selected text
-   * @returns {string} - selected text
-   */
-  // @TODO: change the way to provide API
-  // eslint-disable-next-line
-  getSelectedText() {
-    // const range = this.getRange();
-    // const textObject = this.getTextObject(range);
-    // return textObject.getTextContent() || '';
+  getSelection() {
+    return this.getCurrentModeEditor().getSelection();
   }
 
   /**
@@ -710,7 +731,7 @@ class ToastUIEditor {
   }
 
   /**
-   * get markdown editor, preview, wysiwyg editor DOM elements
+   * Get markdown editor, preview, wysiwyg editor DOM elements
    */
   getEditorElements() {
     return {
