@@ -1,10 +1,13 @@
 import { EditorView, NodeView } from 'prosemirror-view';
 import { Node as ProsemirrorNode } from 'prosemirror-model';
+
 import isFunction from 'tui-code-snippet/type/isFunction';
+import css from 'tui-code-snippet/domUtil/css';
 
 import { getTotalOffset, isPositionInBox, removeNode } from '@/utils/dom';
 
 import { ToDOMAdaptor } from '@t/convertor';
+import { Emitter } from '@t/event';
 
 type GetPos = (() => number) | boolean;
 
@@ -29,13 +32,22 @@ export class CodeBlockView implements NodeView {
 
   private toDOMAdaptor: ToDOMAdaptor;
 
+  private eventEmitter: Emitter;
+
   private input: HTMLElement | null = null;
 
-  constructor(node: ProsemirrorNode, view: EditorView, getPos: GetPos, toDOMAdaptor: ToDOMAdaptor) {
+  constructor(
+    node: ProsemirrorNode,
+    view: EditorView,
+    getPos: GetPos,
+    toDOMAdaptor: ToDOMAdaptor,
+    eventEmitter: Emitter
+  ) {
     this.node = node;
     this.view = view;
     this.getPos = getPos;
     this.toDOMAdaptor = toDOMAdaptor;
+    this.eventEmitter = eventEmitter;
 
     this.createElement();
     this.bindEvent();
@@ -45,7 +57,7 @@ export class CodeBlockView implements NodeView {
     const { language } = this.node.attrs;
     const wrapper = document.createElement('div');
 
-    wrapper.setAttribute('data-style-language', language || 'text');
+    wrapper.setAttribute('data-language', language || 'text');
     wrapper.className = WRAPPER_CLASS_NAME;
 
     const pre = this.createCodeBlockElement();
@@ -54,14 +66,14 @@ export class CodeBlockView implements NodeView {
     wrapper.appendChild(pre);
 
     this.dom = wrapper;
-    this.contentDOM = code!;
+    this.contentDOM = code;
   }
 
   private createCodeBlockElement() {
     const toDOMNode = this.toDOMAdaptor.getToDOMNode('codeBlock');
 
     if (toDOMNode) {
-      return toDOMNode(this.node) as HTMLElement;
+      return toDOMNode(this.node);
     }
 
     const pre = document.createElement('pre');
@@ -80,8 +92,11 @@ export class CodeBlockView implements NodeView {
     const wrapper = document.createElement('span');
 
     wrapper.className = CODE_BLOCK_LANG_CLASS_NAME;
-    wrapper.style.top = `${top}px`;
-    wrapper.style.width = `${width}px`;
+
+    css(wrapper, {
+      top: `${top}px`,
+      width: `${width}px`,
+    });
 
     const input = document.createElement('input');
 
@@ -92,8 +107,14 @@ export class CodeBlockView implements NodeView {
     this.view.dom.parentNode!.appendChild(wrapper);
 
     this.input = input;
-    this.input.addEventListener('blur', this.handleInputBlur);
+    this.input.addEventListener('blur', () => {
+      this.changeLanguage();
+    });
     this.input.addEventListener('keydown', this.handleKeydown);
+
+    setTimeout(() => {
+      this.input!.focus();
+    });
   }
 
   private bindEvent() {
@@ -107,24 +128,25 @@ export class CodeBlockView implements NodeView {
     const style = getComputedStyle(target, ':after');
     const { offsetX, offsetY } = ev;
 
-    if (isPositionInBox(style, offsetX, offsetY) && this.dom) {
-      const { offsetTop } = getTotalOffset(this.dom, this.view.dom.parentElement!);
+    if (isPositionInBox(style, offsetX, offsetY)) {
+      const { offsetTop } = getTotalOffset(this.dom!, this.view.dom.parentElement!);
       const width =
         parseInt(style.width, 10) +
         parseInt(style.paddingLeft, 10) +
         parseInt(style.paddingRight, 10);
 
       this.createLanguageEditor({ top: offsetTop + 10, width });
-
-      setTimeout(() => {
-        if (this.input) {
-          this.input.focus();
-        }
-      }, 0);
     }
   };
 
-  private handleInputBlur = () => {
+  private handleKeydown = (ev: KeyboardEvent) => {
+    if (ev.key === 'Enter' && this.input) {
+      ev.preventDefault();
+      this.input.blur();
+    }
+  };
+
+  private changeLanguage() {
     if (this.input && isFunction(this.getPos)) {
       const { value } = this.input as HTMLInputElement;
 
@@ -136,20 +158,10 @@ export class CodeBlockView implements NodeView {
       tr.setNodeMarkup(pos, null, { language: value });
       this.view.dispatch(tr);
     }
-  };
-
-  private handleKeydown = (ev: KeyboardEvent) => {
-    if (ev.key === 'Enter' && this.input) {
-      ev.preventDefault();
-      this.input.blur();
-    }
-  };
+  }
 
   private reset() {
-    if (this.input && this.input.parentElement) {
-      this.input.removeEventListener('blur', this.handleInputBlur);
-      this.input.removeEventListener('keydown', this.handleKeydown);
-
+    if (this.input?.parentElement) {
       removeNode(this.input.parentElement);
     }
   }

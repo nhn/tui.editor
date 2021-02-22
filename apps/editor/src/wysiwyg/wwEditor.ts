@@ -125,7 +125,7 @@ export default class WysiwygEditor extends EditorBase {
           return new ImageView(node, view, getPos, toDOMAdaptor, eventEmitter);
         },
         codeBlock(node, view, getPos) {
-          return new CodeBlockView(node, view, getPos, toDOMAdaptor);
+          return new CodeBlockView(node, view, getPos, toDOMAdaptor, eventEmitter);
         },
         widget: widgetNodeView,
       },

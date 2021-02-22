@@ -28,21 +28,16 @@ export class CodeBlock extends NodeSchema {
           getAttrs(dom: Node | string) {
             const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
             const child = (dom as HTMLElement).firstElementChild;
-            let language = null;
-
-            if (child && child.hasAttribute('data-language')) {
-              language = child.getAttribute('data-language');
-            }
 
             return {
-              language,
+              language: child?.getAttribute('data-language') || null,
               ...(rawHTML && { rawHTML }),
             };
           },
         },
       ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
-        return [attrs.rawHTML || 'pre', ['code', { 'data-language': attrs.language || null }, 0]];
+        return [attrs.rawHTML || 'pre', ['code', { 'data-language': attrs.language }, 0]];
       },
     };
   }

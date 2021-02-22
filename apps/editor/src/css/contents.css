@@ -392,7 +392,7 @@ table.ProseMirror-selectednode {
 }
 
 .tui-editor-contents .tui-editor-ww-code-block:after {
-  content: attr(data-lang);
+  content: attr(data-language);
   position: absolute;
   display: inline-block;
   top: 10px;
