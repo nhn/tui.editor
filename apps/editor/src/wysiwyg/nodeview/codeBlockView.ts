@@ -45,7 +45,7 @@ export class CodeBlockView implements NodeView {
     const { language } = this.node.attrs;
     const wrapper = document.createElement('div');
 
-    wrapper.setAttribute('data-lang', language || 'text');
+    wrapper.setAttribute('data-style-language', language || 'text');
     wrapper.className = WRAPPER_CLASS_NAME;
 
     const pre = this.createCodeBlockElement();
