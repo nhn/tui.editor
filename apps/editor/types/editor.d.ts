@@ -1,4 +1,4 @@
-import { CustomHTMLRenderer, CustomHTMLRendererMap, CustomParserMap } from './markdown';
+import { CustomHTMLRenderer, CustomHTMLRendererMap, CustomParserMap, MdPos } from './markdown';
 import { Handler } from './event';
 import { EditorCommandFn } from './spec';
 import { ToMdConvertorMap } from './convertor';
@@ -137,7 +137,7 @@ export class EditorCore {
 
   changePreviewStyle(style: PreviewStyle): void;
 
-  exec(type: EditorType, name: string, payload: Record<string, any>): void;
+  exec(type: EditorType, name: string, payload?: Record<string, any>): void;
 
   addCommand(type: EditorType, name: string, command: EditorCommandFn): void;
 
@@ -208,6 +208,10 @@ export class EditorCore {
   setCodeBlockLanguages(languages: string[]): void;
 
   getEditorElements(): Slots;
+
+  addWidget(node: Node, style: WidgetStyle, pos?: MdPos | number): void;
+
+  replaceWithWidget(from: MdPos | number, to: MdPos | number, content: string): void;
 }
 
 export class Editor extends EditorCore {
