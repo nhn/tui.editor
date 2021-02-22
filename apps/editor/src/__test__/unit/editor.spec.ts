@@ -89,19 +89,6 @@ describe('editor', () => {
       expect(editor.getCurrentPreviewStyle()).toBe('vertical');
     });
 
-    it('getRange()', () => {
-      // markdown range
-      expect(editor.getRange()).toEqual([
-        [1, 1],
-        [1, 1],
-      ]);
-
-      editor.changeMode('wysiwyg');
-
-      // wysiwyg range
-      expect(editor.getRange()).toEqual([1, 1]);
-    });
-
     it('setMarkdown()', () => {
       editor.setMarkdown('# heading');
 
@@ -169,13 +156,6 @@ describe('editor', () => {
         expect(wwEditor).toHaveStyle({ minHeight: '300px' });
       });
     });
-
-    // it('insertText()', () => {
-    //   editor.insertText('test');
-
-    //   expect(mdEditor).not.toContainHTML('<div>test</div>');
-    //   expect(getPreviewHTML()).toBe('test');
-    // });
 
     it('addWidget()', () => {
       const node = document.createElement('div');
@@ -247,6 +227,106 @@ describe('editor', () => {
 
       // @ts-ignore
       expect(editor.commandManager.addCommand).toHaveBeenCalledWith('markdown', 'custom', handler);
+    });
+
+    describe('insertText()', () => {
+      it('in markdown', () => {
+        editor.insertText('test');
+
+        expect(mdEditor).toContainHTML('<div>test</div>');
+        expect(getPreviewHTML()).toBe('<p>test</p>');
+      });
+
+      it('in wysiwyg', () => {
+        editor.changeMode('wysiwyg');
+        editor.insertText('test');
+
+        expect(wwEditor).toContainHTML('<p>test</p>');
+      });
+    });
+
+    describe('setSelection(), getSelection()', () => {
+      it('in markdown', () => {
+        expect(editor.getSelection()).toEqual([
+          [1, 1],
+          [1, 1],
+        ]);
+
+        editor.setMarkdown('line1\nline2');
+        editor.setSelection([1, 2], [2, 4]);
+
+        expect(editor.getSelection()).toEqual([
+          [1, 2],
+          [2, 4],
+        ]);
+      });
+
+      it('in wysiwyg', () => {
+        editor.changeMode('wysiwyg');
+
+        expect(editor.getSelection()).toEqual([1, 1]);
+
+        editor.setMarkdown('line1\nline2');
+        editor.setSelection(2, 8);
+
+        expect(editor.getSelection()).toEqual([2, 8]);
+      });
+    });
+
+    describe('getSelectedContent()', () => {
+      beforeEach(() => {
+        editor.setMarkdown('line1\nline2');
+        editor.setSelection([1, 2], [2, 4]);
+      });
+
+      it('in markdown', () => {
+        expect(editor.getSelectedContent()).toEqual('ine1\nlin');
+        expect(editor.getSelectedContent([1, 2], [2, 6])).toEqual('ine1\nline2');
+      });
+
+      it('in wysiwyg', () => {
+        editor.changeMode('wysiwyg');
+        editor.setSelection(2, 11);
+
+        expect(editor.getSelectedContent()).toEqual('ine1\nlin');
+        expect(editor.getSelectedContent(2, 13)).toEqual('ine1\nline2');
+      });
+    });
+
+    describe.only('replaceSelection()', () => {
+      beforeEach(() => {
+        editor.setMarkdown('line1\nline2');
+        editor.setSelection([1, 2], [2, 4]);
+      });
+
+      it('should replace current selection in markdown', () => {
+        editor.replaceSelection('Replaced');
+
+        expect(mdEditor).toContainHTML('<div>lReplacede2</div>');
+        expect(getPreviewHTML()).toBe('<p>lReplacede2</p>');
+      });
+
+      it('should replace current selection in wysiwyg', () => {
+        editor.changeMode('wysiwyg');
+        editor.setSelection(2, 11);
+        editor.replaceSelection('Replaced');
+
+        expect(wwEditor).toContainHTML('<p>lReplacede2</p>');
+      });
+
+      it('should replace given selection in markdown', () => {
+        editor.replaceSelection('Replaced', [1, 1], [2, 1]);
+
+        expect(mdEditor).toContainHTML('<div>Replacedline2</div>');
+        expect(getPreviewHTML()).toBe('<p>Replacedline2</p>');
+      });
+
+      it('should replace given selection in wysiwyg', () => {
+        editor.changeMode('wysiwyg');
+        editor.replaceSelection('Replaced', 1, 7);
+
+        expect(wwEditor).toContainHTML('<p>Replaced</p><p>line2</p>');
+      });
     });
   });
 
