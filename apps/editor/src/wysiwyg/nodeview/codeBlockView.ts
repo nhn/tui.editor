@@ -4,7 +4,7 @@ import { Node as ProsemirrorNode } from 'prosemirror-model';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import css from 'tui-code-snippet/domUtil/css';
 
-import { getTotalOffset, isPositionInBox, removeNode } from '@/utils/dom';
+import { isPositionInBox, removeNode } from '@/utils/dom';
 
 import { ToDOMAdaptor } from '@t/convertor';
 import { Emitter } from '@t/event';
@@ -13,6 +13,7 @@ type GetPos = (() => number) | boolean;
 
 type InputPos = {
   top: number;
+  right: number;
   width: number;
 };
 
@@ -88,15 +89,10 @@ export class CodeBlockView implements NodeView {
     return pre;
   }
 
-  private createLanguageEditor({ top, width }: InputPos) {
+  private createLanguageEditor({ top, right, width }: InputPos) {
     const wrapper = document.createElement('span');
 
     wrapper.className = CODE_BLOCK_LANG_CLASS_NAME;
-
-    css(wrapper, {
-      top: `${top}px`,
-      width: `${width}px`,
-    });
 
     const input = document.createElement('input');
 
@@ -104,17 +100,19 @@ export class CodeBlockView implements NodeView {
     input.value = this.node.attrs.language;
 
     wrapper.appendChild(input);
-    this.view.dom.parentNode!.appendChild(wrapper);
+    document.body.appendChild(wrapper);
+
+    css(wrapper, {
+      top: `${top + 10}px`,
+      left: `${right - Math.max(input.clientWidth, width) - 12}px`,
+      width: `${width}px`,
+    });
 
     this.input = input;
-    this.input.addEventListener('blur', () => {
-      this.changeLanguage();
-    });
+    this.input.addEventListener('blur', () => this.changeLanguage());
     this.input.addEventListener('keydown', this.handleKeydown);
 
-    setTimeout(() => {
-      this.input!.focus();
-    });
+    setTimeout(() => this.input!.focus());
   }
 
   private bindEvent() {
@@ -128,14 +126,14 @@ export class CodeBlockView implements NodeView {
     const style = getComputedStyle(target, ':after');
     const { offsetX, offsetY } = ev;
 
-    if (isPositionInBox(style, offsetX, offsetY)) {
-      const { offsetTop } = getTotalOffset(this.dom!, this.view.dom.parentElement!);
+    if (isPositionInBox(style, offsetX, offsetY) && isFunction(this.getPos)) {
+      const { top, right } = this.view.coordsAtPos(this.getPos());
       const width =
         parseInt(style.width, 10) +
         parseInt(style.paddingLeft, 10) +
         parseInt(style.paddingRight, 10);
 
-      this.createLanguageEditor({ top: offsetTop + 10, width });
+      this.createLanguageEditor({ top, right, width });
     }
   };
 

@@ -148,7 +148,6 @@
 .te-ww-container > .te-editor {
   overflow: auto;
   height: inherit;
-  position: relative;
 }
 
 .te-ww-container .tui-editor-contents:focus {
