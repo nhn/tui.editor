@@ -8,19 +8,11 @@ describe('widgetNode', () => {
     wwEditor: HTMLElement,
     editor: Editor;
 
-  function getEditorHTML() {
-    return mdEditor.querySelector('.ProseMirror')!.innerHTML.trim();
-  }
-
   function getPreviewHTML() {
     return mdPreview
       .querySelector('.tui-editor-contents')!
       .innerHTML.replace(/\sdata-nodeid="\d+"/g, '')
       .trim();
-  }
-
-  function getWwEditorHTML() {
-    return wwEditor.querySelector('.ProseMirror')!.innerHTML.trim();
   }
 
   beforeEach(() => {
@@ -93,7 +85,7 @@ describe('widgetNode', () => {
         </p>
       `;
 
-      expect(getEditorHTML()).toBe(expectedEditor);
+      expect(mdEditor).toContainHTML(expectedEditor);
       expect(getPreviewHTML()).toBe(expectedPreview);
     });
 
@@ -126,7 +118,7 @@ describe('widgetNode', () => {
         </p>
       `;
 
-      expect(getEditorHTML()).toBe(expectedEditor);
+      expect(mdEditor).toContainHTML(expectedEditor);
       expect(getPreviewHTML()).toBe(expectedPreview);
     });
 
@@ -159,7 +151,7 @@ describe('widgetNode', () => {
         </p>
       `;
 
-      expect(getEditorHTML()).toBe(expectedEditor);
+      expect(mdEditor).toContainHTML(expectedEditor);
       expect(getPreviewHTML()).toBe(expectedPreview);
     });
 
@@ -182,7 +174,7 @@ describe('widgetNode', () => {
         </p>
       `;
 
-      expect(getEditorHTML()).toBe(expectedEditor);
+      expect(mdEditor).toContainHTML(expectedEditor);
       expect(getPreviewHTML()).toBe(expectedPreview);
     });
 
@@ -221,7 +213,7 @@ describe('widgetNode', () => {
         </p>
       `;
 
-      expect(getEditorHTML()).toBe(expectedEditor);
+      expect(mdEditor).toContainHTML(expectedEditor);
       expect(getPreviewHTML()).toBe(expectedPreview);
     });
 
@@ -243,7 +235,7 @@ describe('widgetNode', () => {
         </p>
       `;
 
-      expect(getWwEditorHTML()).toBe(expectedEditor);
+      expect(wwEditor).toContainHTML(expectedEditor);
     });
 
     it('should keep "$" character in case of plain text other than widget node', () => {
@@ -277,7 +269,7 @@ describe('widgetNode', () => {
         </p>
       `;
 
-      expect(getEditorHTML()).toBe(expectedEditor);
+      expect(mdEditor).toContainHTML(expectedEditor);
       expect(getPreviewHTML()).toBe(expectedPreview);
     });
   });
@@ -296,7 +288,7 @@ describe('widgetNode', () => {
         </p>
       `;
 
-      expect(getWwEditorHTML()).toBe(expectedEditor);
+      expect(wwEditor).toContainHTML(expectedEditor);
     });
 
     it('should render widget node with markdown text', () => {
@@ -312,7 +304,7 @@ describe('widgetNode', () => {
         </p>
       `;
 
-      expect(getWwEditorHTML()).toBe(expectedEditor);
+      expect(wwEditor).toContainHTML(expectedEditor);
     });
 
     it('should convert to markdown properly', () => {
@@ -346,7 +338,7 @@ describe('widgetNode', () => {
         </p>
       `;
 
-      expect(getEditorHTML()).toBe(expectedEditor);
+      expect(mdEditor).toContainHTML(expectedEditor);
       expect(getPreviewHTML()).toBe(expectedPreview);
     });
   });
