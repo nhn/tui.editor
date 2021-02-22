@@ -67,7 +67,6 @@ export interface MdNode {
   appendChild(child: MdNode): void;
   prependChild(child: MdNode): void;
   walker(): NodeWalker;
-  getInlineMarkdownText(): string | null;
 }
 
 export interface CodeBlockMdNode extends MdNode {

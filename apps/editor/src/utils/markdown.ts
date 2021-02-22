@@ -1,6 +1,7 @@
 import {
   CodeBlockMdNode,
   CustomBlockMdNode,
+  LinkMdNode,
   ListItemMdNode,
   MdNode,
   MdNodeType,
@@ -134,4 +135,28 @@ export function addOffsetPos(originPos: MdPos, offset: number): MdPos {
 
 export function setOffsetPos(originPos: MdPos, newOffset: number): MdPos {
   return [originPos[0], newOffset];
+}
+
+export function getInlineMarkdownText(mdNode: MdNode) {
+  const text = mdNode.firstChild!.literal;
+
+  switch (mdNode.type) {
+    case 'emph':
+      return `*${text}*`;
+    case 'strong':
+      return `**${text}**`;
+    case 'strike':
+      return `~~${text}~~`;
+    case 'code':
+      return `\`${text}\``;
+    case 'link':
+    case 'image':
+      /* eslint-disable no-case-declarations */
+      const { destination, title } = mdNode as LinkMdNode;
+      const delim = mdNode.type === 'link' ? '' : '!';
+
+      return `${delim}[${text}](${destination}${title ? ` "${title}"` : ''})`;
+    default:
+      return null;
+  }
 }
