@@ -139,7 +139,7 @@ describe('wysiwyg commands', () => {
       cmd.exec('wysiwyg', 'codeBlock');
 
       expect(wwe.getHTML()).toBe(
-        '<div data-style-language="text" class="tui-wysiwyg-code-block"><pre><code><br></code></pre></div>'
+        '<div data-style-language="text" class="tui-editor-ww-code-block"><pre><code><br></code></pre></div>'
       );
     });
 
@@ -150,7 +150,7 @@ describe('wysiwyg commands', () => {
       cmd.exec('wysiwyg', 'codeBlock');
 
       expect(wwe.getHTML()).toBe(
-        '<div data-style-language="text" class="tui-wysiwyg-code-block"><pre><code>foo</code></pre></div>'
+        '<div data-style-language="text" class="tui-editor-ww-code-block"><pre><code>foo</code></pre></div>'
       );
     });
   });

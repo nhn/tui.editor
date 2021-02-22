@@ -387,11 +387,11 @@ table.ProseMirror-selectednode {
   vertical-align: middle;
 }
 
-.tui-editor-contents .tui-wysiwyg-code-block {
+.tui-editor-contents .tui-editor-ww-code-block {
   position: relative;
 }
 
-.tui-editor-contents .tui-wysiwyg-code-block:after {
+.tui-editor-contents .tui-editor-ww-code-block:after {
   content: attr(data-lang);
   position: absolute;
   display: inline-block;
@@ -410,7 +410,7 @@ table.ProseMirror-selectednode {
   cursor: pointer;
 }
 
-.tui-wysiwyg-code-block-language {
+.tui-editor-ww-code-block-language {
   position: absolute;
   display: inline-block;
   min-width: 100px;
@@ -422,7 +422,7 @@ table.ProseMirror-selectednode {
   z-index: 100;
 }
 
-.tui-wysiwyg-code-block-language input {
+.tui-editor-ww-code-block-language input {
   margin: 0;
   padding: 0 5px;
   width: 90px;
