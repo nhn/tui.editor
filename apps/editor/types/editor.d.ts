@@ -1,8 +1,19 @@
-import { CustomHTMLRenderer, CustomHTMLRendererMap, CustomParserMap, MdPos } from './markdown';
-import { Handler } from './event';
-import { EditorCommandFn } from './spec';
+import { Schema } from 'prosemirror-model';
+import { EditorView } from 'prosemirror-view';
+import { Plugin } from 'prosemirror-state';
+import {
+  CustomHTMLRenderer,
+  CustomHTMLRendererMap,
+  CustomParserMap,
+  MdPos,
+  MdSourcepos,
+} from './markdown';
+import { Emitter, Handler } from './event';
+import { Context, EditorAllCommandMap, EditorCommandFn } from './spec';
 import { ToMdConvertorMap } from './convertor';
 import { DefaultUI, ToolbarItemOptions } from './ui';
+import { StateOptions } from '@/base';
+import SpecManager from '@/spec/specManager';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -216,4 +227,78 @@ export class EditorCore {
 
 export class Editor extends EditorCore {
   getDefaultUI(): DefaultUI;
+}
+
+export type EditorPos = MdPos | number;
+
+export interface Base {
+  el: HTMLElement;
+
+  editorType: EditorType;
+
+  eventEmitter: Emitter;
+
+  context: Context;
+
+  schema: Schema;
+
+  keymaps: Plugin[];
+
+  view: EditorView;
+
+  commands: EditorAllCommandMap;
+
+  specs: SpecManager;
+
+  placeholder: { text: string };
+
+  createSpecs(): SpecManager;
+
+  createContext(): Context;
+
+  createState(state?: StateOptions): void;
+
+  createView(): EditorView;
+
+  createSchema(): Schema;
+
+  createKeymaps(useCommandShortcut: boolean): Plugin<any, any>[];
+
+  createCommands(): Record<string, EditorCommandFn<Record<string, any>>>;
+
+  focus(): void;
+
+  blur(): void;
+
+  destroy(): void;
+
+  moveCursorToStart(): void;
+
+  moveCursorToEnd(): void;
+
+  setScrollTop(top: number): void;
+
+  getScrollTop(): number;
+
+  setPlaceholder(text: string): void;
+
+  setHeight(height: number): void;
+
+  setMinHeight(minHeight: number): void;
+
+  getElement(): HTMLElement;
+
+  setSelection(start: EditorPos, end: EditorPos): void;
+
+  replaceWithWidget(start: EditorPos, end: EditorPos, content: string): void;
+
+  addWidget(node: Node, style: WidgetStyle, pos?: EditorPos): void;
+
+  replaceSelection(content: string, start?: EditorPos, end?: EditorPos): void;
+
+  deleteSelection(start?: EditorPos, end?: EditorPos): void;
+
+  getSelectedContent(start?: EditorPos, end?: EditorPos): string;
+
+  getSelection(): MdSourcepos | [number, number];
 }
