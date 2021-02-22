@@ -471,7 +471,7 @@ class ToastUIEditor {
    * @param {number|Array.<number>} [start] - start position
    * @param {number|Array.<number>} [end] - end position
    */
-  deleteSelection(start: EditorPos, end: EditorPos) {
+  deleteSelection(start?: EditorPos, end?: EditorPos) {
     this.getCurrentModeEditor().deleteSelection(start, end);
   }
 

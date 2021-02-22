@@ -293,7 +293,7 @@ describe('editor', () => {
       });
     });
 
-    describe.only('replaceSelection()', () => {
+    describe('replaceSelection()', () => {
       beforeEach(() => {
         editor.setMarkdown('line1\nline2');
         editor.setSelection([1, 2], [2, 4]);
@@ -326,6 +326,42 @@ describe('editor', () => {
         editor.replaceSelection('Replaced', 1, 7);
 
         expect(wwEditor).toContainHTML('<p>Replaced</p><p>line2</p>');
+      });
+    });
+
+    describe('deleteSelection()', () => {
+      beforeEach(() => {
+        editor.setMarkdown('line1\nline2');
+        editor.setSelection([1, 2], [2, 4]);
+      });
+
+      it('should delete current selection in markdown', () => {
+        editor.deleteSelection();
+
+        expect(mdEditor).toContainHTML('<div>le2</div>');
+        expect(getPreviewHTML()).toBe('<p>le2</p>');
+      });
+
+      it('should delete current selection in wysiwyg', () => {
+        editor.changeMode('wysiwyg');
+        editor.setSelection(2, 11);
+        editor.deleteSelection();
+
+        expect(wwEditor).toContainHTML('<p>le2</p>');
+      });
+
+      it('should delete given selection in markdown', () => {
+        editor.deleteSelection([1, 1], [2, 1]);
+
+        expect(mdEditor).toContainHTML('<div>line2</div>');
+        expect(getPreviewHTML()).toBe('<p>line2</p>');
+      });
+
+      it('should delete given selection in wysiwyg', () => {
+        editor.changeMode('wysiwyg');
+        editor.deleteSelection(1, 7);
+
+        expect(wwEditor).toContainHTML('<p>line2</p>');
       });
     });
   });
