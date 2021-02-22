@@ -1,7 +1,8 @@
 import { EditorView } from 'prosemirror-view';
 import { Plugin, PluginKey } from 'prosemirror-state';
-import { WidgetStyle } from '@t/editor';
 import css from 'tui-code-snippet/domUtil/css';
+import { WidgetStyle } from '@t/editor';
+import { Emitter } from '@t/event';
 
 interface Widget {
   node: HTMLElement;
@@ -14,11 +15,11 @@ const pluginKey = new PluginKey('widget');
 class PopupWidget {
   private popup: HTMLElement | null = null;
 
-  private view: EditorView;
+  private eventEmitter: Emitter;
 
-  constructor(view: EditorView) {
-    view.dom.addEventListener('blur', this.removeWidget);
-    this.view = view;
+  constructor(eventEmitter: Emitter) {
+    this.eventEmitter = eventEmitter;
+    this.eventEmitter.listen('blur', this.removeWidget);
   }
 
   private removeWidget = () => {
@@ -50,11 +51,11 @@ class PopupWidget {
   }
 
   destroy() {
-    this.view.dom.removeEventListener('blur', this.removeWidget);
+    this.eventEmitter.removeEventHandler('blur', this.removeWidget);
   }
 }
 
-export function addWidget() {
+export function addWidget(eventEmitter: Emitter) {
   return new Plugin({
     key: pluginKey,
     state: {
@@ -65,8 +66,8 @@ export function addWidget() {
         return tr.getMeta('widget');
       },
     },
-    view(editorView: EditorView) {
-      return new PopupWidget(editorView);
+    view() {
+      return new PopupWidget(eventEmitter);
     },
   });
 }

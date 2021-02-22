@@ -169,7 +169,7 @@ export default class MdEditor extends EditorBase {
         smartTask(this.context),
         dropImage(this.context, 'markdown'),
         placeholder(this.placeholder),
-        addWidget(),
+        addWidget(this.eventEmitter),
       ],
     });
   }
