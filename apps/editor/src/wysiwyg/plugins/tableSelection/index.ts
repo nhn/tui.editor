@@ -6,7 +6,7 @@ import isNull from 'tui-code-snippet/type/isNull';
 import CellSelection from './cellSelection';
 import TableSelection, { pluginKey } from './tableSelectionView';
 
-const SELECTED_CELL_CLASS_NAME = 'te-cell-selected';
+const SELECTED_CELL_CLASS_NAME = 'tui-editor-cell-selected';
 
 function drawCellSelection({ selection, doc }: EditorState) {
   if (selection instanceof CellSelection) {

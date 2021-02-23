@@ -88,11 +88,11 @@ export class LinkPopupBody extends Component<Props> {
           class="te-link-text-input"
           ref=${(el: HTMLInputElement) => (this.refs.text = el)}
         />
-        <div class="te-button-section">
-          <button type="button" class="te-ok-button" onClick=${this.execCommand}>
+        <div class="tui-editor-button-container">
+          <button type="button" class="tui-editor-ok-button" onClick=${this.execCommand}>
             ${i18n.get('OK')}
           </button>
-          <button type="button" class="te-close-button" onClick=${this.props.hidePopup}>
+          <button type="button" class="tui-editor-close-button" onClick=${this.props.hidePopup}>
             ${i18n.get('Cancel')}
           </button>
         </div>

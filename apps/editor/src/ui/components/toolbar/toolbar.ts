@@ -118,7 +118,7 @@ export class Toolbar extends Component<Props, State> {
   }
 
   private appendTooltipToBody() {
-    const tooltip = `<div class="tui-tooltip" style="display:none">
+    const tooltip = `<div class="tui-editor-tooltip" style="display:none">
         <div class="arrow"></div>
         <span class="text"></span>
       </div>`;

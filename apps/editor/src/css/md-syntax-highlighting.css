@@ -1,9 +1,3 @@
-.te-md-container .ProseMirror {
-  font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
-    'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
-  color: #222;
-}
-
 .tui-md-heading1 {
   font-size: 24px;
 }
@@ -111,14 +105,6 @@
 
 .tui-md-code-block-line-background {
   background-color: #f5f7f8;
-}
-
-.tui-md-code-block.CodeMirror-linebackground.start {
-  top: 2px;
-}
-
-.tui-md-code-block.CodeMirror-linebackground.end {
-  bottom: 2px;
 }
 
 .tui-md-code,

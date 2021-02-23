@@ -60,9 +60,12 @@ export class Layout extends Component<Props, State> {
   render() {
     const { eventEmitter, hideModeSwitch, toolbarItems } = this.props;
     const { hide, previewStyle, editorType } = this.state;
-    const displayClassName = hide ? ' te-hide' : '';
-    const editorTypeClassName = editorType === 'markdown' ? 'te-md-mode' : 'te-ww-mode';
-    const previewClassName = `te-preview-style-${previewStyle === 'vertical' ? 'vertical' : 'tab'}`;
+    const displayClassName = hide ? ' tui-editor-hidden' : '';
+    const editorTypeClassName =
+      editorType === 'markdown' ? 'tui-editor-md-mode' : 'tui-editor-ww-mode';
+    const previewClassName = `tui-editor-md-preview-style-${
+      previewStyle === 'vertical' ? 'vertical' : 'tab'
+    }`;
 
     return html`
       <div
@@ -76,16 +79,20 @@ export class Layout extends Component<Props, State> {
           toolbarItems=${toolbarItems}
           editorType=${editorType}
         />
-        <div class="te-editor-section" ref=${(el: HTMLElement) => (this.refs.editorSection = el)}>
-          <div class="tui-editor ${editorTypeClassName}">
-            <div
-              class="te-md-container ${previewClassName}"
-              ref=${(el: HTMLElement) => (this.refs.mdContainer = el)}
-            >
-              <div class="te-md-splitter"></div>
-            </div>
-            <div class="te-ww-container" ref=${(el: HTMLElement) => (this.refs.wwContainer = el)} />
+        <div
+          class="tui-editor-main ${editorTypeClassName}"
+          ref=${(el: HTMLElement) => (this.refs.editorSection = el)}
+        >
+          <div
+            class="tui-editor-md-container ${previewClassName}"
+            ref=${(el: HTMLElement) => (this.refs.mdContainer = el)}
+          >
+            <div class="tui-editor-md-splitter"></div>
           </div>
+          <div
+            class="tui-editor-ww-container"
+            ref=${(el: HTMLElement) => (this.refs.wwContainer = el)}
+          />
         </div>
         ${!hideModeSwitch &&
         html`<${Switch} eventEmitter=${eventEmitter} editorType=${editorType} />`}

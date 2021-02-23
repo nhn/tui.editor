@@ -21,7 +21,7 @@ import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
 import { findAdjacentElementToScrollTop } from './scroll/dom';
 import { removeOffsetInfoByNode } from './scroll/offset';
 
-export const CLASS_HIGHLIGHT = 'te-preview-highlight';
+export const CLASS_HIGHLIGHT = 'tui-editor-md-preview-highlight';
 
 function findTableCell(tableRow: MdNode, chOffset: number) {
   let cell = tableRow.firstChild;
@@ -65,7 +65,7 @@ class MarkdownPreview extends Preview {
 
     super(el, eventEmitter, options.isViewer);
     this.el = el;
-    this.el.className = 'te-preview';
+    this.el.className = 'tui-editor-md-preview';
     this.lazyRunner.registerLazyRunFunction(
       'invokeCodeBlock',
       this.invokeCodeBlockPlugins,

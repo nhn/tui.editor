@@ -19,7 +19,7 @@ interface Props {
 export class Popup extends Component<Props> {
   private handleMousedown = (ev: MouseEvent) => {
     if (
-      !closest(ev.target as HTMLElement, '.tui-popup-wrapper') &&
+      !closest(ev.target as HTMLElement, '.tui-editor-popup') &&
       !closest(ev.target as HTMLElement, this.props.info.fromEl)
     ) {
       this.props.hidePopup();
@@ -45,14 +45,18 @@ export class Popup extends Component<Props> {
     }
 
     return html`
-      <div class="tui-popup-wrapper ${className}" style=${popupStyle}>
-        <div class="tui-popup-header" style="display: ${headerText ? 'block' : 'none'}">
-          <span class="tui-popup-title">${headerText}</span>
-          <div class="tui-popup-header-buttons">
-            <button type="button" class="tui-popup-close-button" onClick=${hidePopup}></button>
+      <div class="tui-editor-popup ${className}" style=${popupStyle}>
+        <div class="tui-editor-popup-header" style="display: ${headerText ? 'block' : 'none'}">
+          <span class="tui-editor-popup-title">${headerText}</span>
+          <div class="tui-editor-button-container">
+            <button
+              type="button"
+              class="tui-editor-popup-close-button"
+              onClick=${hidePopup}
+            ></button>
           </div>
         </div>
-        <div class="tui-popup-body">
+        <div class="tui-editor-popup-body">
           ${render && render({ eventEmitter, show, hidePopup, execCommand, initialValues })}
         </div>
       </div>

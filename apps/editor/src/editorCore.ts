@@ -483,7 +483,7 @@ class ToastUIEditor {
     this.minHeight = minHeight;
 
     const editorHeight = this.options.el.clientHeight;
-    const editorSectionHeight = document.querySelector('.te-editor-section')?.clientHeight || 0;
+    const editorSectionHeight = document.querySelector('.tui-editor-main')?.clientHeight || 0;
     const diffHeight = editorHeight - editorSectionHeight;
 
     let minHeightNum = parseInt(minHeight, 10);

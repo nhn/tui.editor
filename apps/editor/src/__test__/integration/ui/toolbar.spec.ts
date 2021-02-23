@@ -131,7 +131,7 @@ describe('default toolbar', () => {
   it('should show tooltip when mouseover on toolbar button', () => {
     dispatchMouseover('.tui-bold');
 
-    const tooltip = getElement('.tui-tooltip');
+    const tooltip = getElement('.tui-editor-tooltip');
 
     expect(tooltip).toHaveStyle({ display: 'block' });
   });
@@ -442,7 +442,7 @@ describe('custom button toolbar', () => {
   it('should show tooltip when mouseover on toolbar button', () => {
     dispatchMouseover('.my-toolbar');
 
-    const tooltip = getElement('.tui-tooltip');
+    const tooltip = getElement('.tui-editor-tooltip');
 
     expect(tooltip).toHaveStyle({ display: 'block' });
   });
@@ -572,7 +572,7 @@ describe('custom toolbar element', () => {
   it('should show tooltip when mouseover on toolbar button', () => {
     dispatchMouseover('.my-toolbar');
 
-    const tooltip = getElement('.tui-tooltip');
+    const tooltip = getElement('.tui-editor-tooltip');
 
     expect(tooltip).toHaveStyle({ display: 'block' });
   });
