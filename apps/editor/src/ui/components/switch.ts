@@ -33,27 +33,25 @@ export class Switch extends Component<Props, State> {
     const { editorType, eventEmitter } = this.props;
 
     return html`
-      <div class="te-mode-switch-section" style="display: ${this.state.hide ? 'none' : 'block'}">
-        <div class="te-mode-switch">
-          <button
-            class="te-switch-button markdown${editorType === 'markdown' ? ' active' : ''}"
-            type="button"
-            onClick=${() => {
-              eventEmitter.emit('needChangeMode', 'markdown');
-            }}
-          >
-            ${i18n.get('Markdown')}
-          </button>
-          <button
-            class="te-switch-button wysiwyg${editorType === 'wysiwyg' ? ' active' : ''}"
-            type="button"
-            onClick=${() => {
-              eventEmitter.emit('needChangeMode', 'wysiwyg');
-            }}
-          >
-            ${i18n.get('WYSIWYG')}
-          </button>
-        </div>
+      <div class="tui-editor-mode-switch" style="display: ${this.state.hide ? 'none' : 'block'}">
+        <button
+          class="${editorType === 'markdown' ? ' active' : ''}"
+          type="button"
+          onClick=${() => {
+            eventEmitter.emit('needChangeMode', 'markdown');
+          }}
+        >
+          ${i18n.get('Markdown')}
+        </button>
+        <button
+          class="${editorType === 'wysiwyg' ? ' active' : ''}"
+          type="button"
+          onClick=${() => {
+            eventEmitter.emit('needChangeMode', 'wysiwyg');
+          }}
+        >
+          ${i18n.get('WYSIWYG')}
+        </button>
       </div>
     `;
   }
