@@ -155,7 +155,7 @@ export class Toolbar extends Component<Props, State> {
     if (el) {
       const { offsetLeft, offsetTop } = getTotalOffset(
         el,
-        closest(el, '.te-toolbar-section') as HTMLElement
+        closest(el, '.tui-editor-toolbar') as HTMLElement
       );
       const info = createPopupInfo(popupName, {
         el,
@@ -260,9 +260,9 @@ export class Toolbar extends Component<Props, State> {
     };
 
     return html`
-      <div class="te-toolbar-section">
+      <div class="tui-editor-toolbar">
         <div
-          class="te-markdown-tab-section"
+          class="tui-editor-md-tab-container"
           style="display: ${editorType === 'wysiwyg' || previewStyle === 'vertical'
             ? 'none'
             : 'block'}"

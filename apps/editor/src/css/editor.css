@@ -94,31 +94,31 @@
   padding-top: 8px;
 }
 
-.tui-editor-main .tui-editor-md-preview-style-tab > .te-editor,
-.tui-editor-main .tui-editor-md-preview-style-tab > .tui-editor-md-preview {
+.tui-editor-main .tui-editor-md-tab > .te-editor,
+.tui-editor-main .tui-editor-md-tab > .tui-editor-md-preview {
   float: left;
   width: 100%;
   display: none;
 }
 
-.tui-editor-main .tui-editor-md-preview-style-tab > .te-tab-active {
+.tui-editor-main .tui-editor-md-tab > .te-tab-active {
   display: block;
 }
 
-.tui-editor-main .tui-editor-md-preview-style-vertical > .te-tab-section {
+.tui-editor-main .tui-editor-md-vertical > .te-tab-section {
   display: none;
 }
 
-.tui-editor-main .tui-editor-md-preview-style-tab > .te-tab-section {
+.tui-editor-main .tui-editor-md-tab > .te-tab-section {
   display: block;
 }
 
-.tui-editor-main .tui-editor-md-preview-style-vertical .te-editor {
+.tui-editor-main .tui-editor-md-vertical .te-editor {
   float: left;
   width: 50%;
 }
 
-.tui-editor-main .tui-editor-md-preview-style-vertical .tui-editor-md-preview {
+.tui-editor-main .tui-editor-md-vertical .tui-editor-md-preview {
   float: left;
   width: 50%;
 }
@@ -133,7 +133,7 @@
   border-left: 1px solid #e5e5e5;
 }
 
-.tui-editor-main .tui-editor-md-preview-style-vertical .tui-editor-md-splitter {
+.tui-editor-main .tui-editor-md-vertical .tui-editor-md-splitter {
   display: block;
 }
 
@@ -220,14 +220,14 @@
   overflow: hidden;
 }
 
-.te-toolbar-section {
+.tui-editor-toolbar {
   height: 32px;
   box-sizing: border-box;
   border-bottom: 1px solid #e5e5e5;
   position: relative;
 }
 
-.tui-toolbar-divider {
+.tui-editor-toolbar-divider {
   float: left;
   display: inline-block;
   width: 1px;
@@ -292,7 +292,7 @@
   content: 'Scroll on';
 }
 
-.tui-editor-defaultUI .tui-editor-mode-switch {
+.tui-editor-mode-switch {
   background-color: #f9f9f9;
   border-top: 1px solid #e5e5e5;
   font-size: 12px;
@@ -499,15 +499,16 @@
   text-align: center;
 }
 
-.te-context-menu {
+.tui-editor-context-menu {
   position: absolute;
   width: auto;
   min-width: 120px;
   font-size: 12px;
   border: 1px solid #cacaca;
+  z-index: 100;
 }
 
-.te-context-menu button {
+.tui-editor-context-menu button {
   display: block;
   width: 100%;
   background-color: #fff;
@@ -520,23 +521,19 @@
   color: #777;
 }
 
-.te-context-menu button:hover {
+.tui-editor-context-menu button:not(:disabled):hover {
   background-color: #f4f4f4;
 }
 
-.te-context-menu hr {
+.tui-editor-context-menu button:disabled {
+  color: #ccc;
+}
+
+.tui-editor-context-menu hr {
   margin: 0;
   background-color: #cacaca;
   border-style: none;
   height: 1px;
-}
-
-.te-context-menu .te-context-menu-disabled {
-  color: #ccc;
-}
-
-.te-context-menu .te-context-menu-disabled:hover {
-  background-color: #fff;
 }
 
 .tui-editor-popup-add-heading {

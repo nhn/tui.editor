@@ -278,7 +278,7 @@ describe('layout component', () => {
 
   describe('context menu', () => {
     it('should be displayed when contextmenu event is triggered', () => {
-      const contextMenu = getElement('.te-context-menu');
+      const contextMenu = getElement('.tui-editor-context-menu');
 
       expect(contextMenu).toHaveStyle({ display: 'none' });
 

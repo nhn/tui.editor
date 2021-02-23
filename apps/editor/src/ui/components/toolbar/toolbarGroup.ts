@@ -42,7 +42,7 @@ export class ToolbarGroup extends Component<Props> {
 
           return html`<${Comp} key=${item.name} ...${this.props} item=${item} />`;
         })}
-        <div class="tui-toolbar-divider" style=${dividerStyle}></div>
+        <div class="tui-editor-toolbar-divider" style=${dividerStyle}></div>
       </div>
     `;
   }

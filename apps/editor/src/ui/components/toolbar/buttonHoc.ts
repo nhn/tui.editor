@@ -29,7 +29,7 @@ export function connectHOC(WrappedComponent: ComponentClass) {
     private getBound(el: HTMLElement) {
       const { offsetLeft, offsetTop } = getTotalOffset(
         el,
-        closest(el, '.te-toolbar-section') as HTMLElement
+        closest(el, '.tui-editor-toolbar') as HTMLElement
       );
 
       return { left: offsetLeft, top: el.offsetHeight + offsetTop };
