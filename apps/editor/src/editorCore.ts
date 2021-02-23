@@ -702,7 +702,7 @@ class ToastUIEditor {
    * // WYSIWYG mode
    * const wwSelection = editor.getSelection();
    *
-   * console.log(wwSelection); // [startCursorOffset, endCursorOffset]]
+   * console.log(wwSelection); // [startCursorOffset, endCursorOffset]
    */
   getSelection() {
     return this.getCurrentModeEditor().getSelection();
