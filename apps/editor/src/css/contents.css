@@ -413,7 +413,7 @@ table.ProseMirror-selectednode {
 .tui-editor-ww-code-block-language {
   position: absolute;
   display: inline-block;
-  min-width: 100px;
+  width: 100px;
   height: 26px;
   right: 35px;
   border: 1px solid #ccc;
@@ -423,11 +423,12 @@ table.ProseMirror-selectednode {
 }
 
 .tui-editor-ww-code-block-language input {
+  box-sizing: border-box;
   margin: 0;
-  padding: 0 5px;
-  width: 90px;
+  padding: 0 10px;
   height: 100%;
-  background-color: none;
+  width: 100%;
+  background-color: transparent;
   border: none;
   outline: none;
 }

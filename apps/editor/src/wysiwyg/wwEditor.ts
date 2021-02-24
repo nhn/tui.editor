@@ -163,6 +163,10 @@ export default class WysiwygEditor extends EditorBase {
           this.eventEmitter.emit('keyup', this.editorType, ev);
           return false;
         },
+        scroll: () => {
+          this.eventEmitter.emit('scroll', 'editor');
+          return true;
+        },
       },
     });
   }

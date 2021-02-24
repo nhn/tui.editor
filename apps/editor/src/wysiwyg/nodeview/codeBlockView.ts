@@ -51,6 +51,7 @@ export class CodeBlockView implements NodeView {
     this.eventEmitter = eventEmitter;
 
     this.createElement();
+    this.bindDOMEvent();
     this.bindEvent();
   }
 
@@ -102,10 +103,12 @@ export class CodeBlockView implements NodeView {
     wrapper.appendChild(input);
     document.body.appendChild(wrapper);
 
+    const wrpperWidth = Math.max(wrapper.clientWidth, width);
+
     css(wrapper, {
       top: `${top + 10}px`,
-      left: `${right - Math.max(input.clientWidth, width) - 12}px`,
-      width: `${width}px`,
+      left: `${right - wrpperWidth - 12}px`,
+      width: `${wrpperWidth}px`,
     });
 
     this.input = input;
@@ -115,10 +118,18 @@ export class CodeBlockView implements NodeView {
     setTimeout(() => this.input!.focus());
   }
 
-  private bindEvent() {
+  private bindDOMEvent() {
     if (this.dom) {
-      this.dom.addEventListener('mousedown', this.handleMousedown);
+      this.dom.addEventListener('click', this.handleMousedown);
     }
+  }
+
+  private bindEvent() {
+    this.eventEmitter.listen('scroll', () => {
+      if (this.input) {
+        this.reset();
+      }
+    });
   }
 
   private handleMousedown = (ev: MouseEvent) => {
@@ -140,7 +151,7 @@ export class CodeBlockView implements NodeView {
   private handleKeydown = (ev: KeyboardEvent) => {
     if (ev.key === 'Enter' && this.input) {
       ev.preventDefault();
-      this.input.blur();
+      this.changeLanguage();
     }
   };
 
@@ -160,7 +171,10 @@ export class CodeBlockView implements NodeView {
 
   private reset() {
     if (this.input?.parentElement) {
-      removeNode(this.input.parentElement);
+      const parent = this.input.parentElement;
+
+      this.input = null;
+      removeNode(parent);
     }
   }
 
@@ -182,7 +196,7 @@ export class CodeBlockView implements NodeView {
     this.reset();
 
     if (this.dom) {
-      this.dom.removeEventListener('mousedown', this.handleMousedown);
+      this.dom.removeEventListener('click', this.handleMousedown);
     }
   }
 }
