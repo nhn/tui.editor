@@ -15,7 +15,6 @@ export class CodeBlock extends NodeSchema {
       content: 'text*',
       group: 'block',
       attrs: {
-        class: { default: null },
         language: { default: null },
         rawHTML: { default: null },
       },
@@ -25,24 +24,20 @@ export class CodeBlock extends NodeSchema {
       parseDOM: [
         {
           tag: 'pre',
+          preserveWhitespace: 'full' as const,
           getAttrs(dom: Node | string) {
-            const className = (dom as HTMLElement).getAttribute('class');
             const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
+            const child = (dom as HTMLElement).firstElementChild;
 
             return {
-              class: className,
-              language: className?.split('lang-'),
+              language: child?.getAttribute('data-language') || null,
               ...(rawHTML && { rawHTML }),
             };
           },
         },
       ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
-        return [
-          attrs.rawHTML || 'pre',
-          { class: attrs.class || null },
-          ['code', { 'data-language': attrs.language || null }, 0],
-        ];
+        return [attrs.rawHTML || 'pre', ['code', { 'data-language': attrs.language }, 0]];
       },
     };
   }

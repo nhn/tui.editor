@@ -146,7 +146,6 @@
 }
 
 .te-ww-container > .te-editor {
-  overflow: auto;
   height: inherit;
 }
 
@@ -155,18 +154,11 @@
 }
 
 .te-ww-container .tui-editor-contents {
-  padding: 0 25px;
-}
-
-.te-ww-container .tui-editor-contents:first-child {
+  overflow: auto;
   box-sizing: border-box;
   margin: 0px;
   padding: 16px 25px 0px 25px;
   height: inherit;
-}
-
-.te-ww-container .tui-editor-contents:last-child {
-  margin-bottom: 16px;
 }
 
 .te-ww-container .tui-editor-contents p {

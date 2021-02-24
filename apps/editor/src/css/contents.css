@@ -144,7 +144,7 @@ table.ProseMirror-selectednode {
 .tui-editor-contents pre {
   margin: 2px 0 8px;
   padding: 18px;
-  background-color: #f5f7f8;
+  background-color: #f4f7f8;
 }
 
 .tui-editor-contents code {
@@ -385,6 +385,52 @@ table.ProseMirror-selectednode {
   font-weight: bold;
   color: #5200d0;
   vertical-align: middle;
+}
+
+.tui-editor-contents .tui-editor-ww-code-block {
+  position: relative;
+}
+
+.tui-editor-contents .tui-editor-ww-code-block:after {
+  content: attr(data-language);
+  position: absolute;
+  display: inline-block;
+  top: 10px;
+  right: 10px;
+  height: 24px;
+  padding: 3px 25px 0 10px;
+  font-weight: bold;
+  font-size: 13px;
+  color: #333;
+  background-color: #e5e9ea;
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI1LjIuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IuugiOydtOyWtF8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiCgkgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMzAgMzAiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDMwIDMwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+Cgkuc3Qwe2ZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkO2ZpbGw6IzU1NTU1NTt9Cjwvc3R5bGU+CjxnPgoJPGc+CgkJPGc+CgkJCTxnPgoJCQkJPGc+CgkJCQkJPHBhdGggY2xhc3M9InN0MCIgZD0iTTE1LjUsMTIuNWwyLDJMMTIsMjBoLTJ2LTJMMTUuNSwxMi41eiBNMTgsMTBsMiwybC0xLjUsMS41bC0yLTJMMTgsMTB6Ii8+CgkJCQk8L2c+CgkJCTwvZz4KCQk8L2c+Cgk8L2c+CjwvZz4KPC9zdmc+Cg==');
+  background-repeat: no-repeat;
+  background-position: right center;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.tui-editor-ww-code-block-language {
+  position: absolute;
+  display: inline-block;
+  width: 100px;
+  height: 26px;
+  right: 35px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  background-color: #fff;
+  z-index: 100;
+}
+
+.tui-editor-ww-code-block-language input {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 10px;
+  height: 100%;
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  outline: none;
 }
 
 .tui-editor-contents-placeholder::before {

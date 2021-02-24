@@ -138,7 +138,9 @@ describe('wysiwyg commands', () => {
     it('should add pre element including code element', () => {
       cmd.exec('wysiwyg', 'codeBlock');
 
-      expect(wwe.getHTML()).toBe('<pre><code><br></code></pre>');
+      expect(wwe.getHTML()).toBe(
+        '<div data-language="text" class="tui-editor-ww-code-block"><pre><code><br></code></pre></div>'
+      );
     });
 
     it('should change pre element to selection', () => {
@@ -147,7 +149,9 @@ describe('wysiwyg commands', () => {
       cmd.exec('wysiwyg', 'selectAll');
       cmd.exec('wysiwyg', 'codeBlock');
 
-      expect(wwe.getHTML()).toBe('<pre><code>foo</code></pre>');
+      expect(wwe.getHTML()).toBe(
+        '<div data-language="text" class="tui-editor-ww-code-block"><pre><code>foo</code></pre></div>'
+      );
     });
   });
 

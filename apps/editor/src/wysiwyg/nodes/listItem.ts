@@ -25,7 +25,6 @@ export class ListItem extends NodeSchema {
           getAttrs(dom: Node | string) {
             const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
 
-            // @TODO Change all task data attribute names to be the same
             return {
               task: (dom as HTMLElement).hasAttribute('data-task'),
               checked: (dom as HTMLElement).hasAttribute('data-task-checked'),

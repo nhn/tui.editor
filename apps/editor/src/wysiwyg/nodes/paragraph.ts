@@ -1,8 +1,8 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 
-import Node from '@/spec/node';
+import NodeSchema from '@/spec/node';
 
-export class Paragraph extends Node {
+export class Paragraph extends NodeSchema {
   get name() {
     return 'paragraph';
   }

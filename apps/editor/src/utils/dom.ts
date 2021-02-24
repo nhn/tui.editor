@@ -8,19 +8,14 @@ import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import matches from 'tui-code-snippet/domUtil/matches';
 
 export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
-  const rect = {
-    left: parseInt(style.left, 10),
-    top: parseInt(style.top, 10),
-    width: parseInt(style.width, 10),
-    height: parseInt(style.height, 10),
-  };
+  const left = parseInt(style.left, 10);
+  const top = parseInt(style.top, 10);
+  const width =
+    parseInt(style.width, 10) + parseInt(style.paddingLeft, 10) + parseInt(style.paddingRight, 10);
+  const height =
+    parseInt(style.height, 10) + parseInt(style.paddingTop, 10) + parseInt(style.paddingBottom, 10);
 
-  return (
-    offsetX >= rect.left &&
-    offsetX <= rect.left + rect.width &&
-    offsetY >= rect.top &&
-    offsetY <= rect.top + rect.height
-  );
+  return offsetX >= left && offsetX <= left + width && offsetY >= top && offsetY <= top + height;
 }
 
 const CLS_PREFIX = 'tui-md-';

@@ -30,6 +30,10 @@ describe('dom utils', () => {
     style.top = '0';
     style.width = '10px';
     style.height = '10px';
+    style.paddingLeft = '0';
+    style.paddingRight = '0';
+    style.paddingTop = '0';
+    style.paddingBottom = '0';
 
     expect(isPositionInBox(style, 5, 5)).toBe(true);
     expect(isPositionInBox(style, 15, 15)).toBe(false);
