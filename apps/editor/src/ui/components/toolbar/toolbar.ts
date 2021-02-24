@@ -185,7 +185,7 @@ export class Toolbar extends Component<Props, State> {
   private classifyToolbarItems() {
     let totalWidth = 0;
     const { clientWidth } = this.refs.el;
-    const divider = this.refs.el.querySelector<HTMLElement>('.tui-toolbar-divider');
+    const divider = this.refs.el.querySelector<HTMLElement>(`.${cls('toolbar-divider')}`);
     const dividerWidth = divider ? getOuterWidth(divider) : 0;
     const items: ToolbarGroupInfo[] = [];
     const dropdownItems: ToolbarGroupInfo[] = [];
