@@ -382,4 +382,56 @@ describe('keymap', () => {
       });
     });
   });
+
+  describe('code block', () => {
+    beforeEach(() => {
+      html = oneLineTrim`
+        <div data-language="text" class="tui-editor-ww-code-block">
+          <pre>
+            <code>foo\nbar\nbaz</code>
+          </pre>
+        </div>
+      `;
+
+      setContent(html);
+    });
+
+    describe('moveCursor keymap with up', () => {
+      it('should add paragraph when there is no content before code block and cursor is in first line', () => {
+        wwe.setSelection(4, 4); // in 'foo' text
+
+        forceKeymapFn('codeBlock', 'moveCursor', ['up']);
+
+        const expected = oneLineTrim`
+          <p><br></p>
+          <div data-language="text" class="tui-editor-ww-code-block">
+            <pre>
+              <code>foo\nbar\nbaz</code>
+            </pre>
+          </div>
+        `;
+
+        expect(wwe.getHTML()).toBe(expected);
+      });
+    });
+
+    describe('moveCursor keymap with down', () => {
+      it('should add paragraph when there is no content after code block and cursor is in last line', () => {
+        wwe.setSelection(10, 10); // in 'baz' text
+
+        forceKeymapFn('codeBlock', 'moveCursor', ['down']);
+
+        const expected = oneLineTrim`
+          <div data-language="text" class="tui-editor-ww-code-block">
+            <pre>
+              <code>foo\nbar\nbaz</code>
+            </pre>
+          </div>
+          <p><br></p>
+        `;
+
+        expect(wwe.getHTML()).toBe(expected);
+      });
+    });
+  });
 });

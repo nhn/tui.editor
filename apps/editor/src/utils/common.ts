@@ -87,3 +87,7 @@ export function shallowEqual(o1: Record<string, any>, o2: Record<string, any>) {
 export function last<T>(arr: T[]) {
   return arr[arr.length - 1];
 }
+
+export function between(value: number, min: number, max: number) {
+  return value >= min && value <= max;
+}

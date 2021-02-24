@@ -1,7 +1,7 @@
 import { ProsemirrorNode, ResolvedPos, Schema } from 'prosemirror-model';
 import { Selection, Transaction, NodeSelection } from 'prosemirror-state';
 
-import { createParagraph, createTextSelection } from '@/helper/manipulation';
+import { createParagraph, createTextSelection, addParagraph } from '@/helper/manipulation';
 
 import { CellInfo } from '@/wysiwyg/helper/table';
 
@@ -141,12 +141,6 @@ export function canBeOutOfTable(
   const inLastRow = direction === 'down' && rowIndex === cellsInfo.length - 1;
 
   return inFirstRow || inLastRow;
-}
-
-function addParagraph(tr: Transaction, { pos }: ResolvedPos, schema: Schema) {
-  tr.replaceWith(pos, pos, createParagraph(schema));
-
-  return tr.setSelection(createTextSelection(tr, pos + 1));
 }
 
 export function addParagraphBeforeTable(tr: Transaction, cellsInfo: CellInfo[][], schema: Schema) {
