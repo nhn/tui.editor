@@ -87,73 +87,6 @@ export function findCell(pos: ResolvedPos) {
   );
 }
 
-export function getRightCellOffset([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) {
-  const allRowCount = cellsInfo.length;
-  const allColumnCount = cellsInfo[0].length;
-
-  const lastCellInRow = columnIndex === allColumnCount - 1;
-  const lastCellInTable = rowIndex === allRowCount - 1 && lastCellInRow;
-
-  if (!lastCellInTable) {
-    columnIndex += 1;
-
-    if (lastCellInRow) {
-      rowIndex += 1;
-      columnIndex = 0;
-    }
-
-    const { offset, nodeSize } = cellsInfo[rowIndex][columnIndex];
-
-    return offset + nodeSize - 2;
-  }
-
-  return null;
-}
-
-export function getLeftCellOffset([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) {
-  const allColumnCount = cellsInfo[0].length;
-
-  const firstCellInRow = columnIndex === 0;
-  const firstCellInTable = rowIndex === 0 && firstCellInRow;
-
-  if (!firstCellInTable) {
-    columnIndex -= 1;
-
-    if (firstCellInRow) {
-      rowIndex -= 1;
-      columnIndex = allColumnCount - 1;
-    }
-
-    const { offset, nodeSize } = cellsInfo[rowIndex][columnIndex];
-
-    return offset + nodeSize - 2;
-  }
-
-  return null;
-}
-
-export function getUpCellOffset([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) {
-  if (rowIndex > 0) {
-    const { offset, nodeSize } = cellsInfo[rowIndex - 1][columnIndex];
-
-    return offset + nodeSize - 2;
-  }
-
-  return null;
-}
-
-export function getDownCellOffset([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) {
-  const allRowCount = cellsInfo.length;
-
-  if (rowIndex < allRowCount - 1) {
-    const { offset } = cellsInfo[rowIndex + 1][columnIndex];
-
-    return offset + 2;
-  }
-
-  return null;
-}
-
 function getMinimumIndex(startIndex: number, endIndex: number) {
   return Math.min(startIndex, endIndex);
 }
@@ -270,7 +203,7 @@ export function getTableCellsInfo(cellPos: ResolvedPos) {
   return [];
 }
 
-export function getCellIndexInfo(cellPos: ResolvedPos) {
+export function getCellIndexInfo(cellPos: ResolvedPos): [rowIndex: number, columnIndex: number] {
   const { pos, parentOffset } = cellPos;
 
   let rowIndex = cellPos

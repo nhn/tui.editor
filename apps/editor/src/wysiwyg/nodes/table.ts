@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
-import { TextSelection, NodeSelection } from 'prosemirror-state';
+import { TextSelection } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 
 import NodeSchema from '@/spec/node';
@@ -8,7 +8,6 @@ import { isInTableNode, findNodeBy, createDOMInfoParsedRawHTML } from '@/wysiwyg
 
 // @TODO Separate the clipboard and command file, leaving only those commonly used in `helper/table`.
 import {
-  CellInfo,
   createTableHeadRow,
   createTableBodyRows,
   createDummyCells,
@@ -20,18 +19,16 @@ import {
   getPrevRowOffset,
   getNextColumnOffsets,
   getPrevColumnOffsets,
-  getRightCellOffset,
-  getLeftCellOffset,
-  getUpCellOffset,
-  getDownCellOffset,
 } from '@/wysiwyg/helper/table';
 import {
   CursorDirection,
-  CellDirection,
-  canBeOutOfTableStart,
-  canBeOutOfTableEnd,
+  canBeOutOfTable,
+  canMoveBetweenCells,
+  canSelectTableNode,
+  selectNode,
   addParagraphBeforeTable,
   addParagraphAfterTable,
+  moveToCell,
 } from '@/wysiwyg/command/table';
 
 import { createTextSelection } from '@/helper/manipulation';
@@ -48,19 +45,6 @@ interface AddTablePayload {
 interface AlignColumnPayload {
   align: ColumnAlign;
 }
-
-type CellOffsetFn = ([rowIndex, columnIndex]: number[], cellsInfo: CellInfo[][]) => number | null;
-
-type CellOffsetFnMap = {
-  [key in CellDirection]: CellOffsetFn;
-};
-
-const cellOffsetFnMap: CellOffsetFnMap = {
-  left: getLeftCellOffset,
-  right: getRightCellOffset,
-  up: getUpCellOffset,
-  down: getDownCellOffset,
-};
 
 export class Table extends NodeSchema {
   get name() {
@@ -294,39 +278,18 @@ export class Table extends NodeSchema {
     };
   }
 
-  private moveToCell(direction: CellDirection): Command {
+  private moveToCell(direction: CursorDirection): Command {
     return (state, dispatch) => {
-      const { selection, tr, schema } = state;
+      const { selection, tr } = state;
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
         const cellsInfo = getTableCellsInfo(anchor);
         const cellIndex = getCellIndexInfo(anchor);
-
-        const cursorInTableStart = canBeOutOfTableStart(direction, cellIndex);
-        const cursorInTableEnd = canBeOutOfTableEnd(direction, cellsInfo, cellIndex);
-
-        let newTr;
-
-        // When there is no content before or after the table,
-        // an empty line('paragraph') is created by pressing the arrow keys.
-        if (cursorInTableStart) {
-          newTr = addParagraphBeforeTable(tr, cellsInfo, schema);
-        } else if (cursorInTableEnd) {
-          newTr = addParagraphAfterTable(tr, cellsInfo, schema);
-        }
+        const newTr = moveToCell(direction, tr, cellIndex, cellsInfo);
 
         if (newTr) {
           dispatch!(newTr);
-
-          return true;
-        }
-
-        const cellOffsetFn = cellOffsetFnMap[direction];
-        const offset = cellOffsetFn(cellIndex, cellsInfo);
-
-        if (offset) {
-          dispatch!(tr.setSelection(createTextSelection(tr, offset)));
 
           return true;
         }
@@ -338,29 +301,51 @@ export class Table extends NodeSchema {
 
   private moveInCell(direction: CursorDirection): Command {
     return (state, dispatch) => {
-      const { selection, tr } = state;
+      const { selection, tr, doc, schema } = state;
+      const { $from } = selection;
       const { view } = this.context;
 
-      if (view.endOfTextblock(direction)) {
-        const { head } = getResolvedSelection(selection);
+      if (!view.endOfTextblock(direction)) {
+        return false;
+      }
 
-        if (!head) {
-          return false;
-        }
+      const cell = findNodeBy(
+        $from,
+        ({ type }) => type.name === 'tableHeadCell' || type.name === 'tableBodyCell'
+      );
 
-        const cellsInfo = getTableCellsInfo(head);
-        const rowCount = cellsInfo.length;
-        const columnCount = cellsInfo[0].length;
+      if (cell) {
+        const para = findNodeBy($from, ({ type }) => type.name === 'paragraph');
+        const { depth: cellDepth } = cell;
 
-        const { offset } =
-          direction === 'left' ? cellsInfo[0][0] : cellsInfo[rowCount - 1][columnCount - 1];
+        if (para && canMoveBetweenCells(direction, [cellDepth, para.depth], $from, doc)) {
+          const { anchor } = getResolvedSelection(selection);
+          const cellIndex = getCellIndexInfo(anchor);
+          const cellsInfo = getTableCellsInfo(anchor);
 
-        if (head.pos === offset) {
-          const tablePos = tr.doc.resolve(head.before(head.depth - 2));
+          let newTr;
 
-          dispatch!(tr.setSelection(new NodeSelection(tablePos)));
+          if (canSelectTableNode(direction, cellsInfo, cellIndex, $from, para.depth)) {
+            // When the cursor position is at the end of the cell,
+            // the table is selected when the left / right arrow keys are pressed.
+            newTr = selectNode(tr, $from, cellDepth);
+          } else if (canBeOutOfTable(direction, cellsInfo, cellIndex[0])) {
+            // When there is no content before or after the table,
+            // an empty line('paragraph') is created by pressing the arrow keys.
+            if (direction === 'up') {
+              newTr = addParagraphBeforeTable(tr, cellsInfo, schema);
+            } else if (direction === 'down') {
+              newTr = addParagraphAfterTable(tr, cellsInfo, schema);
+            }
+          } else {
+            newTr = moveToCell(direction, tr, cellIndex, cellsInfo);
+          }
 
-          return true;
+          if (newTr) {
+            dispatch!(newTr);
+
+            return true;
+          }
         }
       }
 
@@ -423,8 +408,8 @@ export class Table extends NodeSchema {
       Tab: this.moveToCell('right'),
       'Shift-Tab': this.moveToCell('left'),
 
-      ArrowUp: this.moveToCell('up'),
-      ArrowDown: this.moveToCell('down'),
+      ArrowUp: this.moveInCell('up'),
+      ArrowDown: this.moveInCell('down'),
 
       ArrowLeft: this.moveInCell('left'),
       ArrowRight: this.moveInCell('right'),
