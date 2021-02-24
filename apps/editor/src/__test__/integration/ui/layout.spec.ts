@@ -9,12 +9,16 @@ function getElement(selector: string) {
   return document.querySelector<HTMLElement>(selector)!;
 }
 
-function getEditor() {
-  return getElement('.tui-editor')!;
+function getElements(selector: string) {
+  return document.querySelectorAll<HTMLElement>(selector)!;
+}
+
+function getEditorMain() {
+  return getElement('.tui-editor-main')!;
 }
 
 function getMdEditor() {
-  return getElement('.tui-editor-md-container .te-editor')!;
+  return getElement('.tui-editor-md-container .tui-editor')!;
 }
 
 function getMdPreview() {
@@ -22,15 +26,15 @@ function getMdPreview() {
 }
 
 function getWwEditor() {
-  return getElement('.tui-editor-ww-container .te-editor')!;
+  return getElement('.tui-editor-ww-container .tui-editor')!;
 }
 
 function getMdSwitch() {
-  return getElement('.tui-editor-mode-switch-section .markdown')!;
+  return getElements('.tui-editor-mode-switch button')![0];
 }
 
 function getWwSwitch() {
-  return getElement('.tui-editor-mode-switch-section .wysiwyg')!;
+  return getElements('.tui-editor-mode-switch button')![1];
 }
 
 function clickMdSwitch() {
@@ -42,15 +46,15 @@ function clickWwSwitch() {
 }
 
 function getMdWriteTab() {
-  return getElement('.tui-editor-markdown-tab-section button')!;
+  return getElement('.tui-editor-md-tab-container button')!;
 }
 
 function getMdPreviewTab() {
-  return document.querySelectorAll<HTMLElement>('.tui-editor-markdown-tab-section button')[1];
+  return document.querySelectorAll<HTMLElement>('.tui-editor-md-tab-container button')[1];
 }
 
 function getScrollSyncBtn() {
-  return getElement('.tui-scroll-sync')!;
+  return getElement('.scroll-sync')!;
 }
 
 function clickMdWriteTab() {
@@ -73,9 +77,9 @@ describe('layout component', () => {
     const mdPreview = document.createElement('div');
     const wwEditor = document.createElement('div');
 
-    mdEditor.className = 'te-editor';
+    mdEditor.className = 'tui-editor';
     mdPreview.className = 'tui-editor-md-preview';
-    wwEditor.className = 'te-editor';
+    wwEditor.className = 'tui-editor';
 
     const dummySlot = {
       mdEditor,
@@ -108,7 +112,7 @@ describe('layout component', () => {
   });
 
   it('render default ui properly', () => {
-    assertToContainElement(getEditor());
+    assertToContainElement(getEditorMain());
     assertToContainElement(getMdEditor());
     assertToContainElement(getMdPreview());
     assertToContainElement(getWwEditor());
@@ -144,7 +148,7 @@ describe('layout component', () => {
     });
 
     it('should switch the editor in layout when changeMode is triggered', () => {
-      const editorArea = getEditor();
+      const editorArea = getEditorMain();
       const mdSwitch = getMdSwitch();
       const wwSwitch = getWwSwitch();
 
@@ -197,7 +201,7 @@ describe('layout component', () => {
 
   describe('changing preview style', () => {
     it('should hide markdown tab when changePreviewStyle is triggered', () => {
-      const tabSection = getElement('.te-markdown-tab-section')!;
+      const tabSection = getElement('.tui-editor-md-tab-container')!;
 
       expect(tabSection).toHaveStyle({ display: 'block' });
 
@@ -207,7 +211,7 @@ describe('layout component', () => {
     });
 
     it('should hide markdown tab when changeMode is triggered', () => {
-      const tabSection = getElement('.te-markdown-tab-section')!;
+      const tabSection = getElement('.tui-editor-md-tab-container')!;
 
       expect(tabSection).toHaveStyle({ display: 'block' });
 
@@ -217,13 +221,13 @@ describe('layout component', () => {
     });
 
     it('should display the markdown editor or preview by clicking markdown tab', () => {
-      expect(getMdWriteTab()).toHaveClass('te-tab-active');
-      expect(getMdPreviewTab()).not.toHaveClass('te-tab-active');
+      expect(getMdWriteTab()).toHaveClass('active');
+      expect(getMdPreviewTab()).not.toHaveClass('active');
 
       clickMdPreviewTab();
 
-      expect(getMdWriteTab()).not.toHaveClass('te-tab-active');
-      expect(getMdPreviewTab()).toHaveClass('te-tab-active');
+      expect(getMdWriteTab()).not.toHaveClass('active');
+      expect(getMdPreviewTab()).toHaveClass('active');
     });
 
     it('should emit changePreviewTabWrite, changePreviewTabPreview events by clicking markdown tab', () => {
@@ -264,7 +268,7 @@ describe('layout component', () => {
       em.emit('changeMode', 'markdown');
 
       expect(getElement('.tui-editor-toolbar-icons')).not.toBeDisabled();
-      expect(getMdWriteTab()).toHaveClass('te-tab-active');
+      expect(getMdWriteTab()).toHaveClass('active');
     });
 
     it('should enable the toolbar items when changePreviewStyle is triggered', () => {

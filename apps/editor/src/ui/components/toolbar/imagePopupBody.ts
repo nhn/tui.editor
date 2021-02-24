@@ -81,33 +81,28 @@ export class ImagePopupBody extends Component<Props, State> {
 
     return html`
       <div>
-        <div class="te-tab-section">
-          <${Tabs} tabs=${this.tabs} activeTab=${activeTab} onClick=${this.toggleTab} />
-        </div>
-        <div class="te-url-type${activeTab === 'url' ? ' te-tab-active' : ''}">
-          <label for="te-image-url-input">${i18n.get('Image URL')}</label>
+        <${Tabs} tabs=${this.tabs} activeTab=${activeTab} onClick=${this.toggleTab} />
+        <div style="display:${activeTab === 'url' ? 'block' : 'none'}">
+          <label for="teImageUrlInput">${i18n.get('Image URL')}</label>
           <input
-            id="te-image-url-input"
+            id="teImageUrlInput"
             type="text"
-            class="te-image-url-input"
             ref=${(el: HTMLInputElement) => (this.refs.url = el)}
           />
         </div>
-        <div class="te-file-type${activeTab === 'file' ? ' te-tab-active' : ''}">
-          <label for="te-image-file-input">${i18n.get('Select image file')}</label>
+        <div style="display:${activeTab === 'file' ? 'block' : 'none'}">
+          <label for="teImageFileInput">${i18n.get('Select image file')}</label>
           <input
-            id="te-image-file-input"
+            id="teImageFileInput"
             type="file"
-            class="te-image-file-input"
             accept="image/*"
             ref=${(el: HTMLInputElement) => (this.refs.file = el)}
           />
         </div>
-        <label for="te-alt-text-input">${i18n.get('Description')}</label>
+        <label for="teAltTextInput">${i18n.get('Description')}</label>
         <input
-          id="te-alt-text-input"
+          id="teAltTextInput"
           type="text"
-          class="te-alt-text-input"
           ref=${(el: HTMLInputElement) => (this.refs.altText = el)}
         />
         <div class="tui-editor-button-container">

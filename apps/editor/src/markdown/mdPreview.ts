@@ -87,7 +87,7 @@ class MarkdownPreview extends Preview {
   }
 
   private toggleActive(active: boolean) {
-    toggleClass(this.el!, 'te-tab-active', active);
+    toggleClass(this.el!, 'active', active);
   }
 
   private initEvent(highlight: boolean) {

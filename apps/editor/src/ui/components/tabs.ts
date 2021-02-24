@@ -16,12 +16,12 @@ export class Tabs extends Component<Props> {
 
   render() {
     return html`
-      <div class="te-tab">
+      <div class="tui-editor-tab">
         ${this.props.tabs.map(
           ({ name, text }) => html`
             <button
               type="button"
-              class="${this.props.activeTab === name ? 'te-tab-active' : ''}"
+              class="${this.props.activeTab === name ? 'active' : ''}"
               onClick=${(ev: MouseEvent) => this.toggleTab(ev, name)}
             >
               ${i18n.get(text)}

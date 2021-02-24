@@ -40,7 +40,7 @@ export class LinkPopupBody extends Component<Props> {
     const linkUrlEl = this.refs.url as HTMLInputElement;
     const linkTextEl = this.refs.text as HTMLInputElement;
 
-    removeClass(linkTextEl, 'wrong');
+    removeClass(linkUrlEl, 'wrong');
     removeClass(linkTextEl, 'wrong');
 
     if (linkUrlEl.value.length < 1) {
@@ -74,18 +74,16 @@ export class LinkPopupBody extends Component<Props> {
   render() {
     return html`
       <div>
-        <label for="te-link-url-input">${i18n.get('URL')}</label>
+        <label for="teLinkUrlInput">${i18n.get('URL')}</label>
         <input
-          id="te-link-url-input"
+          id="teLinkUrlInput"
           type="text"
-          class="te-url-input"
           ref=${(el: HTMLInputElement) => (this.refs.url = el)}
         />
-        <label for="te-link-text-input">${i18n.get('Link text')}</label>
+        <label for="teLinkTextInput">${i18n.get('Link text')}</label>
         <input
-          id="te-link-text-input"
+          id="teLinkTextInput"
           type="text"
-          class="te-link-text-input"
           ref=${(el: HTMLInputElement) => (this.refs.text = el)}
         />
         <div class="tui-editor-button-container">

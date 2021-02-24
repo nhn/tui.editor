@@ -125,16 +125,16 @@ export class TablePopupBody extends Component<Props, State> {
     return html`
       <div>
         <div
-          class="te-table-selection"
+          class="tui-editor-table-selection"
           ref=${(el: HTMLElement) => (this.refs.tableEl = el)}
           onMousemove=${this.extendSelectionRange}
           onClick=${this.execCommand}
         >
-          <div class="te-table-header" style=${headerAreaBound}></div>
-          <div class="te-table-body" style=${tableBodyAreaBound}></div>
-          <div class="te-selection-area" style=${selectionAreaBound}></div>
+          <div class="tui-editor-table-header" style=${headerAreaBound}></div>
+          <div class="tui-editor-table-body" style=${tableBodyAreaBound}></div>
+          <div class="tui-editor-table-selection-layer" style=${selectionAreaBound}></div>
         </div>
-        <p class="te-description">${this.getDescription()}</p>
+        <p class="tui-editor-table-description">${this.getDescription()}</p>
       </div>
     `;
   }

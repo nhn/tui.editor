@@ -284,14 +284,14 @@ describe('keymap', () => {
         <table>
           <thead>
             <tr>
-              <th class="te-cell-selected"><p><br></p></th>
-              <th class="te-cell-selected"><p><br></p></th>
+              <th class="tui-editor-cell-selected"><p><br></p></th>
+              <th class="tui-editor-cell-selected"><p><br></p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="te-cell-selected"><p><br></p></td>
-              <td class="te-cell-selected"><p><br></p></td>
+              <td class="tui-editor-cell-selected"><p><br></p></td>
+              <td class="tui-editor-cell-selected"><p><br></p></td>
             </tr>
           </tbody>
         </table>

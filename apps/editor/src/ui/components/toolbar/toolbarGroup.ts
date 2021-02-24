@@ -36,7 +36,7 @@ export class ToolbarGroup extends Component<Props> {
     const dividerStyle = { display: hiddenDivider ? 'none' : null };
 
     return html`
-      <div class="te-toolbar-group" style=${groupStyle}>
+      <div class="tui-editor-toolbar-group" style=${groupStyle}>
         ${group.map((item: ToolbarCustomOptions) => {
           const Comp = item.el ? CustomToolbarItem : ToolbarButton;
 

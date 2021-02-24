@@ -5,7 +5,7 @@
   height: auto;
 }
 
-.auto-height .tui-editor {
+.auto-height .tui-editor-md-container {
   position: relative;
 }
 
@@ -23,7 +23,7 @@
 }
 
 /* tui editor */
-.tui-editor::after,
+.tui-editor-md-container::after,
 .tui-editor-defaultUI-toolbar::after {
   content: '';
   display: block;
@@ -31,7 +31,7 @@
   clear: both;
 }
 
-.tui-editor {
+.tui-editor-md-container {
   position: absolute;
   line-height: 1;
   color: #222;
@@ -52,12 +52,12 @@
   height: 100%;
 }
 
-.tui-editor-md-container .te-editor {
+.tui-editor-md-container .tui-editor {
   line-height: 1.5;
   position: relative;
 }
 
-.tui-editor-md-container .te-editor,
+.tui-editor-md-container .tui-editor,
 .tui-editor-md-container .tui-editor-md-preview {
   box-sizing: border-box;
   padding: 0;
@@ -65,19 +65,12 @@
 }
 
 .tui-editor-md-container .ProseMirror {
+  font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
+    'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
+  color: #222;
   font-size: 13px;
   overflow: auto;
   height: calc(100% - 36px);
-}
-
-.tui-editor-md-container .te-editor .te-clipboard {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-  top: 0;
-  left: 0;
-  z-index: -1;
 }
 
 .tui-editor-md-container .tui-editor-md-preview {
@@ -94,31 +87,31 @@
   padding-top: 8px;
 }
 
-.tui-editor-main .tui-editor-md-tab > .te-editor,
-.tui-editor-main .tui-editor-md-tab > .tui-editor-md-preview {
+.tui-editor-main .tui-editor-md-tab-style > .tui-editor,
+.tui-editor-main .tui-editor-md-tab-style > .tui-editor-md-preview {
   float: left;
   width: 100%;
   display: none;
 }
 
-.tui-editor-main .tui-editor-md-tab > .te-tab-active {
+.tui-editor-main .tui-editor-md-tab-style > .active {
   display: block;
 }
 
-.tui-editor-main .tui-editor-md-vertical > .te-tab-section {
+.tui-editor-main .tui-editor-md-vertical-style > .tui-editor-tab {
   display: none;
 }
 
-.tui-editor-main .tui-editor-md-tab > .te-tab-section {
+.tui-editor-main .tui-editor-md-tab-style > .tui-editor-tab {
   display: block;
 }
 
-.tui-editor-main .tui-editor-md-vertical .te-editor {
+.tui-editor-main .tui-editor-md-vertical-style .tui-editor {
   float: left;
   width: 50%;
 }
 
-.tui-editor-main .tui-editor-md-vertical .tui-editor-md-preview {
+.tui-editor-main .tui-editor-md-vertical-style .tui-editor-md-preview {
   float: left;
   width: 50%;
 }
@@ -133,7 +126,7 @@
   border-left: 1px solid #e5e5e5;
 }
 
-.tui-editor-main .tui-editor-md-vertical .tui-editor-md-splitter {
+.tui-editor-main .tui-editor-md-vertical-style .tui-editor-md-splitter {
   display: block;
 }
 
@@ -145,19 +138,12 @@
   background-color: #fff;
 }
 
-.tui-editor-ww-container > .te-editor {
+.tui-editor-ww-container > .tui-editor {
   height: inherit;
 }
 
-.tui-editor-ww-container .tui-editor-contents:focus {
-  outline: none;
-}
-
 .tui-editor-ww-container .tui-editor-contents {
-  padding: 0 25px;
-}
-
-.tui-editor-ww-container .tui-editor-contents:first-child {
+  overflow: auto;
   box-sizing: border-box;
   margin: 0px;
   padding: 16px 25px 0px 25px;
@@ -263,7 +249,7 @@
   border: 0;
 }
 
-.tui-dropdown-toolbar {
+.tui-editor-dropdown-toolbar {
   position: absolute;
   width: auto;
   height: 31px;
@@ -317,18 +303,18 @@
   color: #000;
 }
 
-.tui-editor-defaultUI .te-markdown-tab-section {
+.tui-editor-defaultUI .tui-editor-md-tab-container {
   float: left;
   height: 31px;
   background: #fff;
 }
 
-.te-markdown-tab-section .te-tab {
+.tui-editor-md-tab-container .tui-editor-tab {
   margin: 0 -7px 0 24px;
   background: #fff;
 }
 
-.tui-editor-defaultUI .te-tab button {
+.tui-editor-defaultUI .tui-editor-tab button {
   box-sizing: border-box;
   line-height: 100%;
   position: relative;
@@ -344,19 +330,19 @@
   outline: 0;
 }
 
-.te-markdown-tab-section .te-tab button:last-child {
+.tui-editor-md-tab-container .tui-editor-tab button:last-child {
   margin-left: -1px;
 }
 
-.te-markdown-tab-section .te-tab button.te-tab-active,
-.te-markdown-tab-section .te-tab button:hover.te-tab-active {
+.tui-editor-md-tab-container .tui-editor-tab button.active,
+.tui-editor-md-tab-container .tui-editor-tab button:hover.active {
   background-color: #fff;
   color: #333;
   border-bottom: 1px solid #fff;
   z-index: 2;
 }
 
-.te-markdown-tab-section .te-tab button:hover {
+.tui-editor-md-tab-container .tui-editor-tab button:hover {
   background-color: #fff;
   color: #333;
 }
@@ -436,27 +422,14 @@
   border-color: #ff0000;
 }
 
-.tui-editor-popup-add-image .te-tab {
+.tui-editor-popup-add-image .tui-editor-tab {
   display: block;
   background: none;
   border-bottom: 1px solid #ebebeb;
   margin-bottom: 8px;
 }
 
-.tui-editor-popup-add-image .te-url-type {
-  display: none;
-}
-
-.tui-editor-popup-add-image .te-file-type {
-  display: none;
-}
-
-.tui-editor-popup-add-image div.te-tab-active,
-.tui-editor-popup-add-image form.te-tab-active {
-  display: block;
-}
-
-.tui-editor-popup-add-image .te-tab button {
+.tui-editor-popup-add-image .tui-editor-tab button {
   border: 1px solid #ccc;
   background: #eee;
   min-width: 100px;
@@ -465,7 +438,7 @@
   border-radius: 3px 3px 0px 0px;
 }
 
-.tui-editor-popup-add-image .te-tab button.te-tab-active {
+.tui-editor-popup-add-image .tui-editor-tab button.active {
   background: #fff;
 }
 
@@ -473,19 +446,19 @@
   width: auto;
 }
 
-.tui-editor-popup-add-table .te-table-selection {
+.tui-editor-popup-add-table .tui-editor-table-selection {
   position: relative;
 }
 
-.tui-editor-popup-add-table .te-table-body {
+.tui-editor-popup-add-table .tui-editor-table-body {
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAARCAYAAAAougcOAAAC7mlDQ1BJQ0MgUHJvZmlsZQAAeAGFVM9rE0EU/jZuqdAiCFprDrJ4kCJJWatoRdQ2/RFiawzbH7ZFkGQzSdZuNuvuJrWliOTi0SreRe2hB/+AHnrwZC9KhVpFKN6rKGKhFy3xzW5MtqXqwM5+8943731vdt8ADXLSNPWABOQNx1KiEWlsfEJq/IgAjqIJQTQlVdvsTiQGQYNz+Xvn2HoPgVtWw3v7d7J3rZrStpoHhP1A4Eea2Sqw7xdxClkSAog836Epx3QI3+PY8uyPOU55eMG1Dys9xFkifEA1Lc5/TbhTzSXTQINIOJT1cVI+nNeLlNcdB2luZsbIEL1PkKa7zO6rYqGcTvYOkL2d9H5Os94+wiHCCxmtP0a4jZ71jNU/4mHhpObEhj0cGDX0+GAVtxqp+DXCFF8QTSeiVHHZLg3xmK79VvJKgnCQOMpkYYBzWkhP10xu+LqHBX0m1xOv4ndWUeF5jxNn3tTd70XaAq8wDh0MGgyaDUhQEEUEYZiwUECGPBoxNLJyPyOrBhuTezJ1JGq7dGJEsUF7Ntw9t1Gk3Tz+KCJxlEO1CJL8Qf4qr8lP5Xn5y1yw2Fb3lK2bmrry4DvF5Zm5Gh7X08jjc01efJXUdpNXR5aseXq8muwaP+xXlzHmgjWPxHOw+/EtX5XMlymMFMXjVfPqS4R1WjE3359sfzs94i7PLrXWc62JizdWm5dn/WpI++6qvJPmVflPXvXx/GfNxGPiKTEmdornIYmXxS7xkthLqwviYG3HCJ2VhinSbZH6JNVgYJq89S9dP1t4vUZ/DPVRlBnM0lSJ93/CKmQ0nbkOb/qP28f8F+T3iuefKAIvbODImbptU3HvEKFlpW5zrgIXv9F98LZua6N+OPwEWDyrFq1SNZ8gvAEcdod6HugpmNOWls05Uocsn5O66cpiUsxQ20NSUtcl12VLFrOZVWLpdtiZ0x1uHKE5QvfEp0plk/qv8RGw/bBS+fmsUtl+ThrWgZf6b8C8/UXAeIuJAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAOklEQVQ4EWO8e/fuPwYGBkYgphlgAZmspKREMwtABjPR1HSo4aOWkBTKo8E1GlwkhQBJikdT1wgNLgAMSwQgckFvTgAAAABJRU5ErkJggg==');
 }
 
-.tui-editor-popup-add-table .te-table-header {
+.tui-editor-popup-add-table .tui-editor-table-header {
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAARCAYAAAAougcOAAAC7mlDQ1BJQ0MgUHJvZmlsZQAAeAGFVM9rE0EU/jZuqdAiCFprDrJ4kCJJWatoRdQ2/RFiawzbH7ZFkGQzSdZuNuvuJrWliOTi0SreRe2hB/+AHnrwZC9KhVpFKN6rKGKhFy3xzW5MtqXqwM5+8943731vdt8ADXLSNPWABOQNx1KiEWlsfEJq/IgAjqIJQTQlVdvsTiQGQYNz+Xvn2HoPgVtWw3v7d7J3rZrStpoHhP1A4Eea2Sqw7xdxClkSAog836Epx3QI3+PY8uyPOU55eMG1Dys9xFkifEA1Lc5/TbhTzSXTQINIOJT1cVI+nNeLlNcdB2luZsbIEL1PkKa7zO6rYqGcTvYOkL2d9H5Os94+wiHCCxmtP0a4jZ71jNU/4mHhpObEhj0cGDX0+GAVtxqp+DXCFF8QTSeiVHHZLg3xmK79VvJKgnCQOMpkYYBzWkhP10xu+LqHBX0m1xOv4ndWUeF5jxNn3tTd70XaAq8wDh0MGgyaDUhQEEUEYZiwUECGPBoxNLJyPyOrBhuTezJ1JGq7dGJEsUF7Ntw9t1Gk3Tz+KCJxlEO1CJL8Qf4qr8lP5Xn5y1yw2Fb3lK2bmrry4DvF5Zm5Gh7X08jjc01efJXUdpNXR5aseXq8muwaP+xXlzHmgjWPxHOw+/EtX5XMlymMFMXjVfPqS4R1WjE3359sfzs94i7PLrXWc62JizdWm5dn/WpI++6qvJPmVflPXvXx/GfNxGPiKTEmdornIYmXxS7xkthLqwviYG3HCJ2VhinSbZH6JNVgYJq89S9dP1t4vUZ/DPVRlBnM0lSJ93/CKmQ0nbkOb/qP28f8F+T3iuefKAIvbODImbptU3HvEKFlpW5zrgIXv9F98LZua6N+OPwEWDyrFq1SNZ8gvAEcdod6HugpmNOWls05Uocsn5O66cpiUsxQ20NSUtcl12VLFrOZVWLpdtiZ0x1uHKE5QvfEp0plk/qv8RGw/bBS+fmsUtl+ThrWgZf6b8C8/UXAeIuJAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAOklEQVQ4EWO8e/fuPwYGBkYgphlgAZksLCxMMwtABjPR1HSo4aOWkBTKo8E1GlwkhQBJikdT1wgNLgDxKwPzTeWPdAAAAABJRU5ErkJggg==');
 }
 
-.tui-editor-popup-add-table .te-selection-area {
+.tui-editor-popup-add-table .tui-editor-table-selection-layer {
   position: absolute;
   top: 0;
   left: 0;
@@ -494,7 +467,7 @@
   z-index: 999;
 }
 
-.tui-editor-popup-add-table .te-description {
+.tui-editor-popup-add-table .tui-editor-table-description {
   margin: 10px 0 0 0;
   text-align: center;
 }
@@ -775,14 +748,6 @@
   background-position: -193px -92px;
 }
 
-.tui-editor-pseudo-clipboard {
-  position: fixed;
-  left: -1000px;
-  top: -1000px;
-  width: 100px;
-  height: 100px;
-}
-
 .te-popup-code-block-languages {
   position: fixed;
   box-sizing: border-box;
@@ -853,36 +818,13 @@
   content: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSIxMnB4IiBoZWlnaHQ9IjE0cHgiIHZpZXdCb3g9IjAgMCAxMiAxNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4gICAgICAgIDx0aXRsZT5BNEZDRkIzMy0zNjdBLTREMjAtOEEyNC1DQ0I2ODFBMDZDODg8L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggc2tldGNodG9vbC48L2Rlc2M+ICAgIDxkZWZzPjwvZGVmcz4gICAgPGcgaWQ9IlN5bWJvbHMiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPiAgICAgICAgPGcgaWQ9ImNvbS10cmFuZ2xlLXVwLXNpZGUiIGZpbGw9IiM1NTU1NTUiPiAgICAgICAgICAgIDxwb2x5Z29uIGlkPSJSZWN0YW5nbGUtNyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNi4wMDAwMDAsIDYuNTAwMDAwKSBzY2FsZSgxLCAtMSkgdHJhbnNsYXRlKC02LjAwMDAwMCwgLTYuNTAwMDAwKSAiIHBvaW50cz0iMiA0IDEwIDQgNiA5Ij48L3BvbHlnb24+ICAgICAgICA8L2c+ICAgIDwvZz48L3N2Zz4=);
 }
 
-@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-  /* IE10+ */
-  .tui-split-scroll-wrapper .tui-splitter {
-    left: calc(50% - 9px);
-  }
-}
-
-@supports (-ms-accelerator: true) {
-  /* IE Edge 12+ CSS styles go here */
-  .tui-split-scroll-wrapper .tui-splitter {
-    left: calc(50% - 9px);
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .tui-popup-wrapper {
-    max-width: 300px;
-  }
-
+@media only screen and (max-width: 480px) {
   .tui-editor-popup {
+    max-width: 300px;
     margin-left: -150px;
   }
 
-  .tui-dropdown-toolbar {
+  .tui-editor-dropdown-toolbar {
     max-width: none;
   }
-}
-
-.te-md-container .ProseMirror {
-  font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
-    'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
-  color: #222;
 }

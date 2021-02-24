@@ -150,7 +150,7 @@ export class Toolbar extends Component<Props, State> {
   };
 
   private openPopup = (popupName: string, initialValues = {}) => {
-    const el = document.querySelector<HTMLElement>(`.te-toolbar-group .tui-${popupName}`)!;
+    const el = document.querySelector<HTMLElement>(`.tui-editor-toolbar-group .${popupName}`)!;
 
     if (el) {
       const { offsetLeft, offsetTop } = getTotalOffset(

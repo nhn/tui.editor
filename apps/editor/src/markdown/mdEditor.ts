@@ -71,7 +71,7 @@ export default class MdEditor extends EditorBase {
   }
 
   private toggleActive(active: boolean) {
-    toggleClass(this.el!, 'te-tab-active', active);
+    toggleClass(this.el!, 'active', active);
     if (active) {
       this.focus();
     } else {
@@ -81,7 +81,7 @@ export default class MdEditor extends EditorBase {
 
   private createClipboard() {
     this.clipboard = document.createElement('textarea');
-    this.clipboard.className = 'te-clipboard';
+    this.clipboard.className = 'tui-editor-pseudo-clipboard';
     this.clipboard.addEventListener('paste', (ev: ClipboardEvent) => {
       ev.preventDefault();
       const clipboardData =

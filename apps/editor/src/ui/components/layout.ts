@@ -63,7 +63,9 @@ export class Layout extends Component<Props, State> {
     const displayClassName = hide ? ' tui-editor-hidden' : '';
     const editorTypeClassName =
       editorType === 'markdown' ? 'tui-editor-md-mode' : 'tui-editor-ww-mode';
-    const previewClassName = `tui-editor-md-${previewStyle === 'vertical' ? 'vertical' : 'tab'}`;
+    const previewClassName = `tui-editor-md-${
+      previewStyle === 'vertical' ? 'vertical' : 'tab'
+    }-style`;
 
     return html`
       <div

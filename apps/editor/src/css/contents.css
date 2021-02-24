@@ -446,6 +446,16 @@ table.ProseMirror-selectednode {
   min-height: 22px;
 }
 
+.tui-editor-pseudo-clipboard {
+  position: fixed;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  left: -1000px;
+  top: -1000px;
+  z-index: -1;
+}
+
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
   /* IE10+11 */
   .tui-editor-ww-container .tui-editor-contents li {
