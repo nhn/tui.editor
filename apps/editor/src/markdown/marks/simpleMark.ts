@@ -1,5 +1,5 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
-import { cls } from '@/utils/dom';
+import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 
 export class TaskDelimiter extends Mark {
@@ -10,7 +10,7 @@ export class TaskDelimiter extends Mark {
   get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
-        return ['span', { class: cls('delimiter', 'list-item') }, 0];
+        return ['span', { class: clsWithMdPrefix('delimiter', 'list-item') }, 0];
       },
     };
   }
@@ -24,7 +24,7 @@ export class Delimiter extends Mark {
   get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
-        return ['span', { class: cls('delimiter') }, 0];
+        return ['span', { class: clsWithMdPrefix('delimiter') }, 0];
       },
     };
   }
@@ -38,7 +38,7 @@ export class Meta extends Mark {
   get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
-        return ['span', { class: cls('meta') }, 0];
+        return ['span', { class: clsWithMdPrefix('meta') }, 0];
       },
     };
   }
@@ -52,7 +52,7 @@ export class MarkedText extends Mark {
   get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
-        return ['span', { class: cls('marked-text') }, 0];
+        return ['span', { class: clsWithMdPrefix('marked-text') }, 0];
       },
     };
   }
@@ -66,7 +66,7 @@ export class TableCell extends Mark {
   get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
-        return ['span', { class: cls('table-cell') }, 0];
+        return ['span', { class: clsWithMdPrefix('table-cell') }, 0];
       },
     };
   }

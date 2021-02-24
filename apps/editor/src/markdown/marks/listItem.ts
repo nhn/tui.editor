@@ -4,7 +4,7 @@ import { Command } from 'prosemirror-commands';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import { EditorCommand } from '@t/spec';
 import { ListItemMdNode, MdNode } from '@t/markdown';
-import { cls } from '@/utils/dom';
+import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
 import {
@@ -58,7 +58,7 @@ export class ListItem extends Mark {
         if (even) {
           classNames += '|list-item-even';
         }
-        return ['span', { class: cls(...classNames.split('|')) }, 0];
+        return ['span', { class: clsWithMdPrefix(...classNames.split('|')) }, 0];
       },
     };
   }

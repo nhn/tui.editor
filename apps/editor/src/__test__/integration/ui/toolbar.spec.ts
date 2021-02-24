@@ -609,7 +609,7 @@ describe('API', () => {
   let ref: Toolbar | null;
 
   function getToolbarItems() {
-    return getElement('.tui-editor-defaultUI-toolbar').querySelectorAll('button:not(.tui-more)');
+    return getElement('.tui-editor-defaultUI-toolbar').querySelectorAll('button:not(.more)');
   }
 
   beforeEach(() => {

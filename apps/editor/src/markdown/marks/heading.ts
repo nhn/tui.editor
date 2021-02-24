@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray, Mark as ProsemirrorMark, ProsemirrorNode } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
-import { cls } from '@/utils/dom';
+import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { createParagraph, replaceNodes } from '@/helper/manipulation';
 import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
@@ -29,7 +29,7 @@ export class Heading extends Mark {
         if (seText) {
           classNames += '|delimiter|setext';
         }
-        return ['span', { class: cls(...classNames.split('|')) }, 0];
+        return ['span', { class: clsWithMdPrefix(...classNames.split('|')) }, 0];
       },
     };
   }

@@ -1,6 +1,7 @@
 import { Emitter } from '@t/event';
 import { EditorType } from '@t/editor';
 import i18n from '@/i18n/i18n';
+import { cls } from '@/utils/dom';
 import html from '../vdom/template';
 import { Component } from '../vdom/component';
 
@@ -33,7 +34,7 @@ export class Switch extends Component<Props, State> {
     const { editorType, eventEmitter } = this.props;
 
     return html`
-      <div class="tui-editor-mode-switch" style="display: ${this.state.hide ? 'none' : 'block'}">
+      <div class="${cls('mode-switch')}" style="display: ${this.state.hide ? 'none' : 'block'}">
         <button
           class="${editorType === 'markdown' ? ' active' : ''}"
           type="button"

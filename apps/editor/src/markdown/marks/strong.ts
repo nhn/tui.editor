@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
-import { cls } from '@/utils/dom';
+import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { toggleMark } from '../helper/mdCommand';
 
@@ -15,7 +15,7 @@ export class Strong extends Mark {
   get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
-        return ['span', { class: cls('strong') }, 0];
+        return ['span', { class: clsWithMdPrefix('strong') }, 0];
       },
     };
   }

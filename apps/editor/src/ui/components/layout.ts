@@ -1,6 +1,7 @@
 import { EditorType, PreviewStyle } from '@t/editor';
 import { Emitter } from '@t/event';
 import { IndexList, ToolbarItem, ToolbarItemOptions } from '@t/ui';
+import { cls } from '@/utils/dom';
 import html from '../vdom/template';
 import { Component } from '../vdom/component';
 import { Switch } from './switch';
@@ -60,16 +61,15 @@ export class Layout extends Component<Props, State> {
   render() {
     const { eventEmitter, hideModeSwitch, toolbarItems } = this.props;
     const { hide, previewStyle, editorType } = this.state;
-    const displayClassName = hide ? ' tui-editor-hidden' : '';
-    const editorTypeClassName =
-      editorType === 'markdown' ? 'tui-editor-md-mode' : 'tui-editor-ww-mode';
-    const previewClassName = `tui-editor-md-${
+    const displayClassName = hide ? ` ${cls('hidden')}` : '';
+    const editorTypeClassName = editorType === 'markdown' ? cls('md-mode') : cls('ww-mode');
+    const previewClassName = `${cls('md')}-${
       previewStyle === 'vertical' ? 'vertical' : 'tab'
     }-style`;
 
     return html`
       <div
-        class="tui-editor-defaultUI${displayClassName}"
+        class="${cls('defaultUI')}${displayClassName}"
         ref=${(el: HTMLElement) => (this.refs.el = el)}
       >
         <${Toolbar}
@@ -80,17 +80,17 @@ export class Layout extends Component<Props, State> {
           editorType=${editorType}
         />
         <div
-          class="tui-editor-main ${editorTypeClassName}"
+          class="${cls('main')} ${editorTypeClassName}"
           ref=${(el: HTMLElement) => (this.refs.editorSection = el)}
         >
           <div
-            class="tui-editor-md-container ${previewClassName}"
+            class="${cls('md-container')} ${previewClassName}"
             ref=${(el: HTMLElement) => (this.refs.mdContainer = el)}
           >
-            <div class="tui-editor-md-splitter"></div>
+            <div class="${cls('md-splitter')}"></div>
           </div>
           <div
-            class="tui-editor-ww-container"
+            class="${cls('ww-container')}"
             ref=${(el: HTMLElement) => (this.refs.wwContainer = el)}
           />
         </div>

@@ -2,6 +2,7 @@ import { HookCallback } from '@t/editor';
 import { Emitter } from '@t/event';
 import { ExecCommand, HidePopup, TabInfo } from '@t/ui';
 import i18n from '@/i18n/i18n';
+import { cls } from '@/utils/dom';
 import { Component } from '@/ui/vdom/component';
 import html from '@/ui/vdom/template';
 import { Tabs } from '../tabs';
@@ -105,11 +106,11 @@ export class ImagePopupBody extends Component<Props, State> {
           type="text"
           ref=${(el: HTMLInputElement) => (this.refs.altText = el)}
         />
-        <div class="tui-editor-button-container">
-          <button type="button" class="tui-editor-ok-button" onClick=${this.execCommand}>
+        <div class="${cls('button-container')}">
+          <button type="button" class="${cls('ok-button')}" onClick=${this.execCommand}>
             ${i18n.get('OK')}
           </button>
-          <button type="button" class="tui-editor-close-button" onClick=${this.props.hidePopup}>
+          <button type="button" class="${cls('close-button')}" onClick=${this.props.hidePopup}>
             ${i18n.get('Cancel')}
           </button>
         </div>

@@ -253,7 +253,7 @@
   position: absolute;
   width: auto;
   height: 31px;
-  z-index: 10;
+  z-index: 101;
   margin-right: auto;
   border: 1px solid #cacaca;
   background: #fff;

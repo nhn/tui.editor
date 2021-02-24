@@ -5,7 +5,7 @@ import { Command, joinForward } from 'prosemirror-commands';
 import { ToastMark } from '@toast-ui/toastmark';
 import { EditorCommand } from '@t/spec';
 import { MdNode } from '@t/markdown';
-import { cls } from '@/utils/dom';
+import { clsWithMdPrefix } from '@/utils/dom';
 import Node from '@/spec/node';
 import { hasSpecificTypeAncestor, isOrderedListNode, isTableCellNode } from '@/utils/markdown';
 import {
@@ -84,7 +84,9 @@ export class Paragraph extends Node {
       group: 'block',
       parseDOM: [{ tag: 'div' }],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
-        return attrs.className ? ['div', { class: cls(attrs.className) }, 0] : ['div', 0];
+        return attrs.className
+          ? ['div', { class: clsWithMdPrefix(attrs.className) }, 0]
+          : ['div', 0];
       },
     };
   }

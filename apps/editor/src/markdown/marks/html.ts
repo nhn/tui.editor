@@ -1,5 +1,5 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
-import { cls } from '@/utils/dom';
+import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 
 export class Html extends Mark {
@@ -10,7 +10,7 @@ export class Html extends Mark {
   get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
-        return ['span', { class: cls('html') }, 0];
+        return ['span', { class: clsWithMdPrefix('html') }, 0];
       },
     };
   }

@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
-import { cls } from '@/utils/dom';
+import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { decodeURIGraceful, replaceMarkdownText } from '@/utils/encoder';
 import { createText } from '@/helper/manipulation';
@@ -37,7 +37,7 @@ export class Link extends Mark {
           classNames += '|link-desc|marked-text';
         }
 
-        return ['span', { class: cls(...classNames.split('|')) }, 0];
+        return ['span', { class: clsWithMdPrefix(...classNames.split('|')) }, 0];
       },
     };
   }

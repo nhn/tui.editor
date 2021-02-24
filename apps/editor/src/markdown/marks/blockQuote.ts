@@ -1,7 +1,7 @@
 import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
 import { EditorCommand } from '@t/spec';
-import { cls } from '@/utils/dom';
+import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import {
   createParagraph,
@@ -22,7 +22,7 @@ export class BlockQuote extends Mark {
   get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
-        return ['span', { class: cls('block-quote') }, 0];
+        return ['span', { class: clsWithMdPrefix('block-quote') }, 0];
       },
     };
   }

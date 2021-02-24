@@ -11,6 +11,7 @@ import {
   PopupInitialValues,
 } from '@t/ui';
 import i18n from '@/i18n/i18n';
+import { cls } from '@/utils/dom';
 import html from './vdom/template';
 import { HeadingPopupBody } from './components/toolbar/headingPopupBody';
 import { ImagePopupBody } from './components/toolbar/imagePopupBody';
@@ -187,7 +188,7 @@ function createDefaultToolbarItemInfo(type: string) {
   }
 
   if (info.name !== 'scrollSync') {
-    info.className += ' tui-editor-toolbar-icons';
+    info.className += ` ${cls('toolbar-icons')}`;
   }
 
   return info;
@@ -208,14 +209,14 @@ export function createPopupInfo(type: string, payload: Payload): PopupInfo | und
     case 'heading':
       return {
         render: (props) => html`<${HeadingPopupBody} ...${props} />`,
-        className: 'tui-editor-popup-add-heading',
+        className: cls('popup-add-heading'),
         fromEl: el,
         pos,
       };
     case 'link':
       return {
         render: (props) => html`<${LinkPopupBody} ...${props} />`,
-        className: 'tui-editor-popup-add-link',
+        className: cls('popup-add-link'),
         headerText: i18n.get('Insert link'),
         fromEl: el,
         pos,
@@ -224,7 +225,7 @@ export function createPopupInfo(type: string, payload: Payload): PopupInfo | und
     case 'image':
       return {
         render: (props) => html`<${ImagePopupBody} ...${props} />`,
-        className: 'tui-editor-popup-add-image',
+        className: cls('popup-add-image'),
         headerText: i18n.get('Insert image'),
         fromEl: el,
         pos,
@@ -232,7 +233,7 @@ export function createPopupInfo(type: string, payload: Payload): PopupInfo | und
     case 'table':
       return {
         render: (props) => html`<${TablePopupBody} ...${props} />`,
-        className: 'tui-editor-popup-add-table',
+        className: cls('popup-add-table'),
         fromEl: el,
         pos,
       };
