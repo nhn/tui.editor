@@ -96,7 +96,7 @@ describe('WysiwygEditor', () => {
       expect(wwe.getScrollTop()).toBe(30);
     });
 
-    it('getRange() return selection range as array', () => {
+    it('getSelection() return selection range as array', () => {
       setContent(oneLineTrim`
         <p>foo</p>
         <p>bar</p>
@@ -105,7 +105,7 @@ describe('WysiwygEditor', () => {
 
       wwe.setSelection(13, 2);
 
-      expect(wwe.getRange()).toEqual([2, 13]);
+      expect(wwe.getSelection()).toEqual([2, 13]);
     });
 
     it('replaceSelection() change text of selection range', () => {

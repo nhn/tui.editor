@@ -311,12 +311,18 @@ export default class MdEditor extends EditorBase {
     this.view.dispatch(tr.replaceWith(pos[0], pos[1], nodes));
   }
 
-  getRangeOfNode(pos?: MdPos): MdSourcepos {
+  getRangeInfoOfNode(pos?: MdPos) {
     const { doc, selection } = this.view.state;
     const mdPos = pos || getEditorToMdPos(doc, selection.from)[0];
-    const mdNode: MdNode = this.toastMark.findNodeAtPosition(mdPos);
+    let mdNode: MdNode = this.toastMark.findNodeAtPosition(mdPos);
 
-    return mdNode.sourcepos!;
+    if (mdNode.type === 'text' && mdNode.parent!.type !== 'paragraph') {
+      mdNode = mdNode.parent!;
+    }
+
+    mdNode.sourcepos![1][1] += 1;
+
+    return { range: mdNode.sourcepos!, type: mdNode.type };
   }
 
   getMarkdown() {

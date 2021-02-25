@@ -1,5 +1,5 @@
 import { EditorView } from 'prosemirror-view';
-import { Node as ProsemirrorNode, Slice, Fragment } from 'prosemirror-model';
+import { Node as ProsemirrorNode, Slice, Fragment, Mark } from 'prosemirror-model';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import EditorBase from '@/base';
 import { getWwCommands } from '@/commands/wwCommands';
@@ -26,6 +26,7 @@ import { LinkAttributes, WidgetStyle } from '@t/editor';
 import { createNodesWithWidget } from '@/widget/rules';
 import { widgetNodeView } from '@/widget/widgetNode';
 import { cls } from '@/utils/dom';
+import { includes } from '@/utils/common';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -227,10 +228,37 @@ export default class WysiwygEditor extends EditorBase {
     this.view.dispatch(tr.replaceWith(start, end, nodes));
   }
 
-  getRangeOfNode(pos?: number): [number, number] {
+  getRangeInfoOfNode(pos?: number) {
     const { doc, selection } = this.view.state;
     const $pos = pos ? doc.resolve(pos) : selection.$from;
+    const marks = $pos.marks();
+    const node = $pos.node();
+    let start = $pos.start();
+    let end = $pos.end();
+    let type = node.type.name;
 
-    return [$pos.start(), $pos.end()];
+    if (marks.length || type === 'paragraph') {
+      const mark = marks[marks.length - 1];
+      const maybeHasMark = (nodeMarks: Mark[]) =>
+        nodeMarks.length ? includes(nodeMarks, mark) : true;
+
+      type = mark ? mark.type.name : 'text';
+
+      node.forEach((child, offset) => {
+        const { isText, nodeSize, marks: nodeMarks } = child;
+        const startOffset = $pos.pos - start;
+
+        if (
+          isText &&
+          offset <= startOffset &&
+          offset + nodeSize >= startOffset &&
+          maybeHasMark(nodeMarks)
+        ) {
+          start = start + offset;
+          end = start + nodeSize;
+        }
+      });
+    }
+    return { range: [start, end] as [number, number], type };
   }
 }

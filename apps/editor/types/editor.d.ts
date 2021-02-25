@@ -230,6 +230,10 @@ export class Editor extends EditorCore {
 }
 
 export type EditorPos = MdPos | number;
+export interface NodeRangeInfo {
+  range: MdSourcepos | [number, number];
+  type: string;
+}
 
 export interface Base {
   el: HTMLElement;
@@ -302,5 +306,5 @@ export interface Base {
 
   getSelection(): MdSourcepos | [number, number];
 
-  getRangeOfNode(pos?: EditorPos): MdSourcepos | [number, number];
+  getRangeInfoOfNode(pos?: EditorPos): NodeRangeInfo;
 }

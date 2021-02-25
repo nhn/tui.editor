@@ -491,17 +491,17 @@ class ToastUIEditor {
    * @returns {Array.<number[]>|Array.<number>} - node [start, end] range
    * @example
    * // Markdown mode
-   * const mdSelection = editor.getSelection();
+   * const rangeInfo = editor.getRangeInfoOfNode();
    *
-   * console.log(mdSelection); // [[startLineOffset, startCurorOffset], [endLineOffset, endCurorOffset]]
+   * console.log(rangeInfo); // { range: [[startLineOffset, startCurorOffset], [endLineOffset, endCurorOffset]], type: 'emph' }
    *
    * // WYSIWYG mode
-   * const wwSelection = editor.getSelection();
+   * const rangeInfo = editor.getRangeInfoOfNode();
    *
-   * console.log(wwSelection); // [startCursorOffset, endCursorOffset]
+   * console.log(rangeInfo); // { range: [startCursorOffset, endCursorOffset], type: 'emph' }
    */
-  getRangeOfNode(pos?: EditorPos) {
-    return this.getCurrentModeEditor().getRangeOfNode(pos);
+  getRangeInfoOfNode(pos?: EditorPos) {
+    return this.getCurrentModeEditor().getRangeInfoOfNode(pos);
   }
 
   /**

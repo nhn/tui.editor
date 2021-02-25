@@ -80,7 +80,7 @@ describe('keymap', () => {
 
         forceKeymapFn('table', 'moveToCell', ['right']);
 
-        expect(wwe.getRange()).toEqual([15, 15]);
+        expect(wwe.getSelection()).toEqual([15, 15]);
       });
 
       it('should move to first cell of next line', () => {
@@ -88,7 +88,7 @@ describe('keymap', () => {
 
         forceKeymapFn('table', 'moveToCell', ['right']);
 
-        expect(wwe.getRange()).toEqual([26, 26]);
+        expect(wwe.getSelection()).toEqual([26, 26]);
       });
     });
 
@@ -98,7 +98,7 @@ describe('keymap', () => {
 
         forceKeymapFn('table', 'moveToCell', ['left']);
 
-        expect(wwe.getRange()).toEqual([8, 8]);
+        expect(wwe.getSelection()).toEqual([8, 8]);
       });
 
       it('should move to last cell of previous line', () => {
@@ -106,7 +106,7 @@ describe('keymap', () => {
 
         forceKeymapFn('table', 'moveToCell', ['left']);
 
-        expect(wwe.getRange()).toEqual([15, 15]);
+        expect(wwe.getSelection()).toEqual([15, 15]);
       });
     });
 
@@ -116,7 +116,7 @@ describe('keymap', () => {
 
         forceKeymapFn('table', 'moveInCell', ['up']);
 
-        expect(wwe.getRange()).toEqual([8, 8]);
+        expect(wwe.getSelection()).toEqual([8, 8]);
       });
 
       it('should add paragraph when there is no content before table and cursor is in first row', () => {
@@ -169,7 +169,7 @@ describe('keymap', () => {
         wwe.setSelection(15, 15); // in 'foo' cell
         forceKeymapFn('table', 'moveInCell', ['up']);
 
-        expect(wwe.getRange()).toEqual([7, 7]); // 'before' paragraph
+        expect(wwe.getSelection()).toEqual([7, 7]); // 'before' paragraph
       });
     });
 
@@ -179,7 +179,7 @@ describe('keymap', () => {
 
         forceKeymapFn('table', 'moveInCell', ['down']);
 
-        expect(wwe.getRange()).toEqual([23, 23]);
+        expect(wwe.getSelection()).toEqual([23, 23]);
       });
 
       it('should add paragraph when there is no content after table and cursor is in last row', () => {
@@ -232,7 +232,7 @@ describe('keymap', () => {
         wwe.setSelection(32, 32); // in 'qux' cell
         forceKeymapFn('table', 'moveInCell', ['down']);
 
-        expect(wwe.getRange()).toEqual([39, 39]); // 'after' paragraph
+        expect(wwe.getSelection()).toEqual([39, 39]); // 'after' paragraph
       });
     });
 
