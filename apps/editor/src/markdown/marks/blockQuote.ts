@@ -7,7 +7,6 @@ import {
   createParagraph,
   createTextSelection,
   insertNodes,
-  nbspToSpace,
   replaceNodes,
 } from '@/helper/manipulation';
 import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
@@ -28,7 +27,6 @@ export class BlockQuote extends Mark {
   }
 
   private getChangedText(text: string, isBlockQuote?: boolean) {
-    text = nbspToSpace(text);
     if (isBlockQuote) {
       return text.replace(reBlockQuote, '').trim();
     }
@@ -40,7 +38,7 @@ export class BlockQuote extends Mark {
       const [, to] = resolveSelectionPos(selection);
       const startResolvedPos = doc.resolve(to);
 
-      const lineText = nbspToSpace(startResolvedPos.node().textContent);
+      const lineText = startResolvedPos.node().textContent;
       const isBlockQuote = reBlockQuote.test(lineText);
 
       const [startOffset, endOffset] = getExtendedRangeOffset(to, to, doc);
@@ -76,7 +74,7 @@ export class BlockQuote extends Mark {
       const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
       const startResolvedPos = doc.resolve(from);
 
-      const lineText = nbspToSpace(startResolvedPos.node().textContent);
+      const lineText = startResolvedPos.node().textContent;
       const isBlockQuote = reBlockQuote.test(lineText);
 
       const nodes: ProsemirrorNode[] = [];

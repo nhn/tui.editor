@@ -14,7 +14,7 @@ import EditorBase from '@/base';
 import SpecManager from '@/spec/specManager';
 import { cls, toggleClass } from '@/utils/dom';
 import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
-import { createTextSelection, nbspToSpace } from '@/helper/manipulation';
+import { createTextSelection } from '@/helper/manipulation';
 import { placeholder } from '@/plugins/placeholder';
 import { getDefaultCommands } from '@/commands/defaultCommands';
 import { dropImage } from '@/plugins/dropImage';
@@ -250,7 +250,7 @@ export default class MdEditor extends EditorBase {
       }
     });
 
-    return nbspToSpace(changed);
+    return changed;
   }
 
   setSelection(start: MdPos, end: MdPos) {

@@ -34,34 +34,17 @@ export function insertNodes(
   );
 }
 
-export function nbspToSpace(text: string) {
-  return text.replace(/\u00a0/g, ' ');
-}
-
-export function spaceToNbsp(text: string) {
-  return text.replace(/ /g, '\u00a0');
-}
-
-export function createParagraph(
-  schema: Schema,
-  content?: string | ProsemirrorNode[],
-  spaceChange = true
-) {
+export function createParagraph(schema: Schema, content?: string | ProsemirrorNode[]) {
   const { paragraph } = schema.nodes;
 
   if (!content) {
     return paragraph.createAndFill()!;
   }
-
-  if (isString(content)) {
-    return paragraph.create(null, schema.text(spaceChange ? spaceToNbsp(content) : content));
-  }
-
-  return paragraph.create(null, content);
+  return paragraph.create(null, isString(content) ? schema.text(content) : content);
 }
 
-export function createText(schema: Schema, text: string, marks?: Mark[], spaceChange = true) {
-  return schema.text(spaceChange ? spaceToNbsp(text) : text, marks);
+export function createText(schema: Schema, text: string, marks?: Mark[]) {
+  return schema.text(text, marks);
 }
 
 export function createTextSelection(tr: Transaction, from: number, to = from) {
