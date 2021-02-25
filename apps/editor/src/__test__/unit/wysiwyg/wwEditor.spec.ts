@@ -134,6 +134,10 @@ describe('WysiwygEditor', () => {
       wwe.addWidget(ul, 'top');
 
       expect(document.body).toContainElement(ul);
+
+      wwe.blur();
+
+      expect(document.body).not.toContainElement(ul);
     });
   });
 

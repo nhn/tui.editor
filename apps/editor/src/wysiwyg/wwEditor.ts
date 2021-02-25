@@ -102,7 +102,7 @@ export default class WysiwygEditor extends EditorBase {
         tableContextMenu(this.eventEmitter),
         task(),
         dropImage(this.context, 'wysiwyg'),
-        addWidget(),
+        addWidget(this.eventEmitter),
         toolbarState(this.eventEmitter),
       ],
       ...addedStates,

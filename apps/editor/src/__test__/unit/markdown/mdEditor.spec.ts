@@ -127,5 +127,9 @@ describe('MarkdownEditor', () => {
     mde.addWidget(ul, 'top');
 
     expect(document.body).toContainElement(ul);
+
+    mde.blur();
+
+    expect(document.body).not.toContainElement(ul);
   });
 });

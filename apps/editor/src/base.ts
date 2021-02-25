@@ -81,12 +81,10 @@ export default abstract class EditorBase {
 
   focus() {
     this.view.focus();
-    this.eventEmitter.emit('focus', this.editorType);
   }
 
   blur() {
     (this.view.dom as HTMLElement).blur();
-    this.eventEmitter.emit('blur', this.editorType);
   }
 
   destroy() {

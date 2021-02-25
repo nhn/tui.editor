@@ -52,7 +52,10 @@ describe('Preview', () => {
 });
 
 describe('preview highlight', () => {
-  let eventEmitter: EventEmitter, preview: MarkdownPreview, editor: MarkdownEditor;
+  let eventEmitter: EventEmitter,
+    preview: MarkdownPreview,
+    editor: MarkdownEditor,
+    editorEl: HTMLElement;
 
   function init(highlight: boolean) {
     const options = {
@@ -62,16 +65,13 @@ describe('preview highlight', () => {
       highlight,
     };
 
-    const editorEl = document.createElement('div');
-    const previewEl = document.createElement('div');
-
-    document.body.innerHTML = '';
-    document.body.appendChild(editorEl);
-    document.body.appendChild(previewEl);
-
     eventEmitter = new EventEmitter();
     editor = new MarkdownEditor(new ToastMark(), eventEmitter);
     preview = new MarkdownPreview(eventEmitter, options);
+    editorEl = editor.getElement();
+
+    document.body.appendChild(editorEl);
+    document.body.appendChild(preview.getElement()!);
   }
 
   function setMarkdown(markdown: string) {
@@ -96,6 +96,12 @@ describe('preview highlight', () => {
     expect(el.tagName).toBe(tagName);
     expect(el.innerHTML).toBe(html);
   }
+
+  afterEach(() => {
+    document.body.removeChild(editorEl);
+    editor.destroy();
+    preview.destroy();
+  });
 
   it('highlighted element should be one', () => {
     init(true);
