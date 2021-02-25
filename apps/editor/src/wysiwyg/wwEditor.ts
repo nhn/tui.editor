@@ -163,11 +163,11 @@ export default class WysiwygEditor extends EditorBase {
     return this.view.state.schema;
   }
 
-  replaceSelection(content: string, start?: number, end?: number) {
+  replaceSelection(text: string, start?: number, end?: number) {
     const { schema, tr } = this.view.state;
     const { paragraph } = schema.nodes;
-    const texts = content.split('\n');
-    const paras = texts.map((text) => paragraph.create(null, schema.text(text)));
+    const lineTexts = text.split('\n');
+    const paras = lineTexts.map((lineText) => paragraph.create(null, schema.text(lineText)));
     const slice = new Slice(Fragment.from(paras), 1, 1);
     const newTr =
       isNumber(start) && isNumber(end)
@@ -186,7 +186,7 @@ export default class WysiwygEditor extends EditorBase {
     this.view.dispatch(newTr.scrollIntoView());
   }
 
-  getSelectedContent(start?: number, end?: number) {
+  getSelectedText(start?: number, end?: number) {
     const { doc, selection } = this.view.state;
     let { from, to } = selection;
 
@@ -220,10 +220,17 @@ export default class WysiwygEditor extends EditorBase {
     dispatch(state.tr.setMeta('widget', { pos: pos ?? state.selection.to, node, style }));
   }
 
-  replaceWithWidget(start: number, end: number, content: string) {
+  replaceWithWidget(start: number, end: number, text: string) {
     const { tr, schema } = this.view.state;
-    const nodes = createNodesWithWidget(content, schema);
+    const nodes = createNodesWithWidget(text, schema);
 
     this.view.dispatch(tr.replaceWith(start, end, nodes));
+  }
+
+  getRangeOfNode(pos?: number): [number, number] {
+    const { doc, selection } = this.view.state;
+    const $pos = pos ? doc.resolve(pos) : selection.$from;
+
+    return [$pos.start(), $pos.end()];
   }
 }

@@ -200,17 +200,19 @@ export default abstract class EditorBase implements Base {
 
   abstract createPlugins(): Plugin[];
 
-  abstract replaceWithWidget(start: EditorPos, end: EditorPos, content: string): void;
+  abstract replaceWithWidget(start: EditorPos, end: EditorPos, text: string): void;
 
   abstract addWidget(node: Node, style: WidgetStyle, pos?: EditorPos): void;
 
   abstract setSelection(start?: EditorPos, end?: EditorPos): void;
 
-  abstract replaceSelection(content: string, start?: EditorPos, end?: EditorPos): void;
+  abstract replaceSelection(text: string, start?: EditorPos, end?: EditorPos): void;
 
   abstract deleteSelection(start?: EditorPos, end?: EditorPos): void;
 
-  abstract getSelectedContent(start?: EditorPos, end?: EditorPos): string;
+  abstract getSelectedText(start?: EditorPos, end?: EditorPos): string;
 
   abstract getSelection(): MdSourcepos | [number, number];
+
+  abstract getRangeOfNode(pos?: EditorPos): MdSourcepos | [number, number];
 }

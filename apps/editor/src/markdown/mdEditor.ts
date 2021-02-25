@@ -5,7 +5,7 @@ import { Step, ReplaceAroundStep } from 'prosemirror-transform';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { Emitter } from '@t/event';
-import { MdPos } from '@t/markdown';
+import { MdNode, MdPos, MdSourcepos } from '@t/markdown';
 import { WidgetStyle } from '@t/editor';
 import EditorBase from '@/base';
 import SpecManager from '@/spec/specManager';
@@ -227,10 +227,10 @@ export default class MdEditor extends EditorBase {
     this.view.dispatch(tr.setSelection(createTextSelection(tr, from, to)));
   }
 
-  replaceSelection(content: string, start?: MdPos, end?: MdPos) {
+  replaceSelection(text: string, start?: MdPos, end?: MdPos) {
     let newTr;
     const { tr, schema, doc } = this.view.state;
-    const lineTexts = content.split('\n');
+    const lineTexts = text.split('\n');
     const nodes = lineTexts.map((lineText) =>
       schema.nodes.paragraph.create(null, createNodesWithWidget(lineText, schema))
     );
@@ -262,7 +262,7 @@ export default class MdEditor extends EditorBase {
     this.view.dispatch(newTr.scrollIntoView());
   }
 
-  getSelectedContent(start?: MdPos, end?: MdPos) {
+  getSelectedText(start?: MdPos, end?: MdPos) {
     const { doc, selection } = this.view.state;
     let { from, to } = selection;
 
@@ -303,12 +303,20 @@ export default class MdEditor extends EditorBase {
     this.view.dispatch(tr.setMeta('widget', { pos, node, style }));
   }
 
-  replaceWithWidget(start: MdPos, end: MdPos, content: string) {
+  replaceWithWidget(start: MdPos, end: MdPos, text: string) {
     const { tr, schema, doc } = this.view.state;
     const pos = getMdToEditorPos(doc, this.toastMark, start, end);
-    const nodes = createNodesWithWidget(content, schema);
+    const nodes = createNodesWithWidget(text, schema);
 
     this.view.dispatch(tr.replaceWith(pos[0], pos[1], nodes));
+  }
+
+  getRangeOfNode(pos?: MdPos): MdSourcepos {
+    const { doc, selection } = this.view.state;
+    const mdPos = pos || getEditorToMdPos(doc, selection.from)[0];
+    const mdNode: MdNode = this.toastMark.findNodeAtPosition(mdPos);
+
+    return mdNode.sourcepos!;
   }
 
   getMarkdown() {

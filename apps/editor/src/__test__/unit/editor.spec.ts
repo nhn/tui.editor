@@ -273,23 +273,23 @@ describe('editor', () => {
       });
     });
 
-    describe('getSelectedContent()', () => {
+    describe('getSelectedText()', () => {
       beforeEach(() => {
         editor.setMarkdown('line1\nline2');
         editor.setSelection([1, 2], [2, 4]);
       });
 
       it('in markdown', () => {
-        expect(editor.getSelectedContent()).toEqual('ine1\nlin');
-        expect(editor.getSelectedContent([1, 2], [2, 6])).toEqual('ine1\nline2');
+        expect(editor.getSelectedText()).toEqual('ine1\nlin');
+        expect(editor.getSelectedText([1, 2], [2, 6])).toEqual('ine1\nline2');
       });
 
       it('in wysiwyg', () => {
         editor.changeMode('wysiwyg');
         editor.setSelection(2, 11);
 
-        expect(editor.getSelectedContent()).toEqual('ine1\nlin');
-        expect(editor.getSelectedContent(2, 13)).toEqual('ine1\nline2');
+        expect(editor.getSelectedText()).toEqual('ine1\nlin');
+        expect(editor.getSelectedText(2, 13)).toEqual('ine1\nline2');
       });
     });
 

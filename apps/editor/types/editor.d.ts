@@ -290,15 +290,17 @@ export interface Base {
 
   setSelection(start: EditorPos, end: EditorPos): void;
 
-  replaceWithWidget(start: EditorPos, end: EditorPos, content: string): void;
+  replaceWithWidget(start: EditorPos, end: EditorPos, text: string): void;
 
   addWidget(node: Node, style: WidgetStyle, pos?: EditorPos): void;
 
-  replaceSelection(content: string, start?: EditorPos, end?: EditorPos): void;
+  replaceSelection(text: string, start?: EditorPos, end?: EditorPos): void;
 
   deleteSelection(start?: EditorPos, end?: EditorPos): void;
 
-  getSelectedContent(start?: EditorPos, end?: EditorPos): string;
+  getSelectedText(start?: EditorPos, end?: EditorPos): string;
 
   getSelection(): MdSourcepos | [number, number];
+
+  getRangeOfNode(pos?: EditorPos): MdSourcepos | [number, number];
 }

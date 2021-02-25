@@ -441,10 +441,10 @@ class ToastUIEditor {
 
   /**
    * Insert text
-   * @param {string} content - text content
+   * @param {string} text - text content
    */
-  insertText(content: string) {
-    this.getCurrentModeEditor().replaceSelection(content);
+  insertText(text: string) {
+    this.getCurrentModeEditor().replaceSelection(text);
   }
 
   /**
@@ -458,12 +458,12 @@ class ToastUIEditor {
 
   /**
    * Replace selection range with given text content
-   * @param {string} content - widget text content
+   * @param {string} text - text content
    * @param {number|Array.<number>} [start] - start position
    * @param {number|Array.<number>} [end] - end position
    */
-  replaceSelection(content: string, start?: EditorPos, end?: EditorPos) {
-    this.getCurrentModeEditor().replaceSelection(content, start, end);
+  replaceSelection(text: string, start?: EditorPos, end?: EditorPos) {
+    this.getCurrentModeEditor().replaceSelection(text, start, end);
   }
 
   /**
@@ -481,8 +481,27 @@ class ToastUIEditor {
    * @param {number|Array.<number>} [end] - end position
    * @returns {string} - selected text content
    */
-  getSelectedContent(start?: EditorPos, end?: EditorPos) {
-    return this.getCurrentModeEditor().getSelectedContent(start, end);
+  getSelectedText(start?: EditorPos, end?: EditorPos) {
+    return this.getCurrentModeEditor().getSelectedText(start, end);
+  }
+
+  /**
+   * Get range of the node
+   * @param {number|Array.<number>} [pos] - position
+   * @returns {Array.<number[]>|Array.<number>} - node [start, end] range
+   * @example
+   * // Markdown mode
+   * const mdSelection = editor.getSelection();
+   *
+   * console.log(mdSelection); // [[startLineOffset, startCurorOffset], [endLineOffset, endCurorOffset]]
+   *
+   * // WYSIWYG mode
+   * const wwSelection = editor.getSelection();
+   *
+   * console.log(wwSelection); // [startCursorOffset, endCursorOffset]
+   */
+  getRangeOfNode(pos?: EditorPos) {
+    return this.getCurrentModeEditor().getRangeOfNode(pos);
   }
 
   /**
@@ -499,10 +518,10 @@ class ToastUIEditor {
    * Replace node with widget to range
    * @param {number|Array.<number>} start - start position
    * @param {number|Array.<number>} end - end position
-   * @param {string} content - widget text content
+   * @param {string} text - widget text content
    */
-  replaceWithWidget(start: EditorPos, end: EditorPos, content: string) {
-    this.getCurrentModeEditor().replaceWithWidget(start, end, content);
+  replaceWithWidget(start: EditorPos, end: EditorPos, text: string) {
+    this.getCurrentModeEditor().replaceWithWidget(start, end, text);
   }
 
   /**
