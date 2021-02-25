@@ -1,6 +1,7 @@
 import { Schema, ProsemirrorNode } from 'prosemirror-model';
 import { WidgetRule, WidgetRuleMap } from '@t/editor';
 import { CustomInlineMdNode } from '@t/markdown';
+import { getInlineMarkdownText } from '@/utils/markdown';
 
 let widgetRules: WidgetRule[] = [];
 
@@ -114,7 +115,7 @@ export function getWidgetContent(widgetNode: CustomInlineMdNode) {
 
     if (entering) {
       if (node !== widgetNode && node.type !== 'text') {
-        text += node.getInlineMarkdownText();
+        text += getInlineMarkdownText(node);
         // skip the children
         walker.resumeAt(widgetNode, false);
         walker.next();

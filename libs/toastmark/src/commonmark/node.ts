@@ -190,22 +190,6 @@ export class Node {
   walker() {
     return new NodeWalker(this);
   }
-
-  getInlineMarkdownText() {
-    const text = this.firstChild!.literal;
-    switch (this.type) {
-      case 'emph':
-        return `*${text}*`;
-      case 'strong':
-        return `**${text}**`;
-      case 'strike':
-        return `~~${text}~~`;
-      case 'code':
-        return `\`${text}\``;
-      default:
-        return null;
-    }
-  }
 }
 
 export class BlockNode extends Node {
@@ -249,14 +233,6 @@ export class LinkNode extends Node {
   public destination: string | null = null;
   public title: string | null = null;
   public extendedAutolink = false;
-
-  getInlineMarkdownText() {
-    const text = this.firstChild!.literal;
-    const { destination, title } = this as LinkNode;
-    const delim = this.type === 'link' ? '' : '!';
-
-    return `${delim}[${text}](${destination}${title ? ` "${title}"` : ''})`;
-  }
 }
 
 export class CodeBlockNode extends BlockNode {
