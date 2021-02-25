@@ -26,6 +26,10 @@ export function getTextWithoutTrailingNewline(text: string) {
   return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
 }
 
+export function isInlineNode({ type }: MdNode) {
+  return includes(['text', 'strong', 'emph', 'strike', 'image', 'link', 'code'], type);
+}
+
 function isListNode({ type, literal }: MdNode) {
   const matched = type === 'htmlInline' && literal!.match(reHTMLTag);
 
@@ -165,11 +169,11 @@ const convertors: HTMLToWwConvertorMap = {
         state.closeNode();
       }
     } else if (node.parent?.type === 'tableCell') {
-      if (node.prev?.type === 'text') {
+      if (node.prev && isInlineNode(node.prev)) {
         state.closeNode();
       }
 
-      if (node.next?.type === 'text') {
+      if (node.next && isInlineNode(node.next)) {
         state.openNode(paragraph);
       }
     }
