@@ -87,7 +87,7 @@ export function toggleClass(element: Element, className: string, state?: boolean
   toggleFn(element, className);
 }
 
-export function createElementWith(contents: string | HTMLElement, target: HTMLElement) {
+export function createElementWith(contents: string | HTMLElement, target?: HTMLElement) {
   const container = document.createElement('div');
 
   if (isString(contents)) {
@@ -151,4 +151,55 @@ export function getTotalOffset(el: HTMLElement, root: HTMLElement) {
     el = el.offsetParent as HTMLElement;
   }
   return { offsetTop, offsetLeft };
+}
+
+export function finalizeHtml(html: Element, needHtmlText: boolean) {
+  let result;
+
+  if (needHtmlText) {
+    result = html.innerHTML;
+  } else {
+    const frag = document.createDocumentFragment();
+    const childNodes = toArray(html.childNodes);
+    const { length } = childNodes;
+
+    for (let i = 0; i < length; i += 1) {
+      frag.appendChild(childNodes[i]);
+    }
+    result = frag;
+  }
+
+  return result;
+}
+
+export function empty(node: Node) {
+  while (node.firstChild) {
+    node.removeChild(node.firstChild);
+  }
+}
+
+export function appendNode(node: Element, appended: string | ArrayLike<Element> | Element) {
+  if (isString(appended)) {
+    node.insertAdjacentHTML('beforeend', appended);
+  } else {
+    // @ts-ignore
+    const nodes: Element[] = appended.length ? toArray(appended) : [appended];
+
+    for (let i = 0, len = nodes.length; i < len; i += 1) {
+      node.appendChild(nodes[i]);
+    }
+  }
+}
+
+export function prependNode(node: Element, appended: string | ArrayLike<Element> | Element) {
+  if (isString(appended)) {
+    node.insertAdjacentHTML('afterbegin', appended);
+  } else {
+    // @ts-ignore
+    const nodes: Element[] = appended.length ? toArray(appended) : [appended];
+
+    for (let i = nodes.length - 1, len = 0; i >= len; i -= 1) {
+      node.insertBefore(nodes[i], node.firstChild);
+    }
+  }
 }

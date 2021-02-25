@@ -5,8 +5,8 @@
 import css from 'tui-code-snippet/domUtil/css';
 import { Emitter } from '@t/event';
 import LazyRunner from './lazyRunner';
-import domUtils from './utils/dom-legacy';
 import codeBlockManager from './codeBlockManager';
+import { createElementWith, empty, findNodes } from './utils/dom';
 
 /**
  * Class Preview
@@ -39,7 +39,7 @@ class Preview {
   }
 
   private initContentSection() {
-    this.previewContent = domUtils.createElementWith(
+    this.previewContent = createElementWith(
       `<div class="tui-editor-contents"></div>`
     ) as HTMLElement;
     this.el!.appendChild(this.previewContent);
@@ -59,7 +59,7 @@ class Preview {
     }
 
     targetEls.forEach((targetEl) => {
-      codeEls.push(...(domUtils.findAll(targetEl, 'code[data-language]') as HTMLElement[]));
+      codeEls.push(...(findNodes(targetEl, 'code[data-language]') as HTMLElement[]));
     });
 
     return codeEls;
@@ -101,7 +101,7 @@ class Preview {
   render(html: string) {
     const { previewContent } = this;
 
-    domUtils.empty(previewContent);
+    empty(previewContent);
     previewContent.innerHTML = html;
   }
 

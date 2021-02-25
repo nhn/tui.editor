@@ -12,10 +12,10 @@ import off from 'tui-code-snippet/domEvent/off';
 import { ViewerOptions } from '@t/editor';
 import { Emitter, Handler } from '@t/event';
 import MarkdownPreview from './markdown/mdPreview';
-import domUtils from './utils/dom-legacy';
 import { invokePlugins, getPluginInfo } from './pluginHelper';
 import { last, sanitizeLinkAttribute } from './utils/common';
 import EventEmitter from './event/eventEmitter';
+import { isPositionInBox, toggleClass } from './utils/dom';
 
 const TASK_ATTR_NAME = 'data-task';
 const DISABLED_TASK_ATTR_NAME = 'data-task-disabled';
@@ -147,9 +147,9 @@ class ToastUIEditorViewer {
     if (
       !element.hasAttribute(DISABLED_TASK_ATTR_NAME) &&
       element.hasAttribute(TASK_ATTR_NAME) &&
-      domUtils.isInsideTaskBox(style, ev.offsetX, ev.offsetY)
+      isPositionInBox(style, ev.offsetX, ev.offsetY)
     ) {
-      domUtils.toggleClass(element, TASK_CHECKED_CLASS_NAME);
+      toggleClass(element, TASK_CHECKED_CLASS_NAME);
     }
   }
 

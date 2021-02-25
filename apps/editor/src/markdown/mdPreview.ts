@@ -14,8 +14,7 @@ import { Emitter } from '@t/event';
 import { LinkAttributes } from '@t/editor';
 import { CustomHTMLRendererMap, EditResult, MdNode, MdPos } from '@t/markdown';
 import Preview from '@/preview';
-import { toggleClass } from '@/utils/dom';
-import domUtils from '@/utils/dom-legacy';
+import { removeNode, toggleClass } from '@/utils/dom';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
@@ -192,12 +191,12 @@ class MarkdownPreview extends Preview {
         while (el !== endEl) {
           const nextEl = el.nextElementSibling as HTMLElement;
 
-          el.parentNode!.removeChild(el);
+          removeNode(el);
           removeOffsetInfoByNode(el);
           el = nextEl;
         }
         if (el.parentNode) {
-          domUtils.remove(el);
+          removeNode(el);
           removeOffsetInfoByNode(el);
         }
       }
