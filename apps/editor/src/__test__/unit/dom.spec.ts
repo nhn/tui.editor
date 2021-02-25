@@ -11,8 +11,8 @@ import {
   createElementWith,
   closest,
   empty,
-  append,
-  prepend,
+  appendNode,
+  prependNode,
 } from '@/utils/dom';
 
 describe('dom utils', () => {
@@ -253,13 +253,13 @@ describe('dom utils', () => {
     expect(container.innerHTML).toBe('<div></div>');
   });
 
-  describe('append() appends last child to parent using', () => {
+  describe('appendNode() appends last child to parent using', () => {
     beforeEach(() => {
       container.innerHTML = '<div>foo</div>';
     });
 
     it('html string', () => {
-      append(container.querySelector('div')!, '<p>bar</p>');
+      appendNode(container.querySelector('div')!, '<p>bar</p>');
 
       expect(container.innerHTML).toBe('<div>foo<p>bar</p></div>');
     });
@@ -269,19 +269,19 @@ describe('dom utils', () => {
 
       child.innerHTML = 'bar';
 
-      append(container.querySelector('div')!, child);
+      appendNode(container.querySelector('div')!, child);
 
       expect(container.innerHTML).toBe('<div>foo<p>bar</p></div>');
     });
   });
 
-  describe('prepend() appends first child to parent using', () => {
+  describe('prependNode() appends first child to parent using', () => {
     beforeEach(() => {
       container.innerHTML = '<div>foo</div>';
     });
 
     it('html string', () => {
-      prepend(container.querySelector('div')!, '<p>bar</p>');
+      prependNode(container.querySelector('div')!, '<p>bar</p>');
 
       expect(container.innerHTML).toBe('<div><p>bar</p>foo</div>');
     });
@@ -291,7 +291,7 @@ describe('dom utils', () => {
 
       child.innerHTML = 'bar';
 
-      prepend(container.querySelector('div')!, child);
+      prependNode(container.querySelector('div')!, child);
 
       expect(container.innerHTML).toBe('<div><p>bar</p>foo</div>');
     });

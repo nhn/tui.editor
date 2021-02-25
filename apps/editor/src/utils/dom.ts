@@ -178,7 +178,7 @@ export function empty(node: Node) {
   }
 }
 
-export function append(node: Element, appended: string | ArrayLike<Element> | Element) {
+export function appendNode(node: Element, appended: string | ArrayLike<Element> | Element) {
   if (isString(appended)) {
     node.insertAdjacentHTML('beforeend', appended);
   } else {
@@ -191,7 +191,7 @@ export function append(node: Element, appended: string | ArrayLike<Element> | El
   }
 }
 
-export function prepend(node: Element, appended: string | ArrayLike<Element> | Element) {
+export function prependNode(node: Element, appended: string | ArrayLike<Element> | Element) {
   if (isString(appended)) {
     node.insertAdjacentHTML('afterbegin', appended);
   } else {
