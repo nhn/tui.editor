@@ -13,7 +13,7 @@ describe('editor', () => {
   function getPreviewHTML() {
     return mdPreview
       .querySelector('.tui-editor-contents')!
-      .innerHTML.replace(/\sdata-nodeid="\d+"/g, '')
+      .innerHTML.replace(/\sdata-nodeid="\d+"|\n/g, '')
       .trim();
   }
 
@@ -362,6 +362,74 @@ describe('editor', () => {
         editor.deleteSelection(1, 7);
 
         expect(wwEditor).toContainHTML('<p>line2</p>');
+      });
+    });
+
+    describe('getRangeOfNode()', () => {
+      beforeEach(() => {
+        editor.setMarkdown('line1\nline2 **strong**');
+        editor.setSelection([2, 10], [2, 12]);
+      });
+
+      it('should get the range of the current selected node in markdown', () => {
+        const rangeInfo = editor.getRangeInfoOfNode();
+        const [start, end] = rangeInfo.range;
+
+        expect(rangeInfo).toEqual({
+          range: [
+            [2, 7],
+            [2, 17],
+          ],
+          type: 'strong',
+        });
+
+        editor.replaceSelection('Replaced', start, end);
+
+        expect(getPreviewHTML()).toBe('<p>line1<br>line2 Replaced</p>');
+      });
+
+      it('should get the range of the current selected node in wysiwyg', () => {
+        editor.changeMode('wysiwyg');
+        editor.setSelection(15, 15);
+
+        const rangeInfo = editor.getRangeInfoOfNode();
+        const [start, end] = rangeInfo.range;
+
+        expect(rangeInfo).toEqual({ range: [14, 20], type: 'strong' });
+
+        editor.replaceSelection('Replaced', start, end);
+
+        expect(wwEditor).toContainHTML('<p>line1</p><p>line2 Replaced</p>');
+      });
+
+      it('should get the range of selection with given position in markdown', () => {
+        const rangeInfo = editor.getRangeInfoOfNode([2, 2]);
+        const [start, end] = rangeInfo.range;
+
+        expect(rangeInfo).toEqual({
+          range: [
+            [2, 1],
+            [2, 7],
+          ],
+          type: 'text',
+        });
+
+        editor.replaceSelection('Replaced', start, end);
+
+        expect(getPreviewHTML()).toBe('<p>line1<br>Replaced<strong>strong</strong></p>');
+      });
+
+      it('should get the range of selection with given position in wysiwyg', () => {
+        editor.changeMode('wysiwyg');
+
+        const rangeInfo = editor.getRangeInfoOfNode(10);
+        const [start, end] = rangeInfo.range;
+
+        expect(rangeInfo).toEqual({ range: [8, 14], type: 'text' });
+
+        editor.replaceSelection('Replaced', start, end);
+
+        expect(wwEditor).toContainHTML('<p>line1</p><p>Replaced<strong>strong</strong></p>');
       });
     });
   });
