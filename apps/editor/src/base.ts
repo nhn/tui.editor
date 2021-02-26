@@ -99,9 +99,8 @@ export default abstract class EditorBase {
     const widgetRules = getWidgetRules();
     const rules = widgetRules.map(
       ({ rule }) =>
-        new InputRule(rule, ({ schema, tr, doc }, match, start, end) => {
-          // @ts-ignore
-          const allMatched = (match.input as string).match(new RegExp(rule, 'g'))!;
+        new InputRule(rule, ({ schema, tr, doc }, match: RegExpMatchArray, start, end) => {
+          const allMatched = match.input!.match(new RegExp(rule, 'g'))!;
           const pos = doc.resolve(start);
           let { parent } = pos;
           let count = 0;
