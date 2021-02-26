@@ -1,6 +1,7 @@
 import { AllSelection, Selection } from 'prosemirror-state';
 import { ProsemirrorNode } from 'prosemirror-model';
 import { MdPos, MdSourcepos } from '@t/markdown';
+import { isWidgetNode } from '@/widget/widgetNode';
 import { getTextByMdLine } from './query';
 
 export function resolveSelectionPos(selection: Selection) {
@@ -48,7 +49,7 @@ function getWidgetNodePos(node: ProsemirrorNode, chPos: number, direction: 1 | -
 
   node.forEach((child, pos) => {
     // add or subtract widget node tag
-    if (child.type.name === 'widget' && pos + 2 < chPos) {
+    if (isWidgetNode(child) && pos + 2 < chPos) {
       additionalPos += 2 * direction;
     }
   });

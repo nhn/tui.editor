@@ -12,6 +12,10 @@ export function widgetNodeView(pmNode: ProsemirrorNode) {
   return { dom };
 }
 
+export function isWidgetNode(pmNode: ProsemirrorNode) {
+  return pmNode.type.name === 'widget';
+}
+
 export class Widget extends SpecNode {
   get name() {
     return 'widget';
