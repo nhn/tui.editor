@@ -2,7 +2,7 @@ import { Process, BlockHandler } from '../blockHandlers';
 import { unescapeString } from '../common';
 import { CustomBlockNode, BlockNode } from '../node';
 
-const reClosingCustomBlock = /^}}$/;
+const reClosingCustomBlock = /^\$\$$/;
 
 export const customBlock: BlockHandler = {
   continue(parser, container: CustomBlockNode) {
