@@ -328,6 +328,9 @@ export class InlineParser {
     } else if (cc === C_SINGLEQUOTE || cc === C_DOUBLEQUOTE) {
       canOpen = leftFlanking && !rightFlanking;
       canClose = rightFlanking;
+    } else if (cc === C_DOLLAR) {
+      canOpen = !afterIsWhitespace;
+      canClose = !beforeIsWhitespace;
     } else {
       canOpen = leftFlanking;
       canClose = rightFlanking;
