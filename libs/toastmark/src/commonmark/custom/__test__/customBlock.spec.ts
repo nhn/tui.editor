@@ -24,11 +24,11 @@ const renderer = new Renderer({ gfm: true, convertors });
 describe('customBlock', () => {
   it('basic', () => {
     const input = source`
-      {{myCustom
+      $$myCustom
       my custom block
 
       should be parsed
-      }}
+      $$
     `;
     const output = source`
       <div class="myCustom-block">my custom block
@@ -44,9 +44,9 @@ describe('customBlock', () => {
 
   it('if cannot find the proper custom type renderer, the content would be rendered as text', () => {
     const input = source`
-      {{custom
+      $$custom
       custom block
-      }}
+      $$
     `;
     const output = source`
       <div>custom block
@@ -60,11 +60,11 @@ describe('customBlock', () => {
 
   it('should be rendered regardless of the case insensitive', () => {
     const input = source`
-      {{MYCUSTOM
+      $$MYCUSTOM
       my custom block
 
       should be parsed
-      }}
+      $$
     `;
     const output = source`
       <div class="myCustom-block">my custom block
@@ -80,14 +80,14 @@ describe('customBlock', () => {
 
   it('should be parsed as paragraph without meta information', () => {
     const input = source`
-      {{
+      $$
         custom block
-      }}
+      $$
     `;
     const output = source`
-      <p>{{
+      <p>$$
       custom block
-      }}</p>
+      $$</p>
     `;
 
     const root = reader.parse(input);
