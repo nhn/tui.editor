@@ -144,6 +144,10 @@ export function getRangeInfo(selection: Selection) {
     $from = doc.resolve(from + 1);
     $to = doc.resolve(to - 1);
   }
+  if ($from.depth === 0) {
+    $from = doc.resolve(from - 1);
+    $to = $from;
+  }
   const startFromOffset = $from.start(1);
   const endFromOffset = $to.start(1);
   const startToOffset = $from.end(1);
