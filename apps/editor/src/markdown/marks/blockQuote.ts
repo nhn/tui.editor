@@ -35,8 +35,8 @@ export class BlockQuote extends Mark {
       const [, to] = resolveSelectionPos(selection);
       const { endOffset, endIndex } = getRangeInfo(selection);
       const endNode = doc.child(endIndex);
-      const startOffset = endOffset - endNode.content.size;
-      const { textContent } = endNode;
+      const { textContent, childCount } = endNode;
+      const startOffset = endOffset - childCount;
       const isBlockQuote = reBlockQuote.test(textContent);
 
       if (isBlockQuote) {
