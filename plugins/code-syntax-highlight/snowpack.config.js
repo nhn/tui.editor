@@ -2,7 +2,7 @@
 module.exports = {
   mount: {
     demo: '/',
-    'src/js': '/dist'
+    src: '/dist'
   },
   packageOptions: {
     source: 'remote'
