@@ -30,7 +30,7 @@ export class CodeBlock extends Mark {
   commands(): EditorCommand {
     return () => (state, dispatch) => {
       const { selection, doc, schema } = state;
-      const { startOffset, endOffset, startIndex, endIndex } = getRangeInfo(selection);
+      const { startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(selection);
       const fencedNode = createParagraph(schema, '```');
       const nodes: ProsemirrorNode[] = [fencedNode];
 
@@ -41,9 +41,9 @@ export class CodeBlock extends Mark {
       }
       nodes.push(fencedNode);
 
-      const tr = replaceNodes(state.tr, startOffset, endOffset, nodes);
+      const tr = replaceNodes(state.tr, startFromOffset, endToOffset, nodes);
 
-      dispatch!(tr.setSelection(createTextSelection(tr, startOffset + 4)));
+      dispatch!(tr.setSelection(createTextSelection(tr, startFromOffset + 4)));
 
       return true;
     };
@@ -53,7 +53,7 @@ export class CodeBlock extends Mark {
     return ({ selection, tr, doc, schema }, dispatch) => {
       const { toastMark } = this.context;
       const [from, to] = resolveSelectionPos(selection);
-      const { startOffset, endOffset, endIndex } = getRangeInfo(selection);
+      const { startFromOffset, endToOffset, endIndex } = getRangeInfo(selection);
       const { textContent } = doc.child(endIndex);
 
       if (from === to && textContent.trim()) {
@@ -62,12 +62,12 @@ export class CodeBlock extends Mark {
 
         if (isCodeBlockNode(mdNode) && (matched = textContent.match(/^\s+/))) {
           const [spaces] = matched;
-          const slicedText = textContent.slice(to - startOffset);
+          const slicedText = textContent.slice(to - startFromOffset);
           const node = createParagraph(schema, spaces + slicedText);
           const newTr = slicedText
-            ? replaceNodes(tr, to, endOffset, node, { from: 0, to: 1 })
-            : insertNodes(tr, endOffset, node);
-          const newSelection = createTextSelection(newTr, endOffset + spaces.length + 2);
+            ? replaceNodes(tr, to, endToOffset, node, { from: 0, to: 1 })
+            : insertNodes(tr, endToOffset, node);
+          const newSelection = createTextSelection(newTr, endToOffset + spaces.length + 2);
 
           dispatch!(newTr.setSelection(newSelection));
 

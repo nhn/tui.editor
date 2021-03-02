@@ -33,10 +33,9 @@ export class BlockQuote extends Mark {
   private extendBlockQuote(): Command {
     return ({ selection, doc, tr, schema }, dispatch) => {
       const [, to] = resolveSelectionPos(selection);
-      const { endOffset, endIndex } = getRangeInfo(selection);
+      const { endFromOffset, endToOffset, endIndex } = getRangeInfo(selection);
       const endNode = doc.child(endIndex);
-      const { textContent, childCount } = endNode;
-      const startOffset = endOffset - childCount;
+      const { textContent } = endNode;
       const isBlockQuote = reBlockQuote.test(textContent);
 
       if (isBlockQuote) {
@@ -45,13 +44,13 @@ export class BlockQuote extends Mark {
         if (isEmpty) {
           const emptyNode = createParagraph(schema);
 
-          dispatch!(replaceNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
+          dispatch!(replaceNodes(tr, endFromOffset, endToOffset, [emptyNode, emptyNode]));
         } else {
-          const slicedText = textContent.slice(to - startOffset).trim();
+          const slicedText = textContent.slice(to - endFromOffset).trim();
           const node = createParagraph(schema, this.createBlockQuoteText(slicedText));
           const newTr = slicedText
-            ? replaceNodes(tr, to, endOffset, node, { from: 0, to: 1 })
-            : insertNodes(tr, endOffset, node);
+            ? replaceNodes(tr, to, endToOffset, node, { from: 0, to: 1 })
+            : insertNodes(tr, endToOffset, node);
           const newSelection = createTextSelection(newTr, to + slicedText.length + 4);
 
           dispatch!(newTr.setSelection(newSelection));
@@ -66,7 +65,7 @@ export class BlockQuote extends Mark {
 
   commands(): EditorCommand {
     return () => ({ selection, doc, tr, schema }, dispatch) => {
-      const { startOffset, endOffset, startIndex, endIndex } = getRangeInfo(selection);
+      const { startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(selection);
       const isBlockQuote = reBlockQuote.test(doc.child(startIndex).textContent);
       const nodes: ProsemirrorNode[] = [];
 
@@ -78,7 +77,7 @@ export class BlockQuote extends Mark {
       }
 
       if (nodes.length) {
-        dispatch!(replaceNodes(tr, startOffset, endOffset, nodes));
+        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, nodes));
         return true;
       }
       return false;

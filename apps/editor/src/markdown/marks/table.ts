@@ -1,7 +1,6 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
-import { TableCellMdNode, MdNode, MdPos, TableMdNode } from '@toast-ui/toastmark';
-import { TableRowMdNode } from '@t/markdown';
+import { TableCellMdNode, MdNode } from '@toast-ui/toastmark';
 import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import { findClosestNode, getMdEndCh, isTableCellNode } from '@/utils/markdown';
@@ -73,9 +72,9 @@ export class Table extends Mark {
 
   private extendTable(): Command {
     return ({ selection, doc, tr, schema }, dispatch) => {
-      const { startOffset, endOffset, endStartOffset, endIndex, to } = getRangeInfo(selection);
+      const { startFromOffset, endFromOffset, endToOffset, endIndex, to } = getRangeInfo(selection);
       const { textContent } = doc.child(endIndex);
-      const mdPos = [endIndex + 1, to - endStartOffset];
+      const mdPos = [endIndex + 1, to - endFromOffset];
 
       const mdNode: MdNode = this.context.toastMark.findNodeAtPosition(mdPos);
       const cellNode = findClosestNode(
@@ -93,11 +92,11 @@ export class Table extends Mark {
         if (isEmpty) {
           const emptyNode = createParagraph(schema);
 
-          dispatch!(replaceNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
+          dispatch!(replaceNodes(tr, startFromOffset, endToOffset, [emptyNode, emptyNode]));
         } else {
-          const newTr = insertNodes(tr, endOffset, createParagraph(schema, row));
+          const newTr = insertNodes(tr, endToOffset, createParagraph(schema, row));
 
-          dispatch!(newTr.setSelection(createTextSelection(newTr, endOffset + 4)));
+          dispatch!(newTr.setSelection(createTextSelection(newTr, endToOffset + 4)));
         }
         return true;
       }
@@ -107,8 +106,8 @@ export class Table extends Mark {
 
   private moveTableCell(moveNext: boolean): Command {
     return ({ selection, tr }, dispatch) => {
-      const { endStartOffset, endIndex, to } = getRangeInfo(selection);
-      const mdPos = [endIndex + 1, to - endStartOffset];
+      const { endFromOffset, endIndex, to } = getRangeInfo(selection);
+      const mdPos = [endIndex + 1, to - endFromOffset];
       const mdNode: MdNode = this.context.toastMark.findNodeAtPosition(mdPos);
       const cellNode = findClosestNode(mdNode, (node) => isTableCellNode(node)) as TableCellMdNode;
 
@@ -139,7 +138,7 @@ export class Table extends Mark {
           }
         }
 
-        const pos = endStartOffset + chOffset;
+        const pos = endFromOffset + chOffset;
 
         dispatch!(tr.setSelection(createTextSelection(tr, pos)));
 
@@ -152,15 +151,15 @@ export class Table extends Mark {
   private addTable(): EditorCommand<Payload> {
     return (payload) => ({ selection, tr, schema }, dispatch) => {
       const { columnCount, rowCount } = payload!;
-      const { endOffset } = getRangeInfo(selection);
+      const { endToOffset } = getRangeInfo(selection);
 
       const headerRows = createTableHeader(columnCount);
       const bodyRows = createTableBody(columnCount, rowCount - 1);
 
       const nodes = [...headerRows, ...bodyRows].map((row) => createParagraph(schema, row));
-      const newTr = insertNodes(tr, endOffset, nodes);
+      const newTr = insertNodes(tr, endToOffset, nodes);
 
-      dispatch!(tr.setSelection(createTextSelection(newTr, endOffset + 4)));
+      dispatch!(tr.setSelection(createTextSelection(newTr, endToOffset + 4)));
 
       return true;
     };

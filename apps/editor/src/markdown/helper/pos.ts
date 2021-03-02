@@ -144,19 +144,22 @@ export function getRangeInfo(selection: Selection) {
     $from = doc.resolve(from + 1);
     $to = doc.resolve(to - 1);
   }
-  const startOffset = $from.start(1);
-  const endOffset = $to.end(1);
+  const startFromOffset = $from.start(1);
+  const endFromOffset = $to.start(1);
+  const startToOffset = $from.end(1);
+  const endToOffset = $to.end(1);
   const startIndex = $from.index(0);
   const endIndex = $to.index(0);
 
   return {
-    startOffset,
-    endOffset,
+    startFromOffset,
+    endFromOffset,
+    startToOffset,
+    endToOffset,
     startIndex,
     endIndex,
     from: $from.pos,
     to: $to.pos,
-    endStartOffset: $to.start(1),
   };
 }
 

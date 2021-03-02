@@ -49,7 +49,7 @@ export class Heading extends Mark {
   commands(): EditorCommand<Payload> {
     return (payload) => ({ selection, doc, tr, schema }, dispatch) => {
       const { level } = payload!;
-      const { startOffset, endOffset, startIndex, endIndex } = getRangeInfo(selection);
+      const { startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(selection);
       const nodes: ProsemirrorNode[] = [];
 
       for (let i = startIndex; i <= endIndex; i += 1) {
@@ -66,7 +66,7 @@ export class Heading extends Mark {
       }
 
       if (nodes.length) {
-        dispatch!(replaceNodes(tr, startOffset, endOffset, nodes));
+        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, nodes));
         return true;
       }
       return false;
