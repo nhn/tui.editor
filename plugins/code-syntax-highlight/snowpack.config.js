@@ -2,21 +2,21 @@
 module.exports = {
   mount: {
     demo: '/',
-    src: '/dist'
+    src: '/dist',
   },
   packageOptions: {
-    source: 'remote'
+    source: 'remote',
   },
   devOptions: {
-    port: 8081
+    port: 8081,
   },
   buildOptions: {
     clean: true,
     sourceMaps: false,
-    out: 'dist'
+    out: 'dist',
   },
   alias: {
     '@': './src',
-    '@t': './types'
-  }
+    '@t': './types',
+  },
 };

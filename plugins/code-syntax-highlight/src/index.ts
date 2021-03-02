@@ -3,7 +3,7 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import hljs from 'highlight.js/lib/highlight';
-import { registerCodeBlockReplacer } from './helper';
+import { registerCodeBlockReplacer } from './js/helper';
 
 // @TODO update to 3.0
 import Editor from '@toast-ui/editor';
