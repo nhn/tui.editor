@@ -149,7 +149,15 @@ export function getRangeInfo(selection: Selection) {
   const startIndex = $from.index(0);
   const endIndex = $to.index(0);
 
-  return { startOffset, endOffset, startIndex, endIndex };
+  return {
+    startOffset,
+    endOffset,
+    startIndex,
+    endIndex,
+    from: $from.pos,
+    to: $to.pos,
+    endStartOffset: $to.start(1),
+  };
 }
 
 export function getPosInfo(doc: ProsemirrorNode, selection: Selection, endCursor = false) {
