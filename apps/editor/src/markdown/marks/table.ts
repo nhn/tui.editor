@@ -129,10 +129,10 @@ export class Table extends Mark {
             // Otherwise, the base offset is zero.
             const baseOffset = row ? getMdEndCh(row[childType]!) : 0;
 
-            // calculate ' |' character position('2') for selection
+            // calculate tag(open, close) position('2') for selection
             chOffset += baseOffset + 2;
           } else if (type === 'prev') {
-            // if there is prev row, the target position would be '-4' for calculating ' |' characters twice times
+            // if there is prev row, the target position would be '-4' for calculating ' |' characters and tag(open, close)
             // Otherwise, the target position is zero.
             chOffset = row ? -4 : 0;
           }
