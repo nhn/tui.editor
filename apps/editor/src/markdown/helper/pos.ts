@@ -135,6 +135,23 @@ export function getExtendedRangeOffset(from: number, to: number, doc: Prosemirro
   return [startOffset, endOffset];
 }
 
+export function getRangeInfo(selection: Selection) {
+  // eslint-disable-next-line prefer-const
+  let { $from, $to, from, to } = selection;
+  const { doc } = $from;
+
+  if (selection instanceof AllSelection) {
+    $from = doc.resolve(from + 1);
+    $to = doc.resolve(to - 1);
+  }
+  const startOffset = $from.start(1);
+  const endOffset = $to.end(1);
+  const startIndex = $from.index(0);
+  const endIndex = $to.index(0);
+
+  return { startOffset, endOffset, startIndex, endIndex };
+}
+
 export function getPosInfo(doc: ProsemirrorNode, selection: Selection, endCursor = false) {
   const [from, to] = resolveSelectionPos(selection);
   const resolvedFrom = endCursor ? to : from;

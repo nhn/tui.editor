@@ -9,7 +9,7 @@ import {
   insertNodes,
   replaceNodes,
 } from '@/helper/manipulation';
-import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
+import { getRangeInfo, resolveSelectionPos } from '../helper/pos';
 
 export const reBlockQuote = /^\s*> ?/;
 
@@ -26,33 +26,29 @@ export class BlockQuote extends Mark {
     };
   }
 
-  private getChangedText(text: string, isBlockQuote?: boolean) {
-    if (isBlockQuote) {
-      return text.replace(reBlockQuote, '').trim();
-    }
-    return text.trim() ? `> ${text.trim()}` : `> `;
+  private createBlockQuoteText(text: string, isBlockQuote?: boolean) {
+    return isBlockQuote ? text.replace(reBlockQuote, '').trim() : `> ${text.trim()}`;
   }
 
   private extendBlockQuote(): Command {
     return ({ selection, doc, tr, schema }, dispatch) => {
       const [, to] = resolveSelectionPos(selection);
-      const startResolvedPos = doc.resolve(to);
-
-      const lineText = startResolvedPos.node().textContent;
-      const isBlockQuote = reBlockQuote.test(lineText);
-
-      const [startOffset, endOffset] = getExtendedRangeOffset(to, to, doc);
+      const { endOffset, endIndex } = getRangeInfo(selection);
+      const endNode = doc.child(endIndex);
+      const startOffset = endOffset - endNode.content.size;
+      const { textContent } = endNode;
+      const isBlockQuote = reBlockQuote.test(textContent);
 
       if (isBlockQuote) {
-        const isEmpty = !lineText.replace(reBlockQuote, '').trim();
+        const isEmpty = !textContent.replace(reBlockQuote, '').trim();
 
         if (isEmpty) {
           const emptyNode = createParagraph(schema);
 
           dispatch!(replaceNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
         } else {
-          const slicedText = lineText.slice(to - startOffset).trim();
-          const node = createParagraph(schema, this.getChangedText(slicedText));
+          const slicedText = textContent.slice(to - startOffset).trim();
+          const node = createParagraph(schema, this.createBlockQuoteText(slicedText));
           const newTr = slicedText
             ? replaceNodes(tr, to, endOffset, node, { from: 0, to: 1 })
             : insertNodes(tr, endOffset, node);
@@ -70,30 +66,21 @@ export class BlockQuote extends Mark {
 
   commands(): EditorCommand {
     return () => ({ selection, doc, tr, schema }, dispatch) => {
-      const [from, to] = resolveSelectionPos(selection);
-      const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
-      const startResolvedPos = doc.resolve(from);
-
-      const lineText = startResolvedPos.node().textContent;
-      const isBlockQuote = reBlockQuote.test(lineText);
-
+      const { startOffset, endOffset, startIndex, endIndex } = getRangeInfo(selection);
+      const isBlockQuote = reBlockQuote.test(doc.child(startIndex).textContent);
       const nodes: ProsemirrorNode[] = [];
 
-      doc.nodesBetween(startOffset, endOffset, (node) => {
-        const { isBlock, textContent } = node;
+      for (let i = startIndex; i <= endIndex; i += 1) {
+        const { textContent } = doc.child(i);
+        const result = this.createBlockQuoteText(textContent, isBlockQuote);
 
-        if (isBlock) {
-          const result = this.getChangedText(textContent, isBlockQuote);
-
-          nodes.push(createParagraph(schema, result));
-        }
-      });
+        nodes.push(createParagraph(schema, result));
+      }
 
       if (nodes.length) {
         dispatch!(replaceNodes(tr, startOffset, endOffset, nodes));
         return true;
       }
-
       return false;
     };
   }
