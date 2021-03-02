@@ -12,9 +12,10 @@ import { registerCodeBlockReplacer } from './helper';
  * @param {Object} [options.hljs] - object of highlight.js
  */
 export default function codeSyntaxHighlightPlugin(editor, options = {}) {
-  const editorHljs = options.hljs || hljs;
+  // const editorHljs = options.hljs || hljs;
 
-  if (editorHljs) {
-    registerCodeBlockReplacer(editor, editorHljs);
-  }
+  // if (editorHljs) {
+  //   registerCodeBlockReplacer(editor, editorHljs);
+  // }
+  console.log('test');
 }
