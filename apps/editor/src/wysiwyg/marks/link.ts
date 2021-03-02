@@ -3,7 +3,7 @@ import { toggleMark } from 'prosemirror-commands';
 import { ToDOMAdaptor } from '@t/convertor';
 
 import Mark from '@/spec/mark';
-import { decodeURIGraceful, replaceMarkdownText } from '@/utils/encoder';
+import { decodeURIGraceful, encodeMarkdownText } from '@/utils/encoder';
 import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
 import { createText } from '@/helper/manipulation';
 
@@ -64,8 +64,8 @@ export class Link extends Mark {
 
       if (from && to && linkUrl) {
         const attrs = {
-          linkUrl: replaceMarkdownText(decodeURIGraceful(linkUrl), true),
-          linkText: replaceMarkdownText(linkText, false),
+          linkUrl: encodeMarkdownText(decodeURIGraceful(linkUrl), true),
+          linkText: encodeMarkdownText(linkText, false),
         };
         const mark = schema.mark('link', attrs);
 
