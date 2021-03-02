@@ -47,6 +47,7 @@ export type FirstDelimFn = (index: number) => string;
 
 export interface ToMdConvertorState {
   stopNewline: boolean;
+  inTable: boolean;
   flushClose(size?: number): void;
   wrapBlock(delim: string, firstDelim: string | null, node: ProsemirrorNode, fn: () => void): void;
   ensureNewLine(): void;
@@ -122,6 +123,7 @@ export type ToMdMarkTypeConvertorMap = Partial<Record<WwMarkType, ToMdMarkTypeCo
 interface ToMdConvertorContext {
   origin?: () => ReturnType<ToMdConvertor>;
   entering?: boolean;
+  inTable?: boolean;
 }
 
 type ToMdConvertor = (
