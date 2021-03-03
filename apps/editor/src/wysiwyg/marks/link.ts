@@ -70,7 +70,7 @@ export class Link extends Mark {
         const mark = schema.mark('link', attrs);
 
         if (empty && linkText) {
-          const node = createText(schema, linkText, mark, false);
+          const node = createText(schema, linkText, mark);
 
           tr.replaceRangeWith(from, to, node);
         } else {

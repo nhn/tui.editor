@@ -796,17 +796,18 @@ describe('move lines keymap', () => {
 describe('keep indentation in code block', () => {
   it('should keep indentation in next new line', () => {
     const input = stripIndent`
-      \`\`\`js
-      console.log('line1');
-          console.log('line2');
-      \`\`\`
+    \`\`\`js
+    console.log('line1');
+        console.log('line2');
+    \`\`\`
     `;
+
     const result = stripIndent`
-      \`\`\`js
-      console.log('line1');
-          console.log('line2');
-          
-      \`\`\`
+    \`\`\`js
+    console.log('line1');
+        console.log('line2');
+        
+    \`\`\`
     `;
 
     mde.setMarkdown(input);
@@ -821,7 +822,7 @@ describe('keep indentation in code block', () => {
     const input = stripIndent`
       \`\`\`js
       console.log('line1');
-          console.log('line2');
+          console.log('line2');
       \`\`\`
     `;
     const result = stripIndent`
