@@ -33,6 +33,10 @@ export function widgetToDOM(info: string, content: string) {
   return toDOM(content);
 }
 
+export function getWidgetRules() {
+  return widgetRules;
+}
+
 export function setWidgetRules(rules: WidgetRule[]) {
   widgetRules = rules;
   widgetRules.forEach((rule, index) => {

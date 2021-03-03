@@ -181,7 +181,7 @@ describe('markdown editor syntax highlight', () => {
   });
 
   it('custom block', () => {
-    mde.setMarkdown('{{custom\nmy custom element\n}}');
+    mde.setMarkdown('$$custom\nmy custom element\n$$');
 
     const html = getEditorHTML(mde);
 

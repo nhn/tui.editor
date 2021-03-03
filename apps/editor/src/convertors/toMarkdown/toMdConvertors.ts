@@ -174,7 +174,7 @@ export const toMdConvertors: ToMdConvertorMap = {
     const { attrs, textContent } = node as ProsemirrorNode;
 
     return {
-      delim: [`{{${attrs.info}`, '}}'],
+      delim: [`$$${attrs.info}`, '$$'],
       text: textContent,
     };
   },

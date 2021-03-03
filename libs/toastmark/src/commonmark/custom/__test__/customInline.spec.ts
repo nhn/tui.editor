@@ -52,4 +52,20 @@ describe('customInline', () => {
 
     expect(html).toBe('<p>Hello <span><em>World</em></span></p>\n');
   });
+
+  it('should be parsed as text without meta information', () => {
+    const root = reader.parse('Hello $$ world$$');
+    const para = root.firstChild!;
+    const text = para.firstChild!;
+
+    expect(text.literal).toBe('Hello $$ world$$');
+    expect(text.sourcepos).toEqual([
+      [1, 1],
+      [1, 16]
+    ]);
+
+    const html = renderer.render(root);
+
+    expect(html).toBe('<p>Hello $$ world$$</p>\n');
+  });
 });

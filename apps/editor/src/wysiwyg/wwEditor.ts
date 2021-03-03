@@ -1,19 +1,13 @@
-import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Schema, Node as ProsemirrorNode, Slice, Fragment } from 'prosemirror-model';
-import { keymap } from 'prosemirror-keymap';
-import { baseKeymap } from 'prosemirror-commands';
-import { history } from 'prosemirror-history';
 
-import EditorBase, { StateOptions } from '@/base';
-import { getDefaultCommands } from '@/commands/defaultCommands';
+import EditorBase from '@/base';
 import { getWwCommands } from '@/commands/wwCommands';
 
 import { createTextSelection } from '@/helper/manipulation';
 import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
 
 import { placeholder } from '@/plugins/placeholder';
-import { dropImage } from '@/plugins/dropImage';
 
 import { tableSelection } from './plugins/tableSelection';
 import { tableContextMenu } from './plugins/tableContextMenu';
@@ -31,7 +25,6 @@ import { createSpecs } from './specCreator';
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
 import { LinkAttributes, WidgetStyle } from '@t/editor';
-import { addWidget } from '@/plugins/popupWidget';
 import { createNodesWithWidget } from '@/widget/rules';
 import { widgetNodeView } from '@/widget/widgetNode';
 import { cls } from '@/utils/dom';
@@ -85,29 +78,13 @@ export default class WysiwygEditor extends EditorBase {
     };
   }
 
-  createState(addedStates?: StateOptions) {
-    const { undo, redo } = getDefaultCommands();
-
-    return EditorState.create({
-      schema: this.schema,
-      plugins: [
-        ...this.keymaps,
-        keymap({
-          'Mod-z': undo(),
-          'Shift-Mod-z': redo(),
-          ...baseKeymap,
-        }),
-        history(),
-        placeholder(this.placeholder),
-        tableSelection(),
-        tableContextMenu(this.eventEmitter),
-        task(),
-        dropImage(this.context, 'wysiwyg'),
-        addWidget(this.eventEmitter),
-        toolbarState(this.eventEmitter),
-      ],
-      ...addedStates,
-    });
+  createPlugins() {
+    return this.defaultPlugins.concat([
+      tableSelection(),
+      tableContextMenu(this.eventEmitter),
+      task(),
+      toolbarState(this.eventEmitter),
+    ]);
   }
 
   createView() {

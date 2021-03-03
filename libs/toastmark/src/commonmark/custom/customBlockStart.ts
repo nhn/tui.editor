@@ -1,11 +1,16 @@
 import { BlockStart, Matched } from '../blockStarts';
 import { CustomBlockNode } from '../node';
 
-const reCustomBlock = /^({{)([a-zA-Z])+/;
+const reCustomBlock = /^(\$\$)([a-zA-Z])+/;
+const reCanBeCustomInline = /^(\$\$)([a-zA-Z])+.*(\$\$)/;
 
 export const customBlock: BlockStart = parser => {
   let match;
-  if (!parser.indented && (match = parser.currentLine.match(reCustomBlock))) {
+  if (
+    !parser.indented &&
+    !reCanBeCustomInline.test(parser.currentLine) &&
+    (match = parser.currentLine.match(reCustomBlock))
+  ) {
     const syntaxLength = match[1].length;
     parser.closeUnmatchedBlocks();
 

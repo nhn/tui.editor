@@ -28,7 +28,7 @@ const reHtmlBlockClose = [
   /\]\]>/
 ];
 
-const reMaybeSpecial = /^[#`~*+_=<>0-9-{}]/;
+const reMaybeSpecial = /^[#`~*+_=<>0-9-$]/;
 const reLineEnding = /\r\n|\n|\r/;
 
 function document() {

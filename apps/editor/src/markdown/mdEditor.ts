@@ -1,10 +1,7 @@
-import { EditorState, Transaction } from 'prosemirror-state';
+import { Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Fragment, Schema, Slice } from 'prosemirror-model';
 import { Step, ReplaceAroundStep } from 'prosemirror-transform';
-import { keymap } from 'prosemirror-keymap';
-import { baseKeymap } from 'prosemirror-commands';
-import { history } from 'prosemirror-history';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { Emitter } from '@t/event';
@@ -15,9 +12,6 @@ import SpecManager from '@/spec/specManager';
 import { cls, toggleClass } from '@/utils/dom';
 import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
 import { createTextSelection } from '@/helper/manipulation';
-import { placeholder } from '@/plugins/placeholder';
-import { getDefaultCommands } from '@/commands/defaultCommands';
-import { dropImage } from '@/plugins/dropImage';
 import { syntaxHighlight } from './plugins/syntaxHighlight';
 import { previewHighlight } from './plugins/previewHighlight';
 import { Doc } from './nodes/doc';
@@ -39,7 +33,6 @@ import { Html } from './marks/html';
 import { CustomBlock } from './marks/customBlock';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
 import { smartTask } from './plugins/smartTask';
-import { addWidget } from '@/plugins/popupWidget';
 import { createNodesWithWidget } from '@/widget/rules';
 import { Widget, widgetNodeView } from '@/widget/widgetNode';
 
@@ -151,27 +144,12 @@ export default class MdEditor extends EditorBase {
     });
   }
 
-  createState() {
-    const { undo, redo } = getDefaultCommands();
-
-    return EditorState.create({
-      schema: this.schema,
-      plugins: [
-        ...this.keymaps,
-        keymap({
-          'Mod-z': undo(),
-          'Shift-Mod-z': redo(),
-          ...baseKeymap,
-        }),
-        history(),
-        syntaxHighlight(this.context),
-        previewHighlight(this.context),
-        smartTask(this.context),
-        dropImage(this.context, 'markdown'),
-        placeholder(this.placeholder),
-        addWidget(this.eventEmitter),
-      ],
-    });
+  createPlugins() {
+    return this.defaultPlugins.concat([
+      syntaxHighlight(this.context),
+      previewHighlight(this.context),
+      smartTask(this.context),
+    ]);
   }
 
   createView() {
