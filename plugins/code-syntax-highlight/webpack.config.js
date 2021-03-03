@@ -25,7 +25,7 @@ function getOutputConfig(isProduction, isCDN, isAll, minify) {
       libraryExport: 'default',
       libraryTarget: 'umd',
       path: path.resolve(__dirname, 'dist/cdn'),
-      filename: `${filename}${isAll ? '-all' : ''}${minify ? '.min' : ''}.js`
+      filename: `${filename}${isAll ? '-all' : ''}${minify ? '.min' : ''}.js`,
     };
 
     if (!isProduction) {
@@ -39,7 +39,7 @@ function getOutputConfig(isProduction, isCDN, isAll, minify) {
     libraryExport: 'default',
     libraryTarget: 'commonjs2',
     path: path.resolve(__dirname, 'dist'),
-    filename: `${filename}.js`
+    filename: `${filename}.js`,
   };
 }
 
@@ -58,9 +58,9 @@ function getExternalsConfig(isProduction, isCDN, isAll) {
           commonjs: 'highlight.js',
           commonjs2: 'highlight.js',
           amd: 'highlight.js',
-          root: ['hljs']
-        }
-      }
+          root: ['hljs'],
+        },
+      },
     ];
   }
 
@@ -80,7 +80,7 @@ function getOptimizationConfig(isProduction, minify) {
         cache: true,
         parallel: true,
         sourceMap: false,
-        extractComments: false
+        extractComments: false,
       })
     );
   }
@@ -88,7 +88,7 @@ function getOptimizationConfig(isProduction, minify) {
   return { minimizer };
 }
 
-module.exports = (env, argv) => {
+module.exports = (_, argv) => {
   const isProduction = argv.mode === 'production';
   const minify = !!argv.minify;
   const isCDN = !!argv.cdn;
@@ -106,20 +106,24 @@ module.exports = (env, argv) => {
           loader: 'eslint-loader',
           enforce: 'pre',
           options: {
-            failOnError: isProduction
-          }
+            failOnError: isProduction,
+          },
         },
         {
-          test: /\.js$/,
-          exclude: /node_modules|dist/,
-          loader: 'babel-loader?cacheDirectory',
-          options: {
-            rootMode: 'upward'
-          }
-        }
-      ]
+          test: /\.ts$|\.js$/,
+          use: [
+            {
+              loader: 'ts-loader',
+              options: {
+                transpileOnly: true,
+              },
+            },
+          ],
+          exclude: /node_modules/,
+        },
+      ],
     },
-    optimization: getOptimizationConfig(isProduction, minify)
+    optimization: getOptimizationConfig(isProduction, minify),
   };
 
   if (isProduction) {
@@ -129,14 +133,14 @@ module.exports = (env, argv) => {
           'TOAST UI Editor : Code Syntax Highlight Plugin',
           `@version ${version} | ${new Date().toDateString()}`,
           `@author ${author}`,
-          `@license ${license}`
+          `@license ${license}`,
         ].join('\n')
-      )
+      ),
     ];
   } else {
     config.devServer = {
       inline: true,
-      host: '0.0.0.0'
+      host: '0.0.0.0',
     };
     config.devtool = 'inline-source-map';
   }
