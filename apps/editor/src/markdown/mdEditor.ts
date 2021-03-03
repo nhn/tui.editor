@@ -12,7 +12,7 @@ import { MdPos } from '@t/markdown';
 import { WidgetStyle } from '@t/editor';
 import EditorBase from '@/base';
 import SpecManager from '@/spec/specManager';
-import { toggleClass } from '@/utils/dom';
+import { cls, toggleClass } from '@/utils/dom';
 import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
 import { createTextSelection, nbspToSpace } from '@/helper/manipulation';
 import { placeholder } from '@/plugins/placeholder';
@@ -71,7 +71,7 @@ export default class MdEditor extends EditorBase {
   }
 
   private toggleActive(active: boolean) {
-    toggleClass(this.el!, 'te-tab-active', active);
+    toggleClass(this.el!, 'active', active);
     if (active) {
       this.focus();
     } else {
@@ -81,7 +81,7 @@ export default class MdEditor extends EditorBase {
 
   private createClipboard() {
     this.clipboard = document.createElement('textarea');
-    this.clipboard.className = 'te-clipboard';
+    this.clipboard.className = cls('pseudo-clipboard');
     this.clipboard.addEventListener('paste', (ev: ClipboardEvent) => {
       ev.preventDefault();
       const clipboardData =

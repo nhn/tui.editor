@@ -9,6 +9,7 @@ import {
   ToolbarCustomOptions,
 } from '@t/ui';
 import { Emitter } from '@t/event';
+import { cls } from '@/utils/dom';
 import html from '@/ui/vdom/template';
 import { Component } from '@/ui/vdom/component';
 import { ToolbarButton } from './toolbarButton';
@@ -36,13 +37,13 @@ export class ToolbarGroup extends Component<Props> {
     const dividerStyle = { display: hiddenDivider ? 'none' : null };
 
     return html`
-      <div class="te-toolbar-group" style=${groupStyle}>
+      <div class="${cls('toolbar-group')}" style=${groupStyle}>
         ${group.map((item: ToolbarCustomOptions) => {
           const Comp = item.el ? CustomToolbarItem : ToolbarButton;
 
           return html`<${Comp} key=${item.name} ...${this.props} item=${item} />`;
         })}
-        <div class="tui-toolbar-divider" style=${dividerStyle}></div>
+        <div class="${cls('toolbar-divider')}" style=${dividerStyle}></div>
       </div>
     `;
   }

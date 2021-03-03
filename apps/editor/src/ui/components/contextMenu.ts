@@ -1,6 +1,6 @@
 import { ContextMenuItem, ExecCommand, Pos, VNode } from '@t/ui';
 import { Emitter } from '@t/event';
-import { closest } from '@/utils/dom';
+import { closest, cls } from '@/utils/dom';
 import html from '../vdom/template';
 import { Component } from '../vdom/component';
 
@@ -39,7 +39,7 @@ export class ContextMenu extends Component<Props, State> {
   }
 
   private handleClickDocument = (ev: MouseEvent) => {
-    if (!closest(ev.target as HTMLElement, '.te-context-menu')) {
+    if (!closest(ev.target as HTMLElement, `.${cls('context-menu')}`)) {
       this.setState({ pos: null });
     }
   };
@@ -49,7 +49,7 @@ export class ContextMenu extends Component<Props, State> {
 
     return pos
       ? menuGroups.reduce((acc, group, index) => {
-          group.forEach(({ label, className, disabled, onClick }) => {
+          group.forEach(({ label, className = false, disabled, onClick }) => {
             const handleClick = () => {
               onClick!();
               this.setState({ pos: null });
@@ -79,6 +79,8 @@ export class ContextMenu extends Component<Props, State> {
   render() {
     const style = { display: this.state.pos ? 'block' : 'none', ...this.state.pos };
 
-    return html`<div class="te-context-menu" style=${style}>${this.getMenuGroupElements()}</div>`;
+    return html`<div class="${cls('context-menu')}" style=${style}>
+      ${this.getMenuGroupElements()}
+    </div>`;
   }
 }

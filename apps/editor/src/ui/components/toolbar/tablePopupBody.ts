@@ -1,5 +1,6 @@
 import { Emitter } from '@t/event';
 import { ExecCommand, Pos } from '@t/ui';
+import { cls } from '@/utils/dom';
 import html from '@/ui/vdom/template';
 import { Component } from '@/ui/vdom/component';
 
@@ -125,16 +126,16 @@ export class TablePopupBody extends Component<Props, State> {
     return html`
       <div>
         <div
-          class="te-table-selection"
+          class="${cls('table-selection')}"
           ref=${(el: HTMLElement) => (this.refs.tableEl = el)}
           onMousemove=${this.extendSelectionRange}
           onClick=${this.execCommand}
         >
-          <div class="te-table-header" style=${headerAreaBound}></div>
-          <div class="te-table-body" style=${tableBodyAreaBound}></div>
-          <div class="te-selection-area" style=${selectionAreaBound}></div>
+          <div class="${cls('table-header')}" style=${headerAreaBound}></div>
+          <div class="${cls('table-body')}" style=${tableBodyAreaBound}></div>
+          <div class="${cls('table-selection-layer')}" style=${selectionAreaBound}></div>
         </div>
-        <p class="te-description">${this.getDescription()}</p>
+        <p class="${cls('table-description')}">${this.getDescription()}</p>
       </div>
     `;
   }

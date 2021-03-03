@@ -104,23 +104,23 @@ describe('default toolbar', () => {
 
   it('should be rendered properly', () => {
     const toolbarButtonSelectors = [
-      '.tui-heading',
-      '.tui-bold',
-      '.tui-italic',
-      '.tui-strike',
-      '.tui-hrline',
-      '.tui-quote',
-      '.tui-ul',
-      '.tui-ol',
-      '.tui-task',
-      '.tui-indent',
-      '.tui-outdent',
-      '.tui-table',
-      '.tui-image',
-      '.tui-link',
-      '.tui-code',
-      '.tui-codeblock',
-      '.tui-scroll-sync',
+      '.heading',
+      '.bold',
+      '.italic',
+      '.strike',
+      '.hrline',
+      '.quote',
+      '.bullet-list',
+      '.ordered-list',
+      '.task-list',
+      '.indent',
+      '.outdent',
+      '.table',
+      '.image',
+      '.link',
+      '.code',
+      '.codeblock',
+      '.scroll-sync',
     ];
 
     toolbarButtonSelectors.forEach((selector) => {
@@ -129,9 +129,9 @@ describe('default toolbar', () => {
   });
 
   it('should show tooltip when mouseover on toolbar button', () => {
-    dispatchMouseover('.tui-bold');
+    dispatchMouseover('.bold');
 
-    const tooltip = getElement('.tui-tooltip');
+    const tooltip = getElement('.tui-editor-tooltip');
 
     expect(tooltip).toHaveStyle({ display: 'block' });
   });
@@ -141,17 +141,17 @@ describe('default toolbar', () => {
 
     em.listen('command', spy);
 
-    dispatchClick('.tui-bold');
+    dispatchClick('.bold');
 
     // eslint-disable-next-line no-undefined
     expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'bold' }, undefined);
   });
 
   it('should hide the popup when clicking X button on popup', () => {
-    dispatchClick('.tui-link');
+    dispatchClick('.link');
 
-    const linkPopup = getElement('.te-popup-add-link');
-    const closeBtn = getElement('.te-popup-add-link .tui-popup-close-button');
+    const linkPopup = getElement('.tui-editor-popup-add-link');
+    const closeBtn = getElement('.tui-editor-popup-add-link .tui-editor-close-button');
 
     closeBtn.click();
 
@@ -160,11 +160,11 @@ describe('default toolbar', () => {
 
   describe('scroll sync button', () => {
     it('should toggle state when clicking scroll sync button', () => {
-      const scrollSyncBtn = getElement('.tui-scroll-sync');
+      const scrollSyncBtn = getElement('.scroll-sync');
 
       expect(scrollSyncBtn).toHaveClass('active');
 
-      dispatchClick('.tui-scroll-sync');
+      dispatchClick('.scroll-sync');
 
       expect(scrollSyncBtn).not.toHaveClass('active');
     });
@@ -174,14 +174,14 @@ describe('default toolbar', () => {
 
       em.listen('command', spy);
 
-      dispatchClick('.tui-scroll-sync');
+      dispatchClick('.scroll-sync');
 
       expect(spy).toHaveBeenCalledWith(
         { type: 'markdown', command: 'toggleScrollSync' },
         { active: false }
       );
 
-      dispatchClick('.tui-scroll-sync');
+      dispatchClick('.scroll-sync');
 
       expect(spy).toHaveBeenCalledWith(
         { type: 'markdown', command: 'toggleScrollSync' },
@@ -192,9 +192,9 @@ describe('default toolbar', () => {
 
   describe('heading button', () => {
     it('should show the popup when clicking heading button', () => {
-      dispatchClick('.tui-heading');
+      dispatchClick('.heading');
 
-      const headingPopup = getElement('.te-heading-add');
+      const headingPopup = getElement('.tui-editor-popup-add-heading');
 
       expect(headingPopup).toHaveStyle({ display: 'block' });
     });
@@ -204,8 +204,8 @@ describe('default toolbar', () => {
 
       em.listen('command', spy);
 
-      dispatchClick('.tui-heading');
-      dispatchClick('.te-heading-add [data-level="2"]');
+      dispatchClick('.heading');
+      dispatchClick('.tui-editor-popup-add-heading [data-level="2"]');
 
       expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'heading' }, { level: 2 });
     });
@@ -213,18 +213,18 @@ describe('default toolbar', () => {
 
   describe('link button', () => {
     it('should show the popup when clicking link button', () => {
-      dispatchClick('.tui-link');
+      dispatchClick('.link');
 
-      const linkPopup = getElement('.te-popup-add-link');
+      const linkPopup = getElement('.tui-editor-popup-add-link');
 
       expect(linkPopup).toHaveStyle({ display: 'block' });
     });
 
     it('should hide popup when clicking Cancel button', () => {
-      dispatchClick('.tui-link');
-      dispatchClick('.te-popup-add-link .te-close-button');
+      dispatchClick('.link');
+      dispatchClick('.tui-editor-popup-add-link .tui-editor-close-button');
 
-      const linkPopup = getElement('.te-popup-add-link');
+      const linkPopup = getElement('.tui-editor-popup-add-link');
 
       expect(linkPopup).toHaveStyle({ display: 'none' });
     });
@@ -234,15 +234,17 @@ describe('default toolbar', () => {
 
       em.listen('command', spy);
 
-      dispatchClick('.tui-link');
+      dispatchClick('.link');
 
-      const urlText = getElement('.te-popup-add-link .te-url-input') as HTMLInputElement;
-      const linkText = getElement('.te-popup-add-link .te-link-text-input') as HTMLInputElement;
+      const urlText = getElement('.tui-editor-popup-add-link #tuiLinkUrlInput') as HTMLInputElement;
+      const linkText = getElement(
+        '.tui-editor-popup-add-link #tuiLinkTextInput'
+      ) as HTMLInputElement;
 
       urlText.value = 'https://ui.toast.com';
       linkText.value = 'toastui';
 
-      dispatchClick('.te-popup-add-link .te-ok-button');
+      dispatchClick('.tui-editor-popup-add-link .tui-editor-ok-button');
 
       expect(spy).toHaveBeenCalledWith(
         { type: 'markdown', command: 'addLink' },
@@ -251,17 +253,19 @@ describe('default toolbar', () => {
     });
 
     it('should add wrong class when url or text are not filled out', () => {
-      dispatchClick('.tui-link');
+      dispatchClick('.link');
 
-      const urlText = getElement('.te-popup-add-link .te-url-input') as HTMLInputElement;
-      const linkText = getElement('.te-popup-add-link .te-link-text-input') as HTMLInputElement;
+      const urlText = getElement('.tui-editor-popup-add-link #tuiLinkUrlInput') as HTMLInputElement;
+      const linkText = getElement(
+        '.tui-editor-popup-add-link #tuiLinkTextInput'
+      ) as HTMLInputElement;
 
-      dispatchClick('.te-popup-add-link .te-ok-button');
+      dispatchClick('.tui-editor-popup-add-link .tui-editor-ok-button');
 
       expect(urlText).toHaveClass('wrong');
 
       urlText.value = 'https://ui.toast.com';
-      dispatchClick('.te-popup-add-link .te-ok-button');
+      dispatchClick('.tui-editor-popup-add-link .tui-editor-ok-button');
 
       expect(linkText).toHaveClass('wrong');
     });
@@ -269,37 +273,37 @@ describe('default toolbar', () => {
 
   describe('image button', () => {
     it('should show the popup when clicking image button', () => {
-      dispatchClick('.tui-image');
+      dispatchClick('.image');
 
-      const imagePopup = getElement('.te-popup-add-image');
+      const imagePopup = getElement('.tui-editor-popup-add-image');
 
       expect(imagePopup).toHaveStyle({ display: 'block' });
     });
 
     it('should hide popup when clicking Cancel button', () => {
-      dispatchClick('.tui-image');
-      dispatchClick('.te-popup-add-image .te-close-button');
+      dispatchClick('.image');
+      dispatchClick('.tui-editor-popup-add-image .tui-editor-close-button');
 
-      const imagePopup = getElement('.te-popup-add-image');
+      const imagePopup = getElement('.tui-editor-popup-add-image');
 
       expect(imagePopup).toHaveStyle({ display: 'none' });
     });
 
     it('should toggle tab when clicking the file or url tab', () => {
-      dispatchClick('.tui-image');
+      dispatchClick('.image');
 
-      const fileTabBtn = getElement('.te-popup-add-image .te-tab-active');
+      const fileTabBtn = getElement('.tui-editor-popup-add-image .active');
       const urlTabBtn = fileTabBtn.nextSibling as HTMLButtonElement;
 
       urlTabBtn.click();
 
-      expect(fileTabBtn).not.toHaveClass('te-tab-active');
-      expect(urlTabBtn).toHaveClass('te-tab-active');
+      expect(fileTabBtn).not.toHaveClass('active');
+      expect(urlTabBtn).toHaveClass('active');
 
       fileTabBtn.click();
 
-      expect(fileTabBtn).toHaveClass('te-tab-active');
-      expect(urlTabBtn).not.toHaveClass('te-tab-active');
+      expect(fileTabBtn).toHaveClass('active');
+      expect(urlTabBtn).not.toHaveClass('active');
     });
 
     it('should trigger command event when clicking OK button', () => {
@@ -307,13 +311,15 @@ describe('default toolbar', () => {
 
       em.listen('command', spy);
 
-      dispatchClick('.tui-image');
+      dispatchClick('.image');
 
-      const fileTabBtn = getElement('.te-popup-add-image .te-tab-active');
+      const fileTabBtn = getElement('.tui-editor-popup-add-image .active');
       const urlTabBtn = fileTabBtn.nextSibling as HTMLButtonElement;
-      const urlText = getElement('.te-popup-add-image .te-image-url-input') as HTMLInputElement;
+      const urlText = getElement(
+        '.tui-editor-popup-add-image #tuiImageUrlInput'
+      ) as HTMLInputElement;
       const descriptionText = getElement(
-        '.te-popup-add-image .te-alt-text-input'
+        '.tui-editor-popup-add-image #tuiAltTextInput'
       ) as HTMLInputElement;
 
       urlTabBtn.click();
@@ -321,7 +327,7 @@ describe('default toolbar', () => {
       urlText.value = 'myImageUrl';
       descriptionText.value = 'image';
 
-      dispatchClick('.te-popup-add-image .te-ok-button');
+      dispatchClick('.tui-editor-popup-add-image .tui-editor-ok-button');
 
       expect(spy).toHaveBeenCalledWith(
         { type: 'markdown', command: 'addImage' },
@@ -332,9 +338,9 @@ describe('default toolbar', () => {
 
   describe('table button', () => {
     it('should show the popup when clicking table button', () => {
-      dispatchClick('.tui-table');
+      dispatchClick('.table');
 
-      const tablePopup = getElement('.te-popup-add-table');
+      const tablePopup = getElement('.tui-editor-popup-add-table');
 
       expect(tablePopup).toHaveStyle({ display: 'block' });
     });
@@ -344,10 +350,10 @@ describe('default toolbar', () => {
 
       em.listen('command', spy);
 
-      dispatchClick('.tui-table');
+      dispatchClick('.table');
 
-      dispatchMousemove('.te-table-selection', 100, 60);
-      dispatchClick('.te-table-selection');
+      dispatchMousemove('.tui-editor-table-selection', 100, 60);
+      dispatchClick('.tui-editor-table-selection');
 
       expect(spy).toHaveBeenCalledWith(
         { type: 'markdown', command: 'addTable' },
@@ -442,7 +448,7 @@ describe('custom button toolbar', () => {
   it('should show tooltip when mouseover on toolbar button', () => {
     dispatchMouseover('.my-toolbar');
 
-    const tooltip = getElement('.tui-tooltip');
+    const tooltip = getElement('.tui-editor-tooltip');
 
     expect(tooltip).toHaveStyle({ display: 'block' });
   });
@@ -572,7 +578,7 @@ describe('custom toolbar element', () => {
   it('should show tooltip when mouseover on toolbar button', () => {
     dispatchMouseover('.my-toolbar');
 
-    const tooltip = getElement('.tui-tooltip');
+    const tooltip = getElement('.tui-editor-tooltip');
 
     expect(tooltip).toHaveStyle({ display: 'block' });
   });
@@ -603,7 +609,7 @@ describe('API', () => {
   let ref: Toolbar | null;
 
   function getToolbarItems() {
-    return getElement('.tui-editor-defaultUI-toolbar').querySelectorAll('button:not(.tui-more)');
+    return getElement('.tui-editor-defaultUI-toolbar').querySelectorAll('button:not(.more)');
   }
 
   beforeEach(() => {
@@ -641,11 +647,11 @@ describe('API', () => {
 
     const toolbarItems = getToolbarItems();
 
-    expect(toolbarItems[0]).toHaveClass('tui-heading');
-    expect(toolbarItems[1]).toHaveClass('tui-ol');
-    expect(toolbarItems[2]).toHaveClass('tui-bold');
-    expect(toolbarItems[3]).toHaveClass('tui-italic');
-    expect(toolbarItems[4]).toHaveClass('tui-strike');
+    expect(toolbarItems[0]).toHaveClass('heading');
+    expect(toolbarItems[1]).toHaveClass('ordered-list');
+    expect(toolbarItems[2]).toHaveClass('bold');
+    expect(toolbarItems[3]).toHaveClass('italic');
+    expect(toolbarItems[4]).toHaveClass('strike');
     // should have same parent because the toolbar is added to same group
     expect(toolbarItems[1].parentElement).toEqual(toolbarItems[2].parentElement);
   });
@@ -655,11 +661,11 @@ describe('API', () => {
 
     const toolbarItems = getToolbarItems();
 
-    expect(toolbarItems[0]).toHaveClass('tui-heading');
-    expect(toolbarItems[1]).toHaveClass('tui-bold');
-    expect(toolbarItems[2]).toHaveClass('tui-italic');
-    expect(toolbarItems[3]).toHaveClass('tui-strike');
-    expect(toolbarItems[4]).toHaveClass('tui-ol');
+    expect(toolbarItems[0]).toHaveClass('heading');
+    expect(toolbarItems[1]).toHaveClass('bold');
+    expect(toolbarItems[2]).toHaveClass('italic');
+    expect(toolbarItems[3]).toHaveClass('strike');
+    expect(toolbarItems[4]).toHaveClass('ordered-list');
     // should have different parent because the toolbar is added to another group
     expect(toolbarItems[3].parentElement).not.toEqual(toolbarItems[4].parentElement);
   });
@@ -678,21 +684,21 @@ describe('API', () => {
 
     const toolbarItems = getToolbarItems();
 
-    expect(toolbarItems[0]).toHaveClass('tui-heading');
+    expect(toolbarItems[0]).toHaveClass('heading');
 
     expect(toolbarItems[1]).toHaveClass('my-toolbar');
     expect(toolbarItems[1]).toHaveTextContent('B!');
     expect(toolbarItems[1]).toHaveStyle({ color: '#222', width: '40px' });
 
-    expect(toolbarItems[2]).toHaveClass('tui-bold');
-    expect(toolbarItems[3]).toHaveClass('tui-italic');
-    expect(toolbarItems[4]).toHaveClass('tui-strike');
+    expect(toolbarItems[2]).toHaveClass('bold');
+    expect(toolbarItems[3]).toHaveClass('italic');
+    expect(toolbarItems[4]).toHaveClass('strike');
   });
 
   it('should remove item on calling removeToolbarItem', () => {
     ref!.removeToolbarItem('bold');
 
-    assertToNotContainElement('.tui-bold');
+    assertToNotContainElement('.bold');
   });
 });
 
@@ -726,7 +732,7 @@ describe('event', () => {
     it('should open popup corresponding to name', () => {
       em.emit('openPopup', 'image');
 
-      const imagePopup = getElement('.te-popup-add-image');
+      const imagePopup = getElement('.tui-editor-popup-add-image');
 
       expect(imagePopup).toHaveStyle({ display: 'block' });
     });
@@ -736,8 +742,10 @@ describe('event', () => {
 
       em.emit('openPopup', 'link', initialValues);
 
-      const urlText = getElement('.te-popup-add-link .te-url-input') as HTMLInputElement;
-      const linkText = getElement('.te-popup-add-link .te-link-text-input') as HTMLInputElement;
+      const urlText = getElement('.tui-editor-popup-add-link #tuiLinkUrlInput') as HTMLInputElement;
+      const linkText = getElement(
+        '.tui-editor-popup-add-link #tuiLinkTextInput'
+      ) as HTMLInputElement;
 
       expect(urlText).toHaveValue('http://test.com');
       expect(linkText).toHaveValue('foo');

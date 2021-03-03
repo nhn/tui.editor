@@ -14,14 +14,14 @@ import { Emitter } from '@t/event';
 import { LinkAttributes } from '@t/editor';
 import { CustomHTMLRendererMap, EditResult, MdNode, MdPos } from '@t/markdown';
 import Preview from '@/preview';
-import { removeNode, toggleClass } from '@/utils/dom';
+import { cls, removeNode, toggleClass } from '@/utils/dom';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
 import { findAdjacentElementToScrollTop } from './scroll/dom';
 import { removeOffsetInfoByNode } from './scroll/offset';
 
-export const CLASS_HIGHLIGHT = 'te-preview-highlight';
+export const CLASS_HIGHLIGHT = cls('md-preview-highlight');
 
 function findTableCell(tableRow: MdNode, chOffset: number) {
   let cell = tableRow.firstChild;
@@ -65,7 +65,7 @@ class MarkdownPreview extends Preview {
 
     super(el, eventEmitter, options.isViewer);
     this.el = el;
-    this.el.className = 'te-preview';
+    this.el.className = cls('md-preview');
     this.lazyRunner.registerLazyRunFunction(
       'invokeCodeBlock',
       this.invokeCodeBlockPlugins,
@@ -87,7 +87,7 @@ class MarkdownPreview extends Preview {
   }
 
   private toggleActive(active: boolean) {
-    toggleClass(this.el!, 'te-tab-active', active);
+    toggleClass(this.el!, 'active', active);
   }
 
   private initEvent(highlight: boolean) {

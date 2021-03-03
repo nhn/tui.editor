@@ -6,7 +6,7 @@ import css from 'tui-code-snippet/domUtil/css';
 import { Emitter } from '@t/event';
 import LazyRunner from './lazyRunner';
 import codeBlockManager from './codeBlockManager';
-import { createElementWith, empty, findNodes } from './utils/dom';
+import { cls, createElementWith, empty, findNodes } from './utils/dom';
 
 /**
  * Class Preview
@@ -40,7 +40,7 @@ class Preview {
 
   private initContentSection() {
     this.previewContent = createElementWith(
-      `<div class="tui-editor-contents"></div>`
+      `<div class="${cls('contents')}"></div>`
     ) as HTMLElement;
     this.el!.appendChild(this.previewContent);
   }

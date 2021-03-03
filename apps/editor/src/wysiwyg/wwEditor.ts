@@ -34,12 +34,13 @@ import { LinkAttributes, WidgetStyle } from '@t/editor';
 import { addWidget } from '@/plugins/popupWidget';
 import { createNodesWithWidget } from '@/widget/rules';
 import { widgetNodeView } from '@/widget/widgetNode';
+import { cls } from '@/utils/dom';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
 }
 
-const CONTENTS_CLASS_NAME = 'tui-editor-contents';
+const CONTENTS_CLASS_NAME = cls('contents');
 
 export default class WysiwygEditor extends EditorBase {
   private toDOMAdaptor: ToDOMAdaptor;

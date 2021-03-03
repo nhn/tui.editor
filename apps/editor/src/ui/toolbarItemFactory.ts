@@ -11,6 +11,7 @@ import {
   PopupInitialValues,
 } from '@t/ui';
 import i18n from '@/i18n/i18n';
+import { cls } from '@/utils/dom';
 import html from './vdom/template';
 import { HeadingPopupBody } from './components/toolbar/headingPopupBody';
 import { ImagePopupBody } from './components/toolbar/imagePopupBody';
@@ -29,7 +30,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'heading':
       info = {
         name: 'heading',
-        className: 'tui-heading',
+        className: 'heading',
         tooltip: i18n.get('Headings'),
         state: 'heading',
       };
@@ -37,7 +38,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'bold':
       info = {
         name: 'bold',
-        className: 'tui-bold',
+        className: 'bold',
         command: 'bold',
         tooltip: i18n.get('Bold'),
         state: 'strong',
@@ -46,7 +47,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'italic':
       info = {
         name: 'italic',
-        className: 'tui-italic',
+        className: 'italic',
         command: 'italic',
         tooltip: i18n.get('Italic'),
         state: 'emph',
@@ -55,7 +56,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'strike':
       info = {
         name: 'strike',
-        className: 'tui-strike',
+        className: 'strike',
         command: 'strike',
         tooltip: i18n.get('Strike'),
         state: 'strike',
@@ -64,7 +65,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'hr':
       info = {
         name: 'hr',
-        className: 'tui-hrline',
+        className: 'hrline',
         command: 'hr',
         tooltip: i18n.get('Line'),
         state: 'thematicBreak',
@@ -73,7 +74,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'quote':
       info = {
         name: 'quote',
-        className: 'tui-quote',
+        className: 'quote',
         command: 'blockQuote',
         tooltip: i18n.get('Blockquote'),
         state: 'blockQuote',
@@ -82,7 +83,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'ul':
       info = {
         name: 'ul',
-        className: 'tui-ul',
+        className: 'bullet-list',
         command: 'bulletList',
         tooltip: i18n.get('Unordered list'),
         state: 'bulletList',
@@ -91,7 +92,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'ol':
       info = {
         name: 'ol',
-        className: 'tui-ol',
+        className: 'ordered-list',
         command: 'orderedList',
         tooltip: i18n.get('Ordered list'),
         state: 'orderedList',
@@ -100,7 +101,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'task':
       info = {
         name: 'task',
-        className: 'tui-task',
+        className: 'task-list',
         command: 'taskList',
         tooltip: i18n.get('Task'),
         state: 'taskList',
@@ -109,7 +110,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'table':
       info = {
         name: 'table',
-        className: 'tui-table',
+        className: 'table',
         tooltip: i18n.get('Insert table'),
         state: 'table',
       };
@@ -118,21 +119,21 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'image':
       info = {
         name: 'image',
-        className: 'tui-image',
+        className: 'image',
         tooltip: i18n.get('Insert image'),
       };
       break;
     case 'link':
       info = {
         name: 'link',
-        className: 'tui-link',
+        className: 'link',
         tooltip: i18n.get('Insert link'),
       };
       break;
     case 'code':
       info = {
         name: 'code',
-        className: 'tui-code',
+        className: 'code',
         command: 'code',
         tooltip: i18n.get('Code'),
         state: 'code',
@@ -141,7 +142,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'codeblock':
       info = {
         name: 'codeblock',
-        className: 'tui-codeblock',
+        className: 'codeblock',
         command: 'codeBlock',
         tooltip: i18n.get('Insert CodeBlock'),
         state: 'codeBlock',
@@ -150,7 +151,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'indent':
       info = {
         name: 'indent',
-        className: 'tui-indent',
+        className: 'indent',
         command: 'indent',
         tooltip: i18n.get('Indent'),
       };
@@ -158,7 +159,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'outdent':
       info = {
         name: 'outdent',
-        className: 'tui-outdent',
+        className: 'outdent',
         command: 'outdent',
         tooltip: i18n.get('Outdent'),
       };
@@ -166,7 +167,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'scrollSync':
       info = {
         name: 'scrollSync',
-        className: 'tui-scroll-sync',
+        className: 'scroll-sync',
         tooltip: i18n.get('Auto scroll disabled'),
         activeTooltip: i18n.get('Auto scroll enabled'),
         active: true,
@@ -177,7 +178,7 @@ function createDefaultToolbarItemInfo(type: string) {
     case 'more':
       info = {
         name: 'more',
-        className: 'tui-more',
+        className: 'more',
         tooltip: i18n.get('More'),
       };
       break;
@@ -187,7 +188,7 @@ function createDefaultToolbarItemInfo(type: string) {
   }
 
   if (info.name !== 'scrollSync') {
-    info.className += ' tui-toolbar-icons';
+    info.className += ` ${cls('toolbar-icons')}`;
   }
 
   return info;
@@ -208,14 +209,14 @@ export function createPopupInfo(type: string, payload: Payload): PopupInfo | und
     case 'heading':
       return {
         render: (props) => html`<${HeadingPopupBody} ...${props} />`,
-        className: 'te-heading-add',
+        className: cls('popup-add-heading'),
         fromEl: el,
         pos,
       };
     case 'link':
       return {
         render: (props) => html`<${LinkPopupBody} ...${props} />`,
-        className: 'te-popup-add-link tui-editor-popup',
+        className: cls('popup-add-link'),
         headerText: i18n.get('Insert link'),
         fromEl: el,
         pos,
@@ -224,7 +225,7 @@ export function createPopupInfo(type: string, payload: Payload): PopupInfo | und
     case 'image':
       return {
         render: (props) => html`<${ImagePopupBody} ...${props} />`,
-        className: 'te-popup-add-image tui-editor-popup',
+        className: cls('popup-add-image'),
         headerText: i18n.get('Insert image'),
         fromEl: el,
         pos,
@@ -232,7 +233,7 @@ export function createPopupInfo(type: string, payload: Payload): PopupInfo | und
     case 'table':
       return {
         render: (props) => html`<${TablePopupBody} ...${props} />`,
-        className: 'te-popup-add-table',
+        className: cls('popup-add-table'),
         fromEl: el,
         pos,
       };

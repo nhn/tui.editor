@@ -3,10 +3,11 @@ import { EditorView, Decoration, DecorationSet } from 'prosemirror-view';
 
 import isNull from 'tui-code-snippet/type/isNull';
 
+import { cls } from '@/utils/dom';
 import CellSelection from './cellSelection';
 import TableSelection, { pluginKey } from './tableSelectionView';
 
-const SELECTED_CELL_CLASS_NAME = 'te-cell-selected';
+const SELECTED_CELL_CLASS_NAME = cls('cell-selected');
 
 function drawCellSelection({ selection, doc }: EditorState) {
   if (selection instanceof CellSelection) {

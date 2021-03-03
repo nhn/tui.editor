@@ -1,5 +1,5 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
-import { cls } from '@/utils/dom';
+import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 
 export class CustomBlock extends Mark {
@@ -10,7 +10,7 @@ export class CustomBlock extends Mark {
   get defaultSchema() {
     return {
       toDOM(): DOMOutputSpecArray {
-        return ['span', { class: cls('custom-block') }, 0];
+        return ['span', { class: clsWithMdPrefix('custom-block') }, 0];
       },
     };
   }

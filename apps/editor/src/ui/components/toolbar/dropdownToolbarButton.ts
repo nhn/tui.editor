@@ -9,7 +9,7 @@ import {
   ToolbarButtonInfo,
 } from '@t/ui';
 import { Emitter } from '@t/event';
-import { findNodes, closest } from '@/utils/dom';
+import { findNodes, closest, cls } from '@/utils/dom';
 import html from '@/ui/vdom/template';
 import { Component } from '@/ui/vdom/component';
 import { ToolbarGroup } from './toolbarGroup';
@@ -43,7 +43,7 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
   private getBound() {
     const rect = this.props.getBound(this.refs.el);
 
-    findNodes(this.refs.dropdownEl, '.te-toolbar-group').forEach((el) => {
+    findNodes(this.refs.dropdownEl, `.${cls('toolbar-group')}`).forEach((el) => {
       rect.left -= (el as HTMLElement).offsetWidth;
     });
     rect.top += POPUP_INDENT;
@@ -53,8 +53,8 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
 
   private handleClickDocument = ({ target }: MouseEvent) => {
     if (
-      !closest(target as HTMLElement, '.tui-dropdown-toolbar') &&
-      !closest(target as HTMLElement, '.tui-more')
+      !closest(target as HTMLElement, `.${cls('dropdown-toolbar')}`) &&
+      !closest(target as HTMLElement, '.more')
     ) {
       this.setState({ showDropdown: false, dropdownPos: null });
     }
@@ -83,7 +83,10 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
     const { disabled, item, items, hideTooltip } = this.props;
 
     return html`
-      <div class="te-toolbar-group" style="display: ${items.length ? 'inline-block' : 'none'}">
+      <div
+        class="${cls('toolbar-group')}"
+        style="display: ${items.length ? 'inline-block' : 'none'}"
+      >
         <button
           ref=${(el: HTMLElement) => (this.refs.el = el)}
           type="button"
@@ -94,7 +97,7 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
           disabled=${disabled}
         ></button>
         <div
-          class="tui-dropdown-toolbar"
+          class="${cls('dropdown-toolbar')}"
           style=${{ display: showDropdown ? 'block' : 'none', ...dropdownPos }}
           ref=${(el: HTMLElement) => (this.refs.dropdownEl = el)}
         >

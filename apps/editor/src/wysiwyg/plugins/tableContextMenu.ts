@@ -15,8 +15,6 @@ interface ContextMenuInfo {
   disableInThead?: boolean;
 }
 
-const DISABLED_MENU_CLASS_NAME = 'te-context-menu-disabled';
-
 const contextMenuGroups: ContextMenuInfo[][] = [
   [
     { action: 'Add row to up', command: 'addRowToUp', disableInThead: true },
@@ -40,19 +38,12 @@ function getContextMenuGroups(eventEmitter: Emitter, inTableHead: boolean) {
   return contextMenuGroups
     .map((contextMenuGroup) =>
       contextMenuGroup.map(({ action, command, payload, disableInThead }) => {
-        let className;
-
-        if (inTableHead && disableInThead) {
-          className = DISABLED_MENU_CLASS_NAME;
-        }
-
         return {
           label: i18n.get(action),
           onClick: () => {
             eventEmitter.emit('command', { type: 'wysiwyg', command }, payload);
           },
-          className: className || false,
-          disabled: className ? 'disabled' : false,
+          disabled: inTableHead && !!disableInThead,
         };
       })
     )

@@ -5,6 +5,7 @@ import isUndefined from 'tui-code-snippet/type/isUndefined';
 import { Emitter } from '@t/event';
 import { ExecCommand, HidePopup, PopupInitialValues } from '@t/ui';
 import i18n from '@/i18n/i18n';
+import { cls } from '@/utils/dom';
 import html from '@/ui/vdom/template';
 import { Component } from '@/ui/vdom/component';
 
@@ -40,7 +41,7 @@ export class LinkPopupBody extends Component<Props> {
     const linkUrlEl = this.refs.url as HTMLInputElement;
     const linkTextEl = this.refs.text as HTMLInputElement;
 
-    removeClass(linkTextEl, 'wrong');
+    removeClass(linkUrlEl, 'wrong');
     removeClass(linkTextEl, 'wrong');
 
     if (linkUrlEl.value.length < 1) {
@@ -74,25 +75,23 @@ export class LinkPopupBody extends Component<Props> {
   render() {
     return html`
       <div>
-        <label for="te-link-url-input">${i18n.get('URL')}</label>
+        <label for="tuiLinkUrlInput">${i18n.get('URL')}</label>
         <input
-          id="te-link-url-input"
+          id="tuiLinkUrlInput"
           type="text"
-          class="te-url-input"
           ref=${(el: HTMLInputElement) => (this.refs.url = el)}
         />
-        <label for="te-link-text-input">${i18n.get('Link text')}</label>
+        <label for="tuiLinkTextInput">${i18n.get('Link text')}</label>
         <input
-          id="te-link-text-input"
+          id="tuiLinkTextInput"
           type="text"
-          class="te-link-text-input"
           ref=${(el: HTMLInputElement) => (this.refs.text = el)}
         />
-        <div class="te-button-section">
-          <button type="button" class="te-ok-button" onClick=${this.execCommand}>
+        <div class="${cls('button-container')}">
+          <button type="button" class="${cls('ok-button')}" onClick=${this.execCommand}>
             ${i18n.get('OK')}
           </button>
-          <button type="button" class="te-close-button" onClick=${this.props.hidePopup}>
+          <button type="button" class="${cls('close-button')}" onClick=${this.props.hidePopup}>
             ${i18n.get('Cancel')}
           </button>
         </div>

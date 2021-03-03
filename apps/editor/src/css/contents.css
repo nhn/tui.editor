@@ -162,11 +162,6 @@ table.ProseMirror-selectednode {
   background-color: transparent;
 }
 
-.tui-editor-contents pre.addon {
-  border: 1px solid #e8ebed;
-  background-color: #fff;
-}
-
 .tui-editor-contents img {
   margin: 4px 0 10px;
   box-sizing: border-box;
@@ -204,6 +199,14 @@ table.ProseMirror-selectednode {
 
 .tui-editor-contents td p {
   margin: 0;
+}
+
+.tui-editor-contents td.tui-editor-cell-selected {
+  background-color: #d8dfec;
+}
+
+.tui-editor-contents th.tui-editor-cell-selected {
+  background-color: #908f8f;
 }
 
 .tui-editor-contents ul,
@@ -269,12 +272,6 @@ table.ProseMirror-selectednode {
   margin: 0;
 }
 
-.tui-editor-contents ul li.task-list-item::before,
-.tui-editor-contents ol li.task-list-item::before,
-.tui-editor-contents pre ul li::before {
-  content: '';
-}
-
 .tui-editor-contents hr {
   border-top: 1px solid #eee;
   margin: 16px 0;
@@ -335,13 +332,6 @@ table.ProseMirror-selectednode {
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAEqADAAQAAAABAAAAEgAAAACaqbJVAAAA1ElEQVQ4EWP0nvbsPwMVABMVzAAbMWoQIiT5OJgYvLS5EAJQFguGCB4BkCHt/kIM8kKsYFXbrn6DqyY6sJENefjuN8ORuz/ghoAYWA0COR2kEQbQDanc+I7h049/MGkwjVANFQYZkmXHD/YCyABiDAFpxQgjkJO9dbjA4QAKDxAAhQnIO9hcAlYAJDBcBHIySANII8gAYgwBGYZhEEgQZFjVJohhhFwCUg8CjPgyLT8nE8N/YJZGD1iIVlQSI4yQpT9+R40ZZDl0NlavoSsihj/4DAIAR+hZHUj727YAAAAASUVORK5CYII=');
 }
 
-.tui-editor-contents .task-list-item input[type='checkbox'],
-.tui-editor-contents .task-list-item .task-list-item-checkbox {
-  margin-left: -17px;
-  margin-right: 3.8px;
-  margin-top: 3px;
-}
-
 .custom-block .custom-block-editor {
   background: #f9f7fd;
   color: #452d6b;
@@ -353,22 +343,22 @@ table.ProseMirror-selectednode {
   padding: 9px 13px 8px 12px;
 }
 
-.custom-block.ProseMirror-selectednode .custom-block-view {
+.tui-editor-custom-block.ProseMirror-selectednode .tui-editor-custom-block-view {
   border: solid 1px #dbd4ea;
 }
 
-.custom-block .custom-block-view .tool {
+.tui-editor-custom-block .tui-editor-custom-block-view .tool {
   position: absolute;
   right: 10px;
   top: 7px;
   display: none;
 }
 
-.custom-block.ProseMirror-selectednode .custom-block-view .tool {
+.tui-editor-custom-block.ProseMirror-selectednode .tui-editor-custom-block-view .tool {
   display: block;
 }
 
-.custom-block-view button {
+.tui-editor-custom-block-view button {
   vertical-align: middle;
   width: 15px;
   height: 15px;
@@ -380,7 +370,7 @@ table.ProseMirror-selectednode {
   background-position: 5px 5px;
 }
 
-.custom-block-view .info {
+.tui-editor-custom-block-view .info {
   font-size: 13px;
   font-weight: bold;
   color: #5200d0;
@@ -440,45 +430,55 @@ table.ProseMirror-selectednode {
   position: absolute;
 }
 
-.te-preview .tui-editor-contents h1 {
+.tui-editor-md-preview .tui-editor-contents h1 {
   min-height: 28px;
 }
 
-.te-preview .tui-editor-contents h2 {
+.tui-editor-md-preview .tui-editor-contents h2 {
   min-height: 23px;
 }
 
-.te-preview .tui-editor-contents blockquote {
+.tui-editor-md-preview .tui-editor-contents blockquote {
   min-height: 20px;
 }
 
-.te-preview .tui-editor-contents li {
+.tui-editor-md-preview .tui-editor-contents li {
   min-height: 22px;
+}
+
+.tui-editor-pseudo-clipboard {
+  position: fixed;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  left: -1000px;
+  top: -1000px;
+  z-index: -1;
 }
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
   /* IE10+11 */
-  .te-ww-container .tui-editor-contents li {
+  .tui-editor-ww-container .tui-editor-contents li {
     vertical-align: middle;
   }
 
-  .te-ww-container .tui-editor-contents ul > li::before,
-  .te-ww-container .tui-editor-contents ol > li::before,
-  .te-ww-container .tui-editor-contents .task-list-item:before {
+  .tui-editor-ww-container .tui-editor-contents ul > li::before,
+  .tui-editor-ww-container .tui-editor-contents ol > li::before,
+  .tui-editor-ww-container .tui-editor-contents .task-list-item::before {
     position: static;
     vertical-align: middle;
   }
 
-  .te-ww-container .tui-editor-contents ul > li::before {
+  .tui-editor-ww-container .tui-editor-contents ul > li::before {
     margin-top: -3px;
     margin-right: 12px;
   }
 
-  .te-ww-container .tui-editor-contents ol > li::before {
+  .tui-editor-ww-container .tui-editor-contents ol > li::before {
     margin-right: 6px;
   }
 
-  .te-ww-container .tui-editor-contents .task-list-item {
+  .tui-editor-ww-container .tui-editor-contents .task-list-item {
     padding-left: 2px;
   }
 }

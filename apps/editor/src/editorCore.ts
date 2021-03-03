@@ -35,6 +35,7 @@ import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
 import { ScrollSync } from './markdown/scroll/scrollSync';
 import { addDefaultImageBlobHook } from './helper/image';
 import { setWidgetRules } from './widget/rules';
+import { cls } from './utils/dom';
 
 /**
  * ToastUI Editor
@@ -483,7 +484,7 @@ class ToastUIEditor {
     this.minHeight = minHeight;
 
     const editorHeight = this.options.el.clientHeight;
-    const editorSectionHeight = document.querySelector('.te-editor-section')?.clientHeight || 0;
+    const editorSectionHeight = document.querySelector(`.${cls('main')}`)?.clientHeight || 0;
     const diffHeight = editorHeight - editorSectionHeight;
 
     let minHeightNum = parseInt(minHeight, 10);

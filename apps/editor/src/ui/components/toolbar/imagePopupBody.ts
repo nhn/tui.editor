@@ -2,6 +2,7 @@ import { HookCallback } from '@t/editor';
 import { Emitter } from '@t/event';
 import { ExecCommand, HidePopup, TabInfo } from '@t/ui';
 import i18n from '@/i18n/i18n';
+import { cls } from '@/utils/dom';
 import { Component } from '@/ui/vdom/component';
 import html from '@/ui/vdom/template';
 import { Tabs } from '../tabs';
@@ -81,40 +82,35 @@ export class ImagePopupBody extends Component<Props, State> {
 
     return html`
       <div>
-        <div class="te-tab-section">
-          <${Tabs} tabs=${this.tabs} activeTab=${activeTab} onClick=${this.toggleTab} />
-        </div>
-        <div class="te-url-type${activeTab === 'url' ? ' te-tab-active' : ''}">
-          <label for="te-image-url-input">${i18n.get('Image URL')}</label>
+        <${Tabs} tabs=${this.tabs} activeTab=${activeTab} onClick=${this.toggleTab} />
+        <div style="display:${activeTab === 'url' ? 'block' : 'none'}">
+          <label for="tuiImageUrlInput">${i18n.get('Image URL')}</label>
           <input
-            id="te-image-url-input"
+            id="tuiImageUrlInput"
             type="text"
-            class="te-image-url-input"
             ref=${(el: HTMLInputElement) => (this.refs.url = el)}
           />
         </div>
-        <div class="te-file-type${activeTab === 'file' ? ' te-tab-active' : ''}">
-          <label for="te-image-file-input">${i18n.get('Select image file')}</label>
+        <div style="display:${activeTab === 'file' ? 'block' : 'none'}">
+          <label for="tuiImageFileInput">${i18n.get('Select image file')}</label>
           <input
-            id="te-image-file-input"
+            id="tuiImageFileInput"
             type="file"
-            class="te-image-file-input"
             accept="image/*"
             ref=${(el: HTMLInputElement) => (this.refs.file = el)}
           />
         </div>
-        <label for="te-alt-text-input">${i18n.get('Description')}</label>
+        <label for="tuiAltTextInput">${i18n.get('Description')}</label>
         <input
-          id="te-alt-text-input"
+          id="tuiAltTextInput"
           type="text"
-          class="te-alt-text-input"
           ref=${(el: HTMLInputElement) => (this.refs.altText = el)}
         />
-        <div class="te-button-section">
-          <button type="button" class="te-ok-button" onClick=${this.execCommand}>
+        <div class="${cls('button-container')}">
+          <button type="button" class="${cls('ok-button')}" onClick=${this.execCommand}>
             ${i18n.get('OK')}
           </button>
-          <button type="button" class="te-close-button" onClick=${this.props.hidePopup}>
+          <button type="button" class="${cls('close-button')}" onClick=${this.props.hidePopup}>
             ${i18n.get('Cancel')}
           </button>
         </div>

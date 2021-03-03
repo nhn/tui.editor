@@ -1,5 +1,6 @@
 import { TabInfo } from '@t/ui';
 import i18n from '@/i18n/i18n';
+import { cls } from '@/utils/dom';
 import html from '../vdom/template';
 import { Component } from '../vdom/component';
 
@@ -16,12 +17,12 @@ export class Tabs extends Component<Props> {
 
   render() {
     return html`
-      <div class="te-tab">
+      <div class="${cls('tab')}">
         ${this.props.tabs.map(
           ({ name, text }) => html`
             <button
               type="button"
-              class="${this.props.activeTab === name ? 'te-tab-active' : ''}"
+              class="${this.props.activeTab === name ? 'active' : ''}"
               onClick=${(ev: MouseEvent) => this.toggleTab(ev, name)}
             >
               ${i18n.get(text)}

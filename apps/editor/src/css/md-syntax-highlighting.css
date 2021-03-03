@@ -1,141 +1,127 @@
-.te-md-container .ProseMirror {
-  font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
-    'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
-  color: #222;
-}
-
-.tui-md-heading1 {
+.tui-editor-md-heading1 {
   font-size: 24px;
 }
 
-.tui-md-heading2 {
+.tui-editor-md-heading2 {
   font-size: 22px;
 }
 
-.tui-md-heading3 {
+.tui-editor-md-heading3 {
   font-size: 20px;
 }
 
-.tui-md-heading4 {
+.tui-editor-md-heading4 {
   font-size: 18px;
 }
 
-.tui-md-heading5 {
+.tui-editor-md-heading5 {
   font-size: 16px;
 }
 
-.tui-md-heading6 {
+.tui-editor-md-heading6 {
   font-size: 14px;
 }
 
-.tui-md-heading.tui-md-delimiter.setext {
+.tui-editor-md-heading.tui-editor-md-delimiter.setext {
   line-height: 15px;
 }
 
-.tui-md-strong,
-.tui-md-heading,
-.tui-md-list-item-style,
-.tui-md-list-item .tui-md-meta {
+.tui-editor-md-strong,
+.tui-editor-md-heading,
+.tui-editor-md-list-item-style,
+.tui-editor-md-list-item .tui-editor-md-meta {
   font-weight: bold;
 }
 
-.tui-md-emph {
+.tui-editor-md-emph {
   font-style: italic;
 }
 
-.tui-md-strike {
+.tui-editor-md-strike {
   text-decoration: line-through;
 }
 
-.tui-md-strike.tui-md-delimiter {
+.tui-editor-md-strike.tui-editor-md-delimiter {
   text-decoration: none;
 }
 
-.tui-md-delimiter,
-.tui-md-thematic-break,
-.tui-md-link,
-.tui-md-table,
-.tui-md-block-quote {
+.tui-editor-md-delimiter,
+.tui-editor-md-thematic-break,
+.tui-editor-md-link,
+.tui-editor-md-table,
+.tui-editor-md-block-quote {
   color: #ccc;
 }
 
-.tui-md-code.tui-md-delimiter {
+.tui-editor-md-code.tui-editor-md-delimiter {
   color: #aaa;
 }
 
-.tui-md-meta,
-.tui-md-html,
-.tui-md-link.tui-md-link-url.tui-md-marked-text {
+.tui-editor-md-meta,
+.tui-editor-md-html,
+.tui-editor-md-link.tui-editor-md-link-url.tui-editor-md-marked-text {
   color: #999;
 }
 
-.tui-md-block-quote .tui-md-marked-text,
-.tui-md-list-item.tui-md-meta {
+.tui-editor-md-block-quote .tui-editor-md-marked-text,
+.tui-editor-md-list-item.tui-editor-md-meta {
   color: #555;
 }
 
-.tui-md-table .tui-md-table-cell {
+.tui-editor-md-table .tui-editor-md-table-cell {
   color: #222;
 }
 
-.tui-md-link.tui-md-link-desc.tui-md-marked-text,
-.tui-md-list-item-style.tui-md-list-item-odd {
+.tui-editor-md-link.tui-editor-md-link-desc.tui-editor-md-marked-text,
+.tui-editor-md-list-item-style.tui-editor-md-list-item-odd {
   color: #4b96e6;
 }
 
-.tui-md-list-item-style.tui-md-list-item-even {
+.tui-editor-md-list-item-style.tui-editor-md-list-item-even {
   color: #cb4848;
 }
 
-.tui-md-code.tui-md-marked-text {
+.tui-editor-md-code.tui-editor-md-marked-text {
   color: #c1798b;
 }
 
-.tui-md-code {
+.tui-editor-md-code {
   background-color: rgba(243, 229, 233, 0.5);
   padding: 2px 0;
   letter-spacing: -0.3px;
 }
 
-.tui-md-code.tui-md-start {
+.tui-editor-md-code.tui-editor-md-start {
   padding-left: 2px;
   border-top-left-radius: 2px;
   border-bottom-left-radius: 2px;
 }
 
-.tui-md-code.tui-md-end {
+.tui-editor-md-code.tui-editor-md-end {
   padding-right: 2px;
   border-top-right-radius: 2px;
   border-bottom-right-radius: 2px;
 }
 
-.tui-md-code-block-line-background {
+.tui-editor-md-code-block-line-background {
   background-color: #f5f7f8;
 }
 
-.tui-md-code-block.CodeMirror-linebackground.start {
-  top: 2px;
-}
-
-.tui-md-code-block.CodeMirror-linebackground.end {
-  bottom: 2px;
-}
-
-.tui-md-code,
-.tui-md-code-block {
+.tui-editor-md-code,
+.tui-editor-md-code-block {
   font-family: Consolas, Courier, 'Lucida Grande', '나눔바른고딕', 'Nanum Barun Gothic', '맑은고딕',
     'Malgun Gothic', sans-serif;
 }
 
-.tui-md-custom-block {
+.tui-editor-md-custom-block {
   color: #452d6b;
 }
-.tui-md-custom-block-line-background {
+.tui-editor-md-custom-block-line-background {
   background-color: #f9f7fd;
 }
-.tui-md-custom-block .tui-md-delimiter {
+.tui-editor-md-custom-block .tui-editor-md-delimiter {
   color: #b8b3c0;
 }
-.tui-md-custom-block .tui-md-meta {
+.tui-editor-md-custom-block .tui-editor-md-meta {
   color: #5200d0;
 }

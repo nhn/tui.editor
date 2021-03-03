@@ -12,7 +12,7 @@ import {
 } from '@t/ui';
 import html from '@/ui/vdom/template';
 import { Component } from '@/ui/vdom/component';
-import { createElementWith, getOuterWidth, closest, getTotalOffset } from '@/utils/dom';
+import { createElementWith, getOuterWidth, closest, getTotalOffset, cls } from '@/utils/dom';
 import {
   createToolbarItemInfo,
   toggleScrollSync,
@@ -118,7 +118,7 @@ export class Toolbar extends Component<Props, State> {
   }
 
   private appendTooltipToBody() {
-    const tooltip = `<div class="tui-tooltip" style="display:none">
+    const tooltip = `<div class="${cls('tooltip')}" style="display:none">
         <div class="arrow"></div>
         <span class="text"></span>
       </div>`;
@@ -150,12 +150,12 @@ export class Toolbar extends Component<Props, State> {
   };
 
   private openPopup = (popupName: string, initialValues = {}) => {
-    const el = document.querySelector<HTMLElement>(`.te-toolbar-group .tui-${popupName}`)!;
+    const el = document.querySelector<HTMLElement>(`.${cls('toolbar-group')} .${popupName}`)!;
 
     if (el) {
       const { offsetLeft, offsetTop } = getTotalOffset(
         el,
-        closest(el, '.te-toolbar-section') as HTMLElement
+        closest(el, `.${cls('toolbar')}`) as HTMLElement
       );
       const info = createPopupInfo(popupName, {
         el,
@@ -185,7 +185,7 @@ export class Toolbar extends Component<Props, State> {
   private classifyToolbarItems() {
     let totalWidth = 0;
     const { clientWidth } = this.refs.el;
-    const divider = this.refs.el.querySelector<HTMLElement>('.tui-toolbar-divider');
+    const divider = this.refs.el.querySelector<HTMLElement>(`.${cls('toolbar-divider')}`);
     const dividerWidth = divider ? getOuterWidth(divider) : 0;
     const items: ToolbarGroupInfo[] = [];
     const dropdownItems: ToolbarGroupInfo[] = [];
@@ -260,16 +260,16 @@ export class Toolbar extends Component<Props, State> {
     };
 
     return html`
-      <div class="te-toolbar-section">
+      <div class="${cls('toolbar')}">
         <div
-          class="te-markdown-tab-section"
+          class="${cls('md-tab-container')}"
           style="display: ${editorType === 'wysiwyg' || previewStyle === 'vertical'
             ? 'none'
             : 'block'}"
         >
           <${Tabs} tabs=${this.tabs} activeTab=${activeTab} onClick=${this.toggleTab} />
         </div>
-        <div class="tui-editor-defaultUI-toolbar" ref=${(el: HTMLElement) => (this.refs.el = el)}>
+        <div class="${cls('defaultUI-toolbar')}" ref=${(el: HTMLElement) => (this.refs.el = el)}>
           ${items.map(
             (group, index) => html`
               <${ToolbarGroup}

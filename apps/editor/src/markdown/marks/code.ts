@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
-import { cls } from '@/utils/dom';
+import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { toggleMark } from '../helper/mdCommand';
 
@@ -33,7 +33,7 @@ export class Code extends Mark {
           classNames += '|marked-text';
         }
 
-        return ['span', { class: cls(...classNames.split('|')) }, 0];
+        return ['span', { class: clsWithMdPrefix(...classNames.split('|')) }, 0];
       },
     };
   }
