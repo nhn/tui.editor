@@ -236,9 +236,9 @@ describe('default toolbar', () => {
 
       dispatchClick('.link');
 
-      const urlText = getElement('.tui-editor-popup-add-link #teLinkUrlInput') as HTMLInputElement;
+      const urlText = getElement('.tui-editor-popup-add-link #tuiLinkUrlInput') as HTMLInputElement;
       const linkText = getElement(
-        '.tui-editor-popup-add-link #teLinkTextInput'
+        '.tui-editor-popup-add-link #tuiLinkTextInput'
       ) as HTMLInputElement;
 
       urlText.value = 'https://ui.toast.com';
@@ -255,9 +255,9 @@ describe('default toolbar', () => {
     it('should add wrong class when url or text are not filled out', () => {
       dispatchClick('.link');
 
-      const urlText = getElement('.tui-editor-popup-add-link #teLinkUrlInput') as HTMLInputElement;
+      const urlText = getElement('.tui-editor-popup-add-link #tuiLinkUrlInput') as HTMLInputElement;
       const linkText = getElement(
-        '.tui-editor-popup-add-link #teLinkTextInput'
+        '.tui-editor-popup-add-link #tuiLinkTextInput'
       ) as HTMLInputElement;
 
       dispatchClick('.tui-editor-popup-add-link .tui-editor-ok-button');
@@ -316,10 +316,10 @@ describe('default toolbar', () => {
       const fileTabBtn = getElement('.tui-editor-popup-add-image .active');
       const urlTabBtn = fileTabBtn.nextSibling as HTMLButtonElement;
       const urlText = getElement(
-        '.tui-editor-popup-add-image #teImageUrlInput'
+        '.tui-editor-popup-add-image #tuiImageUrlInput'
       ) as HTMLInputElement;
       const descriptionText = getElement(
-        '.tui-editor-popup-add-image #teAltTextInput'
+        '.tui-editor-popup-add-image #tuiAltTextInput'
       ) as HTMLInputElement;
 
       urlTabBtn.click();
@@ -742,9 +742,9 @@ describe('event', () => {
 
       em.emit('openPopup', 'link', initialValues);
 
-      const urlText = getElement('.tui-editor-popup-add-link #teLinkUrlInput') as HTMLInputElement;
+      const urlText = getElement('.tui-editor-popup-add-link #tuiLinkUrlInput') as HTMLInputElement;
       const linkText = getElement(
-        '.tui-editor-popup-add-link #teLinkTextInput'
+        '.tui-editor-popup-add-link #tuiLinkTextInput'
       ) as HTMLInputElement;
 
       expect(urlText).toHaveValue('http://test.com');

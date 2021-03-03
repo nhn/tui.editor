@@ -8,6 +8,7 @@ import { keymap } from 'prosemirror-keymap';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import { ToDOMAdaptor } from '@t/convertor';
 import { createTextSelection } from '@/helper/manipulation';
+import { cls } from '@/utils/dom';
 
 type GetPos = (() => number) | boolean;
 
@@ -39,9 +40,9 @@ export class CustomBlockView implements NodeView {
     this.canceled = false;
 
     this.dom = document.createElement('div');
-    this.dom.className = 'custom-block';
+    this.dom.className = cls('custom-block');
     this.wrapper = document.createElement('div');
-    this.wrapper.className = 'custom-block-view';
+    this.wrapper.className = cls('custom-block-view');
 
     this.createInnerViewContainer();
     this.renderCustomBlock();
@@ -85,7 +86,7 @@ export class CustomBlockView implements NodeView {
 
   private createInnerViewContainer() {
     this.innerViewContainer = document.createElement('div');
-    this.innerViewContainer.className = 'custom-block-editor';
+    this.innerViewContainer.className = cls('custom-block-editor');
     this.innerViewContainer.style.display = 'none';
   }
 

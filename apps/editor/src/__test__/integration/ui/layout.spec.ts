@@ -125,11 +125,11 @@ describe('layout component', () => {
 
     em.emit('hide');
 
-    expect(layout).toHaveClass('tui-editor-hidden');
+    expect(layout).toHaveClass('hidden');
 
     em.emit('show');
 
-    expect(layout).not.toHaveClass('tui-editor-hidden');
+    expect(layout).not.toHaveClass('hidden');
   });
 
   describe('changing editor mode', () => {

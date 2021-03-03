@@ -343,22 +343,22 @@ table.ProseMirror-selectednode {
   padding: 9px 13px 8px 12px;
 }
 
-.custom-block.ProseMirror-selectednode .custom-block-view {
+.tui-editor-custom-block.ProseMirror-selectednode .tui-editor-custom-block-view {
   border: solid 1px #dbd4ea;
 }
 
-.custom-block .custom-block-view .tool {
+.tui-editor-custom-block .tui-editor-custom-block-view .tool {
   position: absolute;
   right: 10px;
   top: 7px;
   display: none;
 }
 
-.custom-block.ProseMirror-selectednode .custom-block-view .tool {
+.tui-editor-custom-block.ProseMirror-selectednode .tui-editor-custom-block-view .tool {
   display: block;
 }
 
-.custom-block-view button {
+.tui-editor-custom-block-view button {
   vertical-align: middle;
   width: 15px;
   height: 15px;
@@ -370,7 +370,7 @@ table.ProseMirror-selectednode {
   background-position: 5px 5px;
 }
 
-.custom-block-view .info {
+.tui-editor-custom-block-view .info {
   font-size: 13px;
   font-weight: bold;
   color: #5200d0;

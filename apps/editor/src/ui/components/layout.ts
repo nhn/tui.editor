@@ -61,11 +61,9 @@ export class Layout extends Component<Props, State> {
   render() {
     const { eventEmitter, hideModeSwitch, toolbarItems } = this.props;
     const { hide, previewStyle, editorType } = this.state;
-    const displayClassName = hide ? ` ${cls('hidden')}` : '';
+    const displayClassName = hide ? ' hidden' : '';
     const editorTypeClassName = editorType === 'markdown' ? cls('md-mode') : cls('ww-mode');
-    const previewClassName = `${cls('md')}-${
-      previewStyle === 'vertical' ? 'vertical' : 'tab'
-    }-style`;
+    const previewClassName = `${cls('md')}-${previewStyle}-style`;
 
     return html`
       <div
