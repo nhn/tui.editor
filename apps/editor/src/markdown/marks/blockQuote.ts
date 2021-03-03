@@ -9,7 +9,7 @@ import {
   insertNodes,
   replaceNodes,
 } from '@/helper/manipulation';
-import { getRangeInfo, resolveSelectionPos } from '../helper/pos';
+import { getRangeInfo } from '../helper/pos';
 
 export const reBlockQuote = /^\s*> ?/;
 
@@ -32,8 +32,7 @@ export class BlockQuote extends Mark {
 
   private extendBlockQuote(): Command {
     return ({ selection, doc, tr, schema }, dispatch) => {
-      const [, to] = resolveSelectionPos(selection);
-      const { endFromOffset, endToOffset, endIndex } = getRangeInfo(selection);
+      const { endFromOffset, endToOffset, endIndex, to } = getRangeInfo(selection);
       const endNode = doc.child(endIndex);
       const { textContent } = endNode;
       const isBlockQuote = reBlockQuote.test(textContent);
