@@ -80,7 +80,6 @@ export default class WysiwygEditor extends EditorBase {
 
   createPlugins() {
     return this.defaultPlugins.concat([
-      placeholder(this.placeholder),
       tableSelection(),
       tableContextMenu(this.eventEmitter),
       task(),
