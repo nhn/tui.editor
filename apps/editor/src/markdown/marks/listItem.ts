@@ -24,8 +24,7 @@ import {
   reList,
   ToListContext,
 } from '../helper/list';
-import { getTextByMdLine } from '../helper/query';
-import { getMdToEditorPos, getPosInfo } from '../helper/pos';
+import { getMdToEditorPos, getPosInfo, getRangeInfo } from '../helper/pos';
 
 type CommandType = 'bullet' | 'ordered' | 'task';
 
@@ -68,26 +67,26 @@ export class ListItem extends Mark {
   private extendList(): Command {
     return ({ selection, tr, doc, schema }, dispatch) => {
       const { toastMark } = this.context;
-      const { to, startOffset, endOffset, endLine } = getPosInfo(doc, selection, true);
+      const { to, startFromOffset, endToOffset, endIndex } = getRangeInfo(selection);
 
-      const lineText = getTextByMdLine(doc, endLine);
-      const isList = reList.test(lineText);
+      const { textContent } = doc.child(endIndex);
+      const isList = reList.test(textContent);
 
-      if (!isList || selection.from === startOffset) {
+      if (!isList || selection.from === startFromOffset) {
         return false;
       }
 
-      const isEmpty = !lineText.replace(reCanBeTaskList, '').trim();
-      const commandType = getListType(lineText);
+      const isEmpty = !textContent.replace(reCanBeTaskList, '').trim();
+      const commandType = getListType(textContent);
 
       if (isEmpty) {
         const emptyNode = createParagraph(schema);
 
-        dispatch!(replaceNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
+        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, [emptyNode, emptyNode]));
       } else {
-        const mdNode = toastMark.findFirstNodeAtLine(endLine) as ListItemMdNode;
-        const slicedText = lineText.slice(to - startOffset);
-        const context: ExtendListContext = { toastMark, mdNode, doc, line: endLine };
+        const mdNode: ListItemMdNode = toastMark.findFirstNodeAtLine(endIndex + 1);
+        const slicedText = textContent.slice(to - startFromOffset);
+        const context: ExtendListContext = { toastMark, mdNode, doc, line: endIndex + 1 };
         const { listSyntax, changedResults, lastListOffset } = extendList[commandType](context);
 
         const node = createParagraph(schema, listSyntax + slicedText);
@@ -103,11 +102,11 @@ export class ListItem extends Mark {
           newTr = replaceNodes(tr, to, extendedEndOffset, nodes, { from: 0, to: 1 });
         } else {
           newTr = slicedText
-            ? replaceNodes(tr, to, endOffset, node, { from: 0, to: 1 })
-            : insertNodes(tr, endOffset, node);
+            ? replaceNodes(tr, to, endToOffset, node, { from: 0, to: 1 })
+            : insertNodes(tr, endToOffset, node);
         }
 
-        const newSelection = createTextSelection(newTr, endOffset + listSyntax.length + 2);
+        const newSelection = createTextSelection(newTr, endToOffset + listSyntax.length + 2);
 
         dispatch!(newTr.setSelection(newSelection));
       }
