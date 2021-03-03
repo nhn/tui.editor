@@ -199,6 +199,7 @@ table.ProseMirror-selectednode {
 
 .tui-editor-contents td p {
   margin: 0;
+  padding: 0 2px;
 }
 
 .tui-editor-contents td.tui-editor-cell-selected {
