@@ -255,24 +255,23 @@ export class Paragraph extends Node {
         selection
       );
 
-      if (endIndex >= doc.content.childCount - 1) {
-        return false;
+      if (endIndex < doc.content.childCount - 1) {
+        const bottomNode = doc.child(endIndex + 1);
+        const size = bottomNode.nodeSize;
+        const nodes = [bottomNode];
+
+        for (let i = startIndex; i <= endIndex; i += 1) {
+          nodes.push(doc.child(i));
+        }
+
+        const newTr = replaceNodes(tr, startFromOffset, endToOffset + size, nodes);
+
+        newTr.setSelection(createTextSelection(newTr, from + size, to + size));
+        dispatch!(newTr);
+
+        return true;
       }
-
-      const bottomNode = doc.child(endIndex + 1);
-      const size = bottomNode.nodeSize;
-      const nodes = [bottomNode];
-
-      for (let i = startIndex; i <= endIndex; i += 1) {
-        nodes.push(doc.child(i));
-      }
-
-      const newTr = replaceNodes(tr, startFromOffset, endToOffset + size, nodes);
-
-      newTr.setSelection(createTextSelection(newTr, from + size, to + size));
-      dispatch!(newTr);
-
-      return true;
+      return false;
     };
   }
 
@@ -283,25 +282,24 @@ export class Paragraph extends Node {
         selection
       );
 
-      if (startIndex === 0) {
-        return false;
+      if (startIndex > 0) {
+        const topNode = doc.child(startIndex - 1);
+        const size = topNode.nodeSize;
+        const nodes = [];
+
+        for (let i = startIndex; i <= endIndex; i += 1) {
+          nodes.push(doc.child(i));
+        }
+        nodes.push(topNode);
+
+        const newTr = replaceNodes(tr, startFromOffset - size, endToOffset, nodes);
+
+        newTr.setSelection(createTextSelection(newTr, from - size, to - size));
+        dispatch!(newTr);
+
+        return true;
       }
-
-      const topNode = doc.child(startIndex - 1);
-      const size = topNode.nodeSize;
-      const nodes = [];
-
-      for (let i = startIndex; i <= endIndex; i += 1) {
-        nodes.push(doc.child(i));
-      }
-      nodes.push(topNode);
-
-      const newTr = replaceNodes(tr, startFromOffset - size, endToOffset, nodes);
-
-      newTr.setSelection(createTextSelection(newTr, from - size, to - size));
-      dispatch!(newTr);
-
-      return true;
+      return false;
     };
   }
 
