@@ -1,43 +1,57 @@
-import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import { Node as ProsemirrorNode, DOMOutputSpecArray, NodeSpec } from 'prosemirror-model';
 import toArray from 'tui-code-snippet/collection/toArray';
+import { ToDOMAdaptor } from '@t/convertor';
+import { CustomHTMLRendererMap } from '@t/markdown';
+import { SchemaMap } from '@t/editor';
 
-export function createHTMLSchema(tagName: string, renderer, wwToDOMAdaptor) {
+export function getHtmlAttrs(dom: HTMLElement) {
+  return toArray(dom.attributes).reduce<Record<string, string | null>>((acc, attr) => {
+    acc[attr.nodeName] = attr.nodeValue;
+    return acc;
+  }, {});
+}
+
+function createHTMLBlockSchema(typeName: string, wwToDOMAdaptor: ToDOMAdaptor): NodeSpec {
   return {
     content: 'block+',
     atom: true,
     group: 'block',
     attrs: {
-      childNodes: { default: null },
       htmlAttrs: { default: {} },
       literal: { default: '' },
     },
     parseDOM: [
       {
-        tag: tagName,
+        tag: typeName,
         getAttrs(dom: Node | string) {
-          const { attributes, childNodes, outerHTML } = dom as HTMLElement;
-          const htmlAttrs: Record<string, string | null> = {};
-
-          toArray(attributes).forEach((attr) => (htmlAttrs[attr.nodeName] = attr.nodeValue));
-
-          return { childNodes, htmlAttrs, literal: outerHTML };
+          return {
+            htmlAttrs: getHtmlAttrs(dom as HTMLElement),
+            literal: (dom as HTMLElement).outerHTML,
+          };
         },
       },
     ],
     toDOM(node: ProsemirrorNode): DOMOutputSpecArray {
-      const { htmlAttrs, childNodes } = node.attrs;
-      const className = htmlAttrs.class ? `${htmlAttrs.class} html-block` : 'html-block';
+      const dom = wwToDOMAdaptor.getToDOMNode(typeName)!(node) as HTMLElement;
+      const htmlAttrs = getHtmlAttrs(dom);
 
-      const specArray = wwToDOMAdaptor.getToDOM(tagName)(node);
+      htmlAttrs.class = htmlAttrs.class ? `${htmlAttrs.class} html-block` : 'html-block';
 
-      console.log(specArray);
-
-      htmlAttrs.class = className;
-
-      if (childNodes) {
-        return [tagName, htmlAttrs, ...toArray(childNodes)];
-      }
-      return [tagName, htmlAttrs, 0];
+      return [typeName, htmlAttrs, ...toArray(dom.childNodes)];
     },
   };
+}
+
+export function createHTMLBlockSchemaMap(
+  renderer: CustomHTMLRendererMap,
+  wwToDOMAdaptor: ToDOMAdaptor
+) {
+  const htmlBlockSchemaMap: SchemaMap = {};
+
+  if (renderer?.htmlBlock) {
+    Object.keys(renderer.htmlBlock).forEach(
+      (type) => (htmlBlockSchemaMap[type] = createHTMLBlockSchema(type, wwToDOMAdaptor))
+    );
+  }
+  return htmlBlockSchemaMap;
 }

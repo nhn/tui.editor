@@ -53,12 +53,16 @@ export function createMdLikeNode(node: ProsemirrorNode | Mark): MdLikeNode {
     customBlock: { info: attrs.info },
   } as const;
   const nodeInfo = nodeTypeMap[nodeType as keyof typeof nodeTypeMap];
-  let attributes = { ...mdLikeNode, ...nodeInfo };
+  const attributes = { ...mdLikeNode, ...nodeInfo };
+  const { htmlAttrs, literal } = node.attrs;
 
-  if (node.attrs.htmlAttrs) {
-    attributes = { ...attributes, ...node.attrs.htmlAttrs, literal: node.attrs.literal };
+  if (htmlAttrs) {
+    return {
+      ...attributes,
+      attrs: htmlAttrs,
+      literal,
+    };
   }
-  console.log(node);
 
   return attributes;
 }

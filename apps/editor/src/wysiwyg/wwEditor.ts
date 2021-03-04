@@ -22,7 +22,7 @@ import { createSpecs } from './specCreator';
 
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
-import { LinkAttributes, WidgetStyle } from '@t/editor';
+import { LinkAttributes, SchemaMap, WidgetStyle } from '@t/editor';
 import { createNodesWithWidget } from '@/widget/rules';
 import { widgetNodeView } from '@/widget/widgetNode';
 import { cls } from '@/utils/dom';
@@ -43,8 +43,8 @@ export default class WysiwygEditor extends EditorBase {
     eventEmitter: Emitter,
     toDOMAdaptor: ToDOMAdaptor,
     useCommandShortcut: boolean,
-    linkAttributes = {},
-    html
+    htmlBlockSchemaMap: SchemaMap,
+    linkAttributes = {}
   ) {
     super(eventEmitter);
 
@@ -52,7 +52,7 @@ export default class WysiwygEditor extends EditorBase {
     this.toDOMAdaptor = toDOMAdaptor;
     this.linkAttributes = linkAttributes;
     this.specs = this.createSpecs();
-    this.schema = this.createSchema(html);
+    this.schema = this.createSchema(htmlBlockSchemaMap);
     this.context = this.createContext();
     this.keymaps = this.createKeymaps(useCommandShortcut);
     this.view = this.createView();

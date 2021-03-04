@@ -185,8 +185,13 @@ class MarkdownPreview extends Preview {
           if (node.type === 'htmlBlock') {
             const matched = node.literal!.match(reHTMLTag);
 
-            if (matched && this.customHTMLRenderer[node.type][matched[1]]) {
-              return this.renderer.render(node);
+            if (matched) {
+              const [, typeName] = matched;
+
+              // @ts-expect-error
+              if (this.customHTMLRenderer[node.type][typeName]) {
+                return this.renderer.render(node);
+              }
             }
           }
           return this.sanitizer(this.renderer.render(node));
