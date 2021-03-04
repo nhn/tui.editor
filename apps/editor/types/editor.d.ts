@@ -1,3 +1,4 @@
+import { NodeView } from 'prosemirror-view';
 import { CustomHTMLRenderer, CustomHTMLRendererMap, CustomParserMap } from './markdown';
 import { Handler } from './event';
 import { EditorCommandFn } from './spec';
@@ -88,10 +89,17 @@ export class Viewer {
 export type PluginFn = (editor: Editor | Viewer, options?: any) => void;
 export type EditorPlugin = PluginFn | [PluginFn, any];
 
+export interface NodeViewInfo {
+  editorType: 'markdown' | 'wysiwyg';
+  nodeName: 'codeBlock';
+  view: NodeView;
+}
+
 export interface EditorPluginInfo {
   pluginFn: PluginFn;
   renderer: CustomHTMLRendererMap;
   parser: CustomParserMap;
+  nodeViews: NodeViewInfo[];
 }
 
 export interface EditorOptions {

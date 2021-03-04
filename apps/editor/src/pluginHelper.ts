@@ -1,4 +1,4 @@
-import { Editor, EditorPlugin, EditorPluginInfo, Viewer } from '@t/editor';
+import { Editor, EditorPlugin, EditorPluginInfo, Viewer, NodeViewInfo } from '@t/editor';
 import { CustomParserMap, CustomHTMLRendererMap } from '@t/markdown';
 import isArray from 'tui-code-snippet/type/isArray';
 import isFunction from 'tui-code-snippet/type/isFunction';
@@ -7,6 +7,7 @@ interface PluginInfoResult {
   plugins: EditorPlugin[];
   renderer: CustomHTMLRendererMap;
   parser: CustomParserMap;
+  nodeViews: NodeViewInfo[];
 }
 
 /**
@@ -43,7 +44,7 @@ export function getPluginInfo(plugins: (EditorPlugin | EditorPluginInfo)[]) {
       const pluginInfo = isArray(plugin) ? plugin[0] : plugin;
 
       if (!isFunction(pluginInfo)) {
-        const { renderer, parser, pluginFn } = pluginInfo;
+        const { renderer, parser, pluginFn, nodeViews } = pluginInfo;
 
         plugin = isArray(plugin) ? [pluginFn, plugin[1]] : pluginFn;
 
@@ -53,11 +54,15 @@ export function getPluginInfo(plugins: (EditorPlugin | EditorPluginInfo)[]) {
         if (parser) {
           acc.parser = { ...acc.parser, ...parser };
         }
+
+        if (nodeViews) {
+          acc.nodeViews = acc.nodeViews.concat(nodeViews);
+        }
       }
       acc.plugins.push(plugin as EditorPlugin);
 
       return acc;
     },
-    { plugins: [], renderer: {}, parser: {} }
+    { plugins: [], renderer: {}, parser: {}, nodeViews: [] }
   );
 }

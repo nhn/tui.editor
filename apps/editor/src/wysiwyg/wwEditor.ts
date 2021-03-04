@@ -44,9 +44,16 @@ const CONTENTS_CLASS_NAME = 'tui-editor-contents';
 export default class WysiwygEditor extends EditorBase {
   private toDOMAdaptor: ToDOMAdaptor;
 
-  private linkAttributes: LinkAttributes;
+  private linkAttributes: LinkAttributes = {};
 
-  constructor(eventEmitter: Emitter, toDOMAdaptor: ToDOMAdaptor, linkAttributes = {}) {
+  private nodeViews: any;
+
+  constructor(
+    eventEmitter: Emitter,
+    toDOMAdaptor: ToDOMAdaptor,
+    linkAttributes: LinkAttributes,
+    nodeViews: any = []
+  ) {
     super(eventEmitter);
 
     this.editorType = 'wysiwyg';
@@ -56,7 +63,7 @@ export default class WysiwygEditor extends EditorBase {
     this.schema = this.createSchema();
     this.context = this.createContext();
     this.keymaps = this.createKeymaps();
-    this.view = this.createView();
+    this.view = this.createView(nodeViews);
     this.commands = this.createCommands();
     this.specs.setContext({ ...this.context, view: this.view });
     this.initEvent();
@@ -102,15 +109,23 @@ export default class WysiwygEditor extends EditorBase {
         tableContextMenu(this.eventEmitter),
         task(),
         dropImage(this.context, 'wysiwyg'),
-        addWidget(this.eventEmitter),
+        // addWidget(this.eventEmitter),
         toolbarState(this.eventEmitter),
       ],
       ...addedStates,
     });
   }
 
-  createView() {
+  createView(nodeViews: any) {
     const { toDOMAdaptor, eventEmitter } = this;
+
+    const views = nodeViews.filter(({ editorType }: any) => editorType === this.editorType);
+    const map: any = {};
+
+    views.forEach(({ nodeName, view: View }: any) => {
+      map[nodeName] = (node: any, view: any, getPos: any) =>
+        new View(node, view, getPos, toDOMAdaptor, eventEmitter);
+    });
 
     return new EditorView(this.el, {
       state: this.createState(),
@@ -127,7 +142,8 @@ export default class WysiwygEditor extends EditorBase {
         codeBlock(node, view, getPos) {
           return new CodeBlockView(node, view, getPos, toDOMAdaptor, eventEmitter);
         },
-        widget: widgetNodeView,
+        // widget: widgetNodeView,
+        ...map,
       },
       dispatchTransaction: (tr) => {
         const { state } = this.view.state.applyTransaction(tr);

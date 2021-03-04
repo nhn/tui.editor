@@ -48,7 +48,7 @@ export default abstract class EditorBase {
 
   abstract createState(state?: StateOptions): void;
 
-  abstract createView(): EditorView;
+  abstract createView(nodeViews: any): EditorView;
 
   protected initEvent() {
     const { eventEmitter, view, editorType } = this;

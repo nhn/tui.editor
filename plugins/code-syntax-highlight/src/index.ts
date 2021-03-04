@@ -1,12 +1,10 @@
-/**
- * @fileoverview Implements code syntax highlight plugin
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
-import hljs from 'highlight.js/lib/highlight';
-import { registerCodeBlockReplacer } from './js/helper';
+import { renderer } from '@/renderer';
+import { CodeBlockHighlightingView } from '@/nodeView';
 
 // @TODO update to 3.0
 import Editor from '@toast-ui/editor';
+
+import '@/css/plugin.css';
 
 /**
  * Code syntax highlight plugin to import selected languages
@@ -14,6 +12,22 @@ import Editor from '@toast-ui/editor';
  * @param {Object} [options] - options for plugin
  * @param {Object} [options.hljs] - object of highlight.js
  */
-export default function codeSyntaxHighlightPlugin(editor: Editor, options = {}) {
-  console.log('test');
+function codeSyntaxHighlightPlugin(editor: Editor, options = {}) {
+  // @ts-ignore
+  const { eventEmitter } = editor;
+
+  eventEmitter.addEventType('showCodeBlockLanguages');
+  eventEmitter.addEventType('selectLanguage');
 }
+
+export default {
+  renderer,
+  pluginFn: codeSyntaxHighlightPlugin,
+  nodeViews: [
+    {
+      editorType: 'wysiwyg',
+      nodeName: 'codeBlock',
+      view: CodeBlockHighlightingView,
+    },
+  ],
+};

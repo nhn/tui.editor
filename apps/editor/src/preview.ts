@@ -75,7 +75,7 @@ class Preview {
   }
 
   refresh() {
-    this.invokeCodeBlockPlugins(this.getCodeBlockElements());
+    // this.invokeCodeBlockPlugins(this.getCodeBlockElements());
   }
 
   /**

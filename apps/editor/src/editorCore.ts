@@ -152,7 +152,7 @@ class ToastUIEditor {
     setWidgetRules(this.options.widgetRules);
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
-    const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
+    const { renderer, parser, plugins, nodeViews } = getPluginInfo(this.options.plugins);
     const {
       customHTMLRenderer,
       extendedAutolinks,
@@ -198,7 +198,12 @@ class ToastUIEditor {
       highlight: this.options.previewHighlight,
     });
 
-    this.wwEditor = new WysiwygEditor(this.eventEmitter, wwToDOMAdaptor, linkAttributes!);
+    this.wwEditor = new WysiwygEditor(
+      this.eventEmitter,
+      wwToDOMAdaptor,
+      linkAttributes!,
+      nodeViews
+    );
 
     this.convertor = new Convertor(
       this.wwEditor.getSchema(),

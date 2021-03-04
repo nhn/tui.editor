@@ -22,8 +22,10 @@
       You can see the tutorial
       <a
         href="https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md"
-        rel="noopener noreferrer" target="_blank"
-        >here</a>
+        rel="noopener noreferrer"
+        target="_blank"
+        >here</a
+      >
     </div>
     <div class="code-html tui-doc-contents">
       <div id="editor"></div>
@@ -34,11 +36,13 @@
     <!-- Editor -->
     <script src="../dist/cdn/toastui-editor-all.js"></script>
     <script type="text/babel" class="code-js">
-      const editor = new toastui.Editor({
+      const { Editor } = toastui.editor;
+
+      const editor = new Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
-        initialValue: content
+        initialValue: content,
       });
     </script>
   </body>
