@@ -57,7 +57,7 @@ export type LinkAttributeNames = 'rel' | 'target' | 'hreflang' | 'type';
 // @TODO change option and type name from singular to plural
 export type LinkAttributes = Partial<Record<LinkAttributeNames, string>>;
 
-export type CustomHTMLSanitizer = (content: string) => string | DocumentFragment;
+export type CustomHTMLSanitizer = (content: string) => string;
 
 export interface ViewerOptions {
   el: HTMLElement;

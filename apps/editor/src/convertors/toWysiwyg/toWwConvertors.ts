@@ -1,6 +1,5 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 
-import { includes } from '@/utils/common';
 import { isElemNode } from '@/utils/dom';
 
 import {
@@ -306,12 +305,25 @@ export const toWwConvertors: ToWwConvertorMap = {
   htmlBlock(state, node) {
     const html = node.literal!;
     const container = document.createElement('div');
+    const matched = html.match(reHTMLTag);
 
     container.innerHTML = html;
 
-    addRawHTMLAttributeToDOM(container);
+    if (matched) {
+      const nodeType = state.schema.nodes[matched[1]];
 
-    state.convertByDOMParser(container as HTMLElement);
+      if (nodeType) {
+        const { attributes, childNodes } = container.firstChild as HTMLElement;
+        const htmlAttrs: Record<string, string | null> = {};
+
+        toArray(attributes).forEach((attr) => (htmlAttrs[attr.nodeName] = attr.nodeValue));
+        state.addNode(nodeType, { htmlAttrs, childNodes, literal: html });
+      }
+    } else {
+      addRawHTMLAttributeToDOM(container);
+
+      state.convertByDOMParser(container as HTMLElement);
+    }
   },
 
   customInline(state, node, { entering, skipChildren }) {

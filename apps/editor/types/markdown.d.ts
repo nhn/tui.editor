@@ -226,6 +226,10 @@ export type CustomHTMLRenderer = (
   convertors?: CustomHTMLRendererMap
 ) => HTMLToken | HTMLToken[] | null;
 
+export interface HTMLBlockRendererMap {
+  [type: string]: CustomHTMLRenderer;
+}
+
 export type CustomHTMLRendererMap = Partial<Record<string, CustomHTMLRenderer>>;
 
 export interface ContextOptions {

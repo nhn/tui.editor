@@ -28,6 +28,14 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
     const convertors = getHTMLRenderConvertors(linkAttributes, customRenderer);
 
     this.customConvertorKeys = Object.keys(customRenderer);
+    if (customRenderer.htmlBlock) {
+      const map = customRenderer.htmlBlock;
+
+      Object.keys(map).forEach((key) => {
+        this.customConvertorKeys.push(key);
+      });
+      this.customConvertorKeys.splice(this.customConvertorKeys.indexOf('htmlBlock'), 1);
+    }
     this.renderer = new Renderer({
       gfm: true,
       convertors,
@@ -37,6 +45,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
 
   private generateTokens(node: ProsemirrorNode | Mark) {
     const mdLikeNode = createMdLikeNode(node);
+
     const context: Context = {
       entering: true,
       leaf: isPmNode(node) ? node.isLeaf : false,
@@ -45,7 +54,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
       skipChildren: () => false,
     };
 
-    const convertor = this.convertors[node.type.name as MdNodeType]!;
+    const convertor = this.convertors[node.type.name as MdNodeType]! || this.convertors.htmlBlock;
     const converted = convertor(mdLikeNode as MdNode, context, this.convertors)!;
     const tokens: HTMLToken[] = isArray(converted) ? converted : [converted];
 
@@ -63,7 +72,9 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
     const tokens = this.generateTokens(node);
     const stack: SpecArray[] = [];
 
-    tokens.forEach((token) => tokenToPmDOM[token.type](token, stack));
+    tokens.forEach((token) => {
+      tokenToPmDOM[token.type](token, stack);
+    });
 
     return stack[0] as DOMOutputSpecArray;
   }

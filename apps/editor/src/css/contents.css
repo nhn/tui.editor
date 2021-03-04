@@ -17,6 +17,10 @@ table.ProseMirror-selectednode {
   outline: 1px solid lime;
 }
 
+.html-block.ProseMirror-selectednode {
+  outline: 1px solid lime;
+}
+
 .tui-editor-contents {
   margin: 0;
   padding: 0;

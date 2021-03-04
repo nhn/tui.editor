@@ -43,7 +43,8 @@ export default class WysiwygEditor extends EditorBase {
     eventEmitter: Emitter,
     toDOMAdaptor: ToDOMAdaptor,
     useCommandShortcut: boolean,
-    linkAttributes = {}
+    linkAttributes = {},
+    html
   ) {
     super(eventEmitter);
 
@@ -51,7 +52,7 @@ export default class WysiwygEditor extends EditorBase {
     this.toDOMAdaptor = toDOMAdaptor;
     this.linkAttributes = linkAttributes;
     this.specs = this.createSpecs();
-    this.schema = this.createSchema();
+    this.schema = this.createSchema(html);
     this.context = this.createContext();
     this.keymaps = this.createKeymaps(useCommandShortcut);
     this.view = this.createView();
@@ -62,6 +63,10 @@ export default class WysiwygEditor extends EditorBase {
 
   createSpecs() {
     return createSpecs(this.toDOMAdaptor, this.linkAttributes);
+  }
+
+  createKeymaps() {
+    return this.specs.keymaps();
   }
 
   createContext() {

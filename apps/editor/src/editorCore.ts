@@ -43,6 +43,8 @@ import { ScrollSync } from './markdown/scroll/scrollSync';
 import { addDefaultImageBlobHook } from './helper/image';
 import { setWidgetRules } from './widget/rules';
 import { cls } from './utils/dom';
+import { sanitizeHTML } from './sanitizer/htmlSanitizer';
+import { createHTMLSchema } from './wysiwyg/nodes/html';
 
 /**
  * ToastUI Editor
@@ -161,6 +163,7 @@ class ToastUIEditor {
       useCommandShortcut,
       initialEditType,
       widgetRules,
+      customHTMLSanitizer,
     } = this.options;
 
     this.codeBlockLanguages = [];
@@ -180,6 +183,7 @@ class ToastUIEditor {
       referenceDefinition,
       customParser: parser,
       frontMatter,
+      sanitizer: customHTMLSanitizer || sanitizeHTML,
     };
     const wwToDOMAdaptor = new WwToDOMAdaptor(linkAttributes, rendererOptions.customHTMLRenderer);
 
@@ -189,6 +193,17 @@ class ToastUIEditor {
 
     if (this.options.events) {
       forEachOwnProperties(this.options.events, (fn, key) => this.on(key, fn));
+    }
+    const html = {};
+
+    if (customHTMLRenderer?.htmlBlock) {
+      const map = customHTMLRenderer.htmlBlock;
+
+      Object.keys(map).forEach((key) => {
+        const schema = createHTMLSchema(key, map[key], wwToDOMAdaptor);
+
+        html[key] = schema;
+      });
     }
 
     this.i18n = i18n;
@@ -215,7 +230,8 @@ class ToastUIEditor {
       this.eventEmitter,
       wwToDOMAdaptor,
       useCommandShortcut,
-      linkAttributes!
+      linkAttributes!,
+      html
     );
 
     this.convertor = new Convertor(

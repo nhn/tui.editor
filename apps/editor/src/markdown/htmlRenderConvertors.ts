@@ -10,6 +10,7 @@ import {
   CustomInlineMdNode,
 } from '@t/markdown';
 import { LinkAttributes } from '@t/editor';
+import { ATTRIBUTE, reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 import { getWidgetContent, widgetToDOM } from '@/widget/rules';
 
 type TokenAttrs = Record<string, any>;
@@ -150,6 +151,29 @@ export function getHTMLRenderConvertors(
 
           newContext.origin = () => orgConvertor(node, context);
           return customConvertor(node, newContext);
+        };
+      } else if (nodeType === 'htmlBlock' || nodeType === 'htmlInline') {
+        convertors[nodeType] = (node, context) => {
+          const matched = node.literal!.match(reHTMLTag);
+
+          if (matched && customConvertor[matched[1]]) {
+            const rootHtml = matched[0];
+
+            node.attrs = {};
+
+            const attrs = rootHtml.match(new RegExp(ATTRIBUTE, 'g'));
+
+            if (attrs) {
+              attrs.forEach((attr) => {
+                const [name, value] = attr.trim().split('=');
+
+                node.attrs[name] = value.replace(/'|"/g, '').trim();
+              });
+            }
+
+            return customConvertor[matched[1]](node, context);
+          }
+          return context.origin!();
         };
       } else {
         convertors[nodeType] = customConvertor;

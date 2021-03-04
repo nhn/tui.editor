@@ -16,8 +16,8 @@ import { CustomHTMLRendererMap, EditResult, MdNode, MdPos } from '@t/markdown';
 import Preview from '@/preview';
 import { cls, removeNode, toggleClass } from '@/utils/dom';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
-import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
+import { reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 import { findAdjacentElementToScrollTop } from './scroll/dom';
 import { removeOffsetInfoByNode } from './scroll/offset';
 
@@ -36,11 +36,14 @@ function findTableCell(tableRow: MdNode, chOffset: number) {
   return cell;
 }
 
+type Sanitizer = (html: string) => string;
+
 interface Options {
   linkAttributes: LinkAttributes | null;
   customHTMLRenderer: CustomHTMLRendererMap;
   isViewer: boolean;
   highlight?: boolean;
+  sanitizer: Sanitizer;
 }
 
 /**
@@ -60,6 +63,10 @@ class MarkdownPreview extends Preview {
 
   private renderer: Renderer;
 
+  private customHTMLRenderer: CustomHTMLRendererMap;
+
+  private sanitizer: Sanitizer;
+
   constructor(eventEmitter: Emitter, options: Options) {
     const el = document.createElement('div');
 
@@ -73,7 +80,7 @@ class MarkdownPreview extends Preview {
       this
     );
 
-    const { linkAttributes, customHTMLRenderer, highlight = false } = options;
+    const { linkAttributes, customHTMLRenderer, sanitizer, highlight = false } = options;
 
     this.renderer = new Renderer({
       gfm: true,
@@ -82,6 +89,8 @@ class MarkdownPreview extends Preview {
     });
 
     this.cursorNodeId = null;
+    this.sanitizer = sanitizer;
+    this.customHTMLRenderer = customHTMLRenderer;
 
     this.initEvent(highlight);
   }
@@ -169,13 +178,21 @@ class MarkdownPreview extends Preview {
   replaceRangeNodes(editResult: EditResult) {
     const { nodes, removedNodeRange } = editResult;
     const contentEl = this.previewContent;
-    const newHtml = sanitizeHTML(
-      this.eventEmitter.emitReduce(
-        'beforePreviewRender',
-        nodes.map((node) => this.renderer.render(node)).join('')
-      ),
-      true
-    ) as string;
+    const newHtml = this.eventEmitter.emitReduce(
+      'beforePreviewRender',
+      nodes
+        .map((node) => {
+          if (node.type === 'htmlBlock') {
+            const matched = node.literal!.match(reHTMLTag);
+
+            if (matched && this.customHTMLRenderer[node.type][matched[1]]) {
+              return this.renderer.render(node);
+            }
+          }
+          return this.sanitizer(this.renderer.render(node));
+        })
+        .join('')
+    );
 
     if (!removedNodeRange) {
       contentEl.insertAdjacentHTML('afterbegin', newHtml);

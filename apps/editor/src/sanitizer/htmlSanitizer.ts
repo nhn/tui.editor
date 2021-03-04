@@ -46,20 +46,18 @@ const reXSSAttrValue = /((java|vb|live)script|x):/i;
 const reOnEvent = /^on\S+/i;
 const reComment = /<!--[\s\S]*?-->/g;
 
-export function sanitizeHTML(html: string | Node, needHtmlText = false) {
+export function sanitizeHTML(html: string) {
   const root = document.createElement('div');
 
   if (isString(html)) {
     html = html.replace(reComment, '');
     root.innerHTML = html;
-  } else {
-    root.appendChild(html);
   }
 
   removeUnnecessaryTags(root);
   leaveOnlyWhitelistAttribute(root);
 
-  return finalizeHtml(root, needHtmlText);
+  return finalizeHtml(root, true) as string;
 }
 
 function removeUnnecessaryTags(html: HTMLElement) {
