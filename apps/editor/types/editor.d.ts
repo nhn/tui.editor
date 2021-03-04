@@ -1,12 +1,12 @@
-import { Schema } from 'prosemirror-model';
+import { Schema, NodeSpec } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 import { EditorState, Plugin } from 'prosemirror-state';
 import {
+  MdPos,
+  MdSourcepos,
   CustomHTMLRenderer,
   CustomHTMLRendererMap,
   CustomParserMap,
-  MdPos,
-  MdSourcepos,
 } from './markdown';
 import { Emitter, Handler } from './event';
 import { Context, EditorAllCommandMap, EditorCommandFn } from './spec';
@@ -307,3 +307,5 @@ export interface Base {
 
   getRangeInfoOfNode(pos?: EditorPos): NodeRangeInfo;
 }
+
+export type SchemaMap = Record<string, NodeSpec>;

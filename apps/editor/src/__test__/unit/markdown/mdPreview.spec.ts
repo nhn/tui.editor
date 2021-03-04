@@ -15,6 +15,7 @@ describe('Preview', () => {
       customHTMLRenderer: {},
       isViewer: false,
       highlight: true,
+      sanitizer: sanitizer.sanitizeHTML,
     };
 
     eventEmitter = new EventEmitter();
@@ -63,6 +64,7 @@ describe('preview highlight', () => {
       customHTMLRenderer: {},
       isViewer: false,
       highlight,
+      sanitizer: sanitizer.sanitizeHTML,
     };
 
     eventEmitter = new EventEmitter();

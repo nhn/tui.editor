@@ -16,6 +16,7 @@ import { invokePlugins, getPluginInfo } from './pluginHelper';
 import { last, sanitizeLinkAttribute } from './utils/common';
 import EventEmitter from './event/eventEmitter';
 import { isPositionInBox, toggleClass } from './utils/dom';
+import { sanitizeHTML } from './sanitizer/htmlSanitizer';
 
 const TASK_ATTR_NAME = 'data-task';
 const DISABLED_TASK_ATTR_NAME = 'data-task-disabled';
@@ -85,6 +86,7 @@ class ToastUIEditorViewer {
       extendedAutolinks,
       referenceDefinition,
       frontMatter,
+      customHTMLSanitizer,
     } = this.options;
 
     const rendererOptions = {
@@ -94,6 +96,7 @@ class ToastUIEditorViewer {
       referenceDefinition,
       customParser: parser,
       frontMatter,
+      sanitizer: customHTMLSanitizer || sanitizeHTML,
     };
 
     if (this.options.events) {
