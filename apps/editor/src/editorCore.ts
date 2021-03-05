@@ -70,7 +70,6 @@ import { createHTMLSchemaMap } from './wysiwyg/nodes/html';
  *         @param {addImageBlobHook} [options.hooks.addImageBlobHook] - hook for image upload
  *     @param {string} [options.language='en-US'] - language
  *     @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
- *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
  *     @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
  *     @param {Array.<string|toolbarItemsValue>} [options.toolbarItems] - toolbar items.
  *     @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
@@ -129,7 +128,6 @@ class ToastUIEditor {
         height: '300px',
         minHeight: '200px',
         language: 'en-US',
-        useDefaultHTMLSanitizer: true,
         useCommandShortcut: true,
         usageStatistics: true,
         toolbarItems: [

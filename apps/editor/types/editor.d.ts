@@ -64,7 +64,6 @@ export interface ViewerOptions {
   initialValue?: string;
   events?: EventMap;
   plugins?: (EditorPlugin | EditorPluginInfo)[];
-  useDefaultHTMLSanitizer?: boolean;
   extendedAutolinks?: ExtendedAutolinks;
   linkAttributes?: LinkAttributes;
   customHTMLRenderer?: CustomHTMLRenderer;
@@ -115,7 +114,6 @@ export interface EditorOptions {
   hooks?: EditorHookMap;
   language?: string;
   useCommandShortcut?: boolean;
-  useDefaultHTMLSanitizer?: boolean;
   usageStatistics?: boolean;
   toolbarItems?: (string | ToolbarItemOptions)[];
   hideModeSwitch?: boolean;
