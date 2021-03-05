@@ -1,5 +1,6 @@
 import { oneLineTrim } from 'common-tags';
 import Editor from '@/editorCore';
+import { trailingDataAttr } from '@/__test__/unit/markdown/util';
 
 describe('widgetNode', () => {
   let container: HTMLElement,
@@ -9,10 +10,7 @@ describe('widgetNode', () => {
     editor: Editor;
 
   function getPreviewHTML() {
-    return mdPreview
-      .querySelector('.tui-editor-contents')!
-      .innerHTML.replace(/\sdata-nodeid="\d+"/g, '')
-      .trim();
+    return trailingDataAttr(mdPreview.querySelector('.tui-editor-contents')!.innerHTML);
   }
 
   beforeEach(() => {
