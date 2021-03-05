@@ -12,7 +12,6 @@ import { Emitter, Handler } from './event';
 import { Context, EditorAllCommandMap, EditorCommandFn } from './spec';
 import { ToMdConvertorMap } from './convertor';
 import { DefaultUI, ToolbarItemOptions } from './ui';
-import { StateOptions } from '@/base';
 import SpecManager from '@/spec/specManager';
 
 export type PreviewStyle = 'tab' | 'vertical';
@@ -260,7 +259,7 @@ export interface Base {
 
   createContext(): Context;
 
-  createState(state?: StateOptions): EditorState;
+  createState(): EditorState;
 
   createView(): EditorView;
 
