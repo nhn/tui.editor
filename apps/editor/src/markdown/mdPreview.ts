@@ -179,23 +179,6 @@ class MarkdownPreview extends Preview {
     const contentEl = this.previewContent;
     const newHtml = this.eventEmitter.emitReduce(
       'beforePreviewRender',
-      // nodes
-      //   .map((node) => {
-      //     if (isHTMLNode(node)) {
-      //       const matched = node.literal!.match(reHTMLTag);
-
-      //       if (matched) {
-      //         const [, typeName] = matched;
-
-      //         // @ts-expect-error
-      //         if (this.customHTMLRenderer[node.type][typeName]) {
-      //           return this.renderer.render(node);
-      //         }
-      //       }
-      //     }
-      //     return this.sanitizer(this.renderer.render(node));
-      //   })
-      //   .join('')
       this.sanitizer(nodes.map((node) => this.renderer.render(node)).join(''))
     );
 

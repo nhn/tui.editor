@@ -22,7 +22,7 @@ import {
   CustomInlineMdNode,
 } from '@t/markdown';
 import { createWidgetContent, getWidgetContent } from '@/widget/rules';
-import { getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
+import { getChildrenHTML, getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
 
 function isBRTag(node: MdNode) {
   return node.type === 'htmlInline' && /<br ?\/?>/.test(node.literal!);
@@ -321,9 +321,7 @@ export const toWwConvertors: ToWwConvertorMap = {
     // for user defined html schema
     if (nodeType?.spec.attrs!.htmlAttrs) {
       const htmlAttrs = getHTMLAttrsByHTMLString(html);
-      const childrenHTML = node
-        .literal!.replace(new RegExp(`(<\\s*${typeName}[^>]+?>)|(</${typeName}\\s*[>])`, 'ig'), '')
-        .trim();
+      const childrenHTML = getChildrenHTML(node, typeName);
 
       state.addNode(nodeType, { htmlAttrs, childrenHTML });
     } else {

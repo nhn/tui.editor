@@ -13,9 +13,11 @@ import {
 import { LinkAttributes } from '@t/editor';
 import { reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 import { getWidgetContent, widgetToDOM } from '@/widget/rules';
-import { getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
+import { getChildrenHTML, getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
 
 type TokenAttrs = Record<string, any>;
+
+const reCloseTag = /^\s*<\s*\//;
 
 const baseConvertors: CustomHTMLRendererMap = {
   paragraph(_, { entering, origin, options }: Context) {
@@ -159,15 +161,10 @@ export function getHTMLRenderConvertors(
 
           if (matched) {
             const [rootHTML, openTagName, , closeTagName] = matched;
-            const typeName = openTagName || closeTagName;
+            const typeName = (openTagName || closeTagName).toLowerCase();
             // @ts-expect-error
             const htmlConvertor: CustomHTMLRenderer = customConvertor[typeName];
-            const childrenHTML = node
-              .literal!.replace(
-                new RegExp(`(<\\s*${typeName}[^>]+?>)|(</${typeName}\\s*[>])`, 'ig'),
-                ''
-              )
-              .trim();
+            const childrenHTML = getChildrenHTML(node, typeName);
 
             if (htmlConvertor) {
               // copy for preventing to overwrite the originial property
@@ -176,7 +173,7 @@ export function getHTMLRenderConvertors(
               newNode.attrs = getHTMLAttrsByHTMLString(rootHTML);
               newNode.childrenHTML = childrenHTML;
               newNode.type = typeName;
-              context.entering = !/^\s*<\s*\//.test(node.literal!);
+              context.entering = !reCloseTag.test(node.literal!);
 
               return htmlConvertor(newNode, context);
             }

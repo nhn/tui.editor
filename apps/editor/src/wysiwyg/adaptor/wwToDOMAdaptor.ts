@@ -28,6 +28,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
     const convertors = getHTMLRenderConvertors(linkAttributes, customRenderer);
     const customHTMLConvertor = { ...customRenderer.htmlBlock, ...customRenderer.htmlInline };
 
+    // flatten the html block, inline convertor to other custom convertors
     this.customConvertorKeys = Object.keys(customRenderer).concat(Object.keys(customHTMLConvertor));
     this.renderer = new Renderer({
       gfm: true,

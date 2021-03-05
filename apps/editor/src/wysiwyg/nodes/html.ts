@@ -1,10 +1,16 @@
 import { Node as ProsemirrorNode, DOMOutputSpecArray, NodeSpec } from 'prosemirror-model';
 import toArray from 'tui-code-snippet/collection/toArray';
 import { ToDOMAdaptor } from '@t/convertor';
-import { CustomHTMLRendererMap } from '@t/markdown';
+import { CustomHTMLRendererMap, MdNode } from '@t/markdown';
 import { SchemaMap, Sanitizer } from '@t/editor';
 import { ATTRIBUTE, reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 import { registerWhiteTaglistIfPossible } from '@/sanitizer/htmlSanitizer';
+
+export function getChildrenHTML(node: MdNode, typeName: string) {
+  return node
+    .literal!.replace(new RegExp(`(<\\s*${typeName}[^>]+?>)|(</${typeName}\\s*[>])`, 'ig'), '')
+    .trim();
+}
 
 export function getHTMLAttrsByHTMLString(html: string) {
   html = html.match(reHTMLTag)![0];
@@ -30,81 +36,81 @@ export function getHTMLAttrs(dom: HTMLElement) {
   }, {});
 }
 
-function createHTMLBlockSchema(
+export function sanitizeDOM(
+  node: ProsemirrorNode,
   typeName: string,
   sanitizer: Sanitizer,
   wwToDOMAdaptor: ToDOMAdaptor
-): NodeSpec {
-  return {
-    atom: true,
-    content: 'block+',
-    group: 'block',
-    attrs: {
-      htmlAttrs: { default: {} },
-      childrenHTML: { default: '' },
-    },
-    parseDOM: [
-      {
-        tag: typeName,
-        getAttrs(dom: Node | string) {
-          return {
-            htmlAttrs: getHTMLAttrs(dom as HTMLElement),
-            childrenHTML: (dom as HTMLElement).innerHTML,
-          };
-        },
-      },
-    ],
-    toDOM(node: ProsemirrorNode): DOMOutputSpecArray {
-      const container = document.createElement('div');
-      let dom = wwToDOMAdaptor.getToDOMNode(typeName)!(node) as HTMLElement;
-      const html = sanitizer(dom.outerHTML);
+) {
+  let dom = wwToDOMAdaptor.getToDOMNode(typeName)!(node) as HTMLElement;
+  const html = sanitizer(dom.outerHTML);
+  const container = document.createElement('div');
 
-      container.innerHTML = html;
-      dom = container.firstChild as HTMLElement;
+  container.innerHTML = html;
+  dom = container.firstChild as HTMLElement;
 
-      const htmlAttrs = getHTMLAttrs(dom);
+  const htmlAttrs = getHTMLAttrs(dom);
 
-      htmlAttrs.class = htmlAttrs.class ? `${htmlAttrs.class} html-block` : 'html-block';
-
-      return [typeName, htmlAttrs, ...toArray(dom.childNodes)];
-    },
-  };
+  return { dom, htmlAttrs };
 }
 
-function createHTMLInlineSchema(
-  typeName: string,
-  sanitizeHTML: Sanitizer,
-  wwToDOMAdaptor: ToDOMAdaptor
-): NodeSpec {
-  return {
-    inline: true,
-    content: 'inline*',
-    group: 'inline',
-    attrs: { htmlAttrs: { default: {} }, inline: { default: true } },
-    parseDOM: [
-      {
-        tag: typeName,
-        getAttrs(dom: Node | string) {
-          return {
-            htmlAttrs: getHTMLAttrs(dom as HTMLElement),
-          };
-        },
+const schemaFactory = {
+  htmlBlock(typeName: string, sanitizeHTML: Sanitizer, wwToDOMAdaptor: ToDOMAdaptor): NodeSpec {
+    return {
+      atom: true,
+      content: 'block+',
+      group: 'block',
+      attrs: {
+        htmlAttrs: { default: {} },
+        childrenHTML: { default: '' },
       },
-    ],
-    toDOM(node: ProsemirrorNode): DOMOutputSpecArray {
-      const container = document.createElement('div');
-      let dom = wwToDOMAdaptor.getToDOMNode(typeName)!(node) as HTMLElement;
-      const html = sanitizeHTML(dom.outerHTML);
+      parseDOM: [
+        {
+          tag: typeName,
+          getAttrs(dom: Node | string) {
+            return {
+              htmlAttrs: getHTMLAttrs(dom as HTMLElement),
+              childrenHTML: (dom as HTMLElement).innerHTML,
+            };
+          },
+        },
+      ],
+      toDOM(node: ProsemirrorNode): DOMOutputSpecArray {
+        const { dom, htmlAttrs } = sanitizeDOM(node, typeName, sanitizeHTML, wwToDOMAdaptor);
 
-      container.innerHTML = html;
-      dom = container.firstChild as HTMLElement;
+        htmlAttrs.class = htmlAttrs.class ? `${htmlAttrs.class} html-block` : 'html-block';
 
-      const htmlAttrs = getHTMLAttrs(dom);
+        return [typeName, htmlAttrs, ...toArray(dom.childNodes)];
+      },
+    };
+  },
+  htmlInline(typeName: string, sanitizeHTML: Sanitizer, wwToDOMAdaptor: ToDOMAdaptor): NodeSpec {
+    return {
+      inline: true,
+      content: 'inline*',
+      group: 'inline',
+      attrs: {
+        htmlAttrs: { default: {} },
+        inline: { default: true },
+      },
+      parseDOM: [
+        {
+          tag: typeName,
+          getAttrs(dom: Node | string) {
+            return {
+              htmlAttrs: getHTMLAttrs(dom as HTMLElement),
+            };
+          },
+        },
+      ],
+      toDOM(node: ProsemirrorNode): DOMOutputSpecArray {
+        const { htmlAttrs } = sanitizeDOM(node, typeName, sanitizeHTML, wwToDOMAdaptor);
 
-      return [typeName, htmlAttrs, 0];
-    },
-  };
-}
+        return [typeName, htmlAttrs, 0];
+      },
+    };
+  },
+};
 
 export function createHTMLSchemaMap(
   renderer: CustomHTMLRendererMap,
@@ -113,17 +119,15 @@ export function createHTMLSchemaMap(
 ) {
   const htmlSchemaMap: SchemaMap = {};
 
-  if (renderer?.htmlBlock) {
-    Object.keys(renderer.htmlBlock).forEach((type) => {
-      htmlSchemaMap[type] = createHTMLBlockSchema(type, sanitizeHTML, wwToDOMAdaptor);
-      registerWhiteTaglistIfPossible(type);
-    });
-  }
-  if (renderer?.htmlInline) {
-    Object.keys(renderer.htmlInline).forEach((type) => {
-      htmlSchemaMap[type] = createHTMLInlineSchema(type, sanitizeHTML, wwToDOMAdaptor);
-      registerWhiteTaglistIfPossible(type);
-    });
-  }
+  (['htmlBlock', 'htmlInline'] as const).forEach((htmlType) => {
+    if (renderer[htmlType]) {
+      Object.keys(renderer[htmlType]!).forEach((type) => {
+        // register white tag list for preventing to remove the html in sanitizer
+        registerWhiteTaglistIfPossible(type);
+        htmlSchemaMap[type] = schemaFactory[htmlType](type, sanitizeHTML, wwToDOMAdaptor);
+      });
+    }
+  });
+
   return htmlSchemaMap;
 }
