@@ -25,16 +25,13 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
   public convertors: CustomHTMLRendererMap;
 
   constructor(linkAttributes: LinkAttributes | null, customRenderer: CustomHTMLRendererMap) {
-    const convertors = {
-      ...getHTMLRenderConvertors(linkAttributes, customRenderer),
-      ...customRenderer.htmlBlock,
-      ...customRenderer.htmlInline,
-    };
+    const convertors = getHTMLRenderConvertors(linkAttributes, customRenderer);
+    const customHTMLConvertor = { ...customRenderer.htmlBlock, ...customRenderer.htmlInline };
 
-    this.customConvertorKeys = Object.keys(convertors);
+    this.customConvertorKeys = Object.keys(customRenderer).concat(Object.keys(customHTMLConvertor));
     this.renderer = new Renderer({
       gfm: true,
-      convertors,
+      convertors: { ...convertors, ...customHTMLConvertor },
     });
     this.convertors = this.renderer.getConvertors();
   }

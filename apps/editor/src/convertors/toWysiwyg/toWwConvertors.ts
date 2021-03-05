@@ -287,27 +287,25 @@ export const toWwConvertors: ToWwConvertorMap = {
 
   htmlInline(state, node) {
     const html = node.literal!;
-    const matched = html.match(reHTMLTag);
+    const matched = html.match(reHTMLTag)!;
+    const [, openTagName, , closeTagName] = matched;
+    const typeName = (openTagName || closeTagName).toLowerCase();
+    const nodeType = state.schema.nodes[typeName];
 
-    if (matched) {
-      const [, openTagName, , closeTagName] = matched;
-      const typeName = (openTagName || closeTagName).toLowerCase();
-      const nodeType = state.schema.nodes[typeName];
+    // for user defined html schema
+    if (nodeType?.spec.attrs!.htmlAttrs) {
+      if (openTagName) {
+        const htmlAttrs = getHTMLAttrsByHTMLString(html);
 
-      if (nodeType) {
-        if (openTagName) {
-          const htmlAttrs = getHTMLAttrsByHTMLString(html);
-
-          state.openNode(nodeType, { htmlAttrs });
-        } else {
-          state.closeNode();
-        }
+        state.openNode(nodeType, { htmlAttrs });
       } else {
-        const htmlToWwConvertor = htmlToWwConvertors[typeName];
+        state.closeNode();
+      }
+    } else {
+      const htmlToWwConvertor = htmlToWwConvertors[typeName];
 
-        if (htmlToWwConvertor) {
-          htmlToWwConvertor(state, node, openTagName);
-        }
+      if (htmlToWwConvertor) {
+        htmlToWwConvertor(state, node, openTagName);
       }
     }
   },
@@ -315,24 +313,19 @@ export const toWwConvertors: ToWwConvertorMap = {
   htmlBlock(state, node) {
     const html = node.literal!;
     const container = document.createElement('div');
-    const matched = html.match(reHTMLTag);
+    const matched = html.match(reHTMLTag)!;
+    const [, openTagName, , closeTagName] = matched;
+    const typeName = (openTagName || closeTagName).toLowerCase();
+    const nodeType = state.schema.nodes[typeName];
 
-    if (matched) {
-      const [, openTagName, , closeTagName] = matched;
-      const typeName = (openTagName || closeTagName).toLowerCase();
-      const nodeType = state.schema.nodes[typeName];
+    // for user defined html schema
+    if (nodeType?.spec.attrs!.htmlAttrs) {
+      const htmlAttrs = getHTMLAttrsByHTMLString(html);
+      const childrenHTML = node
+        .literal!.replace(new RegExp(`(<\\s*${typeName}[^>]+?>)|(</${typeName}\\s*[>])`, 'ig'), '')
+        .trim();
 
-      if (nodeType) {
-        const htmlAttrs = getHTMLAttrsByHTMLString(html);
-        const childrenHTML = node
-          .literal!.replace(
-            new RegExp(`(<\\s*${typeName}[^>]+?>)|(</${typeName}\\s*[>])`, 'ig'),
-            ''
-          )
-          .trim();
-
-        state.addNode(nodeType, { htmlAttrs, childrenHTML, literal: html });
-      }
+      state.addNode(nodeType, { htmlAttrs, childrenHTML });
     } else {
       container.innerHTML = html;
       addRawHTMLAttributeToDOM(container);
