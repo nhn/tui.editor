@@ -44,7 +44,7 @@ import { addDefaultImageBlobHook } from './helper/image';
 import { setWidgetRules } from './widget/rules';
 import { cls } from './utils/dom';
 import { sanitizeHTML } from './sanitizer/htmlSanitizer';
-import { createHTMLBlockSchemaMap } from './wysiwyg/nodes/html';
+import { createHTMLSchemaMap } from './wysiwyg/nodes/html';
 
 /**
  * ToastUI Editor
@@ -194,10 +194,7 @@ class ToastUIEditor {
     if (this.options.events) {
       forEachOwnProperties(this.options.events, (fn, key) => this.on(key, fn));
     }
-    const htmlBlockSchemaMap = createHTMLBlockSchemaMap(
-      rendererOptions.customHTMLRenderer,
-      wwToDOMAdaptor
-    );
+    const htmlSchemaMap = createHTMLSchemaMap(rendererOptions.customHTMLRenderer, wwToDOMAdaptor);
 
     this.i18n = i18n;
     this.i18n.setCode(this.options.language);
@@ -223,7 +220,7 @@ class ToastUIEditor {
       this.eventEmitter,
       wwToDOMAdaptor,
       useCommandShortcut,
-      htmlBlockSchemaMap,
+      htmlSchemaMap,
       linkAttributes!
     );
 

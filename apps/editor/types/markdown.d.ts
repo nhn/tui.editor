@@ -115,8 +115,10 @@ export interface CodeMdNode extends MdNode {
   tickCount: number;
 }
 
-export interface HTMLBlockMdNode extends MdNode {
+export interface HTMLMdNode extends MdNode {
   attrs: Record<string, string | null>;
+  childrenHTML?: string;
+  open?: boolean;
 }
 
 export interface TableColumn {
@@ -270,4 +272,5 @@ export interface MdLikeNode {
     checked?: boolean;
   };
   attrs?: Record<string, string | null>;
+  childrenHTML?: string;
 }
