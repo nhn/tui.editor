@@ -13,6 +13,7 @@ import { Context, EditorAllCommandMap, EditorCommandFn } from './spec';
 import { ToMdConvertorMap } from './convertor';
 import { DefaultUI, ToolbarItemOptions } from './ui';
 import SpecManager from '@/spec/specManager';
+import { ExtraMdPlugin, ExtraWwPlugin } from './plugin';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -94,14 +95,18 @@ export class Viewer {
   setCodeBlockLanguages(languages?: string[]): void;
 }
 
-export type PluginFn = (editor: Editor | Viewer, options?: any) => void;
-export type EditorPlugin = PluginFn | [PluginFn, any];
-
-export interface EditorPluginInfo {
-  pluginFn: PluginFn;
-  renderer: CustomHTMLRendererMap;
-  parser: CustomParserMap;
+export interface ProsemirrorPlugin {
+  editorType: 'wysiwyg' | 'markdown' | 'all';
+  plugin: ExtraWwPlugin | ExtraMdPlugin;
 }
+
+interface EditorPluginInfo {
+  toHTMLRenderers: CustomHTMLRenderer;
+  plugins: ProsemirrorPlugin[];
+}
+
+export type PluginFn = (eventEmitter: Emitter, options?: any) => EditorPluginInfo | null;
+export type EditorPlugin = PluginFn | [PluginFn, any];
 
 export interface EditorOptions {
   el: HTMLElement;
@@ -117,7 +122,7 @@ export interface EditorOptions {
   usageStatistics?: boolean;
   toolbarItems?: (string | ToolbarItemOptions)[];
   hideModeSwitch?: boolean;
-  plugins?: (EditorPlugin | EditorPluginInfo)[];
+  plugins?: EditorPlugin[];
   extendedAutolinks?: ExtendedAutolinks;
   placeholder?: string;
   linkAttributes?: LinkAttributes;

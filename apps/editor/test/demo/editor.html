@@ -10,6 +10,41 @@
     <script type="module">
       import { Editor } from '/dist/index.js';
 
+      function fooPlugin() {
+        console.log('foo');
+        return null;
+      }
+
+      function barPlugin(eventEmitter, options) {
+        const { hljs = {} } = options;
+
+        console.log('bar');
+
+        return {
+          plugins: [
+            {
+              type: 'wysiwyg',
+              plugin: (eventEmitter, toDOMAdaptor) => {
+                return plugin(eventEmitter, toDOMAdaptor, hljs);
+              },
+            },
+          ],
+        };
+      }
+
+      const convertors = {
+        latex(node) {
+          // const generator = new latexjs.HtmlGenerator({ hyphenate: false });
+          // const { body } = latexjs.parse(node.literal, { generator }).htmlDocument();
+
+          return [
+            { type: 'openTag', tagName: 'div', outerNewLine: true },
+            { type: 'html', content: 'daf' },
+            { type: 'closeTag', tagName: 'div', outerNewLine: true },
+          ];
+        },
+      };
+
       const editor = new Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
@@ -18,6 +53,8 @@
         useCommandShortcut: true,
         extendedAutolinks: true,
         frontMatter: true,
+        customHTMLRenderer: convertors,
+        plugins: [fooPlugin, [barPlugin, {}]],
       });
 
       window.editor = editor;

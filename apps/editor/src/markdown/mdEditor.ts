@@ -35,6 +35,7 @@ import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
 import { smartTask } from './plugins/smartTask';
 import { createNodesWithWidget } from '@/widget/rules';
 import { Widget, widgetNodeView } from '@/widget/widgetNode';
+import { ExtraMdPlugin } from '@t/plugin';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -57,6 +58,7 @@ export default class MdEditor extends EditorBase {
 
     this.editorType = 'markdown';
     this.toastMark = toastMark;
+    this.extraPlugins = extraPlugins;
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
@@ -140,11 +142,18 @@ export default class MdEditor extends EditorBase {
     ]);
   }
 
+  createExtraPlugins() {
+    const { eventEmitter } = this;
+
+    return this.extraPlugins.map((plugin) => plugin(eventEmitter));
+  }
+
   createPlugins() {
     return this.defaultPlugins.concat([
       syntaxHighlight(this.context),
       previewHighlight(this.context),
       smartTask(this.context),
+      ...this.createExtraPlugins(),
     ]);
   }
 

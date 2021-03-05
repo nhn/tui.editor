@@ -34,7 +34,7 @@ import CommandManager from './commands/commandManager';
 import Convertor from './convertors/convertor';
 import Viewer from './viewer';
 import i18n, { I18n } from './i18n/i18n';
-import { invokePlugins, getPluginInfo } from './pluginHelper';
+import { getPluginInfo } from './pluginHelper';
 
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
@@ -152,6 +152,18 @@ class ToastUIEditor {
       options
     );
 
+    this.codeBlockLanguages = [];
+    this.mode = this.options.initialEditType || 'markdown';
+
+    this.eventEmitter = new EventEmitter();
+
+    setWidgetRules(this.options.widgetRules);
+
+    const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
+    const { toHTMLRenderers, mdPlugins, wwPlugins } = getPluginInfo(
+      this.options.plugins,
+      this.eventEmitter
+    );
     const {
       customHTMLRenderer,
       extendedAutolinks,
@@ -176,10 +188,9 @@ class ToastUIEditor {
     const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
     const rendererOptions = {
       linkAttributes,
-      customHTMLRenderer: { ...renderer, ...customHTMLRenderer },
+      customHTMLRenderer: { ...toHTMLRenderers, ...customHTMLRenderer },
       extendedAutolinks,
       referenceDefinition,
-      customParser: parser,
       frontMatter,
       sanitizer: customHTMLSanitizer || sanitizeHTML,
     };
@@ -206,7 +217,6 @@ class ToastUIEditor {
       extendedAutolinks,
       referenceDefinition,
       disallowDeepHeading: true,
-      customParser: parser,
       frontMatter,
     });
 
@@ -233,10 +243,6 @@ class ToastUIEditor {
       customMarkdownRenderer,
       this.eventEmitter
     );
-
-    if (plugins) {
-      invokePlugins(plugins, this);
-    }
 
     this.setMinHeight(this.options.minHeight);
 

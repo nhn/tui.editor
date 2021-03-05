@@ -1,63 +1,65 @@
-import { Editor, EditorPlugin, EditorPluginInfo, Viewer } from '@t/editor';
-import { CustomParserMap, CustomHTMLRendererMap } from '@t/markdown';
-import isArray from 'tui-code-snippet/type/isArray';
 import isFunction from 'tui-code-snippet/type/isFunction';
 
-interface PluginInfoResult {
-  plugins: EditorPlugin[];
-  renderer: CustomHTMLRendererMap;
-  parser: CustomParserMap;
+import { EditorPlugin, ProsemirrorPlugin } from '@t/editor';
+import { Emitter } from '@t/event';
+import { PluginInfoResult, ExtraPluginInfoResult, ExtraMdPlugin, ExtraWwPlugin } from '@t/plugin';
+
+function execPlugin(plugin: EditorPlugin, eventEmitter: Emitter) {
+  if (isFunction(plugin)) {
+    return plugin(eventEmitter);
+  }
+
+  const [pluginFn, options = {}] = plugin;
+
+  return pluginFn(eventEmitter, options);
 }
 
-/**
- * Invoke plugins
- * @param {Array.<Function|Array>} plugins - list of plugin function only or
- *                                  plugin function with options
- * @param {Editor|Viewer} editor - editor or viewer instance
- */
-export function invokePlugins(plugins: EditorPlugin[], editor: Editor | Viewer) {
-  plugins.forEach((plugin) => {
-    if (isFunction(plugin)) {
-      plugin(editor);
-    } else if (isArray(plugin)) {
-      const [pluginFn, options = {}] = plugin;
+function createEditorPlugins(plugins: ProsemirrorPlugin[]) {
+  return plugins.reduce<ExtraPluginInfoResult>(
+    (acc, plugin) => {
+      const { editorType, plugin: pluginFn } = plugin;
 
-      pluginFn(editor, options);
-    }
-  });
+      if (editorType === 'markdown') {
+        acc.mdPlugins.push(pluginFn as ExtraMdPlugin);
+      } else if (editorType === 'wysiwyg') {
+        acc.wwPlugins.push(pluginFn as ExtraWwPlugin);
+      } else {
+        acc.mdPlugins.push(pluginFn as ExtraMdPlugin);
+        acc.wwPlugins.push(pluginFn as ExtraWwPlugin);
+      }
+
+      return acc;
+    },
+    { mdPlugins: [], wwPlugins: [] }
+  );
 }
 
-/**
- * Get plugin info
- * @param {Array.<Function|Array>} plugins - list of plugin function only or
- *                                  plugin function with options
- * @returns {Object} - plugin info
- */
-export function getPluginInfo(plugins: (EditorPlugin | EditorPluginInfo)[]) {
+export function getPluginInfo(plugins: EditorPlugin[], eventEmitter: Emitter) {
   if (!plugins) {
     return {} as PluginInfoResult;
   }
 
   return plugins.reduce<PluginInfoResult>(
     (acc, plugin) => {
-      const pluginInfo = isArray(plugin) ? plugin[0] : plugin;
+      const { toHTMLRenderers, plugins: editorPlugins } = execPlugin(plugin, eventEmitter) ?? {};
 
-      if (!isFunction(pluginInfo)) {
-        const { renderer, parser, pluginFn } = pluginInfo;
-
-        plugin = isArray(plugin) ? [pluginFn, plugin[1]] : pluginFn;
-
-        if (renderer) {
-          acc.renderer = { ...acc.renderer, ...renderer };
-        }
-        if (parser) {
-          acc.parser = { ...acc.parser, ...parser };
-        }
+      if (toHTMLRenderers) {
+        acc.toHTMLRenderers = { ...acc.toHTMLRenderers, ...toHTMLRenderers };
       }
-      acc.plugins.push(plugin as EditorPlugin);
+
+      if (editorPlugins) {
+        const { mdPlugins, wwPlugins } = createEditorPlugins(editorPlugins);
+
+        acc.mdPlugins = acc.mdPlugins.concat(mdPlugins);
+        acc.wwPlugins = acc.wwPlugins.concat(wwPlugins);
+      }
 
       return acc;
     },
-    { plugins: [], renderer: {}, parser: {} }
+    {
+      toHTMLRenderers: {},
+      mdPlugins: [],
+      wwPlugins: [],
+    }
   );
 }

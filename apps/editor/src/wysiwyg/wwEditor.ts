@@ -28,6 +28,7 @@ import { createNodesWithWidget } from '@/widget/rules';
 import { widgetNodeView } from '@/widget/widgetNode';
 import { cls } from '@/utils/dom';
 import { includes } from '@/utils/common';
+import { ExtraWwPlugin } from '@t/plugin';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -94,6 +95,7 @@ export default class WysiwygEditor extends EditorBase {
       tableContextMenu(this.eventEmitter),
       task(),
       toolbarState(this.eventEmitter),
+      ...this.createExtraPlugins(),
     ]);
   }
 
