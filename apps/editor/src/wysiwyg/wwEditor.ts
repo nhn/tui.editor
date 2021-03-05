@@ -1,13 +1,11 @@
 import { EditorView } from 'prosemirror-view';
-import { Schema, Node as ProsemirrorNode, Slice, Fragment } from 'prosemirror-model';
-
+import { Node as ProsemirrorNode, Slice, Fragment, Mark } from 'prosemirror-model';
+import isNumber from 'tui-code-snippet/type/isNumber';
 import EditorBase from '@/base';
 import { getWwCommands } from '@/commands/wwCommands';
 
 import { createTextSelection } from '@/helper/manipulation';
 import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
-
-import { placeholder } from '@/plugins/placeholder';
 
 import { tableSelection } from './plugins/tableSelection';
 import { tableContextMenu } from './plugins/tableContextMenu';
@@ -28,6 +26,7 @@ import { LinkAttributes, WidgetStyle } from '@t/editor';
 import { createNodesWithWidget } from '@/widget/rules';
 import { widgetNodeView } from '@/widget/widgetNode';
 import { cls } from '@/utils/dom';
+import { includes } from '@/utils/common';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -40,7 +39,12 @@ export default class WysiwygEditor extends EditorBase {
 
   private linkAttributes: LinkAttributes;
 
-  constructor(eventEmitter: Emitter, toDOMAdaptor: ToDOMAdaptor, linkAttributes = {}) {
+  constructor(
+    eventEmitter: Emitter,
+    toDOMAdaptor: ToDOMAdaptor,
+    useCommandShortcut: boolean,
+    linkAttributes = {}
+  ) {
     super(eventEmitter);
 
     this.editorType = 'wysiwyg';
@@ -49,7 +53,7 @@ export default class WysiwygEditor extends EditorBase {
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
-    this.keymaps = this.createKeymaps();
+    this.keymaps = this.createKeymaps(useCommandShortcut);
     this.view = this.createView();
     this.commands = this.createCommands();
     this.specs.setContext({ ...this.context, view: this.view });
@@ -58,17 +62,6 @@ export default class WysiwygEditor extends EditorBase {
 
   createSpecs() {
     return createSpecs(this.toDOMAdaptor, this.linkAttributes);
-  }
-
-  createKeymaps() {
-    return this.specs.keymaps();
-  }
-
-  createSchema() {
-    return new Schema({
-      nodes: this.specs.nodes,
-      marks: this.specs.marks,
-    });
   }
 
   createContext() {
@@ -161,7 +154,7 @@ export default class WysiwygEditor extends EditorBase {
     return this.view.state.doc;
   }
 
-  getRange(): [number, number] {
+  getSelection(): [number, number] {
     const { from, to } = this.view.state.selection;
 
     return [from, to];
@@ -171,17 +164,41 @@ export default class WysiwygEditor extends EditorBase {
     return this.view.state.schema;
   }
 
-  replaceSelection(content: string) {
+  replaceSelection(text: string, start?: number, end?: number) {
     const { schema, tr } = this.view.state;
     const { paragraph } = schema.nodes;
-    const texts = content.split('\n');
-    const paras = texts.map((text) => paragraph.create(null, schema.text(text)));
+    const lineTexts = text.split('\n');
+    const paras = lineTexts.map((lineText) => paragraph.create(null, schema.text(lineText)));
+    const slice = new Slice(Fragment.from(paras), 1, 1);
+    const newTr =
+      isNumber(start) && isNumber(end)
+        ? tr.replaceRange(start, end, slice)
+        : tr.replaceSelection(slice);
 
-    this.view.dispatch(tr.replaceSelection(new Slice(Fragment.from(paras), 1, 1)));
+    this.view.dispatch(newTr);
     this.focus();
   }
 
-  setModel(newDoc: ProsemirrorNode, cursorToEnd = false) {
+  deleteSelection(start?: number, end?: number) {
+    const { tr } = this.view.state;
+    const newTr =
+      isNumber(start) && isNumber(end) ? tr.deleteRange(start, end) : tr.deleteSelection();
+
+    this.view.dispatch(newTr.scrollIntoView());
+  }
+
+  getSelectedText(start?: number, end?: number) {
+    const { doc, selection } = this.view.state;
+    let { from, to } = selection;
+
+    if (isNumber(start) && isNumber(end)) {
+      from = start;
+      to = end;
+    }
+    return doc.textBetween(from, to, '\n');
+  }
+
+  setModel(newDoc: ProsemirrorNode | [], cursorToEnd = false) {
     const { tr, doc } = this.view.state;
 
     this.view.dispatch(tr.replaceWith(0, doc.content.size, newDoc));
@@ -191,7 +208,7 @@ export default class WysiwygEditor extends EditorBase {
     }
   }
 
-  setSelection(start = 0, end = 0) {
+  setSelection(start: number, end: number) {
     const { tr } = this.view.state;
     const selection = createTextSelection(tr, start, end);
 
@@ -204,10 +221,44 @@ export default class WysiwygEditor extends EditorBase {
     dispatch(state.tr.setMeta('widget', { pos: pos ?? state.selection.to, node, style }));
   }
 
-  replaceWithWidget(from: number, to: number, content: string) {
+  replaceWithWidget(start: number, end: number, text: string) {
     const { tr, schema } = this.view.state;
-    const nodes = createNodesWithWidget(content, schema);
+    const nodes = createNodesWithWidget(text, schema);
 
-    this.view.dispatch(tr.replaceWith(from, to, nodes));
+    this.view.dispatch(tr.replaceWith(start, end, nodes));
+  }
+
+  getRangeInfoOfNode(pos?: number) {
+    const { doc, selection } = this.view.state;
+    const $pos = pos ? doc.resolve(pos) : selection.$from;
+    const marks = $pos.marks();
+    const node = $pos.node();
+    let start = $pos.start();
+    let end = $pos.end();
+    let type = node.type.name;
+
+    if (marks.length || type === 'paragraph') {
+      const mark = marks[marks.length - 1];
+      const maybeHasMark = (nodeMarks: Mark[]) =>
+        nodeMarks.length ? includes(nodeMarks, mark) : true;
+
+      type = mark ? mark.type.name : 'text';
+
+      node.forEach((child, offset) => {
+        const { isText, nodeSize, marks: nodeMarks } = child;
+        const startOffset = $pos.pos - start;
+
+        if (
+          isText &&
+          offset <= startOffset &&
+          offset + nodeSize >= startOffset &&
+          maybeHasMark(nodeMarks)
+        ) {
+          start = start + offset;
+          end = start + nodeSize;
+        }
+      });
+    }
+    return { range: [start, end] as [number, number], type };
   }
 }

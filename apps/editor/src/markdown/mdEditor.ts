@@ -1,11 +1,11 @@
 import { Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { Fragment, Schema, Slice } from 'prosemirror-model';
+import { Fragment, Slice } from 'prosemirror-model';
 import { Step, ReplaceAroundStep } from 'prosemirror-transform';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { Emitter } from '@t/event';
-import { MdPos } from '@t/markdown';
+import { MdNode, MdPos } from '@t/markdown';
 import { WidgetStyle } from '@t/editor';
 import EditorBase from '@/base';
 import SpecManager from '@/spec/specManager';
@@ -45,7 +45,7 @@ export default class MdEditor extends EditorBase {
 
   private clipboard!: HTMLTextAreaElement;
 
-  constructor(toastMark: ToastMark, eventEmitter: Emitter) {
+  constructor(toastMark: ToastMark, eventEmitter: Emitter, useCommandShortcut: boolean) {
     super(eventEmitter);
 
     this.editorType = 'markdown';
@@ -53,7 +53,7 @@ export default class MdEditor extends EditorBase {
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
-    this.keymaps = this.createKeymaps();
+    this.keymaps = this.createKeymaps(useCommandShortcut);
     this.view = this.createView();
     this.commands = this.createCommands();
     this.specs.setContext({ ...this.context, view: this.view });
@@ -106,10 +106,6 @@ export default class MdEditor extends EditorBase {
     };
   }
 
-  createKeymaps() {
-    return this.specs.keymaps();
-  }
-
   createSpecs() {
     return new SpecManager([
       new Doc(),
@@ -135,13 +131,6 @@ export default class MdEditor extends EditorBase {
       new Meta(),
       new Html(),
     ]);
-  }
-
-  createSchema() {
-    return new Schema({
-      nodes: this.specs.nodes,
-      marks: this.specs.marks,
-    });
   }
 
   createPlugins() {
@@ -236,21 +225,58 @@ export default class MdEditor extends EditorBase {
     const [from, to] = getMdToEditorPos(tr.doc, this.toastMark, start, end);
 
     this.view.dispatch(tr.setSelection(createTextSelection(tr, from, to)));
-    this.focus();
   }
 
-  replaceSelection(text: string) {
-    const { tr, schema } = this.view.state;
+  replaceSelection(text: string, start?: MdPos, end?: MdPos) {
+    let newTr;
+    const { tr, schema, doc } = this.view.state;
     const lineTexts = text.split('\n');
     const nodes = lineTexts.map((lineText) =>
       schema.nodes.paragraph.create(null, createNodesWithWidget(lineText, schema))
     );
+    const slice = new Slice(Fragment.from(nodes), 1, 1);
 
     this.focus();
-    this.view.dispatch(tr.replaceSelection(new Slice(Fragment.from(nodes), 1, 1)).scrollIntoView());
+
+    if (start && end) {
+      const [from, to] = getMdToEditorPos(doc, this.toastMark, start, end);
+
+      newTr = tr.replaceRange(from, to, slice);
+    } else {
+      newTr = tr.replaceSelection(slice);
+    }
+    this.view.dispatch(newTr.scrollIntoView());
   }
 
-  getRange() {
+  deleteSelection(start?: MdPos, end?: MdPos) {
+    let newTr;
+    const { tr, doc } = this.view.state;
+
+    if (start && end) {
+      const [from, to] = getMdToEditorPos(doc, this.toastMark, start, end);
+
+      newTr = tr.deleteRange(from, to);
+    } else {
+      newTr = tr.deleteSelection();
+    }
+    this.view.dispatch(newTr.scrollIntoView());
+  }
+
+  getSelectedText(start?: MdPos, end?: MdPos) {
+    const { doc, selection } = this.view.state;
+    let { from, to } = selection;
+
+    if (start && end) {
+      const pos = getMdToEditorPos(doc, this.toastMark, start, end);
+
+      from = pos[0];
+      to = pos[1];
+    }
+
+    return doc.textBetween(from, to, '\n');
+  }
+
+  getSelection() {
     const { from, to } = this.view.state.selection;
 
     return getEditorToMdPos(this.view.state.tr.doc, from, to);
@@ -277,12 +303,27 @@ export default class MdEditor extends EditorBase {
     this.view.dispatch(tr.setMeta('widget', { pos, node, style }));
   }
 
-  replaceWithWidget(from: MdPos, to: MdPos, content: string) {
+  replaceWithWidget(start: MdPos, end: MdPos, text: string) {
     const { tr, schema, doc } = this.view.state;
-    const pos = getMdToEditorPos(doc, this.toastMark, from, to);
-    const nodes = createNodesWithWidget(content, schema);
+    const pos = getMdToEditorPos(doc, this.toastMark, start, end);
+    const nodes = createNodesWithWidget(text, schema);
 
     this.view.dispatch(tr.replaceWith(pos[0], pos[1], nodes));
+  }
+
+  getRangeInfoOfNode(pos?: MdPos) {
+    const { doc, selection } = this.view.state;
+    const mdPos = pos || getEditorToMdPos(doc, selection.from)[0];
+    let mdNode: MdNode = this.toastMark.findNodeAtPosition(mdPos);
+
+    if (mdNode.type === 'text' && mdNode.parent!.type !== 'paragraph') {
+      mdNode = mdNode.parent!;
+    }
+
+    // add 1 sync for prosemirror position
+    mdNode.sourcepos![1][1] += 1;
+
+    return { range: mdNode.sourcepos!, type: mdNode.type };
   }
 
   getMarkdown() {

@@ -11,9 +11,16 @@ import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import isString from 'tui-code-snippet/type/isString';
 
 import { Emitter, Handler } from '@t/event';
-import { EditorOptions, EditorType, PreviewStyle, ViewerOptions, WidgetStyle } from '@t/editor';
+import {
+  Base,
+  EditorOptions,
+  EditorPos,
+  EditorType,
+  PreviewStyle,
+  ViewerOptions,
+  WidgetStyle,
+} from '@t/editor';
 import { EditorCommandFn } from '@t/spec';
-import { MdPos } from '@t/markdown';
 
 import { sendHostName, sanitizeLinkAttribute } from './utils/common';
 
@@ -98,7 +105,7 @@ class ToastUIEditor {
 
   private mode!: EditorType;
 
-  private mdPreviewStyle!: PreviewStyle;
+  private mdPreviewStyle: PreviewStyle;
 
   private i18n: I18n;
 
@@ -145,22 +152,27 @@ class ToastUIEditor {
       options
     );
 
-    this.codeBlockLanguages = [];
-    this.mode = this.options.initialEditType || 'markdown';
-
-    this.eventEmitter = new EventEmitter();
-
-    setWidgetRules(this.options.widgetRules);
-
-    const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
-    const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
     const {
       customHTMLRenderer,
       extendedAutolinks,
       referenceDefinition,
       frontMatter,
       customMarkdownRenderer,
+      useCommandShortcut,
+      initialEditType,
+      widgetRules,
     } = this.options;
+
+    this.codeBlockLanguages = [];
+    this.mode = initialEditType || 'markdown';
+    this.mdPreviewStyle = this.options.previewStyle;
+
+    this.eventEmitter = new EventEmitter();
+
+    setWidgetRules(widgetRules);
+
+    const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
+    const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
     const rendererOptions = {
       linkAttributes,
       customHTMLRenderer: { ...renderer, ...customHTMLRenderer },
@@ -191,7 +203,7 @@ class ToastUIEditor {
       frontMatter,
     });
 
-    this.mdEditor = new MarkdownEditor(this.toastMark, this.eventEmitter);
+    this.mdEditor = new MarkdownEditor(this.toastMark, this.eventEmitter, useCommandShortcut);
 
     this.preview = new MarkdownPreview(this.eventEmitter, {
       ...rendererOptions,
@@ -199,7 +211,12 @@ class ToastUIEditor {
       highlight: this.options.previewHighlight,
     });
 
-    this.wwEditor = new WysiwygEditor(this.eventEmitter, wwToDOMAdaptor, linkAttributes!);
+    this.wwEditor = new WysiwygEditor(
+      this.eventEmitter,
+      wwToDOMAdaptor,
+      useCommandShortcut,
+      linkAttributes!
+    );
 
     this.convertor = new Convertor(
       this.wwEditor.getSchema(),
@@ -280,13 +297,20 @@ class ToastUIEditor {
   }
 
   /**
-   * call commandManager's exec method
-   * @param {*} ...args Command argument
+   * execute editor command
+   * @param {string} type - editor type
+   * @param {string} name - command name
+   * @param {object} [payload] - payload for command
    */
-  exec(type: EditorType, name: string, payload: Record<string, any>) {
+  exec(type: EditorType, name: string, payload?: Record<string, any>) {
     this.commandManager.exec(type, name, payload);
   }
 
+  /**
+   * @param {string} type - editor type
+   * @param {string} name - command name
+   * @param {function} command - command handler
+   */
   addCommand(type: EditorType, name: string, command: EditorCommandFn) {
     this.commandManager.addCommand(type, name, command);
   }
@@ -359,9 +383,7 @@ class ToastUIEditor {
    * @param {string} markdown - markdown syntax text.
    * @param {boolean} [cursorToEnd=true] - move cursor to contents end
    */
-  setMarkdown(markdown: string, cursorToEnd = true) {
-    markdown = markdown ?? '';
-
+  setMarkdown(markdown = '', cursorToEnd = true) {
     this.mdEditor.setMarkdown(markdown, cursorToEnd);
 
     if (this.isWysiwygMode()) {
@@ -419,32 +441,87 @@ class ToastUIEditor {
 
   /**
    * Insert text
-   * @param {string} text - text string to insert
+   * @param {string} text - text content
    */
   insertText(text: string) {
     this.getCurrentModeEditor().replaceSelection(text);
   }
 
   /**
-   * Add widget to selection
-   * @param {Node} node widget node
-   * @param {string} style Adding style "top" or "bottom"
-   * @param {number|Array.<number>} [pos] position
+   * Set selection range
+   * @param {number|Array.<number>} start - start position
+   * @param {number|Array.<number>} end - end position
    */
-  addWidget(node: Node, style: WidgetStyle, pos?: MdPos | number) {
-    // @ts-ignore
+  setSelection(start: EditorPos, end: EditorPos) {
+    this.getCurrentModeEditor().setSelection(start, end);
+  }
+
+  /**
+   * Replace selection range with given text content
+   * @param {string} text - text content
+   * @param {number|Array.<number>} [start] - start position
+   * @param {number|Array.<number>} [end] - end position
+   */
+  replaceSelection(text: string, start?: EditorPos, end?: EditorPos) {
+    this.getCurrentModeEditor().replaceSelection(text, start, end);
+  }
+
+  /**
+   * Delete the content of selection range
+   * @param {number|Array.<number>} [start] - start position
+   * @param {number|Array.<number>} [end] - end position
+   */
+  deleteSelection(start?: EditorPos, end?: EditorPos) {
+    this.getCurrentModeEditor().deleteSelection(start, end);
+  }
+
+  /**
+   * Get selected text content
+   * @param {number|Array.<number>} [start] - start position
+   * @param {number|Array.<number>} [end] - end position
+   * @returns {string} - selected text content
+   */
+  getSelectedText(start?: EditorPos, end?: EditorPos) {
+    return this.getCurrentModeEditor().getSelectedText(start, end);
+  }
+
+  /**
+   * Get range of the node
+   * @param {number|Array.<number>} [pos] - position
+   * @returns {Array.<number[]>|Array.<number>} - node [start, end] range
+   * @example
+   * // Markdown mode
+   * const rangeInfo = editor.getRangeInfoOfNode();
+   *
+   * console.log(rangeInfo); // { range: [[startLineOffset, startCurorOffset], [endLineOffset, endCurorOffset]], type: 'emph' }
+   *
+   * // WYSIWYG mode
+   * const rangeInfo = editor.getRangeInfoOfNode();
+   *
+   * console.log(rangeInfo); // { range: [startCursorOffset, endCursorOffset], type: 'emph' }
+   */
+  getRangeInfoOfNode(pos?: EditorPos) {
+    return this.getCurrentModeEditor().getRangeInfoOfNode(pos);
+  }
+
+  /**
+   * Add widget to selection
+   * @param {Node} node - widget node
+   * @param {string} style - Adding style "top" or "bottom"
+   * @param {number|Array.<number>} [pos] - position
+   */
+  addWidget(node: Node, style: WidgetStyle, pos?: EditorPos) {
     this.getCurrentModeEditor().addWidget(node, style, pos);
   }
 
   /**
-   * replace node with widget to range
-   * @param {number|Array.<number>} from start position
-   * @param {number|Array.<number>} to end position
-   * @param {string} content widget text content
+   * Replace node with widget to range
+   * @param {number|Array.<number>} start - start position
+   * @param {number|Array.<number>} end - end position
+   * @param {string} text - widget text content
    */
-  replaceWithWidget(from: MdPos | number, to: MdPos | number, content: string) {
-    // @ts-ignore
-    this.getCurrentModeEditor().replaceWithWidget(from, to, content);
+  replaceWithWidget(start: EditorPos, end: EditorPos, text: string) {
+    this.getCurrentModeEditor().replaceWithWidget(start, end, text);
   }
 
   /**
@@ -509,7 +586,7 @@ class ToastUIEditor {
    * @returns {Object} MarkdownEditor or WysiwygEditor
    */
   getCurrentModeEditor() {
-    let editor;
+    let editor: Base;
 
     if (this.isMarkdownMode()) {
       editor = this.mdEditor;
@@ -583,7 +660,7 @@ class ToastUIEditor {
   }
 
   /**
-   * Remove TUIEditor from document
+   * Destroy TUIEditor from document
    */
   destroy() {
     this.wwEditor.destroy();
@@ -598,14 +675,14 @@ class ToastUIEditor {
    * Hide TUIEditor
    */
   hide() {
-    this.eventEmitter.emit('hide', this);
+    this.eventEmitter.emit('hide');
   }
 
   /**
    * Show TUIEditor
    */
   show() {
-    this.eventEmitter.emit('show', this);
+    this.eventEmitter.emit('show');
   }
 
   /**
@@ -628,48 +705,26 @@ class ToastUIEditor {
    * Reset TUIEditor
    */
   reset() {
-    // @ts-ignore
     this.wwEditor.setModel([]);
     this.mdEditor.setMarkdown('');
   }
 
   /**
-   * Get current range
-   * @returns {Array.<string[]>|Array.<string>} Returns the range of the selection depending on the editor mode
+   * Get current selection range
+   * @returns {Array.<number[]>|Array.<number>} Returns the range of the selection depending on the editor mode
    * @example
    * // Markdown mode
-   * const mdRange = editor.getRange();
+   * const mdSelection = editor.getSelection();
    *
-   * console.log(mdRange); // [[startLineOffset, startCurorOffset], [endLineOffset, endCurorOffset]]
+   * console.log(mdSelection); // [[startLineOffset, startCurorOffset], [endLineOffset, endCurorOffset]]
    *
    * // WYSIWYG mode
-   * const wwRange = editor.getRange();
+   * const wwSelection = editor.getSelection();
    *
-   * console.log(mdRange); // [startCursorOffset, endCursorOffset]]
+   * console.log(wwSelection); // [startCursorOffset, endCursorOffset]
    */
-  getRange() {
-    return this.getCurrentModeEditor().getRange();
-  }
-
-  /**
-   * Get text object of current range
-   * @param {{start, end}|Range} range Range object of each editor
-   * @returns {MdTextObject|WwTextObject} TextObject class
-   */
-  // @TODO: change the way to provide API
-  // eslint-disable-next-line
-  getTextObject() {}
-
-  /**
-   * get selected text
-   * @returns {string} - selected text
-   */
-  // @TODO: change the way to provide API
-  // eslint-disable-next-line
-  getSelectedText() {
-    // const range = this.getRange();
-    // const textObject = this.getTextObject(range);
-    // return textObject.getTextContent() || '';
+  getSelection() {
+    return this.getCurrentModeEditor().getSelection();
   }
 
   /**
@@ -695,7 +750,7 @@ class ToastUIEditor {
   }
 
   /**
-   * get markdown editor, preview, wysiwyg editor DOM elements
+   * Get markdown editor, preview, wysiwyg editor DOM elements
    */
   getEditorElements() {
     return {
@@ -706,7 +761,6 @@ class ToastUIEditor {
   }
 }
 
-// @TODO: remove below API
 // // (Not an official API)
 // // Create a function converting markdown to HTML using the internal parser and renderer.
 // ToastUIEditor._createMarkdownToHTML = createMarkdownToHTML;

@@ -92,7 +92,7 @@ export class ScrollSync {
   }
 
   private getScrollTopByCaretPos() {
-    const pos = this.mdEditor.getRange();
+    const pos = this.mdEditor.getSelection();
     const firstMdNode = this.toastMark.findFirstNodeAtLine(pos[0][0]);
     const previewHeight = this.previewEl.clientHeight;
     const { el } = getParentNodeObj(firstMdNode);

@@ -17,7 +17,7 @@ describe('MarkdownEditor', () => {
 
   beforeEach(() => {
     em = new EventEmitter();
-    mde = new MarkdownEditor(new ToastMark(), em);
+    mde = new MarkdownEditor(new ToastMark(), em, true);
     el = mde.el;
     document.body.appendChild(el);
   });
@@ -58,11 +58,11 @@ describe('MarkdownEditor', () => {
     expect(getSelectedText()).toBe('#');
   });
 
-  it('getRange API', () => {
+  it('getSelection API', () => {
     mde.setMarkdown('# myText');
     mde.setSelection([1, 1], [1, 2]);
 
-    const selection = mde.getRange();
+    const selection = mde.getSelection();
 
     expect(selection).toEqual([
       [1, 1],

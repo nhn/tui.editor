@@ -6,9 +6,9 @@ import { baseKeymap } from 'prosemirror-commands';
 import { InputRule, inputRules } from 'prosemirror-inputrules';
 import { history } from 'prosemirror-history';
 import css from 'tui-code-snippet/domUtil/css';
-import { WidgetStyle, EditorType } from '@t/editor';
+import { WidgetStyle, EditorType, EditorPos, Base, NodeRangeInfo } from '@t/editor';
 import { Emitter } from '@t/event';
-import { MdPos, MdSourcepos } from '@t/markdown';
+import { MdSourcepos } from '@t/markdown';
 import { Context, EditorAllCommandMap } from '@t/spec';
 import SpecManager from './spec/specManager';
 import { createTextSelection } from './helper/manipulation';
@@ -20,7 +20,7 @@ import { dropImage } from './plugins/dropImage';
 import { isWidgetNode } from './widget/widgetNode';
 import { last } from './utils/common';
 
-export default abstract class EditorBase {
+export default abstract class EditorBase implements Base {
   el: HTMLElement;
 
   editorType!: EditorType;
@@ -134,8 +134,8 @@ export default abstract class EditorBase {
     });
   }
 
-  createKeymaps() {
-    return this.specs.keymaps();
+  createKeymaps(useCommandShortcut: boolean) {
+    return useCommandShortcut ? this.specs.keymaps() : [];
   }
 
   createCommands() {
@@ -200,11 +200,19 @@ export default abstract class EditorBase {
 
   abstract createPlugins(): Plugin[];
 
-  abstract replaceWithWidget(from: MdPos | number, to: MdPos | number, content: string): void;
+  abstract replaceWithWidget(start: EditorPos, end: EditorPos, text: string): void;
 
-  abstract addWidget(node: Node, style: WidgetStyle, pos?: MdPos | number): void;
+  abstract addWidget(node: Node, style: WidgetStyle, pos?: EditorPos): void;
 
-  abstract replaceSelection(content: string, range: Range): void;
+  abstract setSelection(start?: EditorPos, end?: EditorPos): void;
 
-  abstract getRange(): MdSourcepos | [number, number];
+  abstract replaceSelection(text: string, start?: EditorPos, end?: EditorPos): void;
+
+  abstract deleteSelection(start?: EditorPos, end?: EditorPos): void;
+
+  abstract getSelectedText(start?: EditorPos, end?: EditorPos): string;
+
+  abstract getSelection(): MdSourcepos | [number, number];
+
+  abstract getRangeInfoOfNode(pos?: EditorPos): NodeRangeInfo;
 }

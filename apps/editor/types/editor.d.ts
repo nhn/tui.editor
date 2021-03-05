@@ -1,8 +1,18 @@
-import { CustomHTMLRenderer, CustomHTMLRendererMap, CustomParserMap } from './markdown';
-import { Handler } from './event';
-import { EditorCommandFn } from './spec';
+import { Schema } from 'prosemirror-model';
+import { EditorView } from 'prosemirror-view';
+import { EditorState, Plugin } from 'prosemirror-state';
+import {
+  CustomHTMLRenderer,
+  CustomHTMLRendererMap,
+  CustomParserMap,
+  MdPos,
+  MdSourcepos,
+} from './markdown';
+import { Emitter, Handler } from './event';
+import { Context, EditorAllCommandMap, EditorCommandFn } from './spec';
 import { ToMdConvertorMap } from './convertor';
 import { DefaultUI, ToolbarItemOptions } from './ui';
+import SpecManager from '@/spec/specManager';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -137,7 +147,7 @@ export class EditorCore {
 
   changePreviewStyle(style: PreviewStyle): void;
 
-  exec(type: EditorType, name: string, payload: Record<string, any>): void;
+  exec(type: EditorType, name: string, payload?: Record<string, any>): void;
 
   addCommand(type: EditorType, name: string, command: EditorCommandFn): void;
 
@@ -208,8 +218,92 @@ export class EditorCore {
   setCodeBlockLanguages(languages: string[]): void;
 
   getEditorElements(): Slots;
+
+  addWidget(node: Node, style: WidgetStyle, pos?: MdPos | number): void;
+
+  replaceWithWidget(from: MdPos | number, to: MdPos | number, content: string): void;
 }
 
 export class Editor extends EditorCore {
   getDefaultUI(): DefaultUI;
+}
+
+export type EditorPos = MdPos | number;
+export interface NodeRangeInfo {
+  range: MdSourcepos | [number, number];
+  type: string;
+}
+
+export interface Base {
+  el: HTMLElement;
+
+  editorType: EditorType;
+
+  eventEmitter: Emitter;
+
+  context: Context;
+
+  schema: Schema;
+
+  keymaps: Plugin[];
+
+  view: EditorView;
+
+  commands: EditorAllCommandMap;
+
+  specs: SpecManager;
+
+  placeholder: { text: string };
+
+  createSpecs(): SpecManager;
+
+  createContext(): Context;
+
+  createState(): EditorState;
+
+  createView(): EditorView;
+
+  createSchema(): Schema;
+
+  createKeymaps(useCommandShortcut: boolean): Plugin<any, any>[];
+
+  createCommands(): Record<string, EditorCommandFn<Record<string, any>>>;
+
+  focus(): void;
+
+  blur(): void;
+
+  destroy(): void;
+
+  moveCursorToStart(): void;
+
+  moveCursorToEnd(): void;
+
+  setScrollTop(top: number): void;
+
+  getScrollTop(): number;
+
+  setPlaceholder(text: string): void;
+
+  setHeight(height: number): void;
+
+  setMinHeight(minHeight: number): void;
+
+  getElement(): HTMLElement;
+
+  setSelection(start: EditorPos, end: EditorPos): void;
+
+  replaceWithWidget(start: EditorPos, end: EditorPos, text: string): void;
+
+  addWidget(node: Node, style: WidgetStyle, pos?: EditorPos): void;
+
+  replaceSelection(text: string, start?: EditorPos, end?: EditorPos): void;
+
+  deleteSelection(start?: EditorPos, end?: EditorPos): void;
+
+  getSelectedText(start?: EditorPos, end?: EditorPos): string;
+
+  getSelection(): MdSourcepos | [number, number];
+
+  getRangeInfoOfNode(pos?: EditorPos): NodeRangeInfo;
 }
