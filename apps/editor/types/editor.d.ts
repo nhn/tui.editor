@@ -57,7 +57,7 @@ export type LinkAttributeNames = 'rel' | 'target' | 'hreflang' | 'type';
 // @TODO change option and type name from singular to plural
 export type LinkAttributes = Partial<Record<LinkAttributeNames, string>>;
 
-export type CustomHTMLSanitizer = (content: string) => string;
+export type Sanitizer = (content: string) => string;
 
 export interface ViewerOptions {
   el: HTMLElement;
@@ -69,7 +69,7 @@ export interface ViewerOptions {
   linkAttributes?: LinkAttributes;
   customHTMLRenderer?: CustomHTMLRenderer;
   referenceDefinition?: boolean;
-  customHTMLSanitizer?: CustomHTMLSanitizer;
+  customHTMLSanitizer?: Sanitizer;
   frontMatter?: boolean;
 }
 
@@ -126,7 +126,7 @@ export interface EditorOptions {
   customHTMLRenderer?: CustomHTMLRenderer;
   customMarkdownRenderer?: ToMdConvertorMap;
   referenceDefinition?: boolean;
-  customHTMLSanitizer?: CustomHTMLSanitizer;
+  customHTMLSanitizer?: Sanitizer;
   previewHighlight?: boolean;
   frontMatter?: boolean;
   widgetRules?: WidgetRule[];

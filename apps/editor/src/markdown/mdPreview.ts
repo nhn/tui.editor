@@ -17,7 +17,6 @@ import Preview from '@/preview';
 import { cls, removeNode, toggleClass } from '@/utils/dom';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
-import { reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 import { findAdjacentElementToScrollTop } from './scroll/dom';
 import { removeOffsetInfoByNode } from './scroll/offset';
 
@@ -180,23 +179,24 @@ class MarkdownPreview extends Preview {
     const contentEl = this.previewContent;
     const newHtml = this.eventEmitter.emitReduce(
       'beforePreviewRender',
-      nodes
-        .map((node) => {
-          if (node.type === 'htmlBlock') {
-            const matched = node.literal!.match(reHTMLTag);
+      // nodes
+      //   .map((node) => {
+      //     if (isHTMLNode(node)) {
+      //       const matched = node.literal!.match(reHTMLTag);
 
-            if (matched) {
-              const [, typeName] = matched;
+      //       if (matched) {
+      //         const [, typeName] = matched;
 
-              // @ts-expect-error
-              if (this.customHTMLRenderer[node.type][typeName]) {
-                return this.renderer.render(node);
-              }
-            }
-          }
-          return this.sanitizer(this.renderer.render(node));
-        })
-        .join('')
+      //         // @ts-expect-error
+      //         if (this.customHTMLRenderer[node.type][typeName]) {
+      //           return this.renderer.render(node);
+      //         }
+      //       }
+      //     }
+      //     return this.sanitizer(this.renderer.render(node));
+      //   })
+      //   .join('')
+      this.sanitizer(nodes.map((node) => this.renderer.render(node)).join(''))
     );
 
     if (!removedNodeRange) {

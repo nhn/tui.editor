@@ -8,7 +8,7 @@ import {
   ViewerOptions,
   ExtendedAutolinks,
   LinkAttributes,
-  CustomHTMLSanitizer,
+  Sanitizer,
   EditorType,
   PreviewStyle,
 } from './editor';
@@ -31,7 +31,7 @@ export {
   ViewerOptions,
   ExtendedAutolinks,
   LinkAttributes,
-  CustomHTMLSanitizer,
+  Sanitizer,
   EditorType,
   PreviewStyle,
 };

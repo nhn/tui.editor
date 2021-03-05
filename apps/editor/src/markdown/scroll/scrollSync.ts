@@ -1,7 +1,7 @@
 import { ProsemirrorNode } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 import { Emitter } from '@t/event';
-import { isHtmlNode, getMdStartLine } from '@/utils/markdown';
+import { isHTMLNode, getMdStartLine } from '@/utils/markdown';
 import MarkdownPreview from '../mdPreview';
 import MdEditor from '../mdEditor';
 import { animate } from './animation';
@@ -115,7 +115,7 @@ export class ScrollSync {
     const { doc } = editorView.state;
     const firstMdNode = this.getMdNodeAtPos(doc, posInfo);
 
-    if (!firstMdNode || isHtmlNode(firstMdNode)) {
+    if (!firstMdNode || isHTMLNode(firstMdNode)) {
       return;
     }
 

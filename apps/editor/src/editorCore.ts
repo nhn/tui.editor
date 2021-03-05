@@ -194,7 +194,11 @@ class ToastUIEditor {
     if (this.options.events) {
       forEachOwnProperties(this.options.events, (fn, key) => this.on(key, fn));
     }
-    const htmlSchemaMap = createHTMLSchemaMap(rendererOptions.customHTMLRenderer, wwToDOMAdaptor);
+    const htmlSchemaMap = createHTMLSchemaMap(
+      rendererOptions.customHTMLRenderer,
+      rendererOptions.sanitizer,
+      wwToDOMAdaptor
+    );
 
     this.i18n = i18n;
     this.i18n.setCode(this.options.language);

@@ -2,7 +2,7 @@ import { Node as ProsemirrorNode, DOMOutputSpecArray, NodeSpec } from 'prosemirr
 import toArray from 'tui-code-snippet/collection/toArray';
 import { ToDOMAdaptor } from '@t/convertor';
 import { CustomHTMLRendererMap } from '@t/markdown';
-import { SchemaMap } from '@t/editor';
+import { SchemaMap, Sanitizer } from '@t/editor';
 import { ATTRIBUTE, reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 
 export function getHTMLAttrsByHTMLString(html: string) {
@@ -29,7 +29,11 @@ export function getHTMLAttrs(dom: HTMLElement) {
   }, {});
 }
 
-function createHTMLBlockSchema(typeName: string, wwToDOMAdaptor: ToDOMAdaptor): NodeSpec {
+function createHTMLBlockSchema(
+  typeName: string,
+  sanitizer: Sanitizer,
+  wwToDOMAdaptor: ToDOMAdaptor
+): NodeSpec {
   return {
     atom: true,
     content: 'block+',
@@ -50,7 +54,13 @@ function createHTMLBlockSchema(typeName: string, wwToDOMAdaptor: ToDOMAdaptor): 
       },
     ],
     toDOM(node: ProsemirrorNode): DOMOutputSpecArray {
-      const dom = wwToDOMAdaptor.getToDOMNode(typeName)!(node) as HTMLElement;
+      const container = document.createElement('div');
+      let dom = wwToDOMAdaptor.getToDOMNode(typeName)!(node) as HTMLElement;
+      const html = sanitizer(dom.outerHTML);
+
+      container.innerHTML = html;
+      dom = container.firstChild as HTMLElement;
+
       const htmlAttrs = getHTMLAttrs(dom);
 
       htmlAttrs.class = htmlAttrs.class ? `${htmlAttrs.class} html-block` : 'html-block';
@@ -60,7 +70,11 @@ function createHTMLBlockSchema(typeName: string, wwToDOMAdaptor: ToDOMAdaptor): 
   };
 }
 
-function createHTMLInlineSchema(typeName: string, wwToDOMAdaptor: ToDOMAdaptor): NodeSpec {
+function createHTMLInlineSchema(
+  typeName: string,
+  sanitizer: Sanitizer,
+  wwToDOMAdaptor: ToDOMAdaptor
+): NodeSpec {
   return {
     inline: true,
     content: 'inline*',
@@ -77,7 +91,13 @@ function createHTMLInlineSchema(typeName: string, wwToDOMAdaptor: ToDOMAdaptor):
       },
     ],
     toDOM(node: ProsemirrorNode): DOMOutputSpecArray {
-      const dom = wwToDOMAdaptor.getToDOMNode(typeName)!(node) as HTMLElement;
+      const container = document.createElement('div');
+      let dom = wwToDOMAdaptor.getToDOMNode(typeName)!(node) as HTMLElement;
+      const html = sanitizer(dom.outerHTML);
+
+      container.innerHTML = html;
+      dom = container.firstChild as HTMLElement;
+
       const htmlAttrs = getHTMLAttrs(dom);
 
       return [typeName, htmlAttrs, 0];
@@ -85,17 +105,21 @@ function createHTMLInlineSchema(typeName: string, wwToDOMAdaptor: ToDOMAdaptor):
   };
 }
 
-export function createHTMLSchemaMap(renderer: CustomHTMLRendererMap, wwToDOMAdaptor: ToDOMAdaptor) {
+export function createHTMLSchemaMap(
+  renderer: CustomHTMLRendererMap,
+  sanitizer: Sanitizer,
+  wwToDOMAdaptor: ToDOMAdaptor
+) {
   const htmlSchemaMap: SchemaMap = {};
 
   if (renderer?.htmlBlock) {
     Object.keys(renderer.htmlBlock).forEach(
-      (type) => (htmlSchemaMap[type] = createHTMLBlockSchema(type, wwToDOMAdaptor))
+      (type) => (htmlSchemaMap[type] = createHTMLBlockSchema(type, sanitizer, wwToDOMAdaptor))
     );
   }
   if (renderer?.htmlInline) {
     Object.keys(renderer.htmlInline).forEach(
-      (type) => (htmlSchemaMap[type] = createHTMLInlineSchema(type, wwToDOMAdaptor))
+      (type) => (htmlSchemaMap[type] = createHTMLInlineSchema(type, sanitizer, wwToDOMAdaptor))
     );
   }
   return htmlSchemaMap;

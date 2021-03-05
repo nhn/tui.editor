@@ -42,7 +42,7 @@ export function isMultiLineNode(mdNode: MdNode) {
   return type === 'codeBlock' || type === 'paragraph';
 }
 
-export function isHtmlNode(mdNode: MdNode) {
+export function isHTMLNode(mdNode: MdNode) {
   const { type } = mdNode;
 
   return type === 'htmlBlock' || type === 'htmlInline';
