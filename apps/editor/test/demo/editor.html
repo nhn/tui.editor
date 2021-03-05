@@ -9,6 +9,7 @@
     <!-- Editor -->
     <script type="module">
       import { Editor } from '/dist/index.js';
+      import { Plugin } from 'prosemirror-state';
 
       function fooPlugin() {
         console.log('foo');
@@ -16,16 +17,32 @@
       }
 
       function barPlugin(eventEmitter, options) {
-        const { hljs = {} } = options;
+        const { hljs } = options || {};
 
-        console.log('bar');
+        function customWwPlugin() {
+          console.log('## test wysiwyg plugin');
+          console.log(arguments);
+          return new Plugin({ key: 'ww' });
+        }
+
+        function customMdPlugin() {
+          console.log('## test markdown plugin');
+          console.log(arguments);
+          return new Plugin({ key: 'md' });
+        }
 
         return {
           plugins: [
             {
-              type: 'wysiwyg',
+              editorType: 'wysiwyg',
               plugin: (eventEmitter, toDOMAdaptor) => {
-                return plugin(eventEmitter, toDOMAdaptor, hljs);
+                return customWwPlugin(eventEmitter, toDOMAdaptor, hljs);
+              },
+            },
+            {
+              editorType: 'markdown',
+              plugin: (eventEmitter) => {
+                return customMdPlugin(eventEmitter, hljs);
               },
             },
           ],
@@ -54,7 +71,7 @@
         extendedAutolinks: true,
         frontMatter: true,
         customHTMLRenderer: convertors,
-        plugins: [fooPlugin, [barPlugin, {}]],
+        plugins: [fooPlugin, barPlugin],
       });
 
       window.editor = editor;
