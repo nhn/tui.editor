@@ -1,17 +1,17 @@
-import isFunction from 'tui-code-snippet/type/isFunction';
+import isArray from 'tui-code-snippet/type/isArray';
 
 import { EditorPlugin, ProsemirrorPlugin } from '@t/editor';
 import { Emitter } from '@t/event';
 import { PluginInfoResult, ExtraPluginInfoResult, ExtraMdPlugin, ExtraWwPlugin } from '@t/plugin';
 
 function execPlugin(plugin: EditorPlugin, eventEmitter: Emitter) {
-  if (isFunction(plugin)) {
-    return plugin(eventEmitter);
+  if (isArray(plugin)) {
+    const [pluginFn, options = {}] = plugin;
+
+    return pluginFn(eventEmitter, options);
   }
 
-  const [pluginFn, options = {}] = plugin;
-
-  return pluginFn(eventEmitter, options);
+  return plugin(eventEmitter);
 }
 
 function createEditorPlugins(plugins: ProsemirrorPlugin[]) {
