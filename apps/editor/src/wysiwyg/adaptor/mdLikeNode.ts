@@ -54,13 +54,15 @@ export function createMdLikeNode(node: ProsemirrorNode | Mark): MdLikeNode {
   } as const;
   const nodeInfo = nodeTypeMap[nodeType as keyof typeof nodeTypeMap];
   const attributes = { ...mdLikeNode, ...nodeInfo };
-  const { htmlAttrs, literal } = node.attrs;
+
+  // html block, inline node
+  const { htmlAttrs, childrenHTML } = node.attrs;
 
   if (htmlAttrs) {
     return {
       ...attributes,
       attrs: htmlAttrs,
-      literal,
+      childrenHTML,
     };
   }
 

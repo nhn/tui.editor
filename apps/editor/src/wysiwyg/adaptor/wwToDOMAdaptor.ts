@@ -25,17 +25,13 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
   public convertors: CustomHTMLRendererMap;
 
   constructor(linkAttributes: LinkAttributes | null, customRenderer: CustomHTMLRendererMap) {
-    const convertors = getHTMLRenderConvertors(linkAttributes, customRenderer);
+    const convertors = {
+      ...getHTMLRenderConvertors(linkAttributes, customRenderer),
+      ...customRenderer.htmlBlock,
+      ...customRenderer.htmlInline,
+    };
 
-    this.customConvertorKeys = Object.keys(customRenderer);
-    if (customRenderer.htmlBlock) {
-      const map = customRenderer.htmlBlock;
-
-      Object.keys(map).forEach((key) => {
-        this.customConvertorKeys.push(key);
-      });
-      this.customConvertorKeys.splice(this.customConvertorKeys.indexOf('htmlBlock'), 1);
-    }
+    this.customConvertorKeys = Object.keys(convertors);
     this.renderer = new Renderer({
       gfm: true,
       convertors,
@@ -45,7 +41,6 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
 
   private generateTokens(node: ProsemirrorNode | Mark) {
     const mdLikeNode = createMdLikeNode(node);
-
     const context: Context = {
       entering: true,
       leaf: isPmNode(node) ? node.isLeaf : false,
@@ -54,7 +49,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
       skipChildren: () => false,
     };
 
-    const convertor = this.convertors[node.type.name as MdNodeType]! || this.convertors.htmlBlock;
+    const convertor = this.convertors[node.type.name as MdNodeType]!;
     const converted = convertor(mdLikeNode as MdNode, context, this.convertors)!;
     const tokens: HTMLToken[] = isArray(converted) ? converted : [converted];
 

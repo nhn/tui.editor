@@ -7,12 +7,13 @@ import {
   Context,
   OpenTagToken,
   CustomInlineMdNode,
-  HTMLBlockMdNode,
   CustomHTMLRenderer,
+  HTMLMdNode,
 } from '@t/markdown';
 import { LinkAttributes } from '@t/editor';
-import { ATTRIBUTE, reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
+import { reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 import { getWidgetContent, widgetToDOM } from '@/widget/rules';
+import { getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
 
 type TokenAttrs = Record<string, any>;
 
@@ -152,32 +153,32 @@ export function getHTMLRenderConvertors(
           newContext.origin = () => orgConvertor(node, context);
           return customConvertor(node, newContext);
         };
-      } else if (nodeType === 'htmlBlock' || nodeType === 'htmlInline') {
+      } else if (['htmlBlock', 'htmlInline'].includes(nodeType)) {
         convertors[nodeType] = (node, context) => {
           const matched = node.literal!.match(reHTMLTag);
 
           if (matched) {
-            const [rootHtml, typeName] = matched;
+            const [rootHTML, openTagName, , closeTagName] = matched;
+            const typeName = openTagName || closeTagName;
             // @ts-expect-error
             const htmlConvertor: CustomHTMLRenderer = customConvertor[typeName];
+            const childrenHTML = node
+              .literal!.replace(
+                new RegExp(`(<\\s*${typeName}[^>]+?>)|(</${typeName}\\s*[>])`, 'ig'),
+                ''
+              )
+              .trim();
 
             if (htmlConvertor) {
-              const attrs = rootHtml.match(new RegExp(ATTRIBUTE, 'g'));
-
-              if (attrs) {
-                (node as HTMLBlockMdNode).attrs = attrs.reduce<Record<string, string | null>>(
-                  (acc, attr) => {
-                    const [name, value] = attr.trim().split('=');
-
-                    acc[name] = value.replace(/'|"/g, '').trim();
-
-                    return acc;
-                  },
-                  {}
-                );
-              }
               // copy for preventing to overwrite the originial property
-              return htmlConvertor({ ...node, type: typeName }, context);
+              const newNode = { ...node } as HTMLMdNode;
+
+              newNode.attrs = getHTMLAttrsByHTMLString(rootHTML);
+              newNode.childrenHTML = childrenHTML;
+              newNode.type = typeName;
+              newNode.open = !/^\s*<\s*\//.test(node.literal!);
+
+              return htmlConvertor(newNode, context);
             }
           }
           return context.origin!();

@@ -22,7 +22,7 @@ import {
   CustomInlineMdNode,
 } from '@t/markdown';
 import { createWidgetContent, getWidgetContent } from '@/widget/rules';
-import { getHtmlAttrs } from '@/wysiwyg/nodes/html';
+import { getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
 
 function isBRTag(node: MdNode) {
   return node.type === 'htmlInline' && /<br ?\/?>/.test(node.literal!);
@@ -286,15 +286,24 @@ export const toWwConvertors: ToWwConvertorMap = {
   },
 
   htmlInline(state, node) {
-    const matched = node.literal!.match(reHTMLTag);
+    const html = node.literal!;
+    const matched = html.match(reHTMLTag);
 
     if (matched) {
       const [, openTagName, , closeTagName] = matched;
-      const tagName = openTagName || closeTagName;
+      const typeName = (openTagName || closeTagName).toLowerCase();
+      const nodeType = state.schema.nodes[typeName];
 
-      if (tagName) {
-        const type = tagName.toLowerCase();
-        const htmlToWwConvertor = htmlToWwConvertors[type];
+      if (nodeType) {
+        if (openTagName) {
+          const htmlAttrs = getHTMLAttrsByHTMLString(html);
+
+          state.openNode(nodeType, { htmlAttrs });
+        } else {
+          state.closeNode();
+        }
+      } else {
+        const htmlToWwConvertor = htmlToWwConvertors[typeName];
 
         if (htmlToWwConvertor) {
           htmlToWwConvertor(state, node, openTagName);
@@ -308,18 +317,24 @@ export const toWwConvertors: ToWwConvertorMap = {
     const container = document.createElement('div');
     const matched = html.match(reHTMLTag);
 
-    container.innerHTML = html;
-
     if (matched) {
-      const [, typeName] = matched;
+      const [, openTagName, , closeTagName] = matched;
+      const typeName = (openTagName || closeTagName).toLowerCase();
       const nodeType = state.schema.nodes[typeName];
 
       if (nodeType) {
-        const htmlAttrs = getHtmlAttrs(container.firstChild as HTMLElement);
+        const htmlAttrs = getHTMLAttrsByHTMLString(html);
+        const childrenHTML = node
+          .literal!.replace(
+            new RegExp(`(<\\s*${typeName}[^>]+?>)|(</${typeName}\\s*[>])`, 'ig'),
+            ''
+          )
+          .trim();
 
-        state.addNode(nodeType, { htmlAttrs, literal: html });
+        state.addNode(nodeType, { htmlAttrs, childrenHTML, literal: html });
       }
     } else {
+      container.innerHTML = html;
       addRawHTMLAttributeToDOM(container);
 
       state.convertByDOMParser(container as HTMLElement);
