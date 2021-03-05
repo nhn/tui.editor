@@ -93,7 +93,7 @@ describe('editor', () => {
       editor.setMarkdown('# heading');
 
       expect(mdEditor).toContainHTML(
-        '<div><span class="tui-md-heading tui-md-heading1"><span class="tui-md-delimiter">#</span> heading</span></div>'
+        '<div><span class="tui-editor-md-heading tui-editor-md-heading1"><span class="tui-editor-md-delimiter">#</span> heading</span></div>'
       );
       expect(getPreviewHTML()).toBe('<h1>heading</h1>');
     });
@@ -102,7 +102,7 @@ describe('editor', () => {
       editor.setHTML('<h1>heading</h1>');
 
       expect(mdEditor).toContainHTML(
-        '<div><span class="tui-md-heading tui-md-heading1"><span class="tui-md-delimiter">#</span> heading</span></div>'
+        '<div><span class="tui-editor-md-heading tui-editor-md-heading1"><span class="tui-editor-md-delimiter">#</span> heading</span></div>'
       );
       expect(getPreviewHTML()).toBe('<h1>heading</h1>');
     });
@@ -112,7 +112,7 @@ describe('editor', () => {
       editor.reset();
 
       expect(mdEditor).not.toContainHTML(
-        '<div><span class="tui-md-heading tui-md-heading1"><span class="tui-md-delimiter">#</span> heading</span></div>'
+        '<div><span class="tui-editor-md-heading tui-editor-md-heading1"><span class="tui-editor-md-delimiter">#</span> heading</span></div>'
       );
       expect(getPreviewHTML()).toBe('');
     });
