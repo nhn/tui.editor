@@ -268,6 +268,26 @@ export const toMdConvertors: ToMdConvertorMap = {
       rawHTML,
     };
   },
+
+  // html inline node, html block node
+  html({ node }) {
+    const content = node.attrs.inline
+      ? (node as ProsemirrorNode).textContent
+      : node.attrs.childrenHTML;
+    const tagName = node.type.name;
+    const attrs = node.attrs.htmlAttrs;
+    let openTag = `<${tagName}`;
+    const closeTag = `</${tagName}>`;
+
+    Object.keys(attrs).forEach((attrName) => {
+      openTag += ` ${attrName}="${attrs[attrName]}"`;
+    });
+    openTag += '>';
+
+    return {
+      text: `${openTag}${content}${closeTag}`,
+    };
+  },
 };
 
 const markTypeOptions: ToMdMarkTypeOptions = {

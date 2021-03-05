@@ -224,6 +224,10 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
   widget(state, _, { text }) {
     state.write(text);
   },
+
+  html(state, _, { text }) {
+    state.write(text);
+  },
 };
 
 export function write(
