@@ -53,7 +53,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
     const converted = convertor(mdLikeNode as MdNode, context, this.convertors)!;
     const tokens: HTMLToken[] = isArray(converted) ? converted : [converted];
 
-    if (isContainer(node.type.name)) {
+    if (isContainer(node.type.name) || node.attrs.inline) {
       context.entering = false;
 
       tokens.push({ type: 'text', content: isPmNode(node) ? node.textContent : '' } as TextToken);

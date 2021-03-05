@@ -176,7 +176,7 @@ export function getHTMLRenderConvertors(
               newNode.attrs = getHTMLAttrsByHTMLString(rootHTML);
               newNode.childrenHTML = childrenHTML;
               newNode.type = typeName;
-              newNode.open = !/^\s*<\s*\//.test(node.literal!);
+              context.entering = !/^\s*<\s*\//.test(node.literal!);
 
               return htmlConvertor(newNode, context);
             }
