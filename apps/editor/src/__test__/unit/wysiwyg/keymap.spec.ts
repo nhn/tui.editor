@@ -352,7 +352,7 @@ describe('keymap', () => {
 
         forceKeymapFn('table', 'moveInCell', ['up']);
 
-        expect(wwe.getRange()).toEqual([55, 55]); // in 'quux'
+        expect(wwe.getSelection()).toEqual([55, 55]); // in 'quux'
       });
 
       it('should move from first list item to end list item of up cell', () => {
@@ -360,7 +360,7 @@ describe('keymap', () => {
 
         forceKeymapFn('table', 'moveInCell', ['up']);
 
-        expect(wwe.getRange()).toEqual([33, 33]); // in 'qux'
+        expect(wwe.getSelection()).toEqual([33, 33]); // in 'qux'
       });
     });
 
@@ -370,7 +370,7 @@ describe('keymap', () => {
 
         forceKeymapFn('table', 'moveInCell', ['down']);
 
-        expect(wwe.getRange()).toEqual([23, 23]); // in 'baz'
+        expect(wwe.getSelection()).toEqual([23, 23]); // in 'baz'
       });
 
       it('should move from last list item to start list item of down cell', () => {
@@ -378,7 +378,7 @@ describe('keymap', () => {
 
         forceKeymapFn('table', 'moveInCell', ['down']);
 
-        expect(wwe.getRange()).toEqual([43, 43]); // in 'quux'
+        expect(wwe.getSelection()).toEqual([43, 43]); // in 'quux'
       });
     });
   });

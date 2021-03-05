@@ -1,6 +1,6 @@
 import { Schema } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
-import { Plugin } from 'prosemirror-state';
+import { EditorState, Plugin } from 'prosemirror-state';
 import {
   CustomHTMLRenderer,
   CustomHTMLRendererMap,
@@ -260,7 +260,7 @@ export interface Base {
 
   createContext(): Context;
 
-  createState(state?: StateOptions): void;
+  createState(state?: StateOptions): EditorState;
 
   createView(): EditorView;
 

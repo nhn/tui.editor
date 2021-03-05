@@ -449,8 +449,8 @@ class ToastUIEditor {
 
   /**
    * Set selection range
-   * @param {number|Array.<number>} [start] - start position
-   * @param {number|Array.<number>} [end] - end position
+   * @param {number|Array.<number>} start - start position
+   * @param {number|Array.<number>} end - end position
    */
   setSelection(start: EditorPos, end: EditorPos) {
     this.getCurrentModeEditor().setSelection(start, end);

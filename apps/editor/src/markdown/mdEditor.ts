@@ -5,7 +5,7 @@ import { Step, ReplaceAroundStep } from 'prosemirror-transform';
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { Emitter } from '@t/event';
-import { MdNode, MdPos, MdSourcepos } from '@t/markdown';
+import { MdNode, MdPos } from '@t/markdown';
 import { WidgetStyle } from '@t/editor';
 import EditorBase from '@/base';
 import SpecManager from '@/spec/specManager';
@@ -320,6 +320,7 @@ export default class MdEditor extends EditorBase {
       mdNode = mdNode.parent!;
     }
 
+    // add 1 sync for prosemirror position
     mdNode.sourcepos![1][1] += 1;
 
     return { range: mdNode.sourcepos!, type: mdNode.type };
