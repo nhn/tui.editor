@@ -25,6 +25,8 @@ export default class ToMdConvertorState {
 
   public stopNewline: boolean;
 
+  public inTable: boolean;
+
   constructor({ nodeTypeConvertors, markTypeConvertors }: ToMdConvertors) {
     this.nodeTypeConvertors = nodeTypeConvertors;
     this.markTypeConvertors = markTypeConvertors;
@@ -33,6 +35,7 @@ export default class ToMdConvertorState {
     this.closed = false;
     this.tightList = false;
     this.stopNewline = false;
+    this.inTable = false;
   }
 
   private isInBlank() {
@@ -301,6 +304,7 @@ export default class ToMdConvertorState {
 
   convertTableCell(node: Node) {
     this.stopNewline = true;
+    this.inTable = true;
 
     node.forEach((child, _, index) => {
       if (includes(['bulletList', 'orderedList'], child.type.name)) {
@@ -320,6 +324,7 @@ export default class ToMdConvertorState {
     });
 
     this.stopNewline = false;
+    this.inTable = false;
   }
 
   convertNode(parent: Node) {

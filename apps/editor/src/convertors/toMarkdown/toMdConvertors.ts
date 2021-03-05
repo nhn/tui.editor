@@ -88,21 +88,38 @@ export const toMdConvertors: ToMdConvertorMap = {
     };
   },
 
-  bulletList({ node }) {
+  bulletList({ node }, { inTable }) {
+    let { rawHTML } = node.attrs;
+
+    if (inTable) {
+      rawHTML = rawHTML || 'ul';
+    }
+
     return {
       delim: '*',
-      rawHTML: getPairRawHTML(node.attrs.rawHTML),
+      rawHTML: getPairRawHTML(rawHTML),
     };
   },
 
-  orderedList({ node }) {
+  orderedList({ node }, { inTable }) {
+    let { rawHTML } = node.attrs;
+
+    if (inTable) {
+      rawHTML = rawHTML || 'ol';
+    }
+
     return {
-      rawHTML: getPairRawHTML(node.attrs.rawHTML),
+      rawHTML: getPairRawHTML(rawHTML),
     };
   },
 
-  listItem({ node }) {
-    const { task, checked, rawHTML } = node.attrs;
+  listItem({ node }, { inTable }) {
+    const { task, checked } = node.attrs;
+    let { rawHTML } = node.attrs;
+
+    if (inTable) {
+      rawHTML = rawHTML || 'li';
+    }
 
     const className = task ? ` class="task-list-item${checked ? ' checked' : ''}"` : '';
     const dataset = task ? ` data-task${checked ? ` data-task-checked` : ''}` : '';
@@ -286,7 +303,11 @@ function createNodeTypeConvertors(convertors: ToMdConvertorMap) {
 
       if (writer) {
         const convertor = convertors[type];
-        const params = convertor ? convertor(nodeInfo as NodeInfo, {}) : {};
+        const params = convertor
+          ? convertor(nodeInfo as NodeInfo, {
+              inTable: state.inTable,
+            })
+          : {};
 
         write(type, { state, nodeInfo, params });
       }
