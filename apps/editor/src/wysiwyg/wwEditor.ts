@@ -1,6 +1,7 @@
 import { EditorView } from 'prosemirror-view';
 import { Node as ProsemirrorNode, Slice, Fragment, Mark } from 'prosemirror-model';
 import isNumber from 'tui-code-snippet/type/isNumber';
+
 import EditorBase from '@/base';
 import { getWwCommands } from '@/commands/wwCommands';
 
