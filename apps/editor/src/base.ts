@@ -6,7 +6,7 @@ import { baseKeymap } from 'prosemirror-commands';
 import { InputRule, inputRules } from 'prosemirror-inputrules';
 import { history } from 'prosemirror-history';
 import css from 'tui-code-snippet/domUtil/css';
-import { WidgetStyle, EditorType, EditorPos, Base, NodeRangeInfo, SchemaMap } from '@t/editor';
+import { WidgetStyle, EditorType, EditorPos, Base, NodeRangeInfo } from '@t/editor';
 import { Emitter } from '@t/event';
 import { MdSourcepos } from '@t/markdown';
 import { Context, EditorAllCommandMap } from '@t/spec';
@@ -127,9 +127,9 @@ export default abstract class EditorBase implements Base {
     return rules.length ? inputRules({ rules }) : null;
   }
 
-  createSchema(htmlSchemaMap?: SchemaMap) {
+  createSchema() {
     return new Schema({
-      nodes: { ...this.specs.nodes, ...htmlSchemaMap },
+      nodes: this.specs.nodes,
       marks: this.specs.marks,
     });
   }

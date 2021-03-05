@@ -24,11 +24,11 @@ describe('WysiwygEditor', () => {
 
   beforeEach(() => {
     const htmlRenderer = createHTMLrenderer();
-    const adaptor = new WwToDOMAdaptor({}, htmlRenderer);
-    const htmlSchemaMap = createHTMLSchemaMap(htmlRenderer, sanitizeHTML, adaptor);
+    const toDOMAdaptor = new WwToDOMAdaptor({}, htmlRenderer);
+    const htmlSchemaMap = createHTMLSchemaMap(htmlRenderer, sanitizeHTML, toDOMAdaptor);
 
     em = new EventEmitter();
-    wwe = new WysiwygEditor(em, adaptor, htmlSchemaMap);
+    wwe = new WysiwygEditor(em, { toDOMAdaptor, htmlSchemaMap });
     el = wwe.el;
     document.body.appendChild(el);
   });

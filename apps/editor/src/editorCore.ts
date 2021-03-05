@@ -210,7 +210,10 @@ class ToastUIEditor {
       frontMatter,
     });
 
-    this.mdEditor = new MarkdownEditor(this.toastMark, this.eventEmitter, useCommandShortcut);
+    this.mdEditor = new MarkdownEditor(this.eventEmitter, {
+      toastMark: this.toastMark,
+      useCommandShortcut,
+    });
 
     this.preview = new MarkdownPreview(this.eventEmitter, {
       ...rendererOptions,
@@ -218,13 +221,12 @@ class ToastUIEditor {
       highlight: this.options.previewHighlight,
     });
 
-    this.wwEditor = new WysiwygEditor(
-      this.eventEmitter,
-      wwToDOMAdaptor,
+    this.wwEditor = new WysiwygEditor(this.eventEmitter, {
+      toDOMAdaptor: wwToDOMAdaptor,
       useCommandShortcut,
       htmlSchemaMap,
-      linkAttributes!
-    );
+      linkAttributes,
+    });
 
     this.convertor = new Convertor(
       this.wwEditor.getSchema(),

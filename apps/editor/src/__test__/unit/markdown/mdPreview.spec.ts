@@ -74,7 +74,7 @@ describe('preview highlight', () => {
     };
 
     eventEmitter = new EventEmitter();
-    editor = new MarkdownEditor(new ToastMark(), eventEmitter, true);
+    editor = new MarkdownEditor(eventEmitter, { toastMark: new ToastMark() });
     preview = new MarkdownPreview(eventEmitter, options);
     editorEl = editor.getElement();
 

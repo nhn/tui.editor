@@ -40,13 +40,20 @@ interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
 }
 
+interface MarkdownOptions {
+  toastMark: ToastMark;
+  useCommandShortcut?: boolean;
+}
+
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
 
   private clipboard!: HTMLTextAreaElement;
 
-  constructor(toastMark: ToastMark, eventEmitter: Emitter, useCommandShortcut: boolean) {
+  constructor(eventEmitter: Emitter, options: MarkdownOptions) {
     super(eventEmitter);
+
+    const { toastMark, useCommandShortcut = true } = options;
 
     this.editorType = 'markdown';
     this.toastMark = toastMark;

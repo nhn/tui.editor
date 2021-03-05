@@ -43,10 +43,10 @@ describe('wysiwyg table commands', () => {
   }
 
   beforeEach(() => {
-    const adaptor = new WwToDOMAdaptor({}, {});
+    const toDOMAdaptor = new WwToDOMAdaptor({}, {});
 
     em = new EventEmitter();
-    wwe = new WysiwygEditor(em, adaptor, true);
+    wwe = new WysiwygEditor(em, { toDOMAdaptor });
     cmd = new CommandManager(em, {}, wwe.commands);
   });
 

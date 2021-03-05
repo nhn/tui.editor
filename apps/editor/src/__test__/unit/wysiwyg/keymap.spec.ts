@@ -42,10 +42,10 @@ describe('keymap', () => {
   }
 
   beforeEach(() => {
-    const adaptor = new WwToDOMAdaptor({}, {});
+    const toDOMAdaptor = new WwToDOMAdaptor({}, {});
 
     em = new EventEmitter();
-    wwe = new WysiwygEditor(em, adaptor, true);
+    wwe = new WysiwygEditor(em, { toDOMAdaptor });
   });
 
   afterEach(() => {

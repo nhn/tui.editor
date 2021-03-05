@@ -17,7 +17,7 @@ describe('MarkdownEditor', () => {
 
   beforeEach(() => {
     em = new EventEmitter();
-    mde = new MarkdownEditor(new ToastMark(), em, true);
+    mde = new MarkdownEditor(em, { toastMark: new ToastMark() });
     el = mde.el;
     document.body.appendChild(el);
   });

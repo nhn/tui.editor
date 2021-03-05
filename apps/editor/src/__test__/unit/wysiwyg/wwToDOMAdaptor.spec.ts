@@ -95,7 +95,7 @@ beforeEach(() => {
 
   const htmlSchemaMap = createHTMLSchemaMap(convertors, sanitizeHTML, toDOMAdaptor);
 
-  wwe = new WysiwygEditor(em, toDOMAdaptor, htmlSchemaMap);
+  wwe = new WysiwygEditor(em, { toDOMAdaptor, htmlSchemaMap });
 });
 
 afterEach(() => {
