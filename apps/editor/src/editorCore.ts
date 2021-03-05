@@ -152,18 +152,6 @@ class ToastUIEditor {
       options
     );
 
-    this.codeBlockLanguages = [];
-    this.mode = this.options.initialEditType || 'markdown';
-
-    this.eventEmitter = new EventEmitter();
-
-    setWidgetRules(this.options.widgetRules);
-
-    const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
-    const { toHTMLRenderers, mdPlugins, wwPlugins } = getPluginInfo(
-      this.options.plugins,
-      this.eventEmitter
-    );
     const {
       customHTMLRenderer,
       extendedAutolinks,
@@ -185,7 +173,10 @@ class ToastUIEditor {
     setWidgetRules(widgetRules);
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
-    const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
+    const { toHTMLRenderers, mdPlugins, wwPlugins } = getPluginInfo(
+      this.options.plugins,
+      this.eventEmitter
+    );
     const rendererOptions = {
       linkAttributes,
       customHTMLRenderer: { ...toHTMLRenderers, ...customHTMLRenderer },

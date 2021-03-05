@@ -58,7 +58,7 @@ export default class MdEditor extends EditorBase {
 
     this.editorType = 'markdown';
     this.toastMark = toastMark;
-    this.extraPlugins = extraPlugins;
+    this.extraPlugins = extraPlugins ?? [];
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
