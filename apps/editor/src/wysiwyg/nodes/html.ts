@@ -4,6 +4,7 @@ import { ToDOMAdaptor } from '@t/convertor';
 import { CustomHTMLRendererMap } from '@t/markdown';
 import { SchemaMap, Sanitizer } from '@t/editor';
 import { ATTRIBUTE, reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
+import { registerWhiteTaglistIfPossible } from '@/sanitizer/htmlSanitizer';
 
 export function getHTMLAttrsByHTMLString(html: string) {
   html = html.match(reHTMLTag)![0];
@@ -72,7 +73,7 @@ function createHTMLBlockSchema(
 
 function createHTMLInlineSchema(
   typeName: string,
-  sanitizer: Sanitizer,
+  sanitizeHTML: Sanitizer,
   wwToDOMAdaptor: ToDOMAdaptor
 ): NodeSpec {
   return {
@@ -93,7 +94,7 @@ function createHTMLInlineSchema(
     toDOM(node: ProsemirrorNode): DOMOutputSpecArray {
       const container = document.createElement('div');
       let dom = wwToDOMAdaptor.getToDOMNode(typeName)!(node) as HTMLElement;
-      const html = sanitizer(dom.outerHTML);
+      const html = sanitizeHTML(dom.outerHTML);
 
       container.innerHTML = html;
       dom = container.firstChild as HTMLElement;
@@ -107,20 +108,22 @@ function createHTMLInlineSchema(
 
 export function createHTMLSchemaMap(
   renderer: CustomHTMLRendererMap,
-  sanitizer: Sanitizer,
+  sanitizeHTML: Sanitizer,
   wwToDOMAdaptor: ToDOMAdaptor
 ) {
   const htmlSchemaMap: SchemaMap = {};
 
   if (renderer?.htmlBlock) {
-    Object.keys(renderer.htmlBlock).forEach(
-      (type) => (htmlSchemaMap[type] = createHTMLBlockSchema(type, sanitizer, wwToDOMAdaptor))
-    );
+    Object.keys(renderer.htmlBlock).forEach((type) => {
+      htmlSchemaMap[type] = createHTMLBlockSchema(type, sanitizeHTML, wwToDOMAdaptor);
+      registerWhiteTaglistIfPossible(type);
+    });
   }
   if (renderer?.htmlInline) {
-    Object.keys(renderer.htmlInline).forEach(
-      (type) => (htmlSchemaMap[type] = createHTMLInlineSchema(type, sanitizer, wwToDOMAdaptor))
-    );
+    Object.keys(renderer.htmlInline).forEach((type) => {
+      htmlSchemaMap[type] = createHTMLInlineSchema(type, sanitizeHTML, wwToDOMAdaptor);
+      registerWhiteTaglistIfPossible(type);
+    });
   }
   return htmlSchemaMap;
 }

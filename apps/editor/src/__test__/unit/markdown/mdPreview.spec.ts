@@ -225,6 +225,8 @@ describe('Preview with html renderer', () => {
       sanitizer: sanitizer.sanitizeHTML,
     };
 
+    sanitizer.registerWhiteTaglistIfPossible('iframe');
+
     eventEmitter = new EventEmitter();
 
     preview = new MarkdownPreview(eventEmitter, options);

@@ -6,6 +6,7 @@ import toArray from 'tui-code-snippet/collection/toArray';
 import isString from 'tui-code-snippet/type/isString';
 
 import { finalizeHtml, findNodes, removeNode } from '@/utils/dom';
+import { includes } from '@/utils/common';
 
 type GlobalEventTypes = keyof Omit<
   Omit<GlobalEventHandlers, 'addEventListener'>,
@@ -45,6 +46,31 @@ const reXSSAttr = /href|src|background/i;
 const reXSSAttrValue = /((java|vb|live)script|x):/i;
 const reOnEvent = /^on\S+/i;
 const reComment = /<!--[\s\S]*?-->/g;
+const DEFAULT_BLACK_TAG_LIST = [
+  'script',
+  'iframe',
+  'textarea',
+  'form',
+  'button',
+  'select',
+  'input',
+  'meta',
+  'style',
+  'link',
+  'title',
+  'embed',
+  'object',
+  'details',
+  'summary',
+];
+const CAN_BE_WHITE_TAG_LIST = ['iframe', 'embed', 'details', 'summary'];
+const blackTagList = [...DEFAULT_BLACK_TAG_LIST];
+
+export function registerWhiteTaglistIfPossible(tagName: string) {
+  if (includes(CAN_BE_WHITE_TAG_LIST, tagName)) {
+    blackTagList.splice(blackTagList.indexOf(tagName), 1);
+  }
+}
 
 export function sanitizeHTML(html: string) {
   const root = document.createElement('div');
@@ -61,10 +87,7 @@ export function sanitizeHTML(html: string) {
 }
 
 function removeUnnecessaryTags(html: HTMLElement) {
-  const removedTags = findNodes(
-    html,
-    'script, iframe, textarea, form, button, select, input, meta, style, link, title, embed, object, details, summary'
-  );
+  const removedTags = findNodes(html, blackTagList.join(','));
 
   removedTags.forEach((node) => {
     removeNode(node);
