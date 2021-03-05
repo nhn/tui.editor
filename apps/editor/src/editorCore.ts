@@ -34,7 +34,7 @@ import CommandManager from './commands/commandManager';
 import Convertor from './convertors/convertor';
 import Viewer from './viewer';
 import i18n, { I18n } from './i18n/i18n';
-import { getPluginInfo } from './pluginHelper';
+import { getPluginInfo } from './helper/plugin';
 
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';

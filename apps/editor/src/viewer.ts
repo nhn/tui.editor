@@ -12,7 +12,7 @@ import off from 'tui-code-snippet/domEvent/off';
 import { ViewerOptions } from '@t/editor';
 import { Emitter, Handler } from '@t/event';
 import MarkdownPreview from './markdown/mdPreview';
-import { getPluginInfo } from './pluginHelper';
+import { getPluginInfo } from './helper/plugin';
 import { last, sanitizeLinkAttribute } from './utils/common';
 import EventEmitter from './event/eventEmitter';
 import { isPositionInBox, toggleClass } from './utils/dom';
