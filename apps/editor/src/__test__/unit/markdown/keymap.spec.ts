@@ -87,7 +87,7 @@ describe('extend table keymap', () => {
     `;
 
     mde.setMarkdown(input);
-    mde.setSelection([2, 15], [4, 5]);
+    mde.setSelection([2, 14], [4, 5]);
 
     forceKeymapFn('table', 'extendTable');
 
@@ -258,7 +258,7 @@ describe('extend list keymap', () => {
       `;
 
       mde.setMarkdown(input);
-      mde.setSelection([1, 1], [2, 4]);
+      mde.setSelection([1, 2], [2, 4]);
 
       forceKeymapFn('listItem', 'extendList');
 
@@ -435,7 +435,7 @@ describe('extend list keymap', () => {
       `;
 
       mde.setMarkdown(input);
-      mde.setSelection([1, 1], [2, 5]);
+      mde.setSelection([1, 2], [2, 5]);
 
       forceKeymapFn('listItem', 'extendList');
 
