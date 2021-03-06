@@ -13,7 +13,7 @@ import {
   replaceNodes,
 } from '@/helper/manipulation';
 import { reBlockQuote } from '../marks/blockQuote';
-import { getRangeInfo } from '../helper/pos';
+import { getRangeInfo, getNodeOffsetRange } from '../helper/pos';
 import { getReorderedListInfo, reList, reOrderedListGroup } from '../helper/list';
 
 interface SelectionInfo {
@@ -103,15 +103,6 @@ export class Paragraph extends Node {
   private reorderList(startLine: number, endLine: number) {
     const { view, toastMark, schema } = this.context;
     const { tr, selection, doc } = view.state;
-    const orgEndLine = endLine;
-    let $pos = selection.$to;
-
-    if ($pos.depth === 0) {
-      $pos = doc.resolve($pos.pos - 1);
-    }
-
-    let from = $pos.end(1);
-    let to = from;
 
     let mdNode = toastMark.findFirstNodeAtLine(startLine);
     let topListNode = mdNode;
@@ -134,15 +125,9 @@ export class Paragraph extends Node {
 
     endLine = Math.max(endLine, line - 1);
 
-    for (let i = startLine; i <= endLine; i += 1) {
-      if (i <= orgEndLine) {
-        from -= doc.child(i - 1).nodeSize;
-      } else if (i > orgEndLine) {
-        to += doc.child(i - 1).nodeSize;
-      }
-    }
-
-    const newTr = replaceNodes(tr, Math.max(1, from), Math.min(doc.content.size, to), nodes);
+    const { startOffset } = getNodeOffsetRange(doc, startLine - 1);
+    const { endOffset } = getNodeOffsetRange(doc, endLine - 1);
+    const newTr = replaceNodes(tr, startOffset, endOffset, nodes);
     const newSelection = createTextSelection(newTr, selection.from, selection.to);
 
     view.dispatch!(newTr.setSelection(newSelection));
