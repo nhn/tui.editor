@@ -74,7 +74,9 @@ export class Table extends Mark {
     return ({ selection, doc, tr, schema }, dispatch) => {
       const { startFromOffset, endFromOffset, endToOffset, endIndex, to } = getRangeInfo(selection);
       const { textContent } = doc.child(endIndex);
-      const mdPos = [endIndex + 1, to - endFromOffset];
+      // should add `1` to line for the markdown parser
+      // because markdown parser has `1`(not zero) as the start number
+      const mdPos = [endIndex + 1, to - endFromOffset + 1];
 
       const mdNode: MdNode = this.context.toastMark.findNodeAtPosition(mdPos);
       const cellNode = findClosestNode(
