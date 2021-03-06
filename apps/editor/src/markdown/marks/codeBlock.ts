@@ -10,7 +10,8 @@ import {
   replaceNodes,
 } from '@/helper/manipulation';
 import { isCodeBlockNode } from '@/utils/markdown';
-import { getRangeInfo, resolveSelectionPos } from '../helper/pos';
+import { getRangeInfo } from '../helper/pos';
+import { getTextContent } from '../helper/query';
 
 export class CodeBlock extends Mark {
   context!: MdSpecContext;
@@ -35,7 +36,7 @@ export class CodeBlock extends Mark {
       const nodes: ProsemirrorNode[] = [fencedNode];
 
       for (let i = startIndex; i <= endIndex; i += 1) {
-        const { textContent } = doc.child(i);
+        const textContent = getTextContent(doc, i);
 
         nodes.push(createParagraph(schema, textContent));
       }
@@ -52,15 +53,14 @@ export class CodeBlock extends Mark {
   private keepIndentation(): Command {
     return ({ selection, tr, doc, schema }, dispatch) => {
       const { toastMark } = this.context;
-      const [from, to] = resolveSelectionPos(selection);
-      const { startFromOffset, endToOffset, endIndex } = getRangeInfo(selection);
-      const { textContent } = doc.child(endIndex);
+      const { startFromOffset, endToOffset, endIndex, from, to } = getRangeInfo(selection);
+      const textContent = getTextContent(doc, endIndex);
 
       if (from === to && textContent.trim()) {
-        let matched;
+        const matched = textContent.match(/^\s+/);
         const mdNode = toastMark.findFirstNodeAtLine(endIndex + 1);
 
-        if (isCodeBlockNode(mdNode) && (matched = textContent.match(/^\s+/))) {
+        if (isCodeBlockNode(mdNode) && matched) {
           const [spaces] = matched;
           const slicedText = textContent.slice(to - startFromOffset);
           const node = createParagraph(schema, spaces + slicedText);
@@ -84,7 +84,7 @@ export class CodeBlock extends Mark {
     return {
       'Shift-Mod-p': codeBlockCommand,
       'Shift-Mod-P': codeBlockCommand,
-      Enter: this.keepIndentation(),
+      // Enter: this.keepIndentation(),
     };
   }
 }

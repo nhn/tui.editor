@@ -25,6 +25,7 @@ import {
   ToListContext,
 } from '../helper/list';
 import { getRangeInfo, getNodeOffsetRange } from '../helper/pos';
+import { getTextContent } from '../helper/query';
 
 type CommandType = 'bullet' | 'ordered' | 'task';
 
@@ -68,8 +69,7 @@ export class ListItem extends Mark {
     return ({ selection, tr, doc, schema }, dispatch) => {
       const { toastMark } = this.context;
       const { to, startFromOffset, endFromOffset, endToOffset, endIndex } = getRangeInfo(selection);
-
-      const { textContent } = doc.child(endIndex);
+      const textContent = getTextContent(doc, endIndex);
       const isList = reList.test(textContent);
 
       if (!isList || selection.from === startFromOffset) {

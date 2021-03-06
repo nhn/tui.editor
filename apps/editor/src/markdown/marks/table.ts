@@ -12,6 +12,7 @@ import {
   insertNodes,
   replaceNodes,
 } from '@/helper/manipulation';
+import { getTextContent } from '../helper/query';
 
 interface Payload {
   columnCount: number;
@@ -73,7 +74,7 @@ export class Table extends Mark {
   private extendTable(): Command {
     return ({ selection, doc, tr, schema }, dispatch) => {
       const { startFromOffset, endFromOffset, endToOffset, endIndex, to } = getRangeInfo(selection);
-      const { textContent } = doc.child(endIndex);
+      const textContent = getTextContent(doc, endIndex);
       // should add `1` to line for the markdown parser
       // because markdown parser has `1`(not zero) as the start number
       const mdPos = [endIndex + 1, to - endFromOffset + 1];

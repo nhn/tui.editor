@@ -10,6 +10,7 @@ import {
   replaceNodes,
 } from '@/helper/manipulation';
 import { getRangeInfo } from '../helper/pos';
+import { getTextContent } from '../helper/query';
 
 export const reBlockQuote = /^\s*> ?/;
 
@@ -33,8 +34,7 @@ export class BlockQuote extends Mark {
   private extendBlockQuote(): Command {
     return ({ selection, doc, tr, schema }, dispatch) => {
       const { endFromOffset, endToOffset, endIndex, to } = getRangeInfo(selection);
-      const endNode = doc.child(endIndex);
-      const { textContent } = endNode;
+      const textContent = getTextContent(doc, endIndex);
       const isBlockQuote = reBlockQuote.test(textContent);
 
       if (isBlockQuote) {
@@ -65,11 +65,11 @@ export class BlockQuote extends Mark {
   commands(): EditorCommand {
     return () => ({ selection, doc, tr, schema }, dispatch) => {
       const { startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(selection);
-      const isBlockQuote = reBlockQuote.test(doc.child(startIndex).textContent);
+      const isBlockQuote = reBlockQuote.test(getTextContent(doc, startIndex));
       const nodes: ProsemirrorNode[] = [];
 
       for (let i = startIndex; i <= endIndex; i += 1) {
-        const { textContent } = doc.child(i);
+        const textContent = getTextContent(doc, i);
         const result = this.createBlockQuoteText(textContent, isBlockQuote);
 
         nodes.push(createParagraph(schema, result));

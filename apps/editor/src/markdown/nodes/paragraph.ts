@@ -15,6 +15,7 @@ import {
 import { reBlockQuote } from '../marks/blockQuote';
 import { getRangeInfo, getNodeOffsetRange } from '../helper/pos';
 import { getReorderedListInfo, reList, reOrderedListGroup } from '../helper/list';
+import { getTextByMdLine, getTextContent } from '../helper/query';
 
 interface SelectionInfo {
   from: number;
@@ -119,7 +120,7 @@ export class Paragraph extends Node {
       startLine = topListNode.sourcepos![0][0];
     }
 
-    const [, indent, , start] = reOrderedListGroup.exec(doc.child(startLine - 1).textContent)!;
+    const [, indent, , start] = reOrderedListGroup.exec(getTextByMdLine(doc, startLine))!;
     const indentLen = indent.length;
     const { line, nodes } = getReorderedListInfo(doc, schema, startLine, Number(start), indentLen);
 
@@ -145,14 +146,14 @@ export class Paragraph extends Node {
         return false;
       }
 
-      const startLineText = doc.child(startIndex).textContent;
+      const startLineText = getTextContent(doc, startIndex);
 
       if (
         (tabKey && isBlockUnit(from, to, startLineText)) ||
         (!tabKey && reList.test(startLineText))
       ) {
         for (let line = startIndex; line <= endIndex; line += 1) {
-          const { textContent } = doc.child(line);
+          const textContent = getTextContent(doc, line);
 
           nodes.push(createParagraph(schema, `    ${textContent}`));
         }
@@ -186,7 +187,7 @@ export class Paragraph extends Node {
         return false;
       }
 
-      const startLineText = doc.child(startIndex).textContent;
+      const startLineText = getTextContent(doc, startIndex);
 
       if (
         (tabKey && isBlockUnit(from, to, startLineText)) ||
@@ -195,7 +196,7 @@ export class Paragraph extends Node {
         const spaceLenList: number[] = [];
 
         for (let line = startIndex; line <= endIndex; line += 1) {
-          const { textContent } = doc.child(line);
+          const textContent = getTextContent(doc, line);
           const searchResult = reStartSpace.exec(textContent);
 
           spaceLenList.push(searchResult ? searchResult[1].length : 0);

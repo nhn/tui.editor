@@ -4,6 +4,7 @@ import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { createParagraph, replaceNodes } from '@/helper/manipulation';
 import { getRangeInfo } from '../helper/pos';
+import { getTextContent } from '../helper/query';
 
 const reHeading = /^#{1,6}\s/;
 
@@ -53,7 +54,7 @@ export class Heading extends Mark {
       const nodes: ProsemirrorNode[] = [];
 
       for (let i = startIndex; i <= endIndex; i += 1) {
-        const { textContent } = doc.child(i);
+        const textContent = getTextContent(doc, i);
         const matchedHeading = textContent.match(reHeading);
         const curHeadingSyntax = matchedHeading ? matchedHeading[0] : '';
         const curLevel = curHeadingSyntax.trim().length;
