@@ -167,11 +167,21 @@ export function getRangeInfo(selection: Selection) {
   };
 }
 
-export function getPosInfo(doc: ProsemirrorNode, selection: Selection, endCursor = false) {
-  const [from, to] = resolveSelectionPos(selection);
-  const resolvedFrom = endCursor ? to : from;
-  const [startOffset, endOffset] = getExtendedRangeOffset(resolvedFrom, to, doc);
-  const [startLine, endLine] = getEditorToMdLine(resolvedFrom, to, doc);
+export function getNodeOffsetRange(doc: ProsemirrorNode, targetIndex: number) {
+  let startOffset = 1;
+  let endOffset = 1;
 
-  return { from: resolvedFrom, to, startOffset, endOffset, startLine, endLine };
+  for (let i = 0, offset = 0; i < doc.childCount; i += 1) {
+    const { nodeSize } = doc.child(i);
+
+    startOffset = offset + 1;
+    endOffset = offset + nodeSize;
+
+    if (i === targetIndex) {
+      break;
+    }
+
+    offset += nodeSize;
+  }
+  return { startOffset, endOffset };
 }

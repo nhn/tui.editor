@@ -3,7 +3,7 @@ import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { createParagraph, createTextSelection } from '@/helper/manipulation';
-import { resolveSelectionPos } from '../helper/pos';
+import { getRangeInfo } from '../helper/pos';
 
 const thematicBreakSyntax = '***';
 
@@ -22,13 +22,13 @@ export class ThematicBreak extends Mark {
 
   private hr(): EditorCommand {
     return () => (state, dispatch) => {
-      const { selection, schema, tr, doc } = state;
-      const [from, to] = resolveSelectionPos(selection);
+      const { selection, schema, tr } = state;
+      const { from, to, endToOffset } = getRangeInfo(selection);
       const emptyNode = createParagraph(schema);
       const hrNode = createParagraph(schema, thematicBreakSyntax);
       const nodes = [hrNode];
 
-      if (to >= doc.resolve(to).end()) {
+      if (to >= endToOffset) {
         nodes.push(emptyNode);
       }
 
