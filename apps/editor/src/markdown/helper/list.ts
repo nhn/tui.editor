@@ -21,14 +21,14 @@ export interface ChangedListInfo {
 
 interface ToListResult {
   changedResults: ChangedListInfo[];
-  firstListOffset?: number;
-  lastListOffset?: number;
+  firstIndex?: number;
+  lastIndex?: number;
 }
 
 type ExtendedResult = {
   listSyntax: string;
   changedResults?: ChangedListInfo[];
-  lastListOffset?: number;
+  lastIndex?: number;
 };
 
 type ListType = 'bullet' | 'ordered';
@@ -158,17 +158,12 @@ function getChangedInfo(
   type: ListType,
   start = 0
 ): ToListResult {
-  let firstListOffset = Number.MAX_VALUE;
-  let lastListOffset = 0;
+  let firstIndex = Number.MAX_VALUE;
+  let lastIndex = 0;
 
   const changedResults = sameDepthItems.map(({ line }, index) => {
-    doc.descendants((node, pos, _, nodeIndex) => {
-      if (node.isBlock && line === nodeIndex! + 1) {
-        firstListOffset = Math.min(pos + 1, firstListOffset);
-        lastListOffset = Math.max(pos + 1, lastListOffset);
-      }
-      return nodeIndex! + 1 <= line;
-    });
+    firstIndex = Math.min(line - 1, firstIndex);
+    lastIndex = Math.max(line - 1, lastIndex);
 
     let text = getTextByMdLine(doc, line);
 
@@ -177,7 +172,7 @@ function getChangedInfo(
     return { text, line };
   });
 
-  return { changedResults, firstListOffset, lastListOffset };
+  return { changedResults, firstIndex, lastIndex };
 }
 
 function getBulletOrOrdered(type: ListType, context: ToListContext) {

@@ -24,11 +24,11 @@ import {
   reList,
   ToListContext,
 } from '../helper/list';
-import { getMdToEditorPos, getPosInfo, getRangeInfo } from '../helper/pos';
+import { getRangeInfo, getNodeOffsetRange } from '../helper/pos';
 
 type CommandType = 'bullet' | 'ordered' | 'task';
 
-function canNotBeListNode({ type }: MdNode) {
+function cannotBeListNode({ type }: MdNode) {
   return type === 'codeBlock' || type === 'heading' || type.indexOf('table') !== -1;
 }
 
@@ -67,7 +67,7 @@ export class ListItem extends Mark {
   private extendList(): Command {
     return ({ selection, tr, doc, schema }, dispatch) => {
       const { toastMark } = this.context;
-      const { to, startFromOffset, endToOffset, endIndex } = getRangeInfo(selection);
+      const { to, startFromOffset, endFromOffset, endToOffset, endIndex } = getRangeInfo(selection);
 
       const { textContent } = doc.child(endIndex);
       const isList = reList.test(textContent);
@@ -77,29 +77,32 @@ export class ListItem extends Mark {
       }
 
       const isEmpty = !textContent.replace(reCanBeTaskList, '').trim();
-      const commandType = getListType(textContent);
 
       if (isEmpty) {
         const emptyNode = createParagraph(schema);
 
         dispatch!(replaceNodes(tr, startFromOffset, endToOffset, [emptyNode, emptyNode]));
       } else {
+        const commandType = getListType(textContent);
+        // should add `1` to line for the markdown parser
+        // because markdown parser has `1`(not zero) as the start number
         const mdNode: ListItemMdNode = toastMark.findFirstNodeAtLine(endIndex + 1);
-        const slicedText = textContent.slice(to - startFromOffset);
+        const slicedText = textContent.slice(to - endFromOffset);
         const context: ExtendListContext = { toastMark, mdNode, doc, line: endIndex + 1 };
-        const { listSyntax, changedResults, lastListOffset } = extendList[commandType](context);
+        const { listSyntax, changedResults, lastIndex } = extendList[commandType](context);
 
         const node = createParagraph(schema, listSyntax + slicedText);
         let newTr: Transaction | null;
 
-        // To change ordinal number of backward ordered list
+        // change ordinal number of backward ordered list
         if (changedResults?.length) {
-          const extendedEndOffset = doc.resolve(lastListOffset!).end();
+          // get end offset of the last list
+          const { endOffset } = getNodeOffsetRange(doc, lastIndex!);
           const nodes = changedResults.map(({ text }) => createParagraph(schema, text));
 
           nodes.unshift(node);
 
-          newTr = replaceNodes(tr, to, extendedEndOffset, nodes, { from: 0, to: 1 });
+          newTr = replaceNodes(tr, to, endOffset, nodes, { from: 0, to: 1 });
         } else {
           newTr = slicedText
             ? replaceNodes(tr, to, endToOffset, node, { from: 0, to: 1 })
@@ -118,9 +121,12 @@ export class ListItem extends Mark {
   private toList(commandType: CommandType): EditorCommand {
     return () => ({ doc, tr, selection, schema }, dispatch) => {
       const { toastMark } = this.context;
-      const posInfo = getPosInfo(doc, selection);
-      const { startLine, endLine } = posInfo;
-      let { startOffset, endOffset } = posInfo;
+      const rangeInfo = getRangeInfo(selection);
+      // should add `1` to line for the markdown parser
+      // because markdown parser has `1`(not zero) as the start number
+      const startLine = rangeInfo.startIndex + 1;
+      const endLine = rangeInfo.endIndex + 1;
+      let { startFromOffset, endToOffset } = rangeInfo;
 
       let skipLines: number[] = [];
       let changed: ChangedListInfo[] = [];
@@ -128,38 +134,35 @@ export class ListItem extends Mark {
       for (let line = startLine; line <= endLine; line += 1) {
         const mdNode: MdNode = toastMark.findFirstNodeAtLine(line)!;
 
-        if (mdNode && canNotBeListNode(mdNode)) {
+        if (mdNode && cannotBeListNode(mdNode)) {
           break;
         }
 
-        // To skip unnecessary processing
+        // to skip unnecessary processing
         if (skipLines.indexOf(line) !== -1) {
           continue;
         }
 
         const context: ToListContext<MdNode> = { toastMark, mdNode, doc, line, startLine };
-        const { firstListOffset, lastListOffset, changedResults } = isListNode(mdNode)
+        const { firstIndex, lastIndex, changedResults } = isListNode(mdNode)
           ? otherListToList[commandType](context as ToListContext)
           : otherNodeToList[commandType](context);
+        const { startOffset: firstListStartOffset } = getNodeOffsetRange(doc, firstIndex!);
+        const { endOffset: lastListEndOffset } = getNodeOffsetRange(doc, lastIndex!);
 
         if (changedResults) {
           skipLines = skipLines.concat(changedResults.map((info) => info.line));
         }
 
         // resolve start offset to change forward same depth list
-        if (isNumber(firstListOffset) && firstListOffset < startOffset) {
-          startOffset = firstListOffset;
+        if (isNumber(firstListStartOffset) && firstListStartOffset < startFromOffset) {
+          startFromOffset = firstListStartOffset;
         }
 
         // resolve end offset to change backward same depth list
-        if (isNumber(lastListOffset)) {
-          const lastEndOffset = doc.resolve(lastListOffset).end();
-
-          if (lastEndOffset > endOffset) {
-            endOffset = lastEndOffset;
-          }
+        if (isNumber(lastListEndOffset) && lastListEndOffset > endToOffset) {
+          endToOffset = lastListEndOffset;
         }
-
         changed = changed.concat(changedResults);
       }
 
@@ -167,10 +170,9 @@ export class ListItem extends Mark {
         changed.sort((a, b) => (a.line < b.line ? -1 : 1));
         const nodes = changed.map((info) => createParagraph(schema, info.text));
 
-        dispatch!(replaceNodes(tr, startOffset, endOffset, nodes));
+        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, nodes));
         return true;
       }
-
       return false;
     };
   }
@@ -178,9 +180,7 @@ export class ListItem extends Mark {
   private toggleTask(): Command {
     return ({ selection, tr, doc, schema }, dispatch) => {
       const { toastMark } = this.context;
-      const { from, to } = selection;
-      const startIndex = doc.content.findIndex(from).index;
-      const endIndex = from === to ? startIndex : doc.content.findIndex(to).index;
+      const { startIndex, endIndex } = getRangeInfo(selection);
       let newTr;
 
       for (let i = startIndex; i <= endIndex; i += 1) {
@@ -190,9 +190,11 @@ export class ListItem extends Mark {
           const { checked, padding } = mdNode.listData;
           const stateChar = checked ? ' ' : 'x';
           const [mdPos] = mdNode.sourcepos!;
-          const startPos = getMdToEditorPos(doc, toastMark, mdPos, mdPos)[0] + padding + 1;
+          let { startOffset } = getNodeOffsetRange(doc, mdPos[0] - 1);
 
-          newTr = tr.replaceRangeWith(startPos, startPos + 1, schema.text(stateChar));
+          startOffset += mdPos[1] + padding;
+
+          newTr = tr.replaceWith(startOffset, startOffset + 1, schema.text(stateChar));
         }
       }
       if (newTr) {
