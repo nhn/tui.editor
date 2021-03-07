@@ -33,7 +33,7 @@ import { Html } from './marks/html';
 import { CustomBlock } from './marks/customBlock';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
 import { smartTask } from './plugins/smartTask';
-import { createNodesWithWidget } from '@/widget/rules';
+import { createNodesWithWidget, unwrapWidgetSyntax } from '@/widget/rules';
 import { Widget, widgetNodeView } from '@/widget/widgetNode';
 import { PluginProp } from '@t/plugin';
 
@@ -338,7 +338,10 @@ export default class MdEditor extends EditorBase {
   }
 
   getMarkdown() {
-    return this.toastMark.getLineTexts().join('\n');
+    return this.toastMark
+      .getLineTexts()
+      .map((lineText: string) => unwrapWidgetSyntax(lineText))
+      .join('\n');
   }
 
   getToastMark() {
