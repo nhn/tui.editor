@@ -41,6 +41,11 @@ interface WysiwygOptions {
   linkAttributes?: LinkAttributes | null;
 }
 
+interface ExtraViewOptions {
+  extraPlugins?: ExtraPlugin[];
+  extraNodeViews?: ExtraNodeViewMap;
+}
+
 const CONTENTS_CLASS_NAME = cls('contents');
 
 export default class WysiwygEditor extends EditorBase {
@@ -100,13 +105,16 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createExtraNodeViews() {
-    const { extraNodeViews, eventEmitter, toDOMAdaptor } = this;
+    const { eventEmitter, toDOMAdaptor } = this;
+    const { extraNodeViews } = this.extraViewOptions;
     const extraNodeViewMap: ExtraNodeViews = {};
 
-    Object.keys(extraNodeViews).forEach((key) => {
-      extraNodeViewMap[key] = (node, view, getPos) =>
-        extraNodeViews[key](node, view, getPos, eventEmitter, toDOMAdaptor);
-    });
+    if (extraNodeViews) {
+      Object.keys(extraNodeViews).forEach((key) => {
+        extraNodeViewMap[key] = (node, view, getPos) =>
+          extraNodeViews[key](node, view, getPos, eventEmitter, toDOMAdaptor);
+      });
+    }
 
     return extraNodeViewMap;
   }
