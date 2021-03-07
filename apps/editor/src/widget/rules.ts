@@ -9,7 +9,7 @@ const widgetRuleMap: WidgetRuleMap = {};
 
 const reWidgetPrefix = /\$\$widget\d+\s/;
 
-function trailingWidgetSyntax(text: string) {
+export function unwrapWidgetSyntax(text: string) {
   const index = text.search(reWidgetPrefix);
 
   if (index !== -1) {
@@ -17,7 +17,7 @@ function trailingWidgetSyntax(text: string) {
     const replaced = rest.replace(reWidgetPrefix, '').replace('$$', '');
 
     text = text.substring(0, index);
-    text += trailingWidgetSyntax(replaced);
+    text += unwrapWidgetSyntax(replaced);
   }
   return text;
 }
@@ -29,7 +29,7 @@ export function createWidgetContent(info: string, content: string) {
 export function widgetToDOM(info: string, content: string) {
   const { rule, toDOM } = widgetRuleMap[info];
 
-  content = trailingWidgetSyntax(content).match(rule)![0];
+  content = unwrapWidgetSyntax(content).match(rule)![0];
   return toDOM(content);
 }
 
@@ -71,7 +71,7 @@ export function createNodesWithWidget(content: string, schema: Schema, ruleIndex
   const { rule } = widgetRules[ruleIndex] || {};
   const nextRuleIndex = ruleIndex + 1;
 
-  content = trailingWidgetSyntax(content);
+  content = unwrapWidgetSyntax(content);
 
   if (rule && rule.test(content)) {
     let index;
