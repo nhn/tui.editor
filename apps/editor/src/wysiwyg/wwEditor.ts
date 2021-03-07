@@ -216,7 +216,9 @@ export default class WysiwygEditor extends EditorBase {
     const { schema, tr } = this.view.state;
     const { paragraph } = schema.nodes;
     const lineTexts = text.split('\n');
-    const paras = lineTexts.map((lineText) => paragraph.create(null, schema.text(lineText)));
+    const paras = lineTexts.map((lineText) =>
+      paragraph.create(null, createNodesWithWidget(lineText, schema))
+    );
     const slice = new Slice(Fragment.from(paras), 1, 1);
     const newTr =
       isNumber(start) && isNumber(end)
