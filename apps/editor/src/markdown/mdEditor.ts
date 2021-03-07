@@ -35,7 +35,7 @@ import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
 import { smartTask } from './plugins/smartTask';
 import { createNodesWithWidget } from '@/widget/rules';
 import { Widget, widgetNodeView } from '@/widget/widgetNode';
-import { ExtraMdPlugin } from '@t/plugin';
+import { ExtraPlugin } from '@t/plugin';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;

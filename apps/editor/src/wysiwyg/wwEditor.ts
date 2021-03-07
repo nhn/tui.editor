@@ -28,7 +28,7 @@ import { createNodesWithWidget } from '@/widget/rules';
 import { widgetNodeView } from '@/widget/widgetNode';
 import { cls } from '@/utils/dom';
 import { includes } from '@/utils/common';
-import { ExtraWwPlugin } from '@t/plugin';
+import { ExtraNodeViewMap, ExtraPlugin } from '@t/plugin';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -99,8 +99,22 @@ export default class WysiwygEditor extends EditorBase {
     ]);
   }
 
+  createExtraNodeViews() {
+    const { extraNodeViews, eventEmitter, toDOMAdaptor } = this;
+    const extraNodeViewMap: ExtraNodeViews = {};
+
+    Object.keys(extraNodeViews).forEach((key) => {
+      extraNodeViewMap[key] = (node, view, getPos) =>
+        extraNodeViews[key](node, view, getPos, eventEmitter, toDOMAdaptor);
+    });
+
+    return extraNodeViewMap;
+  }
+
   createView() {
     const { toDOMAdaptor, eventEmitter } = this;
+
+    this.createExtraNodeViews();
 
     return new EditorView(this.el, {
       state: this.createState(),
@@ -118,6 +132,7 @@ export default class WysiwygEditor extends EditorBase {
           return new CodeBlockView(node, view, getPos, toDOMAdaptor, eventEmitter);
         },
         widget: widgetNodeView,
+        ...this.createExtraNodeViews(),
       },
       dispatchTransaction: (tr) => {
         const { state } = this.view.state.applyTransaction(tr);

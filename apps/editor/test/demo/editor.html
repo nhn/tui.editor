@@ -31,18 +31,38 @@
           return new Plugin({ key: 'md' });
         }
 
+        function customNodeView() {
+          console.log('## test nodeview');
+          console.log(arguments);
+
+          const dom = document.createElement('span');
+
+          dom.innerHTML = 'nodeview';
+
+          return { dom };
+        }
+
         return {
           plugins: [
             {
               editorType: 'wysiwyg',
-              plugin: (eventEmitter, toDOMAdaptor) => {
-                return customWwPlugin(eventEmitter, toDOMAdaptor, hljs);
+              plugin: (eventEmitter) => {
+                return customWwPlugin(eventEmitter, hljs);
               },
             },
             {
               editorType: 'markdown',
               plugin: (eventEmitter) => {
                 return customMdPlugin(eventEmitter, hljs);
+              },
+            },
+          ],
+          nodeViews: [
+            {
+              editorType: 'wysiwyg',
+              nodeName: 'codeBlock',
+              view: (node, view, getPos, eventEmitter, toDOMAdaptor) => {
+                return customNodeView(node, view, getPos, eventEmitter, toDOMAdaptor, hljs);
               },
             },
           ],

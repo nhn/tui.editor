@@ -1,8 +1,8 @@
 import isArray from 'tui-code-snippet/type/isArray';
 
-import { EditorPlugin, ProsemirrorPlugin } from '@t/editor';
+import { EditorPlugin, ProsemirrorPlugin, ProsemirrorNodeView } from '@t/editor';
 import { Emitter } from '@t/event';
-import { PluginInfoResult, ExtraPluginInfoResult, ExtraMdPlugin, ExtraWwPlugin } from '@t/plugin';
+import { PluginInfoResult, ExtraPlugin, ExtraNodeViewMap } from '@t/plugin';
 
 function execPlugin(plugin: EditorPlugin, eventEmitter: Emitter) {
   if (isArray(plugin)) {
@@ -15,22 +15,44 @@ function execPlugin(plugin: EditorPlugin, eventEmitter: Emitter) {
 }
 
 function createEditorPlugins(plugins: ProsemirrorPlugin[]) {
-  return plugins.reduce<ExtraPluginInfoResult>(
+  return plugins.reduce<{
+    mdPlugins: ExtraPlugin[];
+    wwPlugins: ExtraPlugin[];
+  }>(
     (acc, plugin) => {
       const { editorType, plugin: pluginFn } = plugin;
 
       if (editorType === 'markdown') {
-        acc.mdPlugins.push(pluginFn as ExtraMdPlugin);
+        acc.mdPlugins.push(pluginFn);
       } else if (editorType === 'wysiwyg') {
-        acc.wwPlugins.push(pluginFn as ExtraWwPlugin);
+        acc.wwPlugins.push(pluginFn);
       } else {
-        acc.mdPlugins.push(pluginFn as ExtraMdPlugin);
-        acc.wwPlugins.push(pluginFn as ExtraWwPlugin);
+        acc.mdPlugins.push(pluginFn);
+        acc.wwPlugins.push(pluginFn);
       }
 
       return acc;
     },
     { mdPlugins: [], wwPlugins: [] }
+  );
+}
+
+function createNodeViews(nodeViews: ProsemirrorNodeView[]) {
+  return nodeViews.reduce<{ wwNodeViews: ExtraNodeViewMap }>(
+    (acc, nodeView) => {
+      const { editorType, nodeName, view } = nodeView;
+
+      if (editorType === 'wysiwyg') {
+        const nodeViewMap = {
+          [nodeName]: view,
+        };
+
+        acc.wwNodeViews = { ...acc.wwNodeViews, ...nodeViewMap };
+      }
+
+      return acc;
+    },
+    { wwNodeViews: {} }
   );
 }
 
@@ -41,7 +63,8 @@ export function getPluginInfo(plugins: EditorPlugin[], eventEmitter: Emitter) {
 
   return plugins.reduce<PluginInfoResult>(
     (acc, plugin) => {
-      const { toHTMLRenderers, plugins: editorPlugins } = execPlugin(plugin, eventEmitter) ?? {};
+      const { toHTMLRenderers, plugins: editorPlugins, nodeViews } =
+        execPlugin(plugin, eventEmitter) ?? {};
 
       if (toHTMLRenderers) {
         acc.toHTMLRenderers = { ...acc.toHTMLRenderers, ...toHTMLRenderers };
@@ -54,12 +77,19 @@ export function getPluginInfo(plugins: EditorPlugin[], eventEmitter: Emitter) {
         acc.wwPlugins = acc.wwPlugins.concat(wwPlugins);
       }
 
+      if (nodeViews) {
+        const { wwNodeViews } = createNodeViews(nodeViews);
+
+        acc.wwNodeViews = { ...acc.wwNodeViews, ...wwNodeViews };
+      }
+
       return acc;
     },
     {
       toHTMLRenderers: {},
       mdPlugins: [],
       wwPlugins: [],
+      wwNodeViews: {},
     }
   );
 }

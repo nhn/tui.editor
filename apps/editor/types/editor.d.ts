@@ -13,7 +13,7 @@ import { Context, EditorAllCommandMap, EditorCommandFn } from './spec';
 import { ToMdConvertorMap } from './convertor';
 import { DefaultUI, ToolbarItemOptions } from './ui';
 import SpecManager from '@/spec/specManager';
-import { ExtraMdPlugin, ExtraWwPlugin } from './plugin';
+import { ExtraPlugin, ExtraNodeViews } from './plugin';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -97,12 +97,19 @@ export class Viewer {
 
 export interface ProsemirrorPlugin {
   editorType: 'wysiwyg' | 'markdown' | 'all';
-  plugin: ExtraWwPlugin | ExtraMdPlugin;
+  plugin: ExtraPlugin;
+}
+
+export interface ProsemirrorNodeView {
+  editorType: 'wysiwyg';
+  nodeName: string;
+  view: ExtraNodeViews;
 }
 
 interface EditorPluginInfo {
   toHTMLRenderers: CustomHTMLRenderer;
   plugins: ProsemirrorPlugin[];
+  nodeViews: ProsemirrorNodeView[];
 }
 
 export type PluginFn = (eventEmitter: Emitter, options?: any) => EditorPluginInfo | null;

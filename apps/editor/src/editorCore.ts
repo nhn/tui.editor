@@ -173,7 +173,7 @@ class ToastUIEditor {
     setWidgetRules(widgetRules);
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
-    const { toHTMLRenderers, mdPlugins, wwPlugins } = getPluginInfo(
+    const { toHTMLRenderers, mdPlugins, wwPlugins, wwNodeViews } = getPluginInfo(
       this.options.plugins,
       this.eventEmitter
     );
