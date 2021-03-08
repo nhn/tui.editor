@@ -1,12 +1,5 @@
-import {
-  ListNode,
-  ListNodeData,
-  HtmlBlockNode,
-  HeadingNode,
-  CodeBlockNode,
-  createNode,
-  BlockNode,
-} from './node';
+import { ListData } from '@t/index';
+import { ListNode, HtmlBlockNode, HeadingNode, CodeBlockNode, createNode, BlockNode } from './node';
 import { OPENTAG, CLOSETAG } from './rawHtml';
 import {
   peek,
@@ -51,11 +44,11 @@ export const reOrderedListMarker = /^(\d{1,9})([.)])/;
 
 // Parse a list marker and return data on the marker (type,
 // start, delimiter, bullet character, padding) or null.
-function parseListMarker(parser: Parser, container: ListNode): ListNodeData | null {
+function parseListMarker(parser: Parser, container: ListNode): ListData | null {
   const rest = parser.currentLine.slice(parser.nextNonspace);
   let match;
   let nextc;
-  const data: ListNodeData = {
+  const data: ListData = {
     type: 'bullet',
     tight: true, // lists are tight by default
     bulletChar: '',
@@ -126,7 +119,7 @@ function parseListMarker(parser: Parser, container: ListNode): ListNodeData | nu
 // Returns true if the two list items are of the same type,
 // with the same delimiter and bullet character.  This is used
 // in agglomerating list items into lists.
-function listsMatch(listData: ListNodeData, itemData: ListNodeData) {
+function listsMatch(listData: ListData, itemData: ListData) {
   return (
     listData.type === itemData.type &&
     listData.delimiter === itemData.delimiter &&

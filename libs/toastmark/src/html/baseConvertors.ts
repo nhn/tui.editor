@@ -1,3 +1,4 @@
+import { HTMLConvertorMap } from '@t/index';
 import {
   Node,
   HeadingNode,
@@ -7,7 +8,6 @@ import {
   CustomBlockNode,
 } from '../commonmark/node';
 import { escapeXml } from '../commonmark/common';
-import { HTMLConvertorMap } from './render';
 import { filterDisallowedTags } from './tagFilter';
 
 export const baseConvertors: HTMLConvertorMap = {

@@ -1,5 +1,5 @@
 import { Parser } from '../../blocks';
-import { Renderer } from '../../../html/render';
+import { Renderer } from '../../../html/renderer';
 import { source } from 'common-tags';
 
 const reader = new Parser();

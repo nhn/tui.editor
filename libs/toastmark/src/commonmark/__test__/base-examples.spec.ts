@@ -1,5 +1,5 @@
 import { Parser } from '../blocks';
-import { Renderer } from '../../html/render';
+import { Renderer } from '../../html/renderer';
 import specs from './base-examples.json';
 
 const reader = new Parser({ referenceDefinition: true });

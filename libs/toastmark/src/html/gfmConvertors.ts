@@ -1,5 +1,5 @@
+import { HTMLConvertorMap, OpenTagToken, HTMLToken } from '@t/index';
 import { Node, ListNode, TableNode, TableCellNode } from '../commonmark/node';
-import { HTMLConvertorMap, OpenTagToken, HTMLToken } from './render';
 
 export const gfmConvertors: HTMLConvertorMap = {
   strike(_, { entering }) {

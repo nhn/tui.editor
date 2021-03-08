@@ -8,6 +8,7 @@ import {
   HeadingMdNode,
   HtmlBlockMdNode,
   LinkMdNode,
+  ListData,
   ListMdNode,
   MdNode,
   MdNodeType,
@@ -61,12 +62,12 @@ export function removeAllNode() {
 }
 
 export class Node implements MdNode {
-  type;
-  id;
+  type: MdNodeType;
+  id: number;
   parent: Node | null = null;
   prev: Node | null = null;
   next: Node | null = null;
-  sourcepos;
+  sourcepos?: SourcePos;
 
   // only for container node
   firstChild: Node | null = null;
@@ -178,8 +179,8 @@ export class BlockNode extends Node implements BlockMdNode {
 
   // temporal data (for parsing)
   open = true;
-  lineOffsets = null;
-  stringContent = null;
+  lineOffsets: number[] | null = null;
+  stringContent: string | null = null;
   lastLineBlank = false;
   lastLineChecked = false;
 
@@ -190,7 +191,7 @@ export class BlockNode extends Node implements BlockMdNode {
 }
 
 export class ListNode extends BlockNode implements ListMdNode {
-  listData = null;
+  listData: ListData | null = null;
 }
 
 export class HeadingNode extends BlockNode implements HeadingMdNode {

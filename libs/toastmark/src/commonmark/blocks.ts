@@ -1,4 +1,4 @@
-import { NodeType, BlockNodeType } from '@t/index';
+import { MdNodeType, BlockNodeType } from '@t/index';
 import { repeat } from './common';
 import { Node, BlockNode, isCodeBlock, isHtmlBlock, createNode, TableCellNode } from './node';
 import { InlineParser, C_NEWLINE } from './inlines';
@@ -42,7 +42,7 @@ const defaultOptions = {
 };
 
 export type CustomParser = (node: Node, context: { entering: boolean; options: Options }) => void;
-export type CustomParserMap = Partial<Record<NodeType, CustomParser>>;
+export type CustomParserMap = Partial<Record<MdNodeType, CustomParser>>;
 
 export interface Options {
   smart: boolean;

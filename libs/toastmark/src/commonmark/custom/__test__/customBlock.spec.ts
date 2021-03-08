@@ -1,5 +1,6 @@
+import { HTMLConvertorMap } from '@t/index';
 import { Parser } from '../../blocks';
-import { Renderer, HTMLConvertorMap } from '../../../html/render';
+import { Renderer } from '../../../html/renderer';
 import { source } from 'common-tags';
 
 const convertors: HTMLConvertorMap = {

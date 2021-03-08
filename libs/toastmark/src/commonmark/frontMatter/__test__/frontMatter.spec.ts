@@ -1,6 +1,6 @@
 import { source } from 'common-tags';
 import { Parser } from '../../blocks';
-import { Renderer } from '../../../html/render';
+import { Renderer } from '../../../html/renderer';
 
 const reader = new Parser({ frontMatter: true });
 const renderer = new Renderer();

@@ -1,4 +1,4 @@
-import { SourcePos } from '@t/index';
+import { EditResult, RemovedNodeRange, SourcePos, ToastMark as ToastMarkParser } from '@t/index';
 import { Parser, Options } from './commonmark/blocks';
 import {
   BlockNode,
@@ -39,16 +39,6 @@ type EventName = 'change';
 type EventHandlerMap = {
   [key in EventName]: Function[];
 };
-
-type RemovedNodeRange = {
-  id: [number, number];
-  line: [number, number];
-};
-
-interface EditResult {
-  nodes: BlockNode[];
-  removedNodeRange: RemovedNodeRange | null;
-}
 
 type ParseResult = EditResult & { nextNode: Node | null };
 type RefDefState = {
@@ -99,8 +89,8 @@ export function createRefDefState(node: RefDefNode) {
   };
 }
 
-export class ToastMark {
-  public lineTexts: string[];
+export class ToastMark implements ToastMarkParser {
+  lineTexts: string[];
   private parser: Parser;
   private root: BlockNode;
   private eventHandlerMap: EventHandlerMap;
@@ -409,7 +399,7 @@ export class ToastMark {
     }
   }
 
-  public editMarkdown(startPos: Position, endPos: Position, newText: string) {
+  editMarkdown(startPos: Position, endPos: Position, newText: string) {
     const lineDiff = this.updateLineTexts(startPos, endPos, newText);
     const parseResult = this.parse(startPos, endPos, lineDiff);
     const editResult: EditResult = omit(parseResult, 'nextNode');
@@ -417,7 +407,7 @@ export class ToastMark {
     updateNextLineNumbers(parseResult.nextNode, lineDiff);
     this.updateRootNodeState();
 
-    let result: EditResult[] = [editResult];
+    let result = [editResult];
 
     if (this.referenceDefinition) {
       this.removeUnlinkedCandidate();
@@ -430,15 +420,15 @@ export class ToastMark {
     return result;
   }
 
-  public getLineTexts() {
+  getLineTexts() {
     return this.lineTexts;
   }
 
-  public getRootNode() {
+  getRootNode() {
     return this.root;
   }
 
-  public findNodeAtPosition(pos: Position) {
+  findNodeAtPosition(pos: Position) {
     const node = findNodeAtPosition(this.root, pos);
     if (!node || node === this.root) {
       return null;
@@ -446,25 +436,25 @@ export class ToastMark {
     return node;
   }
 
-  public findFirstNodeAtLine(line: number) {
+  findFirstNodeAtLine(line: number) {
     return findFirstNodeAtLine(this.root, line);
   }
 
-  public on(eventName: EventName, callback: Function) {
+  on(eventName: EventName, callback: () => void) {
     this.eventHandlerMap[eventName].push(callback);
   }
 
-  public off(eventName: EventName, callback: Function) {
+  off(eventName: EventName, callback: Function) {
     const handlers = this.eventHandlerMap[eventName];
     const idx = handlers.indexOf(callback);
     handlers.splice(idx, 1);
   }
 
-  public findNodeById(id: number) {
+  findNodeById(id: number) {
     return findNodeById(id);
   }
 
-  public removeAllNode() {
+  removeAllNode() {
     removeAllNode();
   }
 }

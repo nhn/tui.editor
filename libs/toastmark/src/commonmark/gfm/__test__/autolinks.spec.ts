@@ -1,5 +1,5 @@
 import { Parser } from '../../blocks';
-import { Renderer } from '../../../html/render';
+import { Renderer } from '../../../html/renderer';
 import { LinkNode } from '../../node';
 import { pos } from '../../__test__/helper.spec';
 import { parseUrlLink, parseEmailLink } from '../autoLinks';

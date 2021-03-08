@@ -1,5 +1,6 @@
+import { OpenTagToken } from '@t/index';
 import { Parser } from '../../commonmark/blocks';
-import { Renderer, OpenTagToken } from '../render';
+import { Renderer } from '../renderer';
 
 const parser = new Parser();
 

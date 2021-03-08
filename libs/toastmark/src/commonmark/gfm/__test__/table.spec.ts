@@ -1,5 +1,5 @@
 import { Parser } from '../../blocks';
-import { Renderer } from '../../../html/render';
+import { Renderer } from '../../../html/renderer';
 import { convertToArrayTree } from '../../__test__/helper.spec';
 import { BlockNode, TableNode } from 'src/commonmark/node';
 import { source } from 'common-tags';

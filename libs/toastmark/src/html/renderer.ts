@@ -1,66 +1,23 @@
-import { NodeType } from '@t/index';
+import {
+  CloseTagToken,
+  Context,
+  HTMLConvertorMap,
+  HTMLToken,
+  MdNodeType,
+  OpenTagToken,
+  RawHTMLToken,
+  RendererOptions,
+  TagToken,
+  TextToken,
+  ToastMarkRenderer,
+} from '@t/index';
 import { Node, isContainer, isCustomBlock, isCustomInline } from '../commonmark/node';
 import { escapeXml } from '../commonmark/common';
 import { last } from '../helper';
 import { baseConvertors } from './baseConvertors';
 import { gfmConvertors } from './gfmConvertors';
 
-interface Options {
-  gfm: boolean;
-  softbreak: string;
-  nodeId: boolean;
-  tagFilter: boolean;
-  convertors?: HTMLConvertorMap;
-}
-
-interface Context {
-  entering: boolean;
-  leaf: boolean;
-  options: Omit<Options, 'convertors'>;
-  getChildrenText: (node: Node) => string;
-  skipChildren: () => void;
-  origin?: () => ReturnType<HTMLConvertor>;
-}
-
-export type HTMLConvertor = (
-  node: Node,
-  context: Context,
-  convertors?: HTMLConvertorMap
-) => HTMLToken | HTMLToken[] | null;
-
-export type HTMLConvertorMap = Partial<Record<NodeType | string, HTMLConvertor>>;
-
-interface TagToken {
-  tagName: string;
-  outerNewLine?: boolean;
-  innerNewLine?: boolean;
-}
-
-export interface OpenTagToken extends TagToken {
-  type: 'openTag';
-  classNames?: string[];
-  attributes?: Record<string, string>;
-  selfClose?: boolean;
-}
-
-export interface CloseTagToken extends TagToken {
-  type: 'closeTag';
-}
-
-interface TextToken {
-  type: 'text';
-  content: string;
-}
-
-export interface RawHTMLToken {
-  type: 'html';
-  content: string;
-  outerNewLine?: boolean;
-}
-
-export type HTMLToken = OpenTagToken | CloseTagToken | TextToken | RawHTMLToken;
-
-const defaultOptions: Options = {
+const defaultOptions: RendererOptions = {
   softbreak: '\n',
   gfm: false,
   tagFilter: false,
@@ -81,14 +38,14 @@ function getChildrenText(node: Node) {
   return buffer.join('');
 }
 
-export class Renderer {
+export class Renderer implements ToastMarkRenderer {
   private convertors: HTMLConvertorMap;
 
-  private options: Options;
+  private options: RendererOptions;
 
   private buffer: string[] = [];
 
-  constructor(customOptions?: Partial<Options>) {
+  constructor(customOptions?: Partial<RendererOptions>) {
     this.options = { ...defaultOptions, ...customOptions };
     this.convertors = this.createConvertors();
 
@@ -96,7 +53,7 @@ export class Renderer {
   }
 
   private createConvertors() {
-    let convertors = { ...baseConvertors };
+    let convertors: HTMLConvertorMap = { ...baseConvertors };
 
     if (this.options.gfm) {
       convertors = { ...convertors, ...gfmConvertors };
@@ -104,7 +61,7 @@ export class Renderer {
 
     if (this.options.convertors) {
       const customConvertors = this.options.convertors;
-      const nodeTypes = Object.keys(customConvertors) as NodeType[];
+      const nodeTypes = Object.keys(customConvertors) as MdNodeType[];
       nodeTypes.forEach((nodeType) => {
         const orgConvertor = convertors[nodeType];
         const convertor = customConvertors[nodeType]!;

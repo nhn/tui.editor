@@ -1,14 +1,15 @@
 import { ToastMark } from '../toastmark';
 import { Parser, Options } from '../commonmark/blocks';
 import { getChildNodes } from '../nodeHelper';
-import { BlockNode } from '../commonmark/node';
+import { Node } from '../commonmark/node';
 
-function removeIdAttrFromAllNode(root: BlockNode) {
+function removeIdAttrFromAllNode(root: Node) {
   const walker = root.walker();
   let event;
   while ((event = walker.next())) {
     const { entering, node } = event;
     if (entering) {
+      // @ts-ignore
       delete node.id;
     }
   }
@@ -26,7 +27,7 @@ function assertParseResult(doc: ToastMark, lineTexts: string[], options?: Partia
   expect(root).toEqual(expectedRoot);
 }
 
-function assertResultNodes(doc: ToastMark, nodes: BlockNode[], startIdx = 0) {
+function assertResultNodes(doc: ToastMark, nodes: Node[], startIdx = 0) {
   const root = doc.getRootNode();
   const newNodes = getChildNodes(root);
 
@@ -40,47 +41,47 @@ describe('findNodeAtPosition()', () => {
     const doc = new ToastMark('# Hello *World*\n\n- Item 1\n- Item **2**');
 
     expect(doc.findNodeAtPosition([1, 1])).toMatchObject({
-      type: 'heading'
+      type: 'heading',
     });
 
     expect(doc.findNodeAtPosition([1, 3])).toMatchObject({
       type: 'text',
-      literal: 'Hello '
+      literal: 'Hello ',
     });
 
     expect(doc.findNodeAtPosition([1, 9])).toMatchObject({
       type: 'emph',
       firstChild: {
         type: 'text',
-        literal: 'World'
-      }
+        literal: 'World',
+      },
     });
 
     expect(doc.findNodeAtPosition([1, 10])).toMatchObject({
       type: 'text',
-      literal: 'World'
+      literal: 'World',
     });
 
     expect(doc.findNodeAtPosition([3, 1])).toMatchObject({
-      type: 'item'
+      type: 'item',
     });
 
     expect(doc.findNodeAtPosition([3, 3])).toMatchObject({
       type: 'text',
-      literal: 'Item 1'
+      literal: 'Item 1',
     });
 
     expect(doc.findNodeAtPosition([4, 8])).toMatchObject({
       type: 'strong',
       firstChild: {
         type: 'text',
-        literal: '2'
-      }
+        literal: '2',
+      },
     });
 
     expect(doc.findNodeAtPosition([4, 10])).toMatchObject({
       type: 'text',
-      literal: '2'
+      literal: '2',
     });
 
     expect(doc.findNodeAtPosition([5, 1])).toBeNull();
@@ -105,7 +106,7 @@ describe('findFirstNodeAtLine()', () => {
     '  - Item D2',
     '![Image](URL)',
     '',
-    'Paragraph'
+    'Paragraph',
   ].join('\n');
 
   it('returns the first node at the given line', () => {
@@ -114,11 +115,11 @@ describe('findFirstNodeAtLine()', () => {
     expect(doc.findFirstNodeAtLine(1)).toMatchObject({ type: 'heading' });
     expect(doc.findFirstNodeAtLine(3)).toMatchObject({
       type: 'list',
-      prev: { type: 'heading' }
+      prev: { type: 'heading' },
     });
     expect(doc.findFirstNodeAtLine(4)).toMatchObject({
       type: 'list',
-      parent: { type: 'item' }
+      parent: { type: 'item' },
     });
     expect(doc.findFirstNodeAtLine(5)).toMatchObject({ type: 'image' });
     expect(doc.findFirstNodeAtLine(7)).toMatchObject({ type: 'paragraph' });
@@ -379,7 +380,7 @@ describe('editText()', () => {
       doc.editMarkdown([1, 1], [1, 13], '[foo]: /test2');
 
       assertParseResult(doc, ['[foo]: /test2', '', '[foo]', '', '[foo]'], {
-        referenceDefinition: true
+        referenceDefinition: true,
       });
     });
 
@@ -388,7 +389,7 @@ describe('editText()', () => {
       doc.editMarkdown([1, 1], [1, 13], '[food]: /test2');
 
       assertParseResult(doc, ['[food]: /test2', '', '[foo]', '', '[foo]'], {
-        referenceDefinition: true
+        referenceDefinition: true,
       });
     });
 
@@ -397,7 +398,7 @@ describe('editText()', () => {
       doc.editMarkdown([2, 1], [2, 1], 'test');
 
       assertParseResult(doc, ['test', 'test', '[foo]: /test'], {
-        referenceDefinition: true
+        referenceDefinition: true,
       });
     });
   });
@@ -408,7 +409,7 @@ it('return the node - findNodeById()', () => {
   const firstNodeId = doc.findFirstNodeAtLine(1)!.id;
 
   expect(doc.findNodeById(firstNodeId)).toMatchObject({
-    type: 'heading'
+    type: 'heading',
   });
 });
 

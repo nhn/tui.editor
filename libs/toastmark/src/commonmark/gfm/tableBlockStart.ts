@@ -1,7 +1,7 @@
-import { SourcePos } from '@t/index';
+import { SourcePos, TableColumn } from '@t/index';
 import { isEmpty } from '../common';
 import { BlockStart, Matched } from '../blockStarts';
-import { createNode, TableNode, TableColumn, TableCellNode } from '../node';
+import { createNode, TableNode, TableCellNode } from '../node';
 import { last } from '../../helper';
 
 function parseRowContent(content: string): [number, string[]] {

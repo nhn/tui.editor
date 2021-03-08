@@ -1,6 +1,6 @@
 import codemirror from 'codemirror';
 import { ToastMark } from '../toastmark';
-import { Renderer } from '../html/render';
+import { Renderer } from '../html/renderer';
 import { last } from '../helper';
 import 'codemirror/lib/codemirror.css';
 import './index.css';
