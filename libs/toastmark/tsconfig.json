@@ -7,11 +7,15 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "noEmit": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "typeRoots": ["./types", "node_modules/@types"],
     "baseUrl": ".",
-    "lib": ["esnext", "dom"]
+    "lib": ["esnext", "dom"],
+    "paths": {
+      "@t/*": ["types/*"]
+    },
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
