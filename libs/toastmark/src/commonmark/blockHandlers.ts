@@ -7,7 +7,7 @@ import {
   tableRow,
   tableCell,
   tableDelimRow,
-  tableDelimCell
+  tableDelimCell,
 } from './gfm/tableBlockHandler';
 import { customBlock } from './custom/customBlockHandler';
 import { ListNode, BlockNode, CodeBlockNode, HtmlBlockNode } from './node';
@@ -19,14 +19,14 @@ import {
   reClosingCodeFence,
   CODE_INDENT,
   C_OPEN_BRACKET,
-  C_GREATERTHAN
+  C_GREATERTHAN,
 } from './blockHelper';
 import { unescapeString } from './common';
 
 export const enum Process {
   Go = 0,
   Stop = 1,
-  Finished = 2
+  Finished = 2,
 }
 
 // 'finalize' is run when the block is closed.
@@ -49,7 +49,7 @@ const noop: BlockHandler = {
   canContain() {
     return false;
   },
-  acceptsLines: true
+  acceptsLines: true,
 };
 
 const document: BlockHandler = {
@@ -60,7 +60,7 @@ const document: BlockHandler = {
   canContain(t) {
     return t !== 'item';
   },
-  acceptsLines: false
+  acceptsLines: false,
 };
 
 const list: BlockHandler = {
@@ -91,7 +91,7 @@ const list: BlockHandler = {
   canContain(t) {
     return t === 'item';
   },
-  acceptsLines: false
+  acceptsLines: false,
 };
 
 const blockQuote: BlockHandler = {
@@ -112,7 +112,7 @@ const blockQuote: BlockHandler = {
   canContain(t) {
     return t !== 'item';
   },
-  acceptsLines: false
+  acceptsLines: false,
 };
 
 const item: BlockHandler = {
@@ -134,7 +134,7 @@ const item: BlockHandler = {
   canContain(t) {
     return t !== 'item';
   },
-  acceptsLines: false
+  acceptsLines: false,
 };
 
 const heading: BlockHandler = {
@@ -146,7 +146,7 @@ const heading: BlockHandler = {
   canContain() {
     return false;
   },
-  acceptsLines: false
+  acceptsLines: false,
 };
 
 const thematicBreak: BlockHandler = {
@@ -158,7 +158,7 @@ const thematicBreak: BlockHandler = {
   canContain() {
     return false;
   },
-  acceptsLines: false
+  acceptsLines: false,
 };
 
 const codeBlock: BlockHandler = {
@@ -219,7 +219,7 @@ const codeBlock: BlockHandler = {
   canContain() {
     return false;
   },
-  acceptsLines: true
+  acceptsLines: true,
 };
 
 const htmlBlock: BlockHandler = {
@@ -235,7 +235,7 @@ const htmlBlock: BlockHandler = {
   canContain() {
     return false;
   },
-  acceptsLines: true
+  acceptsLines: true,
 };
 
 const paragraph: BlockHandler = {
@@ -265,7 +265,7 @@ const paragraph: BlockHandler = {
   canContain() {
     return false;
   },
-  acceptsLines: true
+  acceptsLines: true,
 };
 
 const refDef = noop;
@@ -290,5 +290,5 @@ export const blockHandlers = {
   tableDelimCell,
   refDef,
   customBlock,
-  frontMatter
+  frontMatter,
 };

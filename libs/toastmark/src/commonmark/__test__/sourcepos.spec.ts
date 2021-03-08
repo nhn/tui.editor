@@ -10,7 +10,7 @@ describe('paragraph', () => {
 
     expect(text.sourcepos).toEqual([
       [1, 1],
-      [1, 11]
+      [1, 11],
     ]);
   });
 
@@ -20,7 +20,7 @@ describe('paragraph', () => {
 
     expect(text.sourcepos).toEqual([
       [1, 1],
-      [1, 3]
+      [1, 3],
     ]);
   });
 
@@ -32,16 +32,16 @@ describe('paragraph', () => {
 
     expect(text1.sourcepos).toEqual([
       [1, 3],
-      [1, 7]
+      [1, 7],
     ]);
     expect(linebreak.sourcepos).toEqual([
       [1, 8],
-      [1, 10]
+      [1, 10],
     ]);
     // preceeding whitespaces are not included in text node
     expect(text2.sourcepos).toEqual([
       [2, 3],
-      [2, 7]
+      [2, 7],
     ]);
   });
 
@@ -53,15 +53,15 @@ describe('paragraph', () => {
 
     expect(text.sourcepos).toEqual([
       [1, 1],
-      [1, 6]
+      [1, 6],
     ]);
     expect(emph.sourcepos).toEqual([
       [1, 7],
-      [1, 13]
+      [1, 13],
     ]);
     expect(emphText.sourcepos).toEqual([
       [1, 8],
-      [1, 12]
+      [1, 12],
     ]);
   });
 
@@ -73,15 +73,15 @@ describe('paragraph', () => {
 
     expect(text.sourcepos).toEqual([
       [1, 1],
-      [1, 6]
+      [1, 6],
     ]);
     expect(strong.sourcepos).toEqual([
       [1, 7],
-      [1, 15]
+      [1, 15],
     ]);
     expect(strongText.sourcepos).toEqual([
       [1, 9],
-      [1, 13]
+      [1, 13],
     ]);
   });
 
@@ -93,15 +93,15 @@ describe('paragraph', () => {
 
     expect(text.sourcepos).toEqual([
       [1, 1],
-      [1, 6]
+      [1, 6],
     ]);
     expect(image.sourcepos).toEqual([
       [1, 7],
-      [1, 30]
+      [1, 30],
     ]);
     expect(imageText.sourcepos).toEqual([
       [1, 9],
-      [1, 13]
+      [1, 13],
     ]);
   });
 
@@ -111,7 +111,7 @@ describe('paragraph', () => {
 
     expect(text.sourcepos).toEqual([
       [1, 1],
-      [1, 17]
+      [1, 17],
     ]);
   });
 
@@ -123,15 +123,15 @@ describe('paragraph', () => {
 
     expect(text.sourcepos).toEqual([
       [1, 1],
-      [1, 6]
+      [1, 6],
     ]);
     expect(link.sourcepos).toEqual([
       [1, 7],
-      [1, 29]
+      [1, 29],
     ]);
     expect(linkText.sourcepos).toEqual([
       [1, 8],
-      [1, 12]
+      [1, 12],
     ]);
   });
 
@@ -142,12 +142,12 @@ describe('paragraph', () => {
 
     expect(text.sourcepos).toEqual([
       [1, 1],
-      [1, 6]
+      [1, 6],
     ]);
     expect(code.tickCount).toBe(2);
     expect(code.sourcepos).toEqual([
       [1, 7],
-      [1, 15]
+      [1, 15],
     ]);
   });
 
@@ -160,19 +160,19 @@ describe('paragraph', () => {
 
     expect(text1.sourcepos).toEqual([
       [1, 1],
-      [1, 6]
+      [1, 6],
     ]);
     expect(html1.sourcepos).toEqual([
       [1, 7],
-      [1, 14]
+      [1, 14],
     ]);
     expect(text2.sourcepos).toEqual([
       [1, 15],
-      [1, 19]
+      [1, 19],
     ]);
     expect(html2.sourcepos).toEqual([
       [1, 20],
-      [1, 28]
+      [1, 28],
     ]);
   });
 
@@ -183,11 +183,11 @@ describe('paragraph', () => {
 
     expect(link.sourcepos).toEqual([
       [1, 7],
-      [1, 22]
+      [1, 22],
     ]);
     expect(linkText.sourcepos).toEqual([
       [1, 8],
-      [1, 21]
+      [1, 21],
     ]);
   });
 
@@ -198,11 +198,11 @@ describe('paragraph', () => {
 
     expect(link.sourcepos).toEqual([
       [1, 7],
-      [1, 21]
+      [1, 21],
     ]);
     expect(linkText.sourcepos).toEqual([
       [1, 8],
-      [1, 20]
+      [1, 20],
     ]);
   });
 });
@@ -216,16 +216,16 @@ describe('softbreak and linebreak', () => {
 
     expect(text1.sourcepos).toEqual([
       [1, 1],
-      [1, 5]
+      [1, 5],
     ]);
     expect(softbreak.type).toBe('softbreak');
     expect(softbreak.sourcepos).toEqual([
       [1, 6],
-      [1, 6]
+      [1, 6],
     ]);
     expect(text2.sourcepos).toEqual([
       [2, 1],
-      [2, 5]
+      [2, 5],
     ]);
   });
 
@@ -238,16 +238,16 @@ describe('softbreak and linebreak', () => {
     // trailing spaces are not included in text node
     expect(text1.sourcepos).toEqual([
       [1, 1],
-      [1, 5]
+      [1, 5],
     ]);
     // preceeding spaces are included in linebreak node
     expect(linebreak.sourcepos).toEqual([
       [1, 6],
-      [1, 9]
+      [1, 9],
     ]);
     expect(text2.sourcepos).toEqual([
       [2, 1],
-      [2, 5]
+      [2, 5],
     ]);
   });
 
@@ -259,16 +259,16 @@ describe('softbreak and linebreak', () => {
 
     expect(text1.sourcepos).toEqual([
       [1, 1],
-      [1, 5]
+      [1, 5],
     ]);
     // preceeding backslash is included in linebreak node
     expect(linebreak.sourcepos).toEqual([
       [1, 6],
-      [1, 7]
+      [1, 7],
     ]);
     expect(text2.sourcepos).toEqual([
       [2, 1],
-      [2, 5]
+      [2, 5],
     ]);
   });
 });
@@ -282,15 +282,15 @@ describe('atx header', () => {
 
     expect(text.sourcepos).toEqual([
       [1, 3],
-      [1, 8]
+      [1, 8],
     ]);
     expect(emph.sourcepos).toEqual([
       [1, 9],
-      [1, 15]
+      [1, 15],
     ]);
     expect(emphText.sourcepos).toEqual([
       [1, 10],
-      [1, 14]
+      [1, 14],
     ]);
   });
 
@@ -302,15 +302,15 @@ describe('atx header', () => {
 
     expect(text.sourcepos).toEqual([
       [1, 5],
-      [1, 10]
+      [1, 10],
     ]);
     expect(emph.sourcepos).toEqual([
       [1, 11],
-      [1, 17]
+      [1, 17],
     ]);
     expect(emphText.sourcepos).toEqual([
       [1, 12],
-      [1, 16]
+      [1, 16],
     ]);
   });
 });
@@ -326,11 +326,11 @@ describe('list items', () => {
 
     expect(para1Text.sourcepos).toEqual([
       [1, 6],
-      [1, 10]
+      [1, 10],
     ]);
     expect(para2Text.sourcepos).toEqual([
       [3, 6],
-      [3, 10]
+      [3, 10],
     ]);
   });
 });
@@ -345,11 +345,11 @@ describe('block quote', () => {
 
     expect(para1.firstChild!.sourcepos).toEqual([
       [1, 3],
-      [1, 7]
+      [1, 7],
     ]);
     expect(para2.firstChild!.sourcepos).toEqual([
       [2, 5],
-      [2, 9]
+      [2, 9],
     ]);
   });
 });
@@ -362,11 +362,11 @@ describe('code block', () => {
 
     expect(codeblock.sourcepos).toEqual([
       [1, 1],
-      [3, 3]
+      [3, 3],
     ]);
     expect(para.sourcepos).toEqual([
       [4, 1],
-      [4, 5]
+      [4, 5],
     ]);
   });
 });
@@ -381,15 +381,15 @@ describe('inlline code', () => {
 
     expect(code.sourcepos).toEqual([
       [1, 1],
-      [3, 5]
+      [3, 5],
     ]);
     expect(linebreak.sourcepos).toEqual([
       [3, 6],
-      [3, 6]
+      [3, 6],
     ]);
     expect(text.sourcepos).toEqual([
       [4, 2],
-      [4, 2]
+      [4, 2],
     ]);
   });
 });
@@ -404,18 +404,18 @@ describe('merge text nodes', () => {
     expect(text1.literal).toBe('\\ Text *');
     expect(text1.sourcepos).toEqual([
       [1, 1],
-      [1, 8]
+      [1, 8],
     ]);
     expect(text2.literal).toBe('[ Text !');
     expect(text2.sourcepos).toEqual([
       [2, 1],
-      [2, 8]
+      [2, 8],
     ]);
 
     expect(text3.literal).toBe('![ Text ]');
     expect(text3.sourcepos).toEqual([
       [3, 1],
-      [3, 9]
+      [3, 9],
     ]);
   });
 });
@@ -433,7 +433,7 @@ describe('reference link definition', () => {
 
     expect(refDef.sourcepos).toEqual([
       [1, 1],
-      [1, 11]
+      [1, 11],
     ]);
   });
 
@@ -443,7 +443,7 @@ describe('reference link definition', () => {
 
     expect(refDef.sourcepos).toEqual([
       [1, 1],
-      [1, 19]
+      [1, 19],
     ]);
   });
 
@@ -453,7 +453,7 @@ describe('reference link definition', () => {
 
     expect(refDef.sourcepos).toEqual([
       [1, 1],
-      [2, 4]
+      [2, 4],
     ]);
   });
 
@@ -463,7 +463,7 @@ describe('reference link definition', () => {
 
     expect(refDef.sourcepos).toEqual([
       [1, 1],
-      [2, 12]
+      [2, 12],
     ]);
   });
 
@@ -473,7 +473,7 @@ describe('reference link definition', () => {
 
     expect(refDef.sourcepos).toEqual([
       [1, 1],
-      [5, 2]
+      [5, 2],
     ]);
   });
 });

@@ -34,5 +34,5 @@ export const customBlock: BlockHandler = {
   canContain() {
     return false;
   },
-  acceptsLines: true
+  acceptsLines: true,
 };

@@ -7,16 +7,16 @@ const convertors: HTMLConvertorMap = {
     return [
       { type: 'openTag', tagName: 'div', outerNewLine: true, classNames: ['myCustom-block'] },
       { type: 'html', content: node.literal! },
-      { type: 'closeTag', tagName: 'div', outerNewLine: true }
+      { type: 'closeTag', tagName: 'div', outerNewLine: true },
     ];
   },
   MYCUSTOM(node) {
     return [
       { type: 'openTag', tagName: 'div', outerNewLine: true, classNames: ['myCustom-block'] },
       { type: 'html', content: node.literal! },
-      { type: 'closeTag', tagName: 'div', outerNewLine: true }
+      { type: 'closeTag', tagName: 'div', outerNewLine: true },
     ];
-  }
+  },
 };
 const reader = new Parser();
 const renderer = new Renderer({ gfm: true, convertors });

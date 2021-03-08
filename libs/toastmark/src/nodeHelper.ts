@@ -1,10 +1,10 @@
-import { Node, getNodeById, removeNodeById, BlockNode } from './commonmark/node';
+import { Node, getNodeById, removeNodeById } from './commonmark/node';
 import { Position } from './toastmark';
 
 export const enum Compare {
   LT = 1,
   EQ = 0,
-  GT = -1
+  GT = -1,
 }
 
 function comparePos(p1: Position, p2: Position) {
@@ -203,9 +203,11 @@ export function toString(node: Node | null) {
   if (!node) {
     return 'null';
   }
-  return `type: ${node.type}, sourcepos: ${node.sourcepos}, firstChild: ${node.firstChild &&
-    node.firstChild.type}, lastChild: ${node.lastChild && node.lastChild.type}, prev: ${node.prev &&
-    node.prev.type}, next: ${node.next && node.next.type}`;
+  return `type: ${node.type}, sourcepos: ${node.sourcepos}, firstChild: ${
+    node.firstChild && node.firstChild.type
+  }, lastChild: ${node.lastChild && node.lastChild.type}, prev: ${
+    node.prev && node.prev.type
+  }, next: ${node.next && node.next.type}`;
 }
 
 export function findNodeById(id: number) {

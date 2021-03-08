@@ -1,4 +1,5 @@
-import { Node, NodeType, isContainer, isCustomBlock, isCustomInline } from '../commonmark/node';
+import { NodeType } from '@t/index';
+import { Node, isContainer, isCustomBlock, isCustomInline } from '../commonmark/node';
 import { escapeXml } from '../commonmark/common';
 import { last } from '../helper';
 import { baseConvertors } from './baseConvertors';
@@ -63,7 +64,7 @@ const defaultOptions: Options = {
   softbreak: '\n',
   gfm: false,
   tagFilter: false,
-  nodeId: false
+  nodeId: false,
 };
 
 function getChildrenText(node: Node) {
@@ -104,7 +105,7 @@ export class Renderer {
     if (this.options.convertors) {
       const customConvertors = this.options.convertors;
       const nodeTypes = Object.keys(customConvertors) as NodeType[];
-      nodeTypes.forEach(nodeType => {
+      nodeTypes.forEach((nodeType) => {
         const orgConvertor = convertors[nodeType];
         const convertor = customConvertors[nodeType]!;
         if (orgConvertor) {
@@ -149,7 +150,7 @@ export class Renderer {
         getChildrenText,
         skipChildren: () => {
           skipped = true;
-        }
+        },
       };
 
       const converted =
@@ -206,7 +207,7 @@ export class Renderer {
     }
 
     if (attributes) {
-      Object.keys(attributes).forEach(attrName => {
+      Object.keys(attributes).forEach((attrName) => {
         const attrValue = attributes[attrName];
         this.buffer.push(` ${attrName}="${attrValue}"`);
       });

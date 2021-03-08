@@ -1,3 +1,4 @@
+import { SourcePos } from '@t/index';
 import { Parser, Options } from './commonmark/blocks';
 import {
   BlockNode,
@@ -5,11 +6,10 @@ import {
   removeAllNode,
   removeNodeById,
   Node,
-  SourcePos,
   isRefDef,
   RefDefNode,
   isTable,
-  isCodeBlock
+  isCodeBlock,
 } from './commonmark/node';
 import {
   removeNextUntil,
@@ -22,7 +22,7 @@ import {
   findNodeAtPosition,
   findNodeById,
   invokeNextUntil,
-  isUnlinked
+  isUnlinked,
 } from './nodeHelper';
 import { reBulletListMarker, reOrderedListMarker } from './commonmark/blockStarts';
 import { iterateObject, omit, isEmptyObj } from './helper';
@@ -95,7 +95,7 @@ export function createRefDefState(node: RefDefNode) {
     title,
     sourcepos: sourcepos!,
     unlinked: false,
-    destination: dest
+    destination: dest,
   };
 }
 
@@ -178,7 +178,7 @@ export class ToastMark {
     } else {
       insertNodesBefore(startNode, newNodes);
       removeNextUntil(startNode, endNode!);
-      [startNode.id, endNode!.id].forEach(id => removeNodeById(id));
+      [startNode.id, endNode!.id].forEach((id) => removeNodeById(id));
       startNode.unlink();
     }
   }
@@ -196,7 +196,7 @@ export class ToastMark {
   }
 
   private trigger(eventName: EventName, param: any) {
-    this.eventHandlerMap[eventName].forEach(handler => {
+    this.eventHandlerMap[eventName].forEach((handler) => {
       handler(param);
     });
   }
@@ -268,7 +268,7 @@ export class ToastMark {
     }
     return {
       id: [extStartNode.id, extEndNode!.id],
-      line: [extStartNode.sourcepos![0][0] - 1, extEndNode!.sourcepos![1][0] - 1]
+      line: [extStartNode.sourcepos![0][0] - 1, extEndNode!.sourcepos![1][0] - 1],
     };
   }
 
@@ -302,7 +302,7 @@ export class ToastMark {
           }
         }
       };
-      nodes.forEach(node => {
+      nodes.forEach((node) => {
         invokeNextUntil(replaceWith, node);
       });
     }
@@ -399,8 +399,8 @@ export class ToastMark {
 
   private removeUnlinkedCandidate() {
     if (!isEmptyObj(this.refDefCandidateMap)) {
-      [this.refLinkCandidateMap, this.refDefCandidateMap].forEach(candidateMap => {
-        iterateObject(candidateMap, id => {
+      [this.refLinkCandidateMap, this.refDefCandidateMap].forEach((candidateMap) => {
+        iterateObject(candidateMap, (id) => {
           if (isUnlinked(id)) {
             delete candidateMap[id];
           }

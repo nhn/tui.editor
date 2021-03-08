@@ -1,14 +1,6 @@
+import { NodeType, BlockNodeType } from '@t/index';
 import { repeat } from './common';
-import {
-  Node,
-  BlockNode,
-  BlockNodeType,
-  isCodeBlock,
-  isHtmlBlock,
-  createNode,
-  TableCellNode,
-  NodeType
-} from './node';
+import { Node, BlockNode, isCodeBlock, isHtmlBlock, createNode, TableCellNode } from './node';
 import { InlineParser, C_NEWLINE } from './inlines';
 import { blockHandlers, Process } from './blockHandlers';
 import { CODE_INDENT } from './blockHelper';
@@ -25,7 +17,7 @@ const reHtmlBlockClose = [
   /-->/,
   /\?>/,
   />/,
-  /\]\]>/
+  /\]\]>/,
 ];
 
 const reMaybeSpecial = /^[#`~*+_=<>0-9-$]/;
@@ -34,7 +26,7 @@ const reLineEnding = /\r\n|\n|\r/;
 function document() {
   return createNode('document', [
     [1, 1],
-    [0, 0]
+    [0, 0],
   ]);
 }
 
@@ -46,7 +38,7 @@ const defaultOptions = {
   referenceDefinition: false,
   disallowDeepHeading: false,
   customParser: null,
-  frontMatter: false
+  frontMatter: false,
 };
 
 export type CustomParser = (node: Node, context: { entering: boolean; options: Options }) => void;
@@ -204,7 +196,7 @@ export class Parser {
     const columnNumber = offset + 1; // offset 0 = column 1
     const newBlock = createNode(tag, [
       [this.lineNumber, columnNumber],
-      [0, 0]
+      [0, 0],
     ]);
     newBlock.stringContent = '';
     this.tip.appendChild(newBlock);
@@ -491,7 +483,7 @@ export class Parser {
   }
 
   clearRefMaps() {
-    [this.refMap, this.refLinkCandidateMap, this.refDefCandidateMap].forEach(map => {
+    [this.refMap, this.refLinkCandidateMap, this.refDefCandidateMap].forEach((map) => {
       clearObj(map);
     });
   }

@@ -7,7 +7,7 @@ const disallowedTags = [
   'noembed',
   'noframes',
   'script',
-  'plaintext'
+  'plaintext',
 ];
 
 const reDisallowedTag = new RegExp(`<(\/?(?:${disallowedTags.join('|')})[^>]*>)`, 'ig');

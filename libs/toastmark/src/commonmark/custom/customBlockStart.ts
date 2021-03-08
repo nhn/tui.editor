@@ -4,7 +4,7 @@ import { CustomBlockNode } from '../node';
 const reCustomBlock = /^(\$\$)([a-zA-Z])+/;
 const reCanBeCustomInline = /^(\$\$)([a-zA-Z])+.*(\$\$)/;
 
-export const customBlock: BlockStart = parser => {
+export const customBlock: BlockStart = (parser) => {
   let match;
   if (
     !parser.indented &&

@@ -5,7 +5,7 @@ import specs from './base-examples.json';
 const reader = new Parser({ referenceDefinition: true });
 const renderer = new Renderer();
 
-specs.forEach(spec => {
+specs.forEach((spec) => {
   const { example, section, markdown, html } = spec;
 
   it(`Example ${example} (${section})`, () => {

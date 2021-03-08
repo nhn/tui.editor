@@ -17,9 +17,9 @@ it('tags in disallowedHtmlBlockTags should not be parsed as a HTML block', () =>
           type: 'softbreak',
           next: {
             type: 'text',
-            literal: 'Hello'
-          }
-        }
+            literal: 'Hello',
+          },
+        },
       },
       next: {
         type: 'paragraph',
@@ -30,12 +30,12 @@ it('tags in disallowedHtmlBlockTags should not be parsed as a HTML block', () =>
             type: 'softbreak',
             next: {
               type: 'text',
-              literal: 'World'
-            }
-          }
-        }
-      }
-    }
+              literal: 'World',
+            },
+          },
+        },
+      },
+    },
   });
 });
 
@@ -55,7 +55,7 @@ describe('disallowDeepHeading: true', () => {
             markerOffset: 0,
             padding: 2,
             start: 0,
-            type: 'bullet'
+            type: 'bullet',
           },
           firstChild: {
             type: 'paragraph',
@@ -68,13 +68,13 @@ describe('disallowDeepHeading: true', () => {
                 next: {
                   type: 'text',
                   literal: '-',
-                  sourcepos: pos(2, 2, 2, 2)
-                }
-              }
-            }
-          }
-        }
-      }
+                  sourcepos: pos(2, 2, 2, 2),
+                },
+              },
+            },
+          },
+        },
+      },
     });
   });
 
@@ -93,7 +93,7 @@ describe('disallowDeepHeading: true', () => {
             markerOffset: 0,
             padding: 2,
             start: 0,
-            type: 'bullet'
+            type: 'bullet',
           },
           firstChild: {
             type: 'paragraph',
@@ -101,11 +101,11 @@ describe('disallowDeepHeading: true', () => {
             firstChild: {
               type: 'text',
               literal: '# item1',
-              sourcepos: pos(1, 3, 1, 9)
-            }
-          }
-        }
-      }
+              sourcepos: pos(1, 3, 1, 9),
+            },
+          },
+        },
+      },
     });
   });
 
@@ -130,12 +130,12 @@ describe('disallowDeepHeading: true', () => {
               next: {
                 type: 'text',
                 literal: '-',
-                sourcepos: pos(2, 3, 2, 3)
-              }
-            }
-          }
-        }
-      }
+                sourcepos: pos(2, 3, 2, 3),
+              },
+            },
+          },
+        },
+      },
     });
   });
 
@@ -154,10 +154,10 @@ describe('disallowDeepHeading: true', () => {
           firstChild: {
             type: 'text',
             literal: '# item1',
-            sourcepos: pos(1, 3, 1, 9)
-          }
-        }
-      }
+            sourcepos: pos(1, 3, 1, 9),
+          },
+        },
+      },
     });
   });
 });
@@ -177,7 +177,7 @@ it('should apply the custom parser', () => {
       if (inEmph) {
         node.literal = node.literal!.toUpperCase();
       }
-    }
+    },
   };
   const reader = new Parser({ customParser });
   const root = reader.parse('*test*');
@@ -190,8 +190,8 @@ it('should apply the custom parser', () => {
       firstChild: {
         type: 'text',
         sourcepos: pos(1, 2, 1, 5),
-        literal: 'TEST'
-      }
-    }
+        literal: 'TEST',
+      },
+    },
   });
 });

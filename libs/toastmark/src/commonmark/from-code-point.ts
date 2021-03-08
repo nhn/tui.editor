@@ -3,7 +3,7 @@
 let fromCodePoint: (c: number) => string;
 
 if (String.fromCodePoint) {
-  fromCodePoint = function(_) {
+  fromCodePoint = function (_) {
     try {
       return String.fromCodePoint(_);
     } catch (e) {
@@ -16,7 +16,7 @@ if (String.fromCodePoint) {
 } else {
   const stringFromCharCode = String.fromCharCode;
   const floor = Math.floor;
-  fromCodePoint = function(...args) {
+  fromCodePoint = function (...args) {
     const MAX_SIZE = 0x4000;
     const codeUnits = [];
     let highSurrogate: number;

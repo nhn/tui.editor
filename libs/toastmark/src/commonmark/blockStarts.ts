@@ -5,7 +5,7 @@ import {
   HeadingNode,
   CodeBlockNode,
   createNode,
-  BlockNode
+  BlockNode,
 } from './node';
 import { OPENTAG, CLOSETAG } from './rawHtml';
 import {
@@ -17,7 +17,7 @@ import {
   C_GREATERTHAN,
   C_LESSTHAN,
   C_TAB,
-  C_SPACE
+  C_SPACE,
 } from './blockHelper';
 import { Parser } from './blocks';
 import { tableHead, tableBody } from './gfm/tableBlockStart';
@@ -26,7 +26,7 @@ import { customBlock } from './custom/customBlockStart';
 export const enum Matched {
   None = 0, // No Match
   Container, // Keep Going
-  Leaf // No more block starts
+  Leaf, // No more block starts
 }
 export interface BlockStart {
   (parser: Parser, container: BlockNode): Matched;
@@ -41,7 +41,7 @@ const reHtmlBlockOpen = [
   /^<![A-Z]/,
   /^<!\[CDATA\[/,
   /^<[/]?(?:address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h[123456]|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|p|param|section|source|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)(?:\s|[/]?[>]|$)/i,
-  new RegExp(`^(?:${OPENTAG}|${CLOSETAG})\\s*$`, 'i')
+  new RegExp(`^(?:${OPENTAG}|${CLOSETAG})\\s*$`, 'i'),
 ];
 const reSetextHeadingLine = /^(?:=+|-+)[ \t]*$/;
 const reATXHeadingMarker = /^#{1,6}(?:[ \t]+|$)/;
@@ -65,7 +65,7 @@ function parseListMarker(parser: Parser, container: ListNode): ListNodeData | nu
     markerOffset: parser.indent,
     // GFM: Task List Item
     task: false,
-    checked: false
+    checked: false,
   };
 
   if (parser.indent >= 4) {
@@ -138,7 +138,7 @@ function isDisallowedDeepHeading(parser: Parser, node: BlockNode) {
   return parser.options.disallowDeepHeading && (node.type === 'blockQuote' || node.type === 'item');
 }
 
-const blockQuote: BlockStart = parser => {
+const blockQuote: BlockStart = (parser) => {
   if (!parser.indented && peek(parser.currentLine, parser.nextNonspace) === C_GREATERTHAN) {
     parser.advanceNextNonspace();
     parser.advanceOffset(1, false);
@@ -179,7 +179,7 @@ const atxHeading: BlockStart = (parser, container) => {
   return Matched.None;
 };
 
-const fencedCodeBlock: BlockStart = parser => {
+const fencedCodeBlock: BlockStart = (parser) => {
   let match;
   if (
     !parser.indented &&
@@ -267,7 +267,7 @@ const seTextHeading: BlockStart = (parser, container) => {
   return Matched.None;
 };
 
-const thematicBreak: BlockStart = parser => {
+const thematicBreak: BlockStart = (parser) => {
   if (!parser.indented && reThematicBreak.test(parser.currentLine.slice(parser.nextNonspace))) {
     parser.closeUnmatchedBlocks();
     parser.addChild('thematicBreak', parser.nextNonspace);
@@ -303,7 +303,7 @@ const listItem: BlockStart = (parser, container) => {
 };
 
 // indented code block
-const indentedCodeBlock: BlockStart = parser => {
+const indentedCodeBlock: BlockStart = (parser) => {
   if (parser.indented && parser.tip.type !== 'paragraph' && !parser.blank) {
     // indented code
     parser.advanceOffset(CODE_INDENT, true);
@@ -325,5 +325,5 @@ export const blockStarts = [
   indentedCodeBlock,
   tableHead,
   tableBody,
-  customBlock
+  customBlock,
 ];
