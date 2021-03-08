@@ -8,72 +8,6 @@
     <div id="editor"></div>
     <!-- Editor -->
     <script type="module">
-      import { Editor } from '/dist/index.js';
-      import { Plugin } from 'prosemirror-state';
-
-      function fooPlugin() {
-        console.log('foo');
-        return null;
-      }
-
-      function barPlugin(eventEmitter, options) {
-        const { hljs } = options || {};
-
-        function customWwPlugin() {
-          console.log('## test wysiwyg plugin');
-          console.log(arguments);
-          return new Plugin({ key: 'ww' });
-        }
-
-        function customMdPlugin() {
-          console.log('## test markdown plugin');
-          console.log(arguments);
-          return new Plugin({ key: 'md' });
-        }
-
-        function customNodeView() {
-          console.log('## test nodeview');
-          console.log(arguments);
-
-          const dom = document.createElement('span');
-
-          dom.innerHTML = 'nodeview';
-
-          return { dom };
-        }
-
-        return {
-          wwPlugins: [
-            (eventEmitter) => {
-              return customWwPlugin(eventEmitter, hljs);
-            },
-          ],
-          mdPlugins: [
-            (eventEmitter) => {
-              return customMdPlugin(eventEmitter, hljs);
-            },
-          ],
-          wwNodeViews: {
-            codeBlock: (node, view, getPos, eventEmitter, toDOMAdaptor) => {
-              return customNodeView(node, view, getPos, eventEmitter, toDOMAdaptor, hljs);
-            },
-          },
-        };
-      }
-
-      const convertors = {
-        latex(node) {
-          // const generator = new latexjs.HtmlGenerator({ hyphenate: false });
-          // const { body } = latexjs.parse(node.literal, { generator }).htmlDocument();
-
-          return [
-            { type: 'openTag', tagName: 'div', outerNewLine: true },
-            { type: 'html', content: 'daf' },
-            { type: 'closeTag', tagName: 'div', outerNewLine: true },
-          ];
-        },
-      };
-
       const editor = new Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
@@ -82,8 +16,6 @@
         useCommandShortcut: true,
         extendedAutolinks: true,
         frontMatter: true,
-        customHTMLRenderer: convertors,
-        plugins: [barPlugin],
       });
 
       window.editor = editor;
