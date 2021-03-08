@@ -19,6 +19,7 @@ import { addWidget } from './plugins/popupWidget';
 import { dropImage } from './plugins/dropImage';
 import { isWidgetNode } from './widget/widgetNode';
 import { last } from './utils/common';
+import { PluginProp } from '@t/plugin';
 
 export default abstract class EditorBase implements Base {
   el: HTMLElement;
@@ -41,12 +42,15 @@ export default abstract class EditorBase implements Base {
 
   placeholder: { text: string };
 
-  constructor(eventEmitter: Emitter) {
+  extraPlugins: PluginProp[];
+
+  constructor(eventEmitter: Emitter, extraPlugins: PluginProp[] = []) {
     this.el = document.createElement('div');
     this.el.className = 'tui-editor';
 
     this.eventEmitter = eventEmitter;
     this.placeholder = { text: '' };
+    this.extraPlugins = extraPlugins;
   }
 
   abstract createSpecs(): SpecManager;
@@ -140,6 +144,10 @@ export default abstract class EditorBase implements Base {
 
   createCommands() {
     return this.specs.commands(this.view);
+  }
+
+  createPluginProps() {
+    return this.extraPlugins.map((plugin) => plugin(this.eventEmitter));
   }
 
   focus() {

@@ -43,29 +43,21 @@
         }
 
         return {
-          plugins: [
-            {
-              editorType: 'wysiwyg',
-              plugin: (eventEmitter) => {
-                return customWwPlugin(eventEmitter, hljs);
-              },
-            },
-            {
-              editorType: 'markdown',
-              plugin: (eventEmitter) => {
-                return customMdPlugin(eventEmitter, hljs);
-              },
+          wwPlugins: [
+            (eventEmitter) => {
+              return customWwPlugin(eventEmitter, hljs);
             },
           ],
-          nodeViews: [
-            {
-              editorType: 'wysiwyg',
-              nodeName: 'codeBlock',
-              view: (node, view, getPos, eventEmitter, toDOMAdaptor) => {
-                return customNodeView(node, view, getPos, eventEmitter, toDOMAdaptor, hljs);
-              },
+          mdPlugins: [
+            (eventEmitter) => {
+              return customMdPlugin(eventEmitter, hljs);
             },
           ],
+          wwNodeViews: {
+            codeBlock: (node, view, getPos, eventEmitter, toDOMAdaptor) => {
+              return customNodeView(node, view, getPos, eventEmitter, toDOMAdaptor, hljs);
+            },
+          },
         };
       }
 
@@ -91,7 +83,7 @@
         extendedAutolinks: true,
         frontMatter: true,
         customHTMLRenderer: convertors,
-        plugins: [fooPlugin, barPlugin],
+        plugins: [barPlugin],
       });
 
       window.editor = editor;

@@ -457,8 +457,8 @@ describe('editor', () => {
   describe('options', () => {
     describe('plugins', () => {
       it('should invoke plugin functions', () => {
-        const fooPlugin = jest.fn();
-        const barPlugin = jest.fn();
+        const fooPlugin = jest.fn().mockReturnValue({});
+        const barPlugin = jest.fn().mockReturnValue({});
 
         editor = new Editor({
           el: container,
@@ -472,7 +472,7 @@ describe('editor', () => {
       });
 
       it('should invoke plugin function with options of plugin', () => {
-        const plugin = jest.fn();
+        const plugin = jest.fn().mockReturnValue({});
         const options = {};
 
         editor = new Editor({

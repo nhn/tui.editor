@@ -13,7 +13,7 @@ import { Context, EditorAllCommandMap, EditorCommandFn } from './spec';
 import { ToMdConvertorMap } from './convertor';
 import { DefaultUI, ToolbarItemOptions } from './ui';
 import SpecManager from '@/spec/specManager';
-import { ExtraPlugin, ExtraNodeViews } from './plugin';
+import { PluginProp, NodeViewPropMap } from './plugin';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -95,25 +95,18 @@ export class Viewer {
   setCodeBlockLanguages(languages?: string[]): void;
 }
 
-export interface ProsemirrorPlugin {
-  editorType: 'wysiwyg' | 'markdown' | 'all';
-  plugin: ExtraPlugin;
-}
-
-export interface ProsemirrorNodeView {
-  editorType: 'wysiwyg';
-  nodeName: string;
-  view: ExtraNodeViews;
-}
-
 interface EditorPluginInfo {
   toHTMLRenderers: CustomHTMLRenderer;
-  plugins: ProsemirrorPlugin[];
-  nodeViews: ProsemirrorNodeView[];
+  mdPlugins: PluginProp[];
+  wwPlugins: PluginProp[];
+  wwNodeViews: NodeViewPropMap;
 }
 
-export type PluginFn = (eventEmitter: Emitter, options?: any) => EditorPluginInfo | null;
-export type EditorPlugin = PluginFn | [PluginFn, any];
+export type PluginFn = (
+  eventEmitter: Emitter,
+  options?: Record<string, any>
+) => EditorPluginInfo | null;
+export type EditorPlugin = PluginFn | [PluginFn, Record<string, any>];
 
 export interface EditorOptions {
   el: HTMLElement;

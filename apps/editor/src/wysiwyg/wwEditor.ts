@@ -28,7 +28,7 @@ import { createNodesWithWidget } from '@/widget/rules';
 import { widgetNodeView } from '@/widget/widgetNode';
 import { cls } from '@/utils/dom';
 import { includes } from '@/utils/common';
-import { ExtraNodeViewMap, ExtraPlugin } from '@t/plugin';
+import { NodeViewPropMap, PluginProp } from '@t/plugin';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -42,8 +42,8 @@ interface WysiwygOptions {
 }
 
 interface ExtraViewOptions {
-  extraPlugins?: ExtraPlugin[];
-  extraNodeViews?: ExtraNodeViewMap;
+  extraPlugins?: PluginProp[];
+  extraNodeViews?: NodeViewPropMap;
 }
 
 const CONTENTS_CLASS_NAME = cls('contents');
@@ -53,8 +53,21 @@ export default class WysiwygEditor extends EditorBase {
 
   private linkAttributes: LinkAttributes;
 
+<<<<<<< HEAD
   constructor(eventEmitter: Emitter, options: WysiwygOptions) {
     super(eventEmitter);
+=======
+  private extraNodeViews: NodeViewPropMap;
+
+  constructor(
+    eventEmitter: Emitter,
+    toDOMAdaptor: ToDOMAdaptor,
+    useCommandShortcut: boolean,
+    linkAttributes = {},
+    extraViewOptions: ExtraViewOptions = {}
+  ) {
+    super(eventEmitter, extraViewOptions.extraPlugins);
+>>>>>>> feat: apply code review
 
     const {
       toDOMAdaptor,
@@ -65,7 +78,12 @@ export default class WysiwygEditor extends EditorBase {
 
     this.editorType = 'wysiwyg';
     this.toDOMAdaptor = toDOMAdaptor;
+<<<<<<< HEAD
     this.linkAttributes = linkAttributes!;
+=======
+    this.linkAttributes = linkAttributes;
+    this.extraNodeViews = extraViewOptions.extraNodeViews ?? {};
+>>>>>>> feat: apply code review
     this.specs = this.createSpecs();
     this.schema = this.createSchema(htmlSchemaMap);
     this.context = this.createContext();
@@ -100,13 +118,12 @@ export default class WysiwygEditor extends EditorBase {
       tableContextMenu(this.eventEmitter),
       task(),
       toolbarState(this.eventEmitter),
-      ...this.createExtraPlugins(),
+      ...this.createPluginProps(),
     ]);
   }
 
   createExtraNodeViews() {
-    const { eventEmitter, toDOMAdaptor } = this;
-    const { extraNodeViews } = this.extraViewOptions;
+    const { eventEmitter, toDOMAdaptor, extraNodeViews } = this;
     const extraNodeViewMap: ExtraNodeViews = {};
 
     if (extraNodeViews) {
@@ -121,8 +138,6 @@ export default class WysiwygEditor extends EditorBase {
 
   createView() {
     const { toDOMAdaptor, eventEmitter } = this;
-
-    this.createExtraNodeViews();
 
     return new EditorView(this.el, {
       state: this.createState(),

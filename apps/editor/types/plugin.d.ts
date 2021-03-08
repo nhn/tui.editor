@@ -5,7 +5,7 @@ import { CustomHTMLRendererMap } from '@t/markdown';
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
 
-export type ExtraPlugin = (eventEmitter: Emitter) => Plugin;
+export type PluginProp = (eventEmitter: Emitter) => Plugin;
 
 export type ExtraNodeViews = (
   node: Node,
@@ -15,13 +15,13 @@ export type ExtraNodeViews = (
   toDOMAdaptor: ToDOMAdaptor
 ) => NodeView;
 
-interface ExtraNodeViewMap {
+interface NodeViewPropMap {
   [k: string]: ExtraNodeViews;
 }
 
 export interface PluginInfoResult {
   toHTMLRenderers: CustomHTMLRendererMap;
-  mdPlugins: ExtraPlugin[];
-  wwPlugins: ExtraPlugin[];
-  wwNodeViews: ExtraNodeViewMap;
+  mdPlugins: PluginProp[];
+  wwPlugins: PluginProp[];
+  wwNodeViews: NodeViewPropMap;
 }
