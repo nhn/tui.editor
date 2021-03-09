@@ -1,23 +1,18 @@
 import {
-  CodeBlockMdNode,
-  CodeMdNode,
-  Context,
-  CustomInlineMdNode,
   HTMLConvertorMap,
-  ListItemMdNode,
   MdNode,
-  HTMLConvertorMap,
-  Context,
-  OpenTagToken,
+  ListItemMdNode,
+  CodeMdNode,
+  CodeBlockMdNode,
   CustomInlineMdNode,
-  CustomHTMLRenderer,
-  HTMLMdNode,
   OpenTagToken,
 } from '@toast-ui/toastmark';
 import { LinkAttributes } from '@t/editor';
+import { MdLikeNode } from '@t/markdown';
 import { reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 import { getWidgetContent, widgetToDOM } from '@/widget/rules';
 import { getChildrenHTML, getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
+import { Context } from 'vm';
 
 type TokenAttrs = Record<string, any>;
 
@@ -172,7 +167,7 @@ export function getHTMLRenderConvertors(
 
             if (htmlConvertor) {
               // copy for preventing to overwrite the originial property
-              const newNode = { ...node } as HTMLMdNode;
+              const newNode: MdLikeNode = { ...node };
 
               newNode.attrs = getHTMLAttrsByHTMLString(rootHTML);
               newNode.childrenHTML = childrenHTML;

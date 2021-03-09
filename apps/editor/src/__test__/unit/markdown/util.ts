@@ -1,5 +1,5 @@
+import { HTMLConvertorMap } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdown/mdEditor';
-import { CustomHTMLRendererMap } from '@t/markdown';
 
 export function getTextContent(editor: MarkdownEditor) {
   const { doc } = editor.view.state;
@@ -22,7 +22,7 @@ export function trailingDataAttr(html: string) {
 }
 
 export function createHTMLrenderer() {
-  const customHTMLRenderer: CustomHTMLRendererMap = {
+  const customHTMLRenderer: HTMLConvertorMap = {
     htmlBlock: {
       // @ts-ignore
       iframe(node: MdLikeNode) {

@@ -1,7 +1,7 @@
 import { Node as ProsemirrorNode, DOMOutputSpecArray, NodeSpec } from 'prosemirror-model';
+import { HTMLConvertorMap, MdNode } from '@toast-ui/toastmark';
 import toArray from 'tui-code-snippet/collection/toArray';
 import { ToDOMAdaptor } from '@t/convertor';
-import { CustomHTMLRendererMap, MdNode } from '@t/markdown';
 import { SchemaMap, Sanitizer } from '@t/editor';
 import { ATTRIBUTE, reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 import { registerTagWhitelistIfPossible } from '@/sanitizer/htmlSanitizer';
@@ -113,7 +113,7 @@ const schemaFactory = {
 };
 
 export function createHTMLSchemaMap(
-  renderer: CustomHTMLRendererMap,
+  renderer: HTMLConvertorMap,
   sanitizeHTML: Sanitizer,
   wwToDOMAdaptor: ToDOMAdaptor
 ) {

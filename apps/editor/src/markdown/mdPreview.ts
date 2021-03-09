@@ -60,7 +60,7 @@ class MarkdownPreview extends Preview {
 
   private renderer: Renderer;
 
-  private customHTMLRenderer: CustomHTMLRendererMap;
+  private customHTMLRenderer: HTMLConvertorMap;
 
   private sanitizer: Sanitizer;
 
