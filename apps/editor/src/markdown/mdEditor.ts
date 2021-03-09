@@ -35,6 +35,7 @@ import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
 import { smartTask } from './plugins/smartTask';
 import { createNodesWithWidget } from '@/widget/rules';
 import { Widget, widgetNodeView } from '@/widget/widgetNode';
+import { PluginProp } from '@t/plugin';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -43,6 +44,7 @@ interface WindowWithClipboard extends Window {
 interface MarkdownOptions {
   toastMark: ToastMark;
   useCommandShortcut?: boolean;
+  mdPlugins?: PluginProp[];
 }
 
 export default class MdEditor extends EditorBase {
@@ -53,10 +55,11 @@ export default class MdEditor extends EditorBase {
   constructor(eventEmitter: Emitter, options: MarkdownOptions) {
     super(eventEmitter);
 
-    const { toastMark, useCommandShortcut = true } = options;
+    const { toastMark, useCommandShortcut = true, mdPlugins = [] } = options;
 
     this.editorType = 'markdown';
     this.toastMark = toastMark;
+    this.extraPlugins = mdPlugins;
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
@@ -145,6 +148,7 @@ export default class MdEditor extends EditorBase {
       syntaxHighlight(this.context),
       previewHighlight(this.context),
       smartTask(this.context),
+      ...this.createPluginProps(),
     ]);
   }
 

@@ -453,4 +453,36 @@ describe('editor', () => {
       expect(i18n.setLanguage).toHaveBeenCalledWith('ko', data);
     });
   });
+
+  describe('options', () => {
+    describe('plugins', () => {
+      it('should invoke plugin functions', () => {
+        const fooPlugin = jest.fn().mockReturnValue({});
+        const barPlugin = jest.fn().mockReturnValue({});
+
+        editor = new Editor({
+          el: container,
+          plugins: [fooPlugin, barPlugin],
+        });
+
+        // @ts-ignore
+        expect(fooPlugin).toHaveBeenCalledWith(editor.eventEmitter);
+        // @ts-ignore
+        expect(barPlugin).toHaveBeenCalledWith(editor.eventEmitter);
+      });
+
+      it('should invoke plugin function with options of plugin', () => {
+        const plugin = jest.fn().mockReturnValue({});
+        const options = {};
+
+        editor = new Editor({
+          el: container,
+          plugins: [[plugin, options]],
+        });
+
+        // @ts-ignore
+        expect(plugin).toHaveBeenCalledWith(editor.eventEmitter, options);
+      });
+    });
+  });
 });

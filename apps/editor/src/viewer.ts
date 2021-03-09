@@ -12,7 +12,7 @@ import off from 'tui-code-snippet/domEvent/off';
 import { ViewerOptions } from '@t/editor';
 import { Emitter, Handler } from '@t/event';
 import MarkdownPreview from './markdown/mdPreview';
-import { invokePlugins, getPluginInfo } from './pluginHelper';
+import { getPluginInfo } from './helper/plugin';
 import { last, sanitizeLinkAttribute } from './utils/common';
 import EventEmitter from './event/eventEmitter';
 import { isPositionInBox, toggleClass } from './utils/dom';
@@ -78,7 +78,7 @@ class ToastUIEditorViewer {
     this.eventEmitter = new EventEmitter();
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
-    const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
+    const { toHTMLRenderers } = getPluginInfo(this.options.plugins, this.eventEmitter);
     const {
       customHTMLRenderer,
       extendedAutolinks,
@@ -89,10 +89,9 @@ class ToastUIEditorViewer {
 
     const rendererOptions = {
       linkAttributes,
-      customHTMLRenderer: { ...renderer, ...customHTMLRenderer },
+      customHTMLRenderer: { ...toHTMLRenderers, ...customHTMLRenderer },
       extendedAutolinks,
       referenceDefinition,
-      customParser: parser,
       frontMatter,
       sanitizer: customHTMLSanitizer || sanitizeHTML,
     };
@@ -121,10 +120,6 @@ class ToastUIEditorViewer {
     });
 
     on(this.preview.el!, 'mousedown', this.toggleTask.bind(this));
-
-    if (plugins) {
-      invokePlugins(plugins, this);
-    }
 
     if (initialValue) {
       this.setMarkdown(initialValue);

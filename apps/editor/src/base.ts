@@ -19,6 +19,7 @@ import { addWidget } from './plugins/popupWidget';
 import { dropImage } from './plugins/dropImage';
 import { isWidgetNode } from './widget/widgetNode';
 import { last } from './utils/common';
+import { PluginProp } from '@t/plugin';
 
 export default abstract class EditorBase implements Base {
   el: HTMLElement;
@@ -40,6 +41,8 @@ export default abstract class EditorBase implements Base {
   specs!: SpecManager;
 
   placeholder: { text: string };
+
+  extraPlugins!: PluginProp[];
 
   constructor(eventEmitter: Emitter) {
     this.el = document.createElement('div');
@@ -140,6 +143,10 @@ export default abstract class EditorBase implements Base {
 
   createCommands() {
     return this.specs.commands(this.view);
+  }
+
+  createPluginProps() {
+    return this.extraPlugins.map((plugin) => plugin(this.eventEmitter));
   }
 
   focus() {

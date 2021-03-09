@@ -34,7 +34,7 @@ import CommandManager from './commands/commandManager';
 import Convertor from './convertors/convertor';
 import Viewer from './viewer';
 import i18n, { I18n } from './i18n/i18n';
-import { invokePlugins, getPluginInfo } from './pluginHelper';
+import { getPluginInfo } from './helper/plugin';
 
 // @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
@@ -173,13 +173,15 @@ class ToastUIEditor {
     setWidgetRules(widgetRules);
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
-    const { renderer, parser, plugins } = getPluginInfo(this.options.plugins);
+    const { toHTMLRenderers, mdPlugins, wwPlugins, wwNodeViews } = getPluginInfo(
+      this.options.plugins,
+      this.eventEmitter
+    );
     const rendererOptions = {
       linkAttributes,
-      customHTMLRenderer: { ...renderer, ...customHTMLRenderer },
+      customHTMLRenderer: { ...toHTMLRenderers, ...customHTMLRenderer },
       extendedAutolinks,
       referenceDefinition,
-      customParser: parser,
       frontMatter,
       sanitizer: customHTMLSanitizer || sanitizeHTML,
     };
@@ -206,13 +208,13 @@ class ToastUIEditor {
       extendedAutolinks,
       referenceDefinition,
       disallowDeepHeading: true,
-      customParser: parser,
       frontMatter,
     });
 
     this.mdEditor = new MarkdownEditor(this.eventEmitter, {
       toastMark: this.toastMark,
       useCommandShortcut,
+      mdPlugins,
     });
 
     this.preview = new MarkdownPreview(this.eventEmitter, {
@@ -226,6 +228,8 @@ class ToastUIEditor {
       useCommandShortcut,
       htmlSchemaMap,
       linkAttributes,
+      wwPlugins,
+      wwNodeViews,
     });
 
     this.convertor = new Convertor(
@@ -233,10 +237,6 @@ class ToastUIEditor {
       customMarkdownRenderer,
       this.eventEmitter
     );
-
-    if (plugins) {
-      invokePlugins(plugins, this);
-    }
 
     this.setMinHeight(this.options.minHeight);
 

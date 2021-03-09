@@ -1,18 +1,13 @@
 import { Schema, NodeSpec } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 import { EditorState, Plugin } from 'prosemirror-state';
-import {
-  MdPos,
-  MdSourcepos,
-  CustomHTMLRenderer,
-  CustomHTMLRendererMap,
-  CustomParserMap,
-} from './markdown';
+import { MdPos, MdSourcepos, CustomHTMLRenderer } from './markdown';
 import { Emitter, Handler } from './event';
 import { Context, EditorAllCommandMap, EditorCommandFn } from './spec';
 import { ToMdConvertorMap } from './convertor';
 import { DefaultUI, ToolbarItemOptions } from './ui';
 import SpecManager from '@/spec/specManager';
+import { PluginProp, NodeViewPropMap } from './plugin';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -63,7 +58,7 @@ export interface ViewerOptions {
   el: HTMLElement;
   initialValue?: string;
   events?: EventMap;
-  plugins?: (EditorPlugin | EditorPluginInfo)[];
+  plugins?: EditorPlugin[];
   extendedAutolinks?: ExtendedAutolinks;
   linkAttributes?: LinkAttributes;
   customHTMLRenderer?: CustomHTMLRenderer;
@@ -94,14 +89,18 @@ export class Viewer {
   setCodeBlockLanguages(languages?: string[]): void;
 }
 
-export type PluginFn = (editor: Editor | Viewer, options?: any) => void;
-export type EditorPlugin = PluginFn | [PluginFn, any];
-
-export interface EditorPluginInfo {
-  pluginFn: PluginFn;
-  renderer: CustomHTMLRendererMap;
-  parser: CustomParserMap;
+interface EditorPluginInfo {
+  toHTMLRenderers: CustomHTMLRenderer;
+  markdownPlugins: PluginProp[];
+  wysiwygPlugins: PluginProp[];
+  wysiwygNodeViews: NodeViewPropMap;
 }
+
+export type PluginFn = (
+  eventEmitter: Emitter,
+  options?: Record<string, any>
+) => EditorPluginInfo | null;
+export type EditorPlugin = PluginFn | [PluginFn, Record<string, any>];
 
 export interface EditorOptions {
   el: HTMLElement;
@@ -117,7 +116,7 @@ export interface EditorOptions {
   usageStatistics?: boolean;
   toolbarItems?: (string | ToolbarItemOptions)[];
   hideModeSwitch?: boolean;
-  plugins?: (EditorPlugin | EditorPluginInfo)[];
+  plugins?: EditorPlugin[];
   extendedAutolinks?: ExtendedAutolinks;
   placeholder?: string;
   linkAttributes?: LinkAttributes;
