@@ -18,7 +18,7 @@ type GetPos = (() => number) | boolean;
 
 type CodeBlockPos = { top: number; right: number };
 
-export default class CodeSyntaxHighlightView implements NodeView {
+class CodeSyntaxHighlightView implements NodeView {
   dom: HTMLElement | null = null;
 
   contentDOM: HTMLElement | null = null;
@@ -179,4 +179,14 @@ export default class CodeSyntaxHighlightView implements NodeView {
       window.removeEventListener('resize', this.finishLanguageEditing);
     }
   }
+}
+
+export function createCodeSyntaxHighlightView(languages: any[]) {
+  return (
+    node: ProsemirrorNode,
+    view: EditorView,
+    getPos: GetPos,
+    evtEmitter: Emitter,
+    toDOMAdaptor: ToDOMAdaptor
+  ) => new CodeSyntaxHighlightView(node, view, getPos, evtEmitter, toDOMAdaptor, languages);
 }
