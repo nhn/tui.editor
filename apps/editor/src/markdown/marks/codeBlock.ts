@@ -84,7 +84,7 @@ export class CodeBlock extends Mark {
     return {
       'Shift-Mod-p': codeBlockCommand,
       'Shift-Mod-P': codeBlockCommand,
-      // Enter: this.keepIndentation(),
+      Enter: this.keepIndentation(),
     };
   }
 }

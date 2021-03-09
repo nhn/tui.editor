@@ -50,6 +50,7 @@ export class BlockQuote extends Mark {
           const newTr = slicedText
             ? replaceNodes(tr, to, endToOffset, node, { from: 0, to: 1 })
             : insertNodes(tr, endToOffset, node);
+          // should add `4` to selection end position considering `> ` text and start, end block tag position
           const newSelection = createTextSelection(newTr, to + slicedText.length + 4);
 
           dispatch!(newTr.setSelection(newSelection));

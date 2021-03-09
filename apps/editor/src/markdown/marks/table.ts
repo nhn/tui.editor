@@ -99,6 +99,7 @@ export class Table extends Mark {
         } else {
           const newTr = insertNodes(tr, endToOffset, createParagraph(schema, row));
 
+          // should add `4` to selection end position considering `| ` text and start, end block tag position
           dispatch!(newTr.setSelection(createTextSelection(newTr, endToOffset + 4)));
         }
         return true;

@@ -108,7 +108,7 @@ export class ListItem extends Mark {
             ? replaceNodes(tr, to, endToOffset, node, { from: 0, to: 1 })
             : insertNodes(tr, endToOffset, node);
         }
-
+        // should add `2` to selection end position considering start, end block tag position
         const newSelection = createTextSelection(newTr, endToOffset + listSyntax.length + 2);
 
         dispatch!(newTr.setSelection(newSelection));
@@ -181,7 +181,7 @@ export class ListItem extends Mark {
     return ({ selection, tr, doc, schema }, dispatch) => {
       const { toastMark } = this.context;
       const { startIndex, endIndex } = getRangeInfo(selection);
-      let newTr;
+      let newTr: Transaction | null = null;
 
       for (let i = startIndex; i <= endIndex; i += 1) {
         const mdNode = toastMark.findFirstNodeAtLine(i + 1)!;

@@ -27,7 +27,7 @@ interface IndentSelectionInfo extends SelectionInfo {
   lineLen: number;
 }
 
-interface OutDentSelectionInfo extends SelectionInfo {
+interface OutdentSelectionInfo extends SelectionInfo {
   type: 'outdent';
   spaceLenList: number[];
 }
@@ -55,7 +55,7 @@ function isInTableCellNode(doc: ProsemirrorNode, schema: Schema, selection: Sele
   );
 }
 
-function createSelection(tr: Transaction, posInfo: IndentSelectionInfo | OutDentSelectionInfo) {
+function createSelection(tr: Transaction, posInfo: IndentSelectionInfo | OutdentSelectionInfo) {
   let { from, to } = posInfo;
 
   if (posInfo.type === 'indent') {
@@ -159,7 +159,12 @@ export class Paragraph extends Node {
         }
 
         const newTr = replaceNodes(tr, startFromOffset, endToOffset, nodes);
-        const posInfo = { type: 'indent' as const, from, to, lineLen: endIndex - startIndex };
+        const posInfo: IndentSelectionInfo = {
+          type: 'indent',
+          from,
+          to,
+          lineLen: endIndex - startIndex,
+        };
 
         dispatch!(newTr.setSelection(createSelection(newTr, posInfo)));
 
@@ -203,7 +208,7 @@ export class Paragraph extends Node {
           nodes.push(createParagraph(schema, textContent.replace(reStartSpace, '$2')));
         }
         const newTr = replaceNodes(tr, startFromOffset, endToOffset, nodes);
-        const posInfo = { type: 'outdent' as const, from, to, spaceLenList };
+        const posInfo: OutdentSelectionInfo = { type: 'outdent', from, to, spaceLenList };
 
         dispatch!(newTr.setSelection(createSelection(newTr, posInfo)));
 

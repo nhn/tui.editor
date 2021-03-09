@@ -136,8 +136,8 @@ export function getExtendedRangeOffset(from: number, to: number, doc: Prosemirro
 }
 
 export function getRangeInfo(selection: Selection) {
-  // eslint-disable-next-line prefer-const
-  let { $from, $to, from, to } = selection;
+  let { $from, $to } = selection;
+  const { from, to } = selection;
   const { doc } = $from;
 
   if (selection instanceof AllSelection) {
