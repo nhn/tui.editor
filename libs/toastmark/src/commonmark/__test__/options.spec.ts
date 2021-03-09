@@ -1,4 +1,5 @@
-import { Parser, CustomParserMap } from '../blocks';
+import { CustomParserMap } from '@t/parser';
+import { Parser } from '../blocks';
 import { pos } from './helper.spec';
 import { Node } from '../node';
 

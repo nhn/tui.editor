@@ -1,4 +1,4 @@
-import { SourcePos, TableColumn } from '@t/index';
+import { Sourcepos, TableColumn } from '@t/node';
 import { isEmpty } from '../common';
 import { BlockStart, Matched } from '../blockStarts';
 import { createNode, TableNode, TableCellNode } from '../node';
@@ -134,7 +134,7 @@ export const tableHead: BlockStart = (parser, container) => {
     const tableHead = createNode('tableHead', [
       [firstLineNum, firstLineStart],
       [parser.lineNumber, parser.offset],
-    ] as SourcePos);
+    ] as Sourcepos);
     table.appendChild(tableHead);
 
     const tableHeadRow = createNode('tableRow', [

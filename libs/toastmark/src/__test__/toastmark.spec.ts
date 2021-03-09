@@ -1,5 +1,6 @@
+import { ParserOptions } from '@t/parser';
 import { ToastMark } from '../toastmark';
-import { Parser, Options } from '../commonmark/blocks';
+import { Parser } from '../commonmark/blocks';
 import { getChildNodes } from '../nodeHelper';
 import { Node } from '../commonmark/node';
 
@@ -15,7 +16,7 @@ function removeIdAttrFromAllNode(root: Node) {
   }
 }
 
-function assertParseResult(doc: ToastMark, lineTexts: string[], options?: Partial<Options>) {
+function assertParseResult(doc: ToastMark, lineTexts: string[], options?: Partial<ParserOptions>) {
   expect(doc.getLineTexts()).toEqual(lineTexts);
 
   const reader = new Parser(options);

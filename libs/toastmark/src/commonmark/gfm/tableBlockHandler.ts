@@ -1,4 +1,4 @@
-import { MdNodeType } from '@t/index';
+import { MdNodeType } from '@t/node';
 import { Process, BlockHandler } from '../blockHandlers';
 
 export const table: BlockHandler = {

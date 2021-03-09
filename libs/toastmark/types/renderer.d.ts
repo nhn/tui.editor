@@ -25,7 +25,7 @@ interface Context {
   origin?: () => ReturnType<HTMLConvertor>;
 }
 
-export interface TagToken {
+interface TagToken {
   tagName: string;
   outerNewLine?: boolean;
   innerNewLine?: boolean;
@@ -55,7 +55,7 @@ export interface RawHTMLToken {
 
 export type HTMLToken = OpenTagToken | CloseTagToken | TextToken | RawHTMLToken;
 
-export interface ToastMarkRenderer {
+export interface HTMLRenderer {
   getConvertors(): HTMLConvertorMap;
 
   getOptions(): RendererOptions;

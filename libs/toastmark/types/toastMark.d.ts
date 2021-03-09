@@ -1,7 +1,4 @@
-import { MdNode, MdNodeType, Pos } from './node';
-
-export type CustomParser = (node: MdNode, context: { entering: boolean }) => void;
-export type CustomParserMap = Partial<Record<MdNodeType, CustomParser>>;
+import { MdNode, Pos } from './node';
 
 export interface RemovedNodeRange {
   id: [number, number];

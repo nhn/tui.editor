@@ -1,14 +1,14 @@
-import { SourcePos, InlineNodeType } from '@t/index';
+import { InlineNodeType, Sourcepos } from '@t/node';
+import { RefMap, RefLinkCandidateMap, RefDefCandidateMap, ParserOptions } from '@t/parser';
 import { Node, BlockNode, isHeading, LinkNode, createNode, text, CustomInlineNode } from './node';
 import { repeat, normalizeURI, unescapeString, ESCAPABLE, ENTITY } from './common';
 import { reHtmlTag } from './rawHtml';
 import fromCodePoint from './from-code-point';
-import { Options } from './blocks';
 import { decodeHTML } from 'entities/lib/decode';
 import NodeWalker from './nodeWalker';
 import { convertExtAutoLinks } from './gfm/autoLinks';
 import { last, normalizeReference } from '../helper';
-import { RefMap, RefLinkCandidateMap, RefDefCandidateMap, createRefDefState } from '../toastmark';
+import { createRefDefState } from '../toastmark';
 
 export const C_NEWLINE = 10;
 const C_ASTERISK = 42;
@@ -107,21 +107,21 @@ export class InlineParser {
   public refMap: RefMap = {};
   public refLinkCandidateMap: RefLinkCandidateMap = {};
   public refDefCandidateMap: RefDefCandidateMap = {};
-  public options: Options;
+  public options: ParserOptions;
 
-  constructor(options: Options) {
+  constructor(options: ParserOptions) {
     this.options = options;
   }
 
   sourcepos(start: number): [number, number];
-  sourcepos(start: number, end: number): SourcePos;
-  sourcepos(start: number, end?: number): [number, number] | SourcePos {
+  sourcepos(start: number, end: number): Sourcepos;
+  sourcepos(start: number, end?: number): [number, number] | Sourcepos {
     const linePosOffset = this.linePosOffset + this.lineOffsets[this.lineIdx];
     const lineNum = this.lineStartNum + this.lineIdx;
     const startpos = [lineNum, start + linePosOffset];
 
     if (typeof end === 'number') {
-      return [startpos, [lineNum, end + linePosOffset]] as SourcePos;
+      return [startpos, [lineNum, end + linePosOffset]] as Sourcepos;
     }
     return startpos as [number, number];
   }
@@ -1020,7 +1020,7 @@ export class InlineParser {
     }
   }
 
-  getReferenceDefSourcepos(block: BlockNode): SourcePos {
+  getReferenceDefSourcepos(block: BlockNode): Sourcepos {
     const lines = block.stringContent!.split(/\n|\r\n/);
     let passedUrlLine = false;
     let quotationCount = 0;

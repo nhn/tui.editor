@@ -1,4 +1,4 @@
-import { ListData } from '@t/index';
+import { ListData } from '@t/node';
 import { ListNode, HtmlBlockNode, HeadingNode, CodeBlockNode, createNode, BlockNode } from './node';
 import { OPENTAG, CLOSETAG } from './rawHtml';
 import {

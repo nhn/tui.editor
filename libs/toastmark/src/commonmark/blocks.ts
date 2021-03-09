@@ -1,12 +1,17 @@
-import { MdNodeType, BlockNodeType } from '@t/index';
+import {
+  BlockParser,
+  ParserOptions,
+  RefDefCandidateMap,
+  RefLinkCandidateMap,
+  RefMap,
+} from '@t/parser';
+import { BlockNodeType } from '@t/node';
 import { repeat } from './common';
 import { Node, BlockNode, isCodeBlock, isHtmlBlock, createNode, TableCellNode } from './node';
 import { InlineParser, C_NEWLINE } from './inlines';
 import { blockHandlers, Process } from './blockHandlers';
 import { CODE_INDENT } from './blockHelper';
 import { blockStarts, Matched } from './blockStarts';
-import { RefMap, RefLinkCandidateMap, RefDefCandidateMap } from '../toastmark';
-import { AutolinkParser } from './gfm/autoLinks';
 import { clearObj } from '../helper';
 import { frontMatter as frontMatterHandler } from './frontMatter/frontMatterHandler';
 import { frontMatter as frontMatterStart } from './frontMatter/frontMatterStart';
@@ -41,21 +46,7 @@ const defaultOptions = {
   frontMatter: false,
 };
 
-export type CustomParser = (node: Node, context: { entering: boolean; options: Options }) => void;
-export type CustomParserMap = Partial<Record<MdNodeType, CustomParser>>;
-
-export interface Options {
-  smart: boolean;
-  tagFilter: boolean;
-  extendedAutolinks: boolean | AutolinkParser;
-  disallowedHtmlBlockTags: string[];
-  referenceDefinition: boolean;
-  disallowDeepHeading: boolean;
-  frontMatter: boolean;
-  customParser: CustomParserMap | null;
-}
-
-export class Parser {
+export class Parser implements BlockParser {
   public doc: BlockNode;
   public tip: BlockNode;
   public oldtip: BlockNode;
@@ -76,10 +67,10 @@ export class Parser {
   public refDefCandidateMap: RefDefCandidateMap;
   public lastLineLength: number;
   public inlineParser: InlineParser;
-  public options: Options;
+  public options: ParserOptions;
   public lines: string[];
 
-  constructor(options?: Partial<Options>) {
+  constructor(options?: Partial<ParserOptions>) {
     this.options = { ...defaultOptions, ...options };
     this.doc = document();
     this.tip = this.doc;

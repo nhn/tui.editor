@@ -1,4 +1,4 @@
-import { HTMLConvertorMap } from '@t/index';
+import { HTMLConvertorMap } from '@t/renderer';
 import {
   Node,
   HeadingNode,

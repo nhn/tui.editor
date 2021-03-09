@@ -35,7 +35,7 @@ export type InlineNodeType =
 export type MdNodeType = BlockNodeType | InlineNodeType;
 
 export type Pos = [number, number];
-export type SourcePos = [Pos, Pos];
+export type Sourcepos = [Pos, Pos];
 
 export interface NodeWalker {
   current: MdNode | null;
@@ -52,7 +52,7 @@ export interface MdNode {
   parent: MdNode | null;
   prev: MdNode | null;
   next: MdNode | null;
-  sourcepos?: SourcePos;
+  sourcepos?: Sourcepos;
   firstChild: MdNode | null;
   lastChild: MdNode | null;
   literal: string | null;
@@ -152,12 +152,6 @@ export interface LinkMdNode extends MdNode {
 
 export interface CodeMdNode extends MdNode {
   tickCount: number;
-}
-
-export interface ImageMdNode extends MdNode {
-  lastChild: MdNode;
-  destination: string;
-  title: string;
 }
 
 export interface CustomInlineMdNode extends MdNode {

@@ -1,4 +1,4 @@
-import { HTMLConvertorMap, OpenTagToken, HTMLToken } from '@t/index';
+import { HTMLConvertorMap, HTMLToken, OpenTagToken } from '@t/renderer';
 import { Node, ListNode, TableNode, TableCellNode } from '../commonmark/node';
 
 export const gfmConvertors: HTMLConvertorMap = {

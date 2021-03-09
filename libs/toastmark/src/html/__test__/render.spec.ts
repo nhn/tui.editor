@@ -1,4 +1,4 @@
-import { OpenTagToken } from '@t/index';
+import { OpenTagToken } from '@t/renderer';
 import { Parser } from '../../commonmark/blocks';
 import { Renderer } from '../renderer';
 

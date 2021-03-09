@@ -1,5 +1,5 @@
+import { Pos, Sourcepos } from '@t/node';
 import { Node, getNodeById, removeNodeById } from './commonmark/node';
-import { Position } from './toastmark';
 
 export const enum Compare {
   LT = 1,
@@ -7,7 +7,7 @@ export const enum Compare {
   GT = -1,
 }
 
-function comparePos(p1: Position, p2: Position) {
+function comparePos(p1: Pos, p2: Pos) {
   if (p1[0] < p2[0]) {
     return Compare.LT;
   }
@@ -23,7 +23,7 @@ function comparePos(p1: Position, p2: Position) {
   return Compare.EQ;
 }
 
-function compareRangeAndPos([startPos, endPos]: [Position, Position], pos: Position) {
+function compareRangeAndPos([startPos, endPos]: Sourcepos, pos: Pos) {
   if (comparePos(endPos, pos) === Compare.LT) {
     return Compare.LT;
   }
@@ -106,7 +106,7 @@ export function updateNextLineNumbers(base: Node | null, diff: number) {
   }
 }
 
-function compareRangeAndLine([startPos, endPos]: [Position, Position], line: number) {
+function compareRangeAndLine([startPos, endPos]: Sourcepos, line: number) {
   if (endPos[0] < line) {
     return Compare.LT;
   }
@@ -175,7 +175,7 @@ export function findFirstNodeAtLine(parent: Node, line: number) {
   return null;
 }
 
-export function findNodeAtPosition(parent: Node, pos: Position) {
+export function findNodeAtPosition(parent: Node, pos: Pos) {
   let node: Node | null = parent;
   let prev: Node | null = null;
 

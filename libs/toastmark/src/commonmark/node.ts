@@ -13,11 +13,11 @@ import {
   MdNode,
   MdNodeType,
   RefDefMdNode,
-  SourcePos,
+  Sourcepos,
   TableCellMdNode,
   TableColumn,
   TableMdNode,
-} from '@t/index';
+} from '@t/node';
 import NodeWalker from './nodeWalker';
 
 export function isContainer(node: Node) {
@@ -67,7 +67,7 @@ export class Node implements MdNode {
   parent: Node | null = null;
   prev: Node | null = null;
   next: Node | null = null;
-  sourcepos?: SourcePos;
+  sourcepos?: Sourcepos;
 
   // only for container node
   firstChild: Node | null = null;
@@ -76,7 +76,7 @@ export class Node implements MdNode {
   // only for leaf node
   literal: string | null = null;
 
-  constructor(nodeType: MdNodeType, sourcepos?: SourcePos) {
+  constructor(nodeType: MdNodeType, sourcepos?: Sourcepos) {
     if (nodeType === 'document') {
       this.id = -1;
     } else {
@@ -184,7 +184,7 @@ export class BlockNode extends Node implements BlockMdNode {
   lastLineBlank = false;
   lastLineChecked = false;
 
-  constructor(nodeType: BlockNodeType, sourcepos?: SourcePos) {
+  constructor(nodeType: BlockNodeType, sourcepos?: Sourcepos) {
     super(nodeType, sourcepos);
     this.type = nodeType;
   }
@@ -250,19 +250,19 @@ export class CustomInlineNode extends Node implements CustomInlineMdNode {
   info = '';
 }
 
-export function createNode(type: 'heading', sourcepos?: SourcePos): HeadingNode;
-export function createNode(type: 'list' | 'item', sourcepos?: SourcePos): ListNode;
-export function createNode(type: 'codeBlock', sourcepos?: SourcePos): CodeBlockNode;
-export function createNode(type: 'htmlBlock', sourcepos?: SourcePos): HtmlBlockNode;
-export function createNode(type: 'link' | 'image', sourcepos?: SourcePos): LinkNode;
-export function createNode(type: 'code', sourcepos?: SourcePos): CodeNode;
-export function createNode(type: 'table', sourcepos?: SourcePos): TableNode;
-export function createNode(type: 'tableCell', sourcepos?: SourcePos): TableNode;
-export function createNode(type: 'refDef', sourcepos?: SourcePos): RefDefNode;
-export function createNode(type: 'customBlock', sourcepos?: SourcePos): CustomBlockNode;
-export function createNode(type: BlockNodeType, sourcepos?: SourcePos): BlockNode;
-export function createNode(type: MdNodeType, sourcepos?: SourcePos): Node;
-export function createNode(type: MdNodeType, sourcepos?: SourcePos) {
+export function createNode(type: 'heading', sourcepos?: Sourcepos): HeadingNode;
+export function createNode(type: 'list' | 'item', sourcepos?: Sourcepos): ListNode;
+export function createNode(type: 'codeBlock', sourcepos?: Sourcepos): CodeBlockNode;
+export function createNode(type: 'htmlBlock', sourcepos?: Sourcepos): HtmlBlockNode;
+export function createNode(type: 'link' | 'image', sourcepos?: Sourcepos): LinkNode;
+export function createNode(type: 'code', sourcepos?: Sourcepos): CodeNode;
+export function createNode(type: 'table', sourcepos?: Sourcepos): TableNode;
+export function createNode(type: 'tableCell', sourcepos?: Sourcepos): TableNode;
+export function createNode(type: 'refDef', sourcepos?: Sourcepos): RefDefNode;
+export function createNode(type: 'customBlock', sourcepos?: Sourcepos): CustomBlockNode;
+export function createNode(type: BlockNodeType, sourcepos?: Sourcepos): BlockNode;
+export function createNode(type: MdNodeType, sourcepos?: Sourcepos): Node;
+export function createNode(type: MdNodeType, sourcepos?: Sourcepos) {
   switch (type) {
     case 'heading':
       return new HeadingNode(type, sourcepos);
@@ -334,7 +334,7 @@ export function isCustomInline(node: Node) {
   return node.type === 'customInline';
 }
 
-export function text(s: string, sourcepos?: SourcePos) {
+export function text(s: string, sourcepos?: Sourcepos) {
   const node = createNode('text', sourcepos);
   node.literal = s;
   return node;

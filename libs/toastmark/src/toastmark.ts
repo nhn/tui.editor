@@ -1,5 +1,13 @@
-import { EditResult, RemovedNodeRange, SourcePos, ToastMark as ToastMarkParser } from '@t/index';
-import { Parser, Options } from './commonmark/blocks';
+import {
+  EditResult,
+  EventHandlerMap,
+  EventName,
+  RemovedNodeRange,
+  ToastMark as ToastMarkParser,
+} from '@t/toastMark';
+import { ParserOptions, RefDefCandidateMap, RefLinkCandidateMap, RefMap } from '@t/parser';
+import { Pos } from '@t/node';
+import { Parser } from './commonmark/blocks';
 import {
   BlockNode,
   isList,
@@ -30,39 +38,7 @@ import { isBlank } from './commonmark/blockHelper';
 
 export const reLineEnding = /\r\n|\n|\r/;
 
-export type Position = [number, number];
-
-export type Range = [Position, Position];
-
-type EventName = 'change';
-
-type EventHandlerMap = {
-  [key in EventName]: Function[];
-};
-
 type ParseResult = EditResult & { nextNode: Node | null };
-type RefDefState = {
-  id: number;
-  destination: string;
-  title: string;
-  unlinked: boolean;
-  sourcepos: SourcePos;
-};
-
-export type RefMap = {
-  [k: string]: RefDefState;
-};
-
-export type RefLinkCandidateMap = {
-  [k: number]: {
-    node: BlockNode;
-    refLabel: string;
-  };
-};
-
-export type RefDefCandidateMap = {
-  [k: number]: RefDefNode;
-};
 
 function canBeContinuedListItem(lineText: string) {
   const spaceMatch = lineText.match(/^[ \t]+/);
@@ -99,7 +75,7 @@ export class ToastMark implements ToastMarkParser {
   private refDefCandidateMap: RefDefCandidateMap;
   private referenceDefinition: boolean;
 
-  constructor(contents?: string, options?: Partial<Options>) {
+  constructor(contents?: string, options?: Partial<ParserOptions>) {
     this.refMap = {};
     this.refLinkCandidateMap = {};
     this.refDefCandidateMap = {};
@@ -113,7 +89,7 @@ export class ToastMark implements ToastMarkParser {
     this.root = this.parser.parse(contents, this.lineTexts);
   }
 
-  private updateLineTexts(startPos: Position, endPos: Position, newText: string) {
+  private updateLineTexts(startPos: Pos, endPos: Pos, newText: string) {
     const [startLine, startCol] = startPos;
     const [endLine, endCol] = endPos;
     const newLines = newText.split(reLineEnding);
@@ -132,7 +108,10 @@ export class ToastMark implements ToastMarkParser {
   private updateRootNodeState() {
     if (this.lineTexts.length === 1 && this.lineTexts[0] === '') {
       this.root.lastLineBlank = true;
-      this.root.sourcepos = [[1, 1] as Position, [1, 0] as Position];
+      this.root.sourcepos = [
+        [1, 1],
+        [1, 0],
+      ];
       return;
     }
 
@@ -173,7 +152,7 @@ export class ToastMark implements ToastMarkParser {
     }
   }
 
-  private getNodeRange(startPos: Position, endPos: Position) {
+  private getNodeRange(startPos: Pos, endPos: Pos) {
     const startNode = findChildNodeAtLine(this.root, startPos[0]);
     let endNode = findChildNodeAtLine(this.root, endPos[0]);
 
@@ -340,7 +319,7 @@ export class ToastMark implements ToastMarkParser {
     return [startNode, endNode, startLine, endLine] as const;
   }
 
-  private parse(startPos: Position, endPos: Position, lineDiff = 0): ParseResult {
+  private parse(startPos: Pos, endPos: Pos, lineDiff = 0): ParseResult {
     const range = this.getNodeRange(startPos, endPos);
     const [startNode, endNode] = range;
     const startLine = startNode ? Math.min(startNode.sourcepos![0][0], startPos[0]) : startPos[0];
@@ -399,7 +378,7 @@ export class ToastMark implements ToastMarkParser {
     }
   }
 
-  editMarkdown(startPos: Position, endPos: Position, newText: string) {
+  editMarkdown(startPos: Pos, endPos: Pos, newText: string) {
     const lineDiff = this.updateLineTexts(startPos, endPos, newText);
     const parseResult = this.parse(startPos, endPos, lineDiff);
     const editResult: EditResult = omit(parseResult, 'nextNode');
@@ -428,7 +407,7 @@ export class ToastMark implements ToastMarkParser {
     return this.root;
   }
 
-  findNodeAtPosition(pos: Position) {
+  findNodeAtPosition(pos: Pos) {
     const node = findNodeAtPosition(this.root, pos);
     if (!node || node === this.root) {
       return null;

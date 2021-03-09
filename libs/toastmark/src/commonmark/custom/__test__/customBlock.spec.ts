@@ -1,4 +1,4 @@
-import { HTMLConvertorMap } from '@t/index';
+import { HTMLConvertorMap } from '@t/renderer';
 import { Parser } from '../../blocks';
 import { Renderer } from '../../../html/renderer';
 import { source } from 'common-tags';

@@ -2,15 +2,15 @@ import {
   CloseTagToken,
   Context,
   HTMLConvertorMap,
+  HTMLRenderer,
   HTMLToken,
-  MdNodeType,
   OpenTagToken,
   RawHTMLToken,
   RendererOptions,
   TagToken,
   TextToken,
-  ToastMarkRenderer,
-} from '@t/index';
+} from '@t/renderer';
+import { MdNodeType } from '@t/node';
 import { Node, isContainer, isCustomBlock, isCustomInline } from '../commonmark/node';
 import { escapeXml } from '../commonmark/common';
 import { last } from '../helper';
@@ -38,7 +38,7 @@ function getChildrenText(node: Node) {
   return buffer.join('');
 }
 
-export class Renderer implements ToastMarkRenderer {
+export class Renderer implements HTMLRenderer {
   private convertors: HTMLConvertorMap;
 
   private options: RendererOptions;
