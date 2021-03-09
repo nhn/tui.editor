@@ -1,11 +1,23 @@
+import { EditorView } from 'prosemirror-view';
+import { Node as ProsemirrorNode } from 'prosemirror-model';
+
 import { getHTMLRenderers } from '@/renderers/toHTMLRenderers';
 import { codeSyntaxHighlighting } from '@/plugins/codeSyntaxHighlighting';
+import CodeSyntaxHighlightView from '@/nodeViews/codeSyntaxHighlightView';
 
 import { PluginOptions } from '@t/plugin';
 
-function registerLanguages(hljs: any, low: any) {
-  const languages: any[] = hljs.listLanguages();
+// @TODO change import editor's type
+// import { ToDOMAdaptor } from '@t/convertor';
+type ToDOMAdaptor = any;
 
+// @TODO change import editor's type
+// import { Emitter } from '@t/event';
+type Emitter = any;
+
+type GetPos = (() => number) | boolean;
+
+function registerLanguages(hljs: any, low: any, languages: any[]) {
   languages.forEach((lang) => {
     const { rawDefinition } = hljs.getLanguage(lang);
 
@@ -13,15 +25,27 @@ function registerLanguages(hljs: any, low: any) {
   });
 }
 
-export function codeSyntaxHighlightPlugin(eventEmitter: any, low: any, options = {}) {
+export function codeSyntaxHighlightPlugin(eventEmitter: Emitter, low: any, options = {}) {
   const { hljs } = options as PluginOptions;
+  const languages = hljs.listLanguages();
 
-  registerLanguages(hljs, low);
+  eventEmitter.addEventType('showCodeBlockLanguages');
+  eventEmitter.addEventType('selectLanguage');
+  eventEmitter.addEventType('finishLanguageEditing');
 
-  console.log(low.highlight('js', 'var foo = 123'));
+  registerLanguages(hljs, low, languages);
 
   return {
     toHTMLRenderers: getHTMLRenderers(hljs),
-    wwPlugins: [() => codeSyntaxHighlighting(low)],
+    wysiwygPlugins: [() => codeSyntaxHighlighting(hljs, low)],
+    wysiwygNodeViews: {
+      codeBlock: (
+        node: ProsemirrorNode,
+        view: EditorView,
+        getPos: GetPos,
+        evtEmitter: Emitter,
+        toDOMAdaptor: ToDOMAdaptor
+      ) => new CodeSyntaxHighlightView(node, view, getPos, evtEmitter, toDOMAdaptor, languages),
+    },
   };
 }

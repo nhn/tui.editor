@@ -39,13 +39,15 @@ function parseNodes(nodes: any, className = []) {
   });
 }
 
-function getDecorations(doc: ProsemirrorNode, low: any) {
+function getDecorations(doc: ProsemirrorNode, hljs: any, low: any) {
   const decorations: Decoration[] = [];
   const codeBlocks = findCodeBlocks(doc);
 
   codeBlocks.forEach(({ pos, node }) => {
     let startPos = pos + 1;
-    const nodes = low.highlight(node.attrs.language, node.textContent).value;
+
+    const registeredLang = hljs.getLanguage(node.attrs.language);
+    const nodes = registeredLang ? low.highlight(node.attrs.language, node.textContent).value : [];
 
     flatten(parseNodes(nodes))
       .map((nodeInfo: any) => {
@@ -68,25 +70,21 @@ function getDecorations(doc: ProsemirrorNode, low: any) {
       });
   });
 
-  return decorations;
+  return DecorationSet.create(doc, decorations);
 }
 
-export function codeSyntaxHighlighting(low: any) {
+export function codeSyntaxHighlighting(hljs: any, low: any) {
   return new Plugin({
     state: {
       init(_, { doc }) {
-        const content = getDecorations(doc, low);
-
-        return DecorationSet.create(doc, content);
+        return getDecorations(doc, hljs, low);
       },
       apply(tr, set) {
         if (!tr.docChanged) {
           return set.map(tr.mapping, tr.doc);
         }
 
-        const content = getDecorations(tr.doc, low);
-
-        return DecorationSet.create(tr.doc, content);
+        return getDecorations(tr.doc, hljs, low);
       },
     },
     props: {
