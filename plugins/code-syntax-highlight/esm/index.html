@@ -16,6 +16,16 @@
       import { Editor } from 'http://localhost:8080/dist/index.js';
       import codeSyntaxHighlightPlugin from '/dist/index.js';
 
+      // import hljs from 'highlight.js';
+
+      import hljs from 'highlight.js/lib/core';
+
+      import javascript from 'highlight.js/lib/languages/javascript';
+      import clojure from 'highlight.js/lib/languages/clojure';
+
+      hljs.registerLanguage('javascript', javascript);
+      hljs.registerLanguage('clojure', clojure);
+
       const content = [
         '```js',
         `console.log('foo')`,
@@ -43,7 +53,7 @@
         previewStyle: 'vertical',
         height: '500px',
         initialValue: content,
-        plugins: [codeSyntaxHighlightPlugin],
+        plugins: [[codeSyntaxHighlightPlugin, { hljs }]],
       });
 
       window.editor = editor;
