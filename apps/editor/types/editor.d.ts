@@ -97,9 +97,9 @@ export class Viewer {
 
 interface EditorPluginInfo {
   toHTMLRenderers: CustomHTMLRenderer;
-  mdPlugins: PluginProp[];
-  wwPlugins: PluginProp[];
-  wwNodeViews: NodeViewPropMap;
+  markdownPlugins: PluginProp[];
+  wysiwygPlugins: PluginProp[];
+  wysiwygNodeViews: NodeViewPropMap;
 }
 
 export type PluginFn = (
