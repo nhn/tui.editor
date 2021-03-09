@@ -42,15 +42,14 @@ export default abstract class EditorBase implements Base {
 
   placeholder: { text: string };
 
-  extraPlugins: PluginProp[];
+  extraPlugins!: PluginProp[];
 
-  constructor(eventEmitter: Emitter, extraPlugins: PluginProp[] = []) {
+  constructor(eventEmitter: Emitter) {
     this.el = document.createElement('div');
     this.el.className = 'tui-editor';
 
     this.eventEmitter = eventEmitter;
     this.placeholder = { text: '' };
-    this.extraPlugins = extraPlugins;
   }
 
   abstract createSpecs(): SpecManager;

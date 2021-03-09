@@ -214,6 +214,7 @@ class ToastUIEditor {
     this.mdEditor = new MarkdownEditor(this.eventEmitter, {
       toastMark: this.toastMark,
       useCommandShortcut,
+      mdPlugins,
     });
 
     this.preview = new MarkdownPreview(this.eventEmitter, {
@@ -227,6 +228,8 @@ class ToastUIEditor {
       useCommandShortcut,
       htmlSchemaMap,
       linkAttributes,
+      wwPlugins,
+      wwNodeViews,
     });
 
     this.convertor = new Convertor(

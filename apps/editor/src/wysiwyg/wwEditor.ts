@@ -1,4 +1,4 @@
-import { EditorView } from 'prosemirror-view';
+import { EditorView, NodeView } from 'prosemirror-view';
 import { Node as ProsemirrorNode, Slice, Fragment, Mark, Schema } from 'prosemirror-model';
 import isNumber from 'tui-code-snippet/type/isNumber';
 
@@ -23,7 +23,7 @@ import { createSpecs } from './specCreator';
 
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
-import { LinkAttributeNames, LinkAttributes, SchemaMap, WidgetStyle } from '@t/editor';
+import { LinkAttributes, SchemaMap, WidgetStyle } from '@t/editor';
 import { createNodesWithWidget } from '@/widget/rules';
 import { widgetNodeView } from '@/widget/widgetNode';
 import { cls } from '@/utils/dom';
@@ -39,11 +39,14 @@ interface WysiwygOptions {
   useCommandShortcut?: boolean;
   htmlSchemaMap?: SchemaMap;
   linkAttributes?: LinkAttributes | null;
+  wwPlugins?: PluginProp[];
+  wwNodeViews?: NodeViewPropMap;
 }
 
-interface ExtraViewOptions {
-  extraPlugins?: PluginProp[];
-  extraNodeViews?: NodeViewPropMap;
+type ExtraNodeVeiwFn = (node: Node, view: EditorView, getPos: () => number) => NodeView;
+
+interface ExtraNodeViews {
+  [k: string]: ExtraNodeVeiwFn;
 }
 
 const CONTENTS_CLASS_NAME = cls('contents');
@@ -53,37 +56,25 @@ export default class WysiwygEditor extends EditorBase {
 
   private linkAttributes: LinkAttributes;
 
-<<<<<<< HEAD
-  constructor(eventEmitter: Emitter, options: WysiwygOptions) {
-    super(eventEmitter);
-=======
   private extraNodeViews: NodeViewPropMap;
 
-  constructor(
-    eventEmitter: Emitter,
-    toDOMAdaptor: ToDOMAdaptor,
-    useCommandShortcut: boolean,
-    linkAttributes = {},
-    extraViewOptions: ExtraViewOptions = {}
-  ) {
-    super(eventEmitter, extraViewOptions.extraPlugins);
->>>>>>> feat: apply code review
+  constructor(eventEmitter: Emitter, options: WysiwygOptions) {
+    super(eventEmitter);
 
     const {
       toDOMAdaptor,
       htmlSchemaMap = {},
       linkAttributes = {},
       useCommandShortcut = true,
+      wwPlugins = [],
+      wwNodeViews = {},
     } = options;
 
     this.editorType = 'wysiwyg';
     this.toDOMAdaptor = toDOMAdaptor;
-<<<<<<< HEAD
     this.linkAttributes = linkAttributes!;
-=======
-    this.linkAttributes = linkAttributes;
-    this.extraNodeViews = extraViewOptions.extraNodeViews ?? {};
->>>>>>> feat: apply code review
+    this.extraPlugins = wwPlugins;
+    this.extraNodeViews = wwNodeViews;
     this.specs = this.createSpecs();
     this.schema = this.createSchema(htmlSchemaMap);
     this.context = this.createContext();

@@ -1,13 +1,7 @@
 import { Schema, NodeSpec } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 import { EditorState, Plugin } from 'prosemirror-state';
-import {
-  MdPos,
-  MdSourcepos,
-  CustomHTMLRenderer,
-  CustomHTMLRendererMap,
-  CustomParserMap,
-} from './markdown';
+import { MdPos, MdSourcepos, CustomHTMLRenderer } from './markdown';
 import { Emitter, Handler } from './event';
 import { Context, EditorAllCommandMap, EditorCommandFn } from './spec';
 import { ToMdConvertorMap } from './convertor';
@@ -64,7 +58,7 @@ export interface ViewerOptions {
   el: HTMLElement;
   initialValue?: string;
   events?: EventMap;
-  plugins?: (EditorPlugin | EditorPluginInfo)[];
+  plugins?: EditorPlugin[];
   extendedAutolinks?: ExtendedAutolinks;
   linkAttributes?: LinkAttributes;
   customHTMLRenderer?: CustomHTMLRenderer;
