@@ -46,7 +46,7 @@ const reXSSAttr = /href|src|background/i;
 const reXSSAttrValue = /((java|vb|live)script|x):/i;
 const reOnEvent = /^on\S+/i;
 const reComment = /<!--[\s\S]*?-->/g;
-const DEFAULT_BLACK_TAG_LIST = [
+const DEFAULT_TAG_BLACK_LIST = [
   'script',
   'iframe',
   'textarea',
@@ -63,12 +63,12 @@ const DEFAULT_BLACK_TAG_LIST = [
   'details',
   'summary',
 ];
-const CAN_BE_WHITE_TAG_LIST = ['iframe', 'embed', 'details', 'summary'];
-const blackTagList = [...DEFAULT_BLACK_TAG_LIST];
+const CAN_BE_TAG_WHITE_LIST = ['iframe', 'embed', 'details', 'summary'];
+const tagBlacklist = [...DEFAULT_TAG_BLACK_LIST];
 
-export function registerWhiteTaglistIfPossible(tagName: string) {
-  if (includes(CAN_BE_WHITE_TAG_LIST, tagName)) {
-    blackTagList.splice(blackTagList.indexOf(tagName), 1);
+export function registerTagWhitelistIfPossible(tagName: string) {
+  if (includes(CAN_BE_TAG_WHITE_LIST, tagName)) {
+    tagBlacklist.splice(tagBlacklist.indexOf(tagName), 1);
   }
 }
 
@@ -87,7 +87,7 @@ export function sanitizeHTML(html: string) {
 }
 
 function removeUnnecessaryTags(html: HTMLElement) {
-  const removedTags = findNodes(html, blackTagList.join(','));
+  const removedTags = findNodes(html, tagBlacklist.join(','));
 
   removedTags.forEach((node) => {
     removeNode(node);

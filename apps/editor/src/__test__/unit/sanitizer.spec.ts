@@ -1,4 +1,4 @@
-import { registerWhiteTaglistIfPossible, sanitizeHTML } from '@/sanitizer/htmlSanitizer';
+import { registerTagWhitelistIfPossible, sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 
 describe('sanitizeHTML', () => {
   it('removes unnecessary tags', () => {
@@ -51,10 +51,10 @@ describe('sanitizeHTML', () => {
       });
     });
 
-    describe('registerWhiteTaglistIfPossible', () => {
+    describe('registerTagWhitelistIfPossible', () => {
       it('if possible, should keep the tags when registered in the white tag list', () => {
-        registerWhiteTaglistIfPossible('embed');
-        registerWhiteTaglistIfPossible('iframe');
+        registerTagWhitelistIfPossible('embed');
+        registerTagWhitelistIfPossible('iframe');
 
         expect(sanitizeHTML('<iframe src=""></iframe>')).toBe('<iframe src=""></iframe>');
         expect(sanitizeHTML('<embed type="image/jpg" src="">')).toBe(
@@ -63,8 +63,8 @@ describe('sanitizeHTML', () => {
       });
 
       it('should remove the tags in case that the tag name cannot be white list', () => {
-        registerWhiteTaglistIfPossible('sript');
-        registerWhiteTaglistIfPossible('input');
+        registerTagWhitelistIfPossible('sript');
+        registerTagWhitelistIfPossible('input');
 
         expect(sanitizeHTML('<script>alert("test");</script>')).toBe('');
         expect(sanitizeHTML('<input type="image" />')).toBe('');

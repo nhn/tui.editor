@@ -4,7 +4,7 @@ import { ToDOMAdaptor } from '@t/convertor';
 import { CustomHTMLRendererMap, MdNode } from '@t/markdown';
 import { SchemaMap, Sanitizer } from '@t/editor';
 import { ATTRIBUTE, reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
-import { registerWhiteTaglistIfPossible } from '@/sanitizer/htmlSanitizer';
+import { registerTagWhitelistIfPossible } from '@/sanitizer/htmlSanitizer';
 
 export function getChildrenHTML(node: MdNode, typeName: string) {
   return node
@@ -122,8 +122,8 @@ export function createHTMLSchemaMap(
   (['htmlBlock', 'htmlInline'] as const).forEach((htmlType) => {
     if (renderer[htmlType]) {
       Object.keys(renderer[htmlType]!).forEach((type) => {
-        // register white tag list for preventing to remove the html in sanitizer
-        registerWhiteTaglistIfPossible(type);
+        // register tag white list for preventing to remove the html in sanitizer
+        registerTagWhitelistIfPossible(type);
         htmlSchemaMap[type] = schemaFactory[htmlType](type, sanitizeHTML, wwToDOMAdaptor);
       });
     }
