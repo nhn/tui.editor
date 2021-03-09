@@ -240,6 +240,7 @@ export class LinkNode extends Node implements LinkMdNode {
   destination: string | null = null;
   title: string | null = null;
   extendedAutolink = false;
+  lastChild!: Node;
 }
 
 export class CodeNode extends Node implements CodeMdNode {

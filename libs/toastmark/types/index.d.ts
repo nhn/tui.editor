@@ -1,7 +1,3 @@
-import { ToastMark } from './toastMark';
-import { HTMLRenderer as Renderer } from './renderer';
-import { BlockParser as Parser } from './parser';
-
 export {
   BlockNodeType,
   InlineNodeType,
@@ -15,13 +11,17 @@ export {
   HeadingMdNode,
   CodeBlockMdNode,
   TableColumn,
+  TableMdNode,
   TableCellMdNode,
   CustomBlockMdNode,
   HtmlBlockMdNode,
   LinkMdNode,
   CodeMdNode,
   CustomInlineMdNode,
+  Pos as MdPos,
+  Sourcepos,
 } from './node';
+export { ToastMark, EditResult } from './toastMark';
 export {
   HTMLConvertor,
   HTMLConvertorMap,
@@ -32,9 +32,6 @@ export {
   TextToken,
   RawHTMLToken,
   HTMLToken,
+  HTMLRenderer as Renderer,
 } from './renderer';
-export { ParserOptions } from './parser';
-
-declare module '@toast-ui/toastmark' {
-  export { ToastMark, Renderer, Parser };
-}
+export { ParserOptions, BlockParser as Parser, CustomParserMap } from './parser';

@@ -55,7 +55,9 @@ export interface RawHTMLToken {
 
 export type HTMLToken = OpenTagToken | CloseTagToken | TextToken | RawHTMLToken;
 
-export interface HTMLRenderer {
+export class HTMLRenderer {
+  constructor(customOptions?: Partial<RendererOptions>);
+
   getConvertors(): HTMLConvertorMap;
 
   getOptions(): RendererOptions;

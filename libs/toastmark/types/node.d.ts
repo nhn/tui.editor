@@ -95,8 +95,8 @@ export interface ListMdNode extends BlockMdNode {
 }
 
 export interface ListItemMdNode extends BlockMdNode {
-  parent: NonNullable<MdNode>;
-  listData: ListData | null;
+  parent: MdNode;
+  listData: ListData;
 }
 
 export interface HeadingMdNode extends BlockMdNode {
@@ -148,6 +148,7 @@ export interface LinkMdNode extends MdNode {
   destination: string | null;
   title: string | null;
   extendedAutolink: boolean;
+  lastChild: MdNode;
 }
 
 export interface CodeMdNode extends MdNode {

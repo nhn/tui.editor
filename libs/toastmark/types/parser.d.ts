@@ -48,7 +48,9 @@ export interface ParserOptions {
   customParser: CustomParserMap | null;
 }
 
-export interface BlockParser {
+export class BlockParser {
+  constructor(options?: Partial<ParserOptions>);
+
   advanceOffset(count: number, columns?: boolean): void;
 
   advanceNextNonspace(): void;

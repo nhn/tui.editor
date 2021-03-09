@@ -1,4 +1,5 @@
 import { MdNode, Pos } from './node';
+import { ParserOptions } from './parser';
 
 export interface RemovedNodeRange {
   id: [number, number];
@@ -16,7 +17,9 @@ type EventHandlerMap = {
   [key in EventName]: Function[];
 };
 
-export interface ToastMark {
+export class ToastMark {
+  constructor(contents?: string, options?: Partial<ParserOptions>);
+
   lineTexts: string[];
 
   editMarkdown(startPos: Pos, endPos: Pos, newText: string): EditResult[];
