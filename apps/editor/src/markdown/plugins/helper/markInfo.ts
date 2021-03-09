@@ -1,16 +1,15 @@
-import isFunction from 'tui-code-snippet/type/isFunction';
 import {
-  MdPos,
-  MdNode,
   MdNodeType,
-  CodeBlockMdNode,
-  ListItemMdNode,
+  MdPos,
   HeadingMdNode,
   LinkMdNode,
-  ImageMdNode,
   CodeMdNode,
+  MdNode,
+  CodeBlockMdNode,
   CustomBlockMdNode,
-} from '@t/markdown';
+  ListItemMdNode,
+} from '@toast-ui/toastmark';
+import isFunction from 'tui-code-snippet/type/isFunction';
 import {
   getMdStartLine,
   getMdStartCh,
@@ -100,7 +99,7 @@ function markLink(start: MdPos, end: MdPos, linkTextStart: MdPos, lastChildCh: n
   ];
 }
 
-function image({ lastChild }: ImageMdNode, start: MdPos, end: MdPos) {
+function image({ lastChild }: LinkMdNode, start: MdPos, end: MdPos) {
   const lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 3; // 3: length of '![]'
   const linkTextEnd = addOffsetPos(start, 1);
 
@@ -177,7 +176,7 @@ function codeBlock(node: MdNode, start: MdPos, end: MdPos, endLine: string) {
 
   return {
     marks,
-    lineBackground: lineBackground(parent, start, end, 'code-block'),
+    lineBackground: lineBackground(parent!, start, end, 'code-block'),
   };
 }
 
@@ -198,7 +197,7 @@ function customBlock(node: MdNode, start: MdPos, end: MdPos) {
 
   return {
     marks,
-    lineBackground: lineBackground(parent, start, end, 'custom-block'),
+    lineBackground: lineBackground(parent!, start, end, 'custom-block'),
   };
 }
 

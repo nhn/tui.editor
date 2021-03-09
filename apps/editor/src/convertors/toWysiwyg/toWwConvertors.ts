@@ -1,3 +1,14 @@
+import {
+  MdNode,
+  HeadingMdNode,
+  CodeBlockMdNode,
+  ListItemMdNode,
+  LinkMdNode,
+  TableCellMdNode,
+  CustomBlockMdNode,
+  CustomInlineMdNode,
+  TableMdNode,
+} from '@toast-ui/toastmark';
 import toArray from 'tui-code-snippet/collection/toArray';
 
 import { isElemNode } from '@/utils/dom';
@@ -10,17 +21,6 @@ import {
 } from './htmlToWwConvertors';
 
 import { ToWwConvertorMap } from '@t/convertor';
-import {
-  MdNode,
-  HeadingMdNode,
-  CodeBlockMdNode,
-  ListItemMdNode,
-  ImageMdNode,
-  LinkMdNode,
-  TableCellMdNode,
-  CustomBlockMdNode,
-  CustomInlineMdNode,
-} from '@t/markdown';
 import { createWidgetContent, getWidgetContent } from '@/widget/rules';
 import { getChildrenHTML, getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
 
@@ -124,7 +124,7 @@ export const toWwConvertors: ToWwConvertorMap = {
 
   image(state, node, { entering, skipChildren }) {
     const { image } = state.schema.nodes;
-    const { destination, firstChild } = node as ImageMdNode;
+    const { destination, firstChild } = node as LinkMdNode;
 
     if (entering && skipChildren) {
       skipChildren();
@@ -229,7 +229,7 @@ export const toWwConvertors: ToWwConvertorMap = {
       const tablePart = (node as TableCellMdNode).parent!.parent!;
       const cell = tablePart.type === 'tableHead' ? tableHeadCell : tableBodyCell;
 
-      const table = tablePart.parent!;
+      const table = tablePart.parent as TableMdNode;
       const columnInfo = table.columns[(node as TableCellMdNode).startIdx];
       const attrs = columnInfo.align ? { align: columnInfo.align } : null;
 

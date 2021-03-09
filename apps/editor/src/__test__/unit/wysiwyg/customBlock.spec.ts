@@ -1,5 +1,5 @@
 import { oneLineTrim } from 'common-tags';
-import { CustomHTMLRendererMap } from '@t/markdown';
+import { HTMLConvertorMap } from '@toast-ui/toastmark';
 import { ToDOMAdaptor } from '@t/convertor';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 import WysiwygEditor from '@/wysiwyg/wwEditor';
@@ -18,7 +18,7 @@ function createCustomBlockNode() {
 }
 
 beforeEach(() => {
-  const convertors: CustomHTMLRendererMap = {
+  const convertors: HTMLConvertorMap = {
     myCustom(node) {
       const span = document.createElement('span');
 

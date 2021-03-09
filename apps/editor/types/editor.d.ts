@@ -1,7 +1,7 @@
 import { Schema, NodeSpec } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 import { EditorState, Plugin } from 'prosemirror-state';
-import { MdPos, MdSourcepos, CustomHTMLRenderer } from './markdown';
+import { HTMLConvertorMap, MdPos, Sourcepos } from '@toast-ui/toastmark';
 import { Emitter, Handler } from './event';
 import { Context, EditorAllCommandMap, EditorCommandFn } from './spec';
 import { ToMdConvertorMap } from './convertor';
@@ -61,7 +61,7 @@ export interface ViewerOptions {
   plugins?: EditorPlugin[];
   extendedAutolinks?: ExtendedAutolinks;
   linkAttributes?: LinkAttributes;
-  customHTMLRenderer?: CustomHTMLRenderer;
+  customHTMLRenderer?: HTMLConvertorMap;
   referenceDefinition?: boolean;
   customHTMLSanitizer?: Sanitizer;
   frontMatter?: boolean;
@@ -90,17 +90,14 @@ export class Viewer {
 }
 
 interface EditorPluginInfo {
-  toHTMLRenderers: CustomHTMLRenderer;
+  toHTMLRenderers: HTMLConvertorMap;
   markdownPlugins: PluginProp[];
   wysiwygPlugins: PluginProp[];
   wysiwygNodeViews: NodeViewPropMap;
 }
 
-export type PluginFn = (
-  eventEmitter: Emitter,
-  options?: Record<string, any>
-) => EditorPluginInfo | null;
-export type EditorPlugin = PluginFn | [PluginFn, Record<string, any>];
+export type PluginFn = (editor: Editor | Viewer, options?: any) => void;
+export type EditorPlugin = PluginFn | [PluginFn, any];
 
 export interface EditorOptions {
   el: HTMLElement;
@@ -120,7 +117,7 @@ export interface EditorOptions {
   extendedAutolinks?: ExtendedAutolinks;
   placeholder?: string;
   linkAttributes?: LinkAttributes;
-  customHTMLRenderer?: CustomHTMLRenderer;
+  customHTMLRenderer?: HTMLConvertorMap;
   customMarkdownRenderer?: ToMdConvertorMap;
   referenceDefinition?: boolean;
   customHTMLSanitizer?: Sanitizer;
@@ -227,7 +224,7 @@ export class Editor extends EditorCore {
 
 export type EditorPos = MdPos | number;
 export interface NodeRangeInfo {
-  range: MdSourcepos | [number, number];
+  range: Sourcepos | [number, number];
   type: string;
 }
 
@@ -300,7 +297,7 @@ export interface Base {
 
   getSelectedText(start?: EditorPos, end?: EditorPos): string;
 
-  getSelection(): MdSourcepos | [number, number];
+  getSelection(): Sourcepos | [number, number];
 
   getRangeInfoOfNode(pos?: EditorPos): NodeRangeInfo;
 }

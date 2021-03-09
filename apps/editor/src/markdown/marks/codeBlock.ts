@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
-import { EditorCommand } from '@t/spec';
+import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import {
@@ -14,6 +14,8 @@ import { getExtendedRangeOffset, getPosInfo, resolveSelectionPos } from '../help
 import { getTextByMdLine } from '../helper/query';
 
 export class CodeBlock extends Mark {
+  context!: MdSpecContext;
+
   get name() {
     return 'codeBlock';
   }
@@ -58,7 +60,7 @@ export class CodeBlock extends Mark {
 
       if (selection.from === selection.to && lineText.trim()) {
         let matched;
-        const mdNode = toastMark.findFirstNodeAtLine(endLine);
+        const mdNode = toastMark.findFirstNodeAtLine(endLine)!;
 
         if (isCodeBlockNode(mdNode) && (matched = lineText.match(/^\s+/))) {
           const [spaces] = matched;

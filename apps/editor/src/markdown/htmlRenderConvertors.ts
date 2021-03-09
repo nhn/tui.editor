@@ -1,15 +1,19 @@
 import {
   CodeBlockMdNode,
   CodeMdNode,
+  Context,
+  CustomInlineMdNode,
+  HTMLConvertorMap,
   ListItemMdNode,
   MdNode,
-  CustomHTMLRendererMap,
+  HTMLConvertorMap,
   Context,
   OpenTagToken,
   CustomInlineMdNode,
   CustomHTMLRenderer,
   HTMLMdNode,
-} from '@t/markdown';
+  OpenTagToken,
+} from '@toast-ui/toastmark';
 import { LinkAttributes } from '@t/editor';
 import { reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 import { getWidgetContent, widgetToDOM } from '@/widget/rules';
@@ -19,7 +23,7 @@ type TokenAttrs = Record<string, any>;
 
 const reCloseTag = /^\s*<\s*\//;
 
-const baseConvertors: CustomHTMLRendererMap = {
+const baseConvertors: HTMLConvertorMap = {
   paragraph(_, { entering, origin, options }: Context) {
     if (options.nodeId) {
       return {
@@ -125,7 +129,7 @@ const baseConvertors: CustomHTMLRendererMap = {
 
 export function getHTMLRenderConvertors(
   linkAttributes: LinkAttributes | null,
-  customConvertors: CustomHTMLRendererMap
+  customConvertors: HTMLConvertorMap
 ) {
   const convertors = { ...baseConvertors };
 

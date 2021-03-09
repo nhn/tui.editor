@@ -1,7 +1,7 @@
 import { ProsemirrorNode } from 'prosemirror-model';
+import { MdNode } from '@toast-ui/toastmark';
 import { includes } from '@/utils/common';
 import { isStyledInlineNode, getMdEndLine, getMdStartLine } from '@/utils/markdown';
-import { MdNode } from '@t/markdown';
 
 type El = HTMLElement | null;
 

@@ -1,5 +1,6 @@
 import { ProsemirrorNode } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
+import { ToastMark } from '@toast-ui/toastmark';
 import { Emitter } from '@t/event';
 import { isHTMLNode, getMdStartLine } from '@/utils/markdown';
 import MarkdownPreview from '../mdPreview';
@@ -35,7 +36,7 @@ export class ScrollSync {
 
   private editorView: EditorView;
 
-  private toastMark: any;
+  private toastMark: ToastMark;
 
   private eventEmitter: Emitter;
 
@@ -93,7 +94,7 @@ export class ScrollSync {
 
   private getScrollTopByCaretPos() {
     const pos = this.mdEditor.getSelection();
-    const firstMdNode = this.toastMark.findFirstNodeAtLine(pos[0][0]);
+    const firstMdNode = this.toastMark.findFirstNodeAtLine(pos[0][0])!;
     const previewHeight = this.previewEl.clientHeight;
     const { el } = getParentNodeObj(firstMdNode);
     const totalOffsetTop = getTotalOffsetTop(el, this.previewRoot) || el.offsetTop;
@@ -174,7 +175,7 @@ export class ScrollSync {
 
       const { children } = dom;
       const mdNodeId = Number(targetNode.getAttribute('data-nodeid'));
-      const { mdNode, el } = getParentNodeObj(toastMark.findNodeById(mdNodeId));
+      const { mdNode, el } = getParentNodeObj(toastMark.findNodeById(mdNodeId)!);
       const mdNodeStartLine = getMdStartLine(mdNode);
 
       targetScrollTop = (children[mdNodeStartLine - 1] as HTMLElement).offsetTop;

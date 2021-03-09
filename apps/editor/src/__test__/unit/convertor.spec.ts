@@ -1,6 +1,5 @@
 import { source, oneLineTrim } from 'common-tags';
 
-// @ts-ignore
 import { Parser } from '@toast-ui/toastmark';
 
 import { Schema } from 'prosemirror-model';

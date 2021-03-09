@@ -1,7 +1,7 @@
 import { Fragment, ProsemirrorNode } from 'prosemirror-model';
 import { oneLineTrim } from 'common-tags';
+import { HeadingMdNode, CodeBlockMdNode, HTMLConvertorMap } from '@toast-ui/toastmark';
 import { ToDOMAdaptor } from '@t/convertor';
-import { CodeBlockMdNode, CustomHTMLRendererMap, HeadingMdNode } from '@t/markdown';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 import EventEmitter from '@/event/eventEmitter';
 import WysiwygEditor from '@/wysiwyg/wwEditor';
@@ -20,17 +20,15 @@ function createNode(
   attrs?: { [key: string]: any } | null,
   content?: Fragment | ProsemirrorNode | Array<ProsemirrorNode>
 ) {
-  // @ts-ignore
   return wwe.schema.nodes[type].create(attrs, content);
 }
 
 function createMark(type: string, attrs?: { [key: string]: any } | null) {
-  // @ts-ignore
-  return wwe.schema.marks[type].create(attrs);
+  return wwe.schema.marks[type].create(attrs!);
 }
 
 beforeEach(() => {
-  const convertors: CustomHTMLRendererMap = {
+  const convertors: HTMLConvertorMap = {
     code() {
       return [
         { type: 'openTag', tagName: 'code' },
@@ -51,7 +49,7 @@ beforeEach(() => {
         {
           type: 'openTag',
           tagName: 'pre',
-          attributes: { 'data-custom': (node as CodeBlockMdNode).info },
+          attributes: { 'data-custom': (node as CodeBlockMdNode).info || '' },
           classNames: ['custom-pre'],
         },
         { type: 'openTag', tagName: 'code', classNames: ['custom-code'] },

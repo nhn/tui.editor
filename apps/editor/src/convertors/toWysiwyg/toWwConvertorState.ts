@@ -1,7 +1,7 @@
 import { Schema, Node, NodeType, Mark, MarkType, DOMParser } from 'prosemirror-model';
+import { MdNode } from '@toast-ui/toastmark';
 
 import { ToWwConvertorMap, StackItem, Attrs } from '@t/convertor';
-import { MdNode } from '@t/markdown';
 import { last } from '@/utils/common';
 
 export function mergeMarkText(a: Node, b: Node) {

@@ -2,7 +2,6 @@
  * @fileoverview Implements editor preivew
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-// @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import extend from 'tui-code-snippet/object/extend';
@@ -157,7 +156,7 @@ class ToastUIEditorViewer {
     const lineTexts: string[] = this.toastMark.getLineTexts();
     const { length } = lineTexts;
     const lastLine = last(lineTexts);
-    const endSourcepos = [length, lastLine.length + 1];
+    const endSourcepos: [number, number] = [length, lastLine.length + 1];
     const editResult = this.toastMark.editMarkdown([1, 1], endSourcepos, markdown || '');
 
     this.eventEmitter.emit('updatePreview', editResult);

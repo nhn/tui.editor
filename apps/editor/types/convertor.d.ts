@@ -6,8 +6,7 @@ import {
   Mark,
   DOMOutputSpecArray,
 } from 'prosemirror-model';
-
-import { MdNode, MdNodeType } from './markdown';
+import { MdNode, MdNodeType } from '@toast-ui/toastmark';
 import { WwNodeType, WwMarkType } from './wysiwyg';
 
 export type Attrs = { [name: string]: any } | null;

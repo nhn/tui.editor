@@ -1,8 +1,6 @@
 import { ProsemirrorNode, Schema } from 'prosemirror-model';
-// @ts-ignore
-import { ToastMark } from '@toast-ui/toastmark';
+import { ListItemMdNode, MdNode, ToastMark } from '@toast-ui/toastmark';
 import { findClosestNode, isListNode, isOrderedListNode } from '@/utils/markdown';
-import { ListItemMdNode, MdNode } from '@t/markdown';
 import { createParagraph } from '@/helper/manipulation';
 import { getTextByMdLine } from './query';
 
@@ -98,7 +96,7 @@ function findSameDepthList(
 
   while (backward ? line < lineLen : line > 1) {
     line = backward ? line + 1 : line - 1;
-    const mdNode: ListItemMdNode = toastMark.findFirstNodeAtLine(line);
+    const mdNode = toastMark.findFirstNodeAtLine(line) as ListItemMdNode;
     const currentListDepth = getListDepth(mdNode);
 
     if (currentListDepth === depth) {
@@ -222,7 +220,7 @@ export const otherNodeToList: NodeToList = {
     let skipped = 0;
 
     for (let i = startLine - 1; i > 0; i -= 1) {
-      const mdNode = toastMark.findFirstNodeAtLine(i);
+      const mdNode = toastMark.findFirstNodeAtLine(i)!;
       const canBeListNode = !!findClosestNode(mdNode, (targetNode) => isListNode(targetNode));
       const searchResult = reOrderedListGroup.exec(getTextByMdLine(doc, i));
 
