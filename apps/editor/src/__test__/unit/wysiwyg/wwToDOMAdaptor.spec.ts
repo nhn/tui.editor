@@ -6,6 +6,8 @@ import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 import EventEmitter from '@/event/eventEmitter';
 import WysiwygEditor from '@/wysiwyg/wwEditor';
 import { createMdLikeNode } from '@/wysiwyg/adaptor/mdLikeNode';
+import { createHTMLSchemaMap } from '@/wysiwyg/nodes/html';
+import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 
 let wwe: WysiwygEditor, em: EventEmitter, toDOMAdaptor: ToDOMAdaptor;
 
@@ -68,11 +70,32 @@ beforeEach(() => {
         classNames: ['custom-emph'],
       };
     },
+    htmlBlock: {
+      // @ts-ignore
+      nav(node) {
+        return [
+          { type: 'openTag', tagName: 'nav', outerNewLine: true, attributes: node.attrs },
+          { type: 'html', content: node.childrenHTML },
+          { type: 'closeTag', tagName: 'nav', outerNewLine: true },
+        ];
+      },
+    },
+    htmlInline: {
+      // @ts-ignore
+      big(node: MdLikeNode, { entering }: Context) {
+        return entering
+          ? { type: 'openTag', tagName: 'big', attributes: { class: node.attrs.class } }
+          : { type: 'closeTag', tagName: 'big' };
+      },
+    },
   };
 
   toDOMAdaptor = new WwToDOMAdaptor({}, convertors);
   em = new EventEmitter();
-  wwe = new WysiwygEditor(em, toDOMAdaptor, true);
+
+  const htmlSchemaMap = createHTMLSchemaMap(convertors, sanitizeHTML, toDOMAdaptor);
+
+  wwe = new WysiwygEditor(em, { toDOMAdaptor, htmlSchemaMap });
 });
 
 afterEach(() => {
@@ -195,6 +218,34 @@ describe('mdLikeNode', () => {
       destination: 'myLinkUrl',
     });
   });
+
+  it('html block should be changed to markdown-like-node', () => {
+    const navNode = createMdLikeNode(
+      createNode('nav', {
+        htmlAttrs: { class: 'my-nav', 'data-my-nav': 'my-nav' },
+        childrenHTML: 'text',
+      })
+    );
+
+    expect(navNode).toEqual({
+      type: 'nav',
+      literal: '',
+      wysiwygNode: true,
+      attrs: { class: 'my-nav', 'data-my-nav': 'my-nav' },
+      childrenHTML: 'text',
+    });
+  });
+
+  it('html inline should be changed to markdown-like-node', () => {
+    const bigNode = createMdLikeNode(createNode('big', { htmlAttrs: { class: 'my-big' } }));
+
+    expect(bigNode).toEqual({
+      type: 'big',
+      literal: '',
+      wysiwygNode: true,
+      attrs: { class: 'my-big' },
+    });
+  });
 });
 
 describe('wysiwyg adaptor toDOM using custom renderer', () => {
@@ -242,6 +293,25 @@ describe('wysiwyg adaptor toDOM using custom renderer', () => {
     const toDOM = toDOMAdaptor.getToDOM('blockQuote');
 
     expect(toDOM).toBe(null);
+  });
+
+  it('toDOM should be parsed with the html block renderer tokens', () => {
+    const toDOM = toDOMAdaptor.getToDOM('nav')!;
+    const navNode = createNode('nav', {
+      htmlAttrs: { class: 'my-nav' },
+      childrenHTML: 'text',
+    });
+
+    expect(toDOM(navNode)).toEqual(['nav', { class: 'my-nav' }, 0]);
+  });
+
+  it('toDOM should be parsed with the html inline renderer tokens', () => {
+    const toDOM = toDOMAdaptor.getToDOM('big')!;
+    const navNode = createNode('big', {
+      htmlAttrs: { class: 'my-big', 'data-my-attr': 'my-attr' },
+    });
+
+    expect(toDOM(navNode)).toEqual(['big', { class: 'my-big' }, 0]);
   });
 });
 
@@ -294,5 +364,38 @@ describe('wysiwyg adaptor toDOMNode using custom renderer', () => {
     const toDOMNode = toDOMAdaptor.getToDOMNode('blockQuote');
 
     expect(toDOMNode).toBe(null);
+  });
+
+  it('toDOMNode should be parsed with the html block renderer tokens', () => {
+    const toDOMNode = toDOMAdaptor.getToDOMNode('nav')!;
+    const navNode = createNode('nav', {
+      htmlAttrs: { class: 'my-nav' },
+      childrenHTML: 'text',
+    });
+
+    const expected = oneLineTrim`
+      <nav class="my-nav">
+        text
+      </nav>
+    `;
+
+    expect(getHTML(toDOMNode(navNode))).toBe(expected);
+  });
+
+  it('toDOMNode should be parsed with the html inline renderer tokens', () => {
+    const toDOMNode = toDOMAdaptor.getToDOMNode('big')!;
+    const bigNode = createNode(
+      'big',
+      {
+        htmlAttrs: { class: 'my-big', 'data-my-attr': 'my-attr' },
+      },
+      createText('text')
+    );
+
+    const expected = oneLineTrim`
+      <big class="my-big">text</big>
+    `;
+
+    expect(getHTML(toDOMNode(bigNode))).toBe(expected);
   });
 });

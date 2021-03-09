@@ -132,10 +132,11 @@ export default class ToMdConvertorState {
   convertBlock(node: Node, parent: Node, index: number) {
     const type = node.type.name as WwNodeType;
     const convertor = this.nodeTypeConvertors[type];
+    const nodeInfo = { node, parent, index };
 
-    if (convertor) {
-      const nodeInfo = { node, parent, index };
-
+    if (node.attrs.htmlAttrs) {
+      this.nodeTypeConvertors.html!(this, nodeInfo);
+    } else if (convertor) {
       convertor(this, nodeInfo);
     }
   }

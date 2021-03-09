@@ -1,12 +1,12 @@
-import { Schema } from 'prosemirror-model';
+import { Schema, NodeSpec } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 import { EditorState, Plugin } from 'prosemirror-state';
 import {
+  MdPos,
+  MdSourcepos,
   CustomHTMLRenderer,
   CustomHTMLRendererMap,
   CustomParserMap,
-  MdPos,
-  MdSourcepos,
 } from './markdown';
 import { Emitter, Handler } from './event';
 import { Context, EditorAllCommandMap, EditorCommandFn } from './spec';
@@ -57,19 +57,18 @@ export type LinkAttributeNames = 'rel' | 'target' | 'hreflang' | 'type';
 // @TODO change option and type name from singular to plural
 export type LinkAttributes = Partial<Record<LinkAttributeNames, string>>;
 
-export type CustomHTMLSanitizer = (content: string) => string | DocumentFragment;
+export type Sanitizer = (content: string) => string;
 
 export interface ViewerOptions {
   el: HTMLElement;
   initialValue?: string;
   events?: EventMap;
   plugins?: (EditorPlugin | EditorPluginInfo)[];
-  useDefaultHTMLSanitizer?: boolean;
   extendedAutolinks?: ExtendedAutolinks;
   linkAttributes?: LinkAttributes;
   customHTMLRenderer?: CustomHTMLRenderer;
   referenceDefinition?: boolean;
-  customHTMLSanitizer?: CustomHTMLSanitizer;
+  customHTMLSanitizer?: Sanitizer;
   frontMatter?: boolean;
 }
 
@@ -115,7 +114,6 @@ export interface EditorOptions {
   hooks?: EditorHookMap;
   language?: string;
   useCommandShortcut?: boolean;
-  useDefaultHTMLSanitizer?: boolean;
   usageStatistics?: boolean;
   toolbarItems?: (string | ToolbarItemOptions)[];
   hideModeSwitch?: boolean;
@@ -126,7 +124,7 @@ export interface EditorOptions {
   customHTMLRenderer?: CustomHTMLRenderer;
   customMarkdownRenderer?: ToMdConvertorMap;
   referenceDefinition?: boolean;
-  customHTMLSanitizer?: CustomHTMLSanitizer;
+  customHTMLSanitizer?: Sanitizer;
   previewHighlight?: boolean;
   frontMatter?: boolean;
   widgetRules?: WidgetRule[];
@@ -307,3 +305,5 @@ export interface Base {
 
   getRangeInfoOfNode(pos?: EditorPos): NodeRangeInfo;
 }
+
+export type SchemaMap = Record<string, NodeSpec>;

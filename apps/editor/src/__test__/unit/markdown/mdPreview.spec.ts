@@ -5,16 +5,24 @@ import MarkdownPreview, { CLASS_HIGHLIGHT } from '@/markdown/mdPreview';
 import MarkdownEditor from '@/markdown/mdEditor';
 import EventEmitter from '@/event/eventEmitter';
 import * as sanitizer from '@/sanitizer/htmlSanitizer';
+import { createHTMLrenderer, trailingDataAttr } from './util';
+
+function getHTML(preview: MarkdownPreview) {
+  return trailingDataAttr(preview.getHTML());
+}
 
 describe('Preview', () => {
   let eventEmitter: EventEmitter, preview: MarkdownPreview;
 
   beforeEach(() => {
+    jest.spyOn(sanitizer, 'sanitizeHTML');
+
     const options = {
       linkAttributes: null,
       customHTMLRenderer: {},
       isViewer: false,
       highlight: true,
+      sanitizer: sanitizer.sanitizeHTML,
     };
 
     eventEmitter = new EventEmitter();
@@ -23,6 +31,7 @@ describe('Preview', () => {
   });
 
   afterEach(() => {
+    jest.restoreAllMocks();
     preview.destroy();
   });
 
@@ -32,12 +41,10 @@ describe('Preview', () => {
 
     eventEmitter.emit('updatePreview', editResult);
 
-    expect(preview.getHTML()).toBe(`<p data-nodeid="${editResult[0].nodes[0].id}">changed</p>\n`);
+    expect(getHTML(preview)).toBe('<p>changed</p>');
   });
 
   it('should call sanitizeHTML', () => {
-    jest.spyOn(sanitizer, 'sanitizeHTML');
-
     const doc = new ToastMark();
     const editResult = doc.editMarkdown(
       [1, 1],
@@ -63,10 +70,11 @@ describe('preview highlight', () => {
       customHTMLRenderer: {},
       isViewer: false,
       highlight,
+      sanitizer: sanitizer.sanitizeHTML,
     };
 
     eventEmitter = new EventEmitter();
-    editor = new MarkdownEditor(new ToastMark(), eventEmitter, true);
+    editor = new MarkdownEditor(eventEmitter, { toastMark: new ToastMark() });
     preview = new MarkdownPreview(eventEmitter, options);
     editorEl = editor.getElement();
 
@@ -202,5 +210,51 @@ describe('preview highlight', () => {
     blur();
 
     expect(getHighlightedCount()).toBe(0);
+  });
+});
+
+describe('Preview with html renderer', () => {
+  let eventEmitter: EventEmitter, preview: MarkdownPreview;
+
+  function createPreviewWithHTMLRenderer() {
+    const options = {
+      linkAttributes: null,
+      customHTMLRenderer: createHTMLrenderer(),
+      isViewer: false,
+      highlight: true,
+      sanitizer: sanitizer.sanitizeHTML,
+    };
+
+    sanitizer.registerTagWhitelistIfPossible('iframe');
+    eventEmitter = new EventEmitter();
+    preview = new MarkdownPreview(eventEmitter, options);
+  }
+
+  beforeEach(() => {
+    createPreviewWithHTMLRenderer();
+  });
+
+  it('should render iframe node to preview ignoring sanitizer tag', () => {
+    const doc = new ToastMark();
+    const editResult = doc.editMarkdown(
+      [1, 1],
+      [1, 1],
+      '<iframe width="420" height="315" src="https://www.youtube.com/embed/XyenY12fzAk"></iframe>'
+    );
+
+    eventEmitter.emit('updatePreview', editResult);
+
+    expect(getHTML(preview)).toBe(
+      '<iframe width="420" height="315" src="https://www.youtube.com/embed/XyenY12fzAk"></iframe>'
+    );
+  });
+
+  it('should render html inline node', () => {
+    const doc = new ToastMark();
+    const editResult = doc.editMarkdown([1, 1], [1, 1], '<big class="my-big">content</big>');
+
+    eventEmitter.emit('updatePreview', editResult);
+
+    expect(getHTML(preview)).toBe('<p><big class="my-big">content</big></p>');
   });
 });

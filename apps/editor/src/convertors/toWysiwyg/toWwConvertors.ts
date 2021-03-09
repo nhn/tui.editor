@@ -1,6 +1,5 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 
-import { includes } from '@/utils/common';
 import { isElemNode } from '@/utils/dom';
 
 import {
@@ -23,6 +22,7 @@ import {
   CustomInlineMdNode,
 } from '@t/markdown';
 import { createWidgetContent, getWidgetContent } from '@/widget/rules';
+import { getChildrenHTML, getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
 
 function isBRTag(node: MdNode) {
   return node.type === 'htmlInline' && /<br ?\/?>/.test(node.literal!);
@@ -286,19 +286,26 @@ export const toWwConvertors: ToWwConvertorMap = {
   },
 
   htmlInline(state, node) {
-    const matched = node.literal!.match(reHTMLTag);
+    const html = node.literal!;
+    const matched = html.match(reHTMLTag)!;
+    const [, openTagName, , closeTagName] = matched;
+    const typeName = (openTagName || closeTagName).toLowerCase();
+    const nodeType = state.schema.nodes[typeName];
 
-    if (matched) {
-      const [, openTagName, , closeTagName] = matched;
-      const tagName = openTagName || closeTagName;
+    // for user defined html schema
+    if (nodeType?.spec.attrs!.htmlAttrs) {
+      if (openTagName) {
+        const htmlAttrs = getHTMLAttrsByHTMLString(html);
 
-      if (tagName) {
-        const type = tagName.toLowerCase();
-        const htmlToWwConvertor = htmlToWwConvertors[type];
+        state.openNode(nodeType, { htmlAttrs });
+      } else {
+        state.closeNode();
+      }
+    } else {
+      const htmlToWwConvertor = htmlToWwConvertors[typeName];
 
-        if (htmlToWwConvertor) {
-          htmlToWwConvertor(state, node, openTagName);
-        }
+      if (htmlToWwConvertor) {
+        htmlToWwConvertor(state, node, openTagName);
       }
     }
   },
@@ -306,12 +313,23 @@ export const toWwConvertors: ToWwConvertorMap = {
   htmlBlock(state, node) {
     const html = node.literal!;
     const container = document.createElement('div');
+    const matched = html.match(reHTMLTag)!;
+    const [, openTagName, , closeTagName] = matched;
+    const typeName = (openTagName || closeTagName).toLowerCase();
+    const nodeType = state.schema.nodes[typeName];
 
-    container.innerHTML = html;
+    // for user defined html schema
+    if (nodeType?.spec.attrs!.htmlAttrs) {
+      const htmlAttrs = getHTMLAttrsByHTMLString(html);
+      const childrenHTML = getChildrenHTML(node, typeName);
 
-    addRawHTMLAttributeToDOM(container);
+      state.addNode(nodeType, { htmlAttrs, childrenHTML });
+    } else {
+      container.innerHTML = html;
+      addRawHTMLAttributeToDOM(container);
 
-    state.convertByDOMParser(container as HTMLElement);
+      state.convertByDOMParser(container as HTMLElement);
+    }
   },
 
   customInline(state, node, { entering, skipChildren }) {

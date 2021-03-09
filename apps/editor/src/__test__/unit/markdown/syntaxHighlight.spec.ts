@@ -12,7 +12,7 @@ let mde: MarkdownEditor, em: EventEmitter;
 
 beforeEach(() => {
   em = new EventEmitter();
-  mde = new MarkdownEditor(new ToastMark(), em, true);
+  mde = new MarkdownEditor(em, { toastMark: new ToastMark() });
 });
 
 afterEach(() => {

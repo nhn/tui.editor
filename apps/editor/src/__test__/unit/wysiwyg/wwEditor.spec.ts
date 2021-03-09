@@ -5,6 +5,9 @@ import { DOMParser } from 'prosemirror-model';
 import WysiwygEditor from '@/wysiwyg/wwEditor';
 import EventEmitter from '@/event/eventEmitter';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
+import { createHTMLSchemaMap } from '@/wysiwyg/nodes/html';
+import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
+import { createHTMLrenderer } from '../markdown/util';
 
 describe('WysiwygEditor', () => {
   let wwe: WysiwygEditor, em: EventEmitter, el: HTMLElement;
@@ -20,10 +23,12 @@ describe('WysiwygEditor', () => {
   }
 
   beforeEach(() => {
-    const adaptor = new WwToDOMAdaptor({}, {});
+    const htmlRenderer = createHTMLrenderer();
+    const toDOMAdaptor = new WwToDOMAdaptor({}, htmlRenderer);
+    const htmlSchemaMap = createHTMLSchemaMap(htmlRenderer, sanitizeHTML, toDOMAdaptor);
 
     em = new EventEmitter();
-    wwe = new WysiwygEditor(em, adaptor, true);
+    wwe = new WysiwygEditor(em, { toDOMAdaptor, htmlSchemaMap });
     el = wwe.el;
     document.body.appendChild(el);
   });
@@ -154,5 +159,29 @@ describe('WysiwygEditor', () => {
     wwe.setSelection(3, 3);
 
     expect(spy).toHaveBeenCalled();
+  });
+
+  it('should display html block element properly', () => {
+    setContent(
+      '<iframe width="420" height="315" src="https://www.youtube.com/embed/XyenY12fzAk"></iframe>'
+    );
+
+    expect(wwe.getHTML()).toBe(
+      '<iframe width="420" height="315" src="https://www.youtube.com/embed/XyenY12fzAk" class="html-block ProseMirror-selectednode" draggable="true"></iframe>'
+    );
+  });
+
+  it('should display html inline element properly', () => {
+    setContent('<big class="my-inline">text</big>');
+
+    expect(wwe.getHTML()).toBe('<p><big class="my-inline">text</big><br></p>');
+  });
+
+  it('should sanitize html element', () => {
+    setContent('<iframe width="420" height="315" src="javascript: alert(1);"></iframe>');
+
+    expect(wwe.getHTML()).toBe(
+      '<iframe width="420" height="315" class="html-block ProseMirror-selectednode" draggable="true"></iframe>'
+    );
   });
 });

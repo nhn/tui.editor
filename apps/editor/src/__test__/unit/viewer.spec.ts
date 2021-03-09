@@ -1,13 +1,14 @@
 import { oneLineTrim } from 'common-tags';
 import Viewer from '@/viewer';
+import { trailingDataAttr } from './markdown/util';
 
 describe('Viewer', () => {
   let viewer: Viewer, container: HTMLElement;
 
   function getViewerHTML() {
-    return oneLineTrim`${container
-      .querySelector('.tui-editor-contents')!
-      .innerHTML.replace(/\sdata-nodeid="\d{1,}"/g, '')}`;
+    return oneLineTrim`${trailingDataAttr(
+      container.querySelector('.tui-editor-contents')!.innerHTML
+    )}`;
   }
 
   beforeEach(() => {

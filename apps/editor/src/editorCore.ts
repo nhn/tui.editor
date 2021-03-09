@@ -43,6 +43,8 @@ import { ScrollSync } from './markdown/scroll/scrollSync';
 import { addDefaultImageBlobHook } from './helper/image';
 import { setWidgetRules } from './widget/rules';
 import { cls } from './utils/dom';
+import { sanitizeHTML } from './sanitizer/htmlSanitizer';
+import { createHTMLSchemaMap } from './wysiwyg/nodes/html';
 
 /**
  * ToastUI Editor
@@ -68,7 +70,6 @@ import { cls } from './utils/dom';
  *         @param {addImageBlobHook} [options.hooks.addImageBlobHook] - hook for image upload
  *     @param {string} [options.language='en-US'] - language
  *     @param {boolean} [options.useCommandShortcut=true] - whether use keyboard shortcuts to perform commands
- *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
  *     @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
  *     @param {Array.<string|toolbarItemsValue>} [options.toolbarItems] - toolbar items.
  *     @param {boolean} [options.hideModeSwitch=false] - hide mode switch tab bar
@@ -127,7 +128,6 @@ class ToastUIEditor {
         height: '300px',
         minHeight: '200px',
         language: 'en-US',
-        useDefaultHTMLSanitizer: true,
         useCommandShortcut: true,
         usageStatistics: true,
         toolbarItems: [
@@ -161,6 +161,7 @@ class ToastUIEditor {
       useCommandShortcut,
       initialEditType,
       widgetRules,
+      customHTMLSanitizer,
     } = this.options;
 
     this.codeBlockLanguages = [];
@@ -180,6 +181,7 @@ class ToastUIEditor {
       referenceDefinition,
       customParser: parser,
       frontMatter,
+      sanitizer: customHTMLSanitizer || sanitizeHTML,
     };
     const wwToDOMAdaptor = new WwToDOMAdaptor(linkAttributes, rendererOptions.customHTMLRenderer);
 
@@ -190,6 +192,11 @@ class ToastUIEditor {
     if (this.options.events) {
       forEachOwnProperties(this.options.events, (fn, key) => this.on(key, fn));
     }
+    const htmlSchemaMap = createHTMLSchemaMap(
+      rendererOptions.customHTMLRenderer,
+      rendererOptions.sanitizer,
+      wwToDOMAdaptor
+    );
 
     this.i18n = i18n;
     this.i18n.setCode(this.options.language);
@@ -203,7 +210,10 @@ class ToastUIEditor {
       frontMatter,
     });
 
-    this.mdEditor = new MarkdownEditor(this.toastMark, this.eventEmitter, useCommandShortcut);
+    this.mdEditor = new MarkdownEditor(this.eventEmitter, {
+      toastMark: this.toastMark,
+      useCommandShortcut,
+    });
 
     this.preview = new MarkdownPreview(this.eventEmitter, {
       ...rendererOptions,
@@ -211,12 +221,12 @@ class ToastUIEditor {
       highlight: this.options.previewHighlight,
     });
 
-    this.wwEditor = new WysiwygEditor(
-      this.eventEmitter,
-      wwToDOMAdaptor,
+    this.wwEditor = new WysiwygEditor(this.eventEmitter, {
+      toDOMAdaptor: wwToDOMAdaptor,
       useCommandShortcut,
-      linkAttributes!
-    );
+      htmlSchemaMap,
+      linkAttributes,
+    });
 
     this.convertor = new Convertor(
       this.wwEditor.getSchema(),

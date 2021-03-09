@@ -26,11 +26,13 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
 
   constructor(linkAttributes: LinkAttributes | null, customRenderer: CustomHTMLRendererMap) {
     const convertors = getHTMLRenderConvertors(linkAttributes, customRenderer);
+    const customHTMLConvertor = { ...customRenderer.htmlBlock, ...customRenderer.htmlInline };
 
-    this.customConvertorKeys = Object.keys(customRenderer);
+    // flatten the html block, inline convertor to other custom convertors
+    this.customConvertorKeys = Object.keys(customRenderer).concat(Object.keys(customHTMLConvertor));
     this.renderer = new Renderer({
       gfm: true,
-      convertors,
+      convertors: { ...convertors, ...customHTMLConvertor },
     });
     this.convertors = this.renderer.getConvertors();
   }
@@ -49,7 +51,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
     const converted = convertor(mdLikeNode as MdNode, context, this.convertors)!;
     const tokens: HTMLToken[] = isArray(converted) ? converted : [converted];
 
-    if (isContainer(node.type.name)) {
+    if (isContainer(node.type.name) || node.attrs.inline) {
       context.entering = false;
 
       tokens.push({ type: 'text', content: isPmNode(node) ? node.textContent : '' } as TextToken);
@@ -63,7 +65,9 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
     const tokens = this.generateTokens(node);
     const stack: SpecArray[] = [];
 
-    tokens.forEach((token) => tokenToPmDOM[token.type](token, stack));
+    tokens.forEach((token) => {
+      tokenToPmDOM[token.type](token, stack);
+    });
 
     return stack[0] as DOMOutputSpecArray;
   }

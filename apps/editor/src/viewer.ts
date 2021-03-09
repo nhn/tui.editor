@@ -16,6 +16,7 @@ import { invokePlugins, getPluginInfo } from './pluginHelper';
 import { last, sanitizeLinkAttribute } from './utils/common';
 import EventEmitter from './event/eventEmitter';
 import { isPositionInBox, toggleClass } from './utils/dom';
+import { sanitizeHTML } from './sanitizer/htmlSanitizer';
 
 const TASK_ATTR_NAME = 'data-task';
 const DISABLED_TASK_ATTR_NAME = 'data-task-disabled';
@@ -33,7 +34,6 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *         @param {function} [options.events.focus] - It would be emitted when editor get focus
  *         @param {function} [options.events.blur] - It would be emitted when editor loose focus
  *     @param {Array.<function|Array>} [options.plugins] - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
- *     @param {boolean} [options.useDefaultHTMLSanitizer=true] - use default htmlSanitizer
  *     @param {Object} [options.extendedAutolinks] - Using extended Autolinks specified in GFM spec
  *     @param {Object} [options.customConvertor] - convertor extention
  *     @param {Object} [options.linkAttributes] - Attributes of anchor element that should be rel, target, hreflang, type
@@ -63,7 +63,6 @@ class ToastUIEditorViewer {
   constructor(options: ViewerOptions) {
     this.options = extend(
       {
-        useDefaultHTMLSanitizer: true,
         linkAttributes: null,
         extendedAutolinks: false,
         customConvertor: null,
@@ -85,6 +84,7 @@ class ToastUIEditorViewer {
       extendedAutolinks,
       referenceDefinition,
       frontMatter,
+      customHTMLSanitizer,
     } = this.options;
 
     const rendererOptions = {
@@ -94,6 +94,7 @@ class ToastUIEditorViewer {
       referenceDefinition,
       customParser: parser,
       frontMatter,
+      sanitizer: customHTMLSanitizer || sanitizeHTML,
     };
 
     if (this.options.events) {

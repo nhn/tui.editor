@@ -11,6 +11,9 @@ import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 import EventEmitter from '@/event/eventEmitter';
 
 import { ToMdConvertorMap, ToMdConvertorContext, NodeInfo, MarkInfo } from '@t/convertor';
+import { createHTMLSchemaMap } from '@/wysiwyg/nodes/html';
+import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
+import { createHTMLrenderer } from './markdown/util';
 
 function createSchema() {
   const adaptor = new WwToDOMAdaptor({}, {});
@@ -799,6 +802,38 @@ describe('Convertor', () => {
       `;
 
       assertFrontMatterConverting(markdown, markdown);
+    });
+  });
+
+  describe('should convert html block node which is not supported as default', () => {
+    function createConvertorWithHTMLRenderer() {
+      const customHTMLRenderer = createHTMLrenderer();
+      const adaptor = new WwToDOMAdaptor({}, customHTMLRenderer);
+      const htmlSchemaMap = createHTMLSchemaMap(customHTMLRenderer, sanitizeHTML, adaptor);
+      const specs = createSpecs(adaptor, {});
+
+      schema = new Schema({
+        nodes: { ...specs.nodes, ...htmlSchemaMap },
+        marks: specs.marks,
+      });
+      convertor = new Convertor(schema, {}, new EventEmitter());
+    }
+
+    beforeEach(() => {
+      createConvertorWithHTMLRenderer();
+    });
+
+    it('should convert html block node to wysiwyg ignoring sanitizer tag', () => {
+      const markdown =
+        '<iframe width="420" height="315" src="https://www.youtube.com/embed/XyenY12fzAk"></iframe>';
+
+      assertConverting(markdown, markdown);
+    });
+
+    it('should convert html inline node', () => {
+      const markdown = '<big class="my-big">content</big>';
+
+      assertConverting(markdown, markdown);
     });
   });
 });

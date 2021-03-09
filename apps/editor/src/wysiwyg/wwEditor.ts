@@ -1,6 +1,7 @@
 import { EditorView } from 'prosemirror-view';
-import { Node as ProsemirrorNode, Slice, Fragment, Mark } from 'prosemirror-model';
+import { Node as ProsemirrorNode, Slice, Fragment, Mark, Schema } from 'prosemirror-model';
 import isNumber from 'tui-code-snippet/type/isNumber';
+
 import EditorBase from '@/base';
 import { getWwCommands } from '@/commands/wwCommands';
 
@@ -22,7 +23,7 @@ import { createSpecs } from './specCreator';
 
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
-import { LinkAttributes, WidgetStyle } from '@t/editor';
+import { LinkAttributeNames, LinkAttributes, SchemaMap, WidgetStyle } from '@t/editor';
 import { createNodesWithWidget } from '@/widget/rules';
 import { widgetNodeView } from '@/widget/widgetNode';
 import { cls } from '@/utils/dom';
@@ -32,6 +33,13 @@ interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
 }
 
+interface WysiwygOptions {
+  toDOMAdaptor: ToDOMAdaptor;
+  useCommandShortcut?: boolean;
+  htmlSchemaMap?: SchemaMap;
+  linkAttributes?: LinkAttributes | null;
+}
+
 const CONTENTS_CLASS_NAME = cls('contents');
 
 export default class WysiwygEditor extends EditorBase {
@@ -39,19 +47,21 @@ export default class WysiwygEditor extends EditorBase {
 
   private linkAttributes: LinkAttributes;
 
-  constructor(
-    eventEmitter: Emitter,
-    toDOMAdaptor: ToDOMAdaptor,
-    useCommandShortcut: boolean,
-    linkAttributes = {}
-  ) {
+  constructor(eventEmitter: Emitter, options: WysiwygOptions) {
     super(eventEmitter);
+
+    const {
+      toDOMAdaptor,
+      htmlSchemaMap = {},
+      linkAttributes = {},
+      useCommandShortcut = true,
+    } = options;
 
     this.editorType = 'wysiwyg';
     this.toDOMAdaptor = toDOMAdaptor;
-    this.linkAttributes = linkAttributes;
+    this.linkAttributes = linkAttributes!;
     this.specs = this.createSpecs();
-    this.schema = this.createSchema();
+    this.schema = this.createSchema(htmlSchemaMap);
     this.context = this.createContext();
     this.keymaps = this.createKeymaps(useCommandShortcut);
     this.view = this.createView();
@@ -69,6 +79,13 @@ export default class WysiwygEditor extends EditorBase {
       schema: this.schema,
       eventEmitter: this.eventEmitter,
     };
+  }
+
+  createSchema(htmlSchemaMap?: SchemaMap) {
+    return new Schema({
+      nodes: { ...this.specs.nodes, ...htmlSchemaMap },
+      marks: this.specs.marks,
+    });
   }
 
   createPlugins() {

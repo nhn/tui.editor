@@ -41,7 +41,7 @@ type ToWwConvertor = (
   }
 ) => void;
 
-export type ToWwConvertorMap = Partial<Record<MdNodeType, ToWwConvertor>>;
+export type ToWwConvertorMap = Partial<Record<string, ToWwConvertor>>;
 
 export type FirstDelimFn = (index: number) => string;
 

@@ -3,16 +3,21 @@ import {
   CodeMdNode,
   ListItemMdNode,
   MdNode,
-  MdNodeType,
   CustomHTMLRendererMap,
   Context,
   OpenTagToken,
   CustomInlineMdNode,
+  CustomHTMLRenderer,
+  HTMLMdNode,
 } from '@t/markdown';
 import { LinkAttributes } from '@t/editor';
+import { reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 import { getWidgetContent, widgetToDOM } from '@/widget/rules';
+import { getChildrenHTML, getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
 
 type TokenAttrs = Record<string, any>;
+
+const reCloseTag = /^\s*<\s*\//;
 
 const baseConvertors: CustomHTMLRendererMap = {
   paragraph(_, { entering, origin, options }: Context) {
@@ -139,8 +144,7 @@ export function getHTMLRenderConvertors(
   }
 
   if (customConvertors) {
-    // @ts-ignore
-    Object.keys(customConvertors).forEach((nodeType: MdNodeType) => {
+    Object.keys(customConvertors).forEach((nodeType: string) => {
       const orgConvertor = convertors[nodeType];
       const customConvertor = customConvertors[nodeType]!;
 
@@ -150,6 +154,31 @@ export function getHTMLRenderConvertors(
 
           newContext.origin = () => orgConvertor(node, context);
           return customConvertor(node, newContext);
+        };
+      } else if (['htmlBlock', 'htmlInline'].includes(nodeType)) {
+        convertors[nodeType] = (node, context) => {
+          const matched = node.literal!.match(reHTMLTag);
+
+          if (matched) {
+            const [rootHTML, openTagName, , closeTagName] = matched;
+            const typeName = (openTagName || closeTagName).toLowerCase();
+            // @ts-expect-error
+            const htmlConvertor: CustomHTMLRenderer = customConvertor[typeName];
+            const childrenHTML = getChildrenHTML(node, typeName);
+
+            if (htmlConvertor) {
+              // copy for preventing to overwrite the originial property
+              const newNode = { ...node } as HTMLMdNode;
+
+              newNode.attrs = getHTMLAttrsByHTMLString(rootHTML);
+              newNode.childrenHTML = childrenHTML;
+              newNode.type = typeName;
+              context.entering = !reCloseTag.test(node.literal!);
+
+              return htmlConvertor(newNode, context);
+            }
+          }
+          return context.origin!();
         };
       } else {
         convertors[nodeType] = customConvertor;

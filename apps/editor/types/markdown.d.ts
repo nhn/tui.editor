@@ -49,7 +49,7 @@ export type MdPos = [number, number];
 export type MdSourcepos = [MdPos, MdPos];
 
 export interface MdNode {
-  type: MdNodeType;
+  type: string;
   id: number;
   parent: MdNode | null;
   prev: MdNode | null;
@@ -113,6 +113,12 @@ export interface LinkMdNode extends MdNode {
 export interface CodeMdNode extends MdNode {
   parent: NonNullable<MdNode>;
   tickCount: number;
+}
+
+export interface HTMLMdNode extends MdNode {
+  attrs: Record<string, string | null>;
+  childrenHTML?: string;
+  open?: boolean;
 }
 
 export interface TableColumn {
@@ -226,6 +232,10 @@ export type CustomHTMLRenderer = (
   convertors?: CustomHTMLRendererMap
 ) => HTMLToken | HTMLToken[] | null;
 
+export interface HTMLRendererMap {
+  [type: string]: CustomHTMLRenderer;
+}
+
 export type CustomHTMLRendererMap = Partial<Record<string, CustomHTMLRenderer>>;
 
 export interface ContextOptions {
@@ -246,7 +256,7 @@ export interface Context {
 }
 
 export interface MdLikeNode {
-  type: MdNodeType;
+  type: string;
   literal: string | null;
   wysiwygNode?: boolean;
   level?: number;
@@ -261,4 +271,6 @@ export interface MdLikeNode {
     task?: boolean;
     checked?: boolean;
   };
+  attrs?: Record<string, string | null>;
+  childrenHTML?: string;
 }

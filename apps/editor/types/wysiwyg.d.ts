@@ -22,7 +22,8 @@ export type WwNodeType =
   | 'lineBreak'
   | 'customBlock'
   | 'frontMatter'
-  | 'widget';
+  | 'widget'
+  | 'html';
 
 export type WwMarkType = 'strong' | 'emph' | 'strike' | 'link' | 'code';
 

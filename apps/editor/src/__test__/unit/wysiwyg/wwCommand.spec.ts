@@ -32,10 +32,10 @@ describe('wysiwyg commands', () => {
   }
 
   beforeEach(() => {
-    const adaptor = new WwToDOMAdaptor({}, {});
+    const toDOMAdaptor = new WwToDOMAdaptor({}, {});
 
     em = new EventEmitter();
-    wwe = new WysiwygEditor(em, adaptor, true);
+    wwe = new WysiwygEditor(em, { toDOMAdaptor });
     cmd = new CommandManager(em, {}, wwe.commands);
   });
 
@@ -523,10 +523,10 @@ describe('wysiwyg commands', () => {
         target: '_blank',
         rel: 'noopener noreferrer',
       };
-      const adaptor = new WwToDOMAdaptor({}, {});
+      const toDOMAdaptor = new WwToDOMAdaptor({}, {});
 
       em = new EventEmitter();
-      wwe = new WysiwygEditor(em, adaptor, true, linkAttributes);
+      wwe = new WysiwygEditor(em, { toDOMAdaptor, linkAttributes });
       cmd = new CommandManager(em, {}, wwe.commands);
     });
 
