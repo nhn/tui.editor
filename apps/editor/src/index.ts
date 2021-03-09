@@ -12,4 +12,5 @@ import '@/css/md-syntax-highlighting.css';
 
 import './i18n/en-us';
 
+export default Editor;
 export { Editor, EditorCore };
