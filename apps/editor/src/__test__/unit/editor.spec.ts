@@ -117,16 +117,6 @@ describe('editor', () => {
       expect(getPreviewHTML()).toBe('');
     });
 
-    it('getCurrentModeEditor()', () => {
-      // @ts-ignore
-      expect(editor.getCurrentModeEditor()).toEqual(editor.mdEditor);
-
-      editor.changeMode('wysiwyg');
-
-      // @ts-ignore
-      expect(editor.getCurrentModeEditor()).toEqual(editor.wwEditor);
-    });
-
     it('setMinHeight()', () => {
       editor.setMinHeight('200px');
 
