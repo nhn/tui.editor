@@ -204,13 +204,6 @@ class MarkdownPreview extends Preview {
         }
       }
     }
-
-    const codeBlockEls = this.getCodeBlockElements(nodes.map((node) => node.id));
-
-    if (codeBlockEls.length) {
-      // @ts-ignore
-      this.lazyRunner.run('invokeCodeBlock', codeBlockEls);
-    }
   }
 
   getRenderer() {

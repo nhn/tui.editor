@@ -65,19 +65,6 @@ class Preview {
     return codeEls;
   }
 
-  invokeCodeBlockPlugins(codeBlocks: HTMLElement[]) {
-    codeBlocks.forEach((codeBlock) => {
-      const lang = codeBlock.getAttribute('data-language')!;
-      const html = codeBlockManager.createCodeBlockHtml(lang, codeBlock.textContent!);
-
-      codeBlock.innerHTML = html;
-    });
-  }
-
-  refresh() {
-    this.invokeCodeBlockPlugins(this.getCodeBlockElements());
-  }
-
   /**
    * get html string
    * @returns {string} - html preview string
