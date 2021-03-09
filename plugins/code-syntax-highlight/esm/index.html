@@ -16,15 +16,16 @@
       import { Editor } from 'http://localhost:8080/dist/index.js';
       import codeSyntaxHighlightPlugin from '/dist/index.js';
 
-      // import hljs from 'highlight.js';
+      import hljs from 'highlight.js';
 
-      import hljs from 'highlight.js/lib/core';
+      // @description import only the languages ​​to use
+      // import hljs from 'highlight.js/lib/core';
 
-      import javascript from 'highlight.js/lib/languages/javascript';
-      import clojure from 'highlight.js/lib/languages/clojure';
+      // import javascript from 'highlight.js/lib/languages/javascript';
+      // import clojure from 'highlight.js/lib/languages/clojure';
 
-      hljs.registerLanguage('javascript', javascript);
-      hljs.registerLanguage('clojure', clojure);
+      // hljs.registerLanguage('javascript', javascript);
+      // hljs.registerLanguage('clojure', clojure);
 
       const content = [
         '```js',
