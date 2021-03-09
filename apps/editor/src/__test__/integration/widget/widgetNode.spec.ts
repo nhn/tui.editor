@@ -270,6 +270,56 @@ describe('widgetNode', () => {
       expect(mdEditor).toContainHTML(expectedEditor);
       expect(getPreviewHTML()).toBe(expectedPreview);
     });
+
+    it('should render widget node in the editor and preview using replaceSelection API', () => {
+      editor.setMarkdown('widgetNode: ');
+
+      editor.replaceSelection('@test1 @test2', [1, 1], [1, 13]);
+
+      const expectedEditor = oneLineTrim`
+        <div>
+          <span class="tui-widget">
+            <span>
+              <a href="www.google.com">@test1</a>
+            </span>
+          </span> 
+          <span class="tui-widget">
+            <span>
+              <a href="www.google.com">@test2</a>
+            </span>
+          </span>
+          <br>
+        </div>
+      `;
+      const expectedPreview = oneLineTrim`
+        <p>
+          <span class="tui-widget">
+            <span>
+              <a href="www.google.com">@test1</a>
+            </span>
+          </span> 
+          <span class="tui-widget">
+            <span>
+              <a href="www.google.com">@test2</a>
+            </span>
+          </span>
+        </p>
+      `;
+
+      expect(mdEditor).toContainHTML(expectedEditor);
+      expect(getPreviewHTML()).toBe(expectedPreview);
+    });
+
+    it('should return the markdown text without widget syntax through calling getMarkdown() API', () => {
+      const markdownText = oneLineTrim`
+        Brand site: [#toast](https://ui.toast.com), editor: [#toastui-editor](https://github.com/nhn/tui.editor)\n
+        The Toastui-editor...
+      `;
+
+      editor.setMarkdown(markdownText);
+
+      expect(editor.getMarkdown()).toBe(markdownText);
+    });
   });
 
   describe('in wysiwyg', () => {
@@ -338,6 +388,53 @@ describe('widgetNode', () => {
 
       expect(mdEditor).toContainHTML(expectedEditor);
       expect(getPreviewHTML()).toBe(expectedPreview);
+    });
+
+    it('should render widget node in the editor using replaceSelection API', () => {
+      editor.setMarkdown('widgetNode:');
+      editor.changeMode('wysiwyg');
+
+      editor.replaceSelection('@test1 @test2', 1, 12);
+
+      const expectedEditor = oneLineTrim`
+        <p>
+          <span class="tui-widget">
+            <span>
+              <a href="www.google.com">@test1</a>
+            </span>
+          </span> 
+          <span class="tui-widget">
+            <span>
+              <a href="www.google.com">@test2</a>
+            </span>
+          </span>
+          <br>
+        </p>
+      `;
+
+      expect(wwEditor).toContainHTML(expectedEditor);
+    });
+
+    it('should render widget node in the editor using insertText API', () => {
+      editor.changeMode('wysiwyg');
+
+      editor.insertText('@test1 @test2');
+
+      const expectedEditor = oneLineTrim`
+        <p>
+          <span class="tui-widget">
+            <span><a href="www.google.com">@test1</a></span>
+          </span> 
+          <span class="tui-widget">
+            <span>
+              <a href="www.google.com">@test2</a>
+            </span>
+          </span>
+          <br>
+        </p>
+      `;
+
+      expect(wwEditor).toContainHTML(expectedEditor);
     });
   });
 });

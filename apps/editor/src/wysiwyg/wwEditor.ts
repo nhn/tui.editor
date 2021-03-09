@@ -5,7 +5,7 @@ import isNumber from 'tui-code-snippet/type/isNumber';
 import EditorBase from '@/base';
 import { getWwCommands } from '@/commands/wwCommands';
 
-import { createTextSelection } from '@/helper/manipulation';
+import { createParagraph, createTextSelection } from '@/helper/manipulation';
 import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
 
 import { tableSelection } from './plugins/tableSelection';
@@ -214,9 +214,10 @@ export default class WysiwygEditor extends EditorBase {
 
   replaceSelection(text: string, start?: number, end?: number) {
     const { schema, tr } = this.view.state;
-    const { paragraph } = schema.nodes;
     const lineTexts = text.split('\n');
-    const paras = lineTexts.map((lineText) => paragraph.create(null, schema.text(lineText)));
+    const paras = lineTexts.map((lineText) =>
+      createParagraph(schema, createNodesWithWidget(lineText, schema))
+    );
     const slice = new Slice(Fragment.from(paras), 1, 1);
     const newTr =
       isNumber(start) && isNumber(end)

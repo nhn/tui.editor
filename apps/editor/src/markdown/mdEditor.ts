@@ -11,7 +11,7 @@ import EditorBase from '@/base';
 import SpecManager from '@/spec/specManager';
 import { cls, toggleClass } from '@/utils/dom';
 import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
-import { createTextSelection } from '@/helper/manipulation';
+import { createParagraph, createTextSelection } from '@/helper/manipulation';
 import { syntaxHighlight } from './plugins/syntaxHighlight';
 import { previewHighlight } from './plugins/previewHighlight';
 import { Doc } from './nodes/doc';
@@ -33,7 +33,7 @@ import { Html } from './marks/html';
 import { CustomBlock } from './marks/customBlock';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
 import { smartTask } from './plugins/smartTask';
-import { createNodesWithWidget } from '@/widget/rules';
+import { createNodesWithWidget, unwrapWidgetSyntax } from '@/widget/rules';
 import { Widget, widgetNodeView } from '@/widget/widgetNode';
 import { PluginProp } from '@t/plugin';
 
@@ -243,7 +243,7 @@ export default class MdEditor extends EditorBase {
     const { tr, schema, doc } = this.view.state;
     const lineTexts = text.split('\n');
     const nodes = lineTexts.map((lineText) =>
-      schema.nodes.paragraph.create(null, createNodesWithWidget(lineText, schema))
+      createParagraph(schema, createNodesWithWidget(lineText, schema))
     );
     const slice = new Slice(Fragment.from(nodes), 1, 1);
 
@@ -294,10 +294,10 @@ export default class MdEditor extends EditorBase {
   }
 
   setMarkdown(markdown: string, cursorToEnd = true) {
-    const contents = markdown.split('\n');
+    const lineTexts = markdown.split('\n');
     const { tr, doc, schema } = this.view.state;
-    const nodes = contents.map((content) =>
-      schema.nodes.paragraph.create(null, createNodesWithWidget(content, schema))
+    const nodes = lineTexts.map((lineText) =>
+      createParagraph(schema, createNodesWithWidget(lineText, schema))
     );
 
     this.view.dispatch(tr.replaceWith(0, doc.content.size, nodes));
@@ -338,7 +338,10 @@ export default class MdEditor extends EditorBase {
   }
 
   getMarkdown() {
-    return this.toastMark.getLineTexts().join('\n');
+    return this.toastMark
+      .getLineTexts()
+      .map((lineText: string) => unwrapWidgetSyntax(lineText))
+      .join('\n');
   }
 
   getToastMark() {
