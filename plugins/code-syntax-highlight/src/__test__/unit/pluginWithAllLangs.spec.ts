@@ -5,10 +5,7 @@ import { source, oneLineTrim } from 'common-tags';
 import { Editor } from '@toast-ui/editor';
 import codeSyntaxHighlightPlugin from '@/index';
 
-import hljs from 'highlight.js/lib/core';
-import javascript from 'highlight.js/lib/languages/javascript';
-
-hljs.registerLanguage('javascript', javascript);
+import hljs from 'highlight.js';
 
 describe('codeSyntaxHighlightPlugin', () => {
   let container: HTMLElement, mdPreview: HTMLElement, wwEditor: HTMLElement, editor: Editor;
