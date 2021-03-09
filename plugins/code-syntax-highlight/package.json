@@ -42,7 +42,8 @@
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.11.9",
-    "@toast-ui/editor": "^2.0.0",
+    "@toast-ui/editor": "file:../../apps/editor",
+    "@types/common-tags": "^1.8.0",
     "@types/highlight.js": "^9.12.4",
     "@types/jest": "^26.0.20",
     "@types/lowlight": "0.0.1",
@@ -51,6 +52,7 @@
     "@types/snowpack-env": "^2.3.3",
     "@typescript-eslint/eslint-plugin": "^4.16.1",
     "@typescript-eslint/parser": "^4.16.1",
+    "common-tags": "^1.8.0",
     "cross-env": "^6.0.3",
     "css-loader": "^5.1.1",
     "eslint": "^6.8.0",
