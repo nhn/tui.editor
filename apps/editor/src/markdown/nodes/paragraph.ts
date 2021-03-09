@@ -1,7 +1,6 @@
 import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { Command, joinForward } from 'prosemirror-commands';
-// @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';

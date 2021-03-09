@@ -141,15 +141,8 @@ function lineBackground(parent: MdNode, start: MdPos, end: MdPos, prefix: string
     : null;
 }
 
-function codeBlock(node: MdNode, start: MdPos, end: MdPos, endLine: string) {
-  const {
-    fenceOffset,
-    fenceLength,
-    fenceChar,
-    info,
-    infoPadding,
-    parent,
-  } = node as CodeBlockMdNode;
+function codeBlock(node: CodeBlockMdNode, start: MdPos, end: MdPos, endLine: string) {
+  const { fenceOffset, fenceLength, fenceChar, info, infoPadding, parent } = node;
   const fenceEnd = fenceOffset + fenceLength;
   const marks = [markInfo(setOffsetPos(start, 1), end, CODE_BLOCK)];
 
@@ -328,7 +321,6 @@ export function getMarkInfo(node: MdNode, start: MdPos, end: MdPos, endLine: str
 
   if (isFunction(markNodeFuncMap[type as MarkNodeFuncMapKey])) {
     return markNodeFuncMap[type as MarkNodeFuncMapKey](
-      // @TODO: create node type to cover all markdown node type
       // @ts-ignore
       node,
       start,
