@@ -39,4 +39,4 @@ function h(type: string | ComponentClass, props: Record<string, any>, ...childre
   return new VNode(type, props || {}, flatted);
 }
 
-export default html.bind(h);
+export default html.bind(h) as (strings: TemplateStringsArray, ...values: any[]) => VNode;

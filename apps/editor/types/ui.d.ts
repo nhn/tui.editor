@@ -36,7 +36,7 @@ export interface Component<T = {}, R = {}> {
   state: R;
   vnode: VNode;
   refs: Record<string, HTMLElement>;
-  render(): any;
+  render(): VNode;
   addEvent?(): void;
   mounted?(): void;
   updated?(prevProps: T): void;
