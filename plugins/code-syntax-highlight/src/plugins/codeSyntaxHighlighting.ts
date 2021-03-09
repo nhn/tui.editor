@@ -7,21 +7,20 @@ interface ChildNodeInfo {
   pos: number;
 }
 
+function flatten<T>(arr: T[]): T[] {
+  return arr.reduce<T[]>((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
+}
+
 function findCodeBlocks(doc: ProsemirrorNode) {
   const descendants: ChildNodeInfo[] = [];
 
-  doc.descendants((child, pos) => {
-    if (child.isBlock && child.type.name === 'codeBlock') {
-      descendants.push({ node: child, pos });
+  doc.descendants((node, pos) => {
+    if (node.isBlock && node.type.name === 'codeBlock') {
+      descendants.push({ node, pos });
     }
   });
 
   return descendants;
-}
-
-// @ts-ignore
-function flatten<T>(arr: T[]) {
-  return arr.reduce<T[]>((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
 }
 
 function parseNodes(nodes: any, className = []) {
