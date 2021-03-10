@@ -4,11 +4,14 @@ import { createCodeSyntaxHighlightView } from '@/nodeViews/codeSyntaxHighlightVi
 
 import { PluginOptions } from '@t/plugin';
 
+import Hljs from 'highlight.js';
+import Low from 'lowlight/lib/core';
+
 // @TODO change import editor's type
 // import { Emitter } from '@t/event';
 type Emitter = any;
 
-function registerLanguages(hljs: any, low: any, languages: any[]) {
+function registerLanguages(hljs: typeof Hljs, low: typeof Low, languages: string[]) {
   languages.forEach((lang) => {
     const { rawDefinition } = hljs.getLanguage(lang);
 
@@ -16,7 +19,7 @@ function registerLanguages(hljs: any, low: any, languages: any[]) {
   });
 }
 
-export function codeSyntaxHighlightPlugin(eventEmitter: Emitter, low: any, options = {}) {
+export function codeSyntaxHighlightPlugin(eventEmitter: Emitter, low: typeof Low, options = {}) {
   const { hljs } = options as PluginOptions;
   const languages = hljs.listLanguages();
 

@@ -4,5 +4,9 @@ import '@/css/plugin.css';
 
 import low from 'lowlight/lib/core';
 
-export default (eventEmitter: any, options = {}) =>
+// @TODO change import editor's type
+// import { Emitter } from '@t/event';
+type Emitter = any;
+
+export default (eventEmitter: Emitter, options = {}) =>
   codeSyntaxHighlightPlugin(eventEmitter, low, options);

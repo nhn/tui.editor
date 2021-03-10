@@ -2,9 +2,17 @@ import { Plugin } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 
+import * as Hljs from 'highlight.js';
+import * as Low from 'lowlight/lib/core';
+
 interface ChildNodeInfo {
   node: ProsemirrorNode;
   pos: number;
+}
+
+interface HighlightedNodeInfo {
+  text: string;
+  classes: string[];
 }
 
 function flatten<T>(arr: T[]): T[] {
@@ -23,9 +31,12 @@ function findCodeBlocks(doc: ProsemirrorNode) {
   return descendants;
 }
 
-function parseNodes(nodes: any, className = []) {
-  return nodes.map((node: any) => {
-    const classes: any = [...className, ...(node.properties ? node.properties.className : [])];
+function parseNodes(nodes: any[], classNames: string[] = []): HighlightedNodeInfo[] {
+  return nodes.map((node) => {
+    const classes: string[] = [
+      ...classNames,
+      ...(node.properties ? node.properties.className : []),
+    ];
 
     if (node.children) {
       return parseNodes(node.children, classes);
@@ -35,21 +46,23 @@ function parseNodes(nodes: any, className = []) {
       text: node.value,
       classes,
     };
-  });
+  }) as HighlightedNodeInfo[];
 }
 
-function getDecorations(doc: ProsemirrorNode, hljs: any, low: any) {
+function getDecorations(doc: ProsemirrorNode, hljs: typeof Hljs, low: typeof Low) {
   const decorations: Decoration[] = [];
   const codeBlocks = findCodeBlocks(doc);
 
   codeBlocks.forEach(({ pos, node }) => {
     let startPos = pos + 1;
 
-    const registeredLang = hljs.getLanguage(node.attrs.language);
-    const nodes = registeredLang ? low.highlight(node.attrs.language, node.textContent).value : [];
+    const { language } = node.attrs;
+    const registeredLang = hljs.getLanguage(language);
+    const tree = registeredLang ? low.highlight(language, node.textContent).value : [];
+    const nodeInfos = flatten(parseNodes(tree)) as HighlightedNodeInfo[];
 
-    flatten(parseNodes(nodes))
-      .map((nodeInfo: any) => {
+    nodeInfos
+      .map((nodeInfo) => {
         const from = startPos;
         const to = from + nodeInfo.text.length;
 
@@ -57,7 +70,7 @@ function getDecorations(doc: ProsemirrorNode, hljs: any, low: any) {
 
         return { ...nodeInfo, from, to };
       })
-      .forEach(({ classes, from, to }: any) => {
+      .forEach(({ classes, from, to }) => {
         const classNames = classes.join(' ');
         const decoration = Decoration.inline(from, to, {
           class: classNames,
@@ -72,7 +85,7 @@ function getDecorations(doc: ProsemirrorNode, hljs: any, low: any) {
   return DecorationSet.create(doc, decorations);
 }
 
-export function codeSyntaxHighlighting(hljs: any, low: any) {
+export function codeSyntaxHighlighting(hljs: typeof Hljs, low: typeof Low) {
   return new Plugin({
     state: {
       init(_, { doc }) {

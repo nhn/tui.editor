@@ -1,14 +1,14 @@
 import { CodeBlockMdNode, MdNode } from '@t/markdown';
 
-type TokenAttrs = Record<string, any>;
+import * as Hljs from 'highlight.js';
 
-export function getHTMLRenderers(hljs: any) {
+export function getHTMLRenderers(hljs: typeof Hljs) {
   return {
     codeBlock(node: MdNode) {
       const { fenceLength, info } = node as CodeBlockMdNode;
       const infoWords = info ? info.split(/\s+/) : [];
       const preClasses = [];
-      const codeAttrs: TokenAttrs = {};
+      const codeAttrs: Record<string, any> = {};
 
       if (fenceLength > 3) {
         codeAttrs['data-backticks'] = fenceLength;

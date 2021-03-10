@@ -5,7 +5,9 @@ import { source, oneLineTrim } from 'common-tags';
 import { Editor } from '@toast-ui/editor';
 import codeSyntaxHighlightPlugin from '@/index';
 
+// @ts-ignore
 import hljs from 'highlight.js/lib/core';
+// @ts-ignore
 import javascript from 'highlight.js/lib/languages/javascript';
 
 hljs.registerLanguage('javascript', javascript);
