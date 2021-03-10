@@ -7,5 +7,3 @@ declare module 'highlight.js' {
     rawDefinition: Function;
   }
 }
-
-declare module 'highlight.js/lib/core';

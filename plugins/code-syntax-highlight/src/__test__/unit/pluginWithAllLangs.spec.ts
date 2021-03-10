@@ -73,6 +73,6 @@ describe('codeSyntaxHighlightPlugin', () => {
       </div>
     `;
 
-    expect(getPreviewHTML()).toBe(expected);
+    expect(wwEditor).toBe(expected);
   });
 });

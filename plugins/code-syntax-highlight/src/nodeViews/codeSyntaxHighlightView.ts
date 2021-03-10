@@ -4,7 +4,7 @@ import { Node as ProsemirrorNode } from 'prosemirror-model';
 import isFunction from 'tui-code-snippet/type/isFunction';
 
 import { isPositionInBox, cls } from '@/utils/dom';
-import LanguageSelectBox from '@/nodeViews/languageSelectBox';
+import { LanguageSelectBox } from '@/nodeViews/languageSelectBox';
 
 // @TODO change import editor's type
 // import { ToDOMAdaptor } from '@t/convertor';

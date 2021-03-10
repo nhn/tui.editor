@@ -10,4 +10,5 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   snapshotSerializers: ['jest-serializer-html'],
+  setupFilesAfterEnv: ['<rootDir>/src/__test__/jest-setup.ts'],
 };
