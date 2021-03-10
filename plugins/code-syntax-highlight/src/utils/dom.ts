@@ -15,6 +15,7 @@ export function removeNode(node: Node) {
   }
 }
 
+// @TODO change to 'toastui-' prefix
 const CLS_PREFIX = 'tui-editor-';
 
 export function cls(...names: string[]) {

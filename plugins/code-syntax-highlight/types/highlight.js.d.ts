@@ -1,5 +1,11 @@
-declare module 'highlight.js';
+import 'highlight.js';
+
+declare module 'highlight.js' {
+  export interface IMode extends IModeBase {
+    keywords?: any;
+    contains?: IMode[];
+    rawDefinition: Function;
+  }
+}
 
 declare module 'highlight.js/lib/core';
-
-declare module 'highlight.js/lib/languages/javascript';
