@@ -15,6 +15,8 @@ interface HighlightedNodeInfo {
   classes: string[];
 }
 
+const NODE_TYPE = 'codeBlock';
+
 function flatten<T>(arr: T[]): T[] {
   return arr.reduce<T[]>((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
 }
@@ -23,7 +25,7 @@ function findCodeBlocks(doc: ProsemirrorNode) {
   const descendants: ChildNodeInfo[] = [];
 
   doc.descendants((node, pos) => {
-    if (node.isBlock && node.type.name === 'codeBlock') {
+    if (node.isBlock && node.type.name === NODE_TYPE) {
       descendants.push({ node, pos });
     }
   });

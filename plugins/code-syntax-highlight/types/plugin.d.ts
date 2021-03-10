@@ -1,8 +1,15 @@
-interface LanguageMap {
-  [k: string]: any;
-}
+import * as Hljs from 'highlight.js';
 
 export interface PluginOptions {
-  hljs: any;
-  languages?: LanguageMap;
+  hljs: typeof Hljs;
 }
+
+// @TODO change to import editor's declaration file
+interface EditorPluginInfo {
+  toHTMLRenderers: any;
+  markdownPlugins: any[];
+  wysiwygPlugins: any[];
+  wysiwygNodeViews: any;
+}
+
+export default function codeSyntaxHighlightPlugin(): EditorPluginInfo;

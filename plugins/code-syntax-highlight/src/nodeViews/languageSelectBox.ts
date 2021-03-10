@@ -11,6 +11,10 @@ import { isPositionInBox, removeNode, cls } from '@/utils/dom';
 // import { Emitter } from '@t/event';
 type Emitter = any;
 
+export const WRAPPER_CLASS_NAME = 'code-block-language';
+export const INPUT_CLASS_NANE = 'code-block-language-input';
+export const LIST_CLASS_NAME = 'code-block-language-list';
+
 const CODE_BLOCK_PADDING = 10;
 
 function getButtonsHTML(languages: string[]) {
@@ -19,7 +23,7 @@ function getButtonsHTML(languages: string[]) {
     .join('');
 }
 
-export default class LanguageSelectBox {
+export class LanguageSelectBox {
   private eventEmitter: Emitter;
 
   private languages: string[];
@@ -48,7 +52,7 @@ export default class LanguageSelectBox {
   private createElement() {
     this.wrapper = document.createElement('div');
 
-    addClass(this.wrapper, cls('code-block-language'));
+    addClass(this.wrapper, cls(WRAPPER_CLASS_NAME));
 
     this.createInputElement();
     this.createLanguageListElement();
@@ -61,7 +65,7 @@ export default class LanguageSelectBox {
   private createInputElement() {
     const wrapper = document.createElement('span');
 
-    addClass(wrapper, cls('code-block-language-input'));
+    addClass(wrapper, cls(INPUT_CLASS_NANE));
 
     const input = document.createElement('input');
 
@@ -76,7 +80,7 @@ export default class LanguageSelectBox {
 
   private createLanguageListElement() {
     this.list = document.createElement('div');
-    addClass(this.list, cls('code-block-language-list'));
+    addClass(this.list, cls(LIST_CLASS_NAME));
 
     const buttonsContainer = document.createElement('div');
 
@@ -91,7 +95,7 @@ export default class LanguageSelectBox {
     this.hideList();
   }
 
-  bindDOMEvent() {
+  private bindDOMEvent() {
     this.wrapper.addEventListener('mousedown', this.handleMousedown);
     this.input.addEventListener('keydown', this.handleKeydown);
     this.input.addEventListener('focus', () => this.activeSelectBox());
@@ -99,7 +103,7 @@ export default class LanguageSelectBox {
     this.list.addEventListener('mousedown', this.handleMousedownLanguageButtons);
   }
 
-  bindEvent() {
+  private bindEvent() {
     this.eventEmitter.listen(
       'showCodeBlockLanguages',
       ({ top, right }: { top: number; right: number }, language: string) => {
