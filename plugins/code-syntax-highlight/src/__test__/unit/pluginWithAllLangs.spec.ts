@@ -1,7 +1,5 @@
 import { source, oneLineTrim } from 'common-tags';
 
-// @TODO change import editor build file
-// @ts-ignore
 import { Editor } from '@toast-ui/editor';
 import codeSyntaxHighlightPlugin from '@/index';
 

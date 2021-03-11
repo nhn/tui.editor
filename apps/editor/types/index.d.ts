@@ -32,7 +32,7 @@ export {
   CodeMdNode,
   HTMLConvertorMap as ToHTMLConvertorMap,
 } from '@toast-ui/toastmark';
-export { ToMdConvertorMap } from './convertor';
+export { ToMdConvertorMap, ToDOMAdaptor } from './convertor';
 export { Emitter, Handler } from './event';
 export {
   EditorOptions,

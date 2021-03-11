@@ -7,9 +7,7 @@ import { PluginOptions } from '@t/plugin';
 import Hljs from 'highlight.js';
 import Low from 'lowlight/lib/core';
 
-// @TODO change import editor's type
-// import { Emitter } from '@t/event';
-type Emitter = any;
+import { Emitter } from '@toast-ui/editor';
 
 function registerLanguages(hljs: typeof Hljs, low: typeof Low, languages: string[]) {
   languages.forEach((lang) => {

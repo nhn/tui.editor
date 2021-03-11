@@ -7,9 +7,7 @@ import inArray from 'tui-code-snippet/array/inArray';
 
 import { isPositionInBox, removeNode, cls } from '@/utils/dom';
 
-// @TODO change import editor's type
-// import { Emitter } from '@t/event';
-type Emitter = any;
+import { Emitter } from '@toast-ui/editor';
 
 export const WRAPPER_CLASS_NAME = 'code-block-language';
 export const INPUT_CLASS_NANE = 'code-block-language-input';
