@@ -7,13 +7,7 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 import { isPositionInBox, cls } from '@/utils/dom';
 import { LanguageSelectBox } from '@/nodeViews/languageSelectBox';
 
-// @TODO change import editor's type
-// import { ToDOMAdaptor } from '@t/convertor';
-type ToDOMAdaptor = any;
-
-// @TODO change import editor's type
-// import { Emitter } from '@t/event';
-type Emitter = any;
+import { Emitter, ToDOMAdaptor } from '@toast-ui/editor';
 
 type GetPos = (() => number) | boolean;
 
@@ -71,7 +65,7 @@ class CodeSyntaxHighlightView implements NodeView {
   private createCodeBlockElement() {
     const toDOMNode = this.toDOMAdaptor.getToDOMNode('codeBlock');
 
-    return toDOMNode(this.node);
+    return toDOMNode!(this.node);
   }
 
   private bindDOMEvent() {
