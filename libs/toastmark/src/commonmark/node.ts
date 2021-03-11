@@ -1,42 +1,24 @@
+import {
+  BlockMdNode,
+  BlockNodeType,
+  CodeBlockMdNode,
+  CodeMdNode,
+  CustomBlockMdNode,
+  CustomInlineMdNode,
+  HeadingMdNode,
+  HtmlBlockMdNode,
+  LinkMdNode,
+  ListData,
+  ListMdNode,
+  MdNode,
+  MdNodeType,
+  RefDefMdNode,
+  Sourcepos,
+  TableCellMdNode,
+  TableColumn,
+  TableMdNode,
+} from '@t/node';
 import NodeWalker from './nodeWalker';
-
-export type BlockNodeType =
-  | 'document'
-  | 'list'
-  | 'blockQuote'
-  | 'item'
-  | 'heading'
-  | 'thematicBreak'
-  | 'paragraph'
-  | 'codeBlock'
-  | 'htmlBlock'
-  | 'table'
-  | 'tableHead'
-  | 'tableBody'
-  | 'tableRow'
-  | 'tableCell'
-  | 'tableDelimRow'
-  | 'tableDelimCell'
-  | 'refDef'
-  | 'customBlock'
-  | 'frontMatter';
-
-export type InlineNodeType =
-  | 'code'
-  | 'text'
-  | 'emph'
-  | 'strong'
-  | 'strike'
-  | 'link'
-  | 'image'
-  | 'htmlInline'
-  | 'linebreak'
-  | 'softbreak'
-  | 'customInline';
-
-export type NodeType = BlockNodeType | InlineNodeType;
-
-export type SourcePos = [[number, number], [number, number]];
 
 export function isContainer(node: Node) {
   switch (node.type) {
@@ -79,22 +61,22 @@ export function removeAllNode() {
   nodeMap = {};
 }
 
-export class Node {
-  public type: NodeType;
-  public id: number;
-  public parent: Node | null = null;
-  public prev: Node | null = null;
-  public next: Node | null = null;
-  public sourcepos?: SourcePos;
+export class Node implements MdNode {
+  type: MdNodeType;
+  id: number;
+  parent: Node | null = null;
+  prev: Node | null = null;
+  next: Node | null = null;
+  sourcepos?: Sourcepos;
 
   // only for container node
-  public firstChild: Node | null = null;
-  public lastChild: Node | null = null;
+  firstChild: Node | null = null;
+  lastChild: Node | null = null;
 
   // only for leaf node
-  public literal: string | null = null;
+  literal: string | null = null;
 
-  constructor(nodeType: NodeType, sourcepos?: SourcePos) {
+  constructor(nodeType: MdNodeType, sourcepos?: Sourcepos) {
     if (nodeType === 'document') {
       this.id = -1;
     } else {
@@ -192,111 +174,96 @@ export class Node {
   }
 }
 
-export class BlockNode extends Node {
-  public type: BlockNodeType;
+export class BlockNode extends Node implements BlockMdNode {
+  type: BlockNodeType;
 
   // temporal data (for parsing)
-  public open = true;
-  public lineOffsets: number[] | null = null;
-  public stringContent: string | null = null;
-  public lastLineBlank = false;
-  public lastLineChecked = false;
+  open = true;
+  lineOffsets: number[] | null = null;
+  stringContent: string | null = null;
+  lastLineBlank = false;
+  lastLineChecked = false;
 
-  constructor(nodeType: BlockNodeType, sourcepos?: SourcePos) {
+  constructor(nodeType: BlockNodeType, sourcepos?: Sourcepos) {
     super(nodeType, sourcepos);
     this.type = nodeType;
   }
 }
 
-export type ListNodeData = {
-  type: 'ordered' | 'bullet';
-  tight: boolean;
-  start: number;
-  bulletChar: string;
-  delimiter: string;
-  markerOffset: number;
-  padding: number;
-  task: boolean;
-  checked: boolean;
-};
-
-export class ListNode extends BlockNode {
-  public listData: ListNodeData | null = null;
+export class ListNode extends BlockNode implements ListMdNode {
+  listData: ListData | null = null;
 }
 
-export class HeadingNode extends BlockNode {
-  public level = 0;
-  public headingType: 'atx' | 'setext' = 'atx';
+export class HeadingNode extends BlockNode implements HeadingMdNode {
+  level = 0;
+  headingType: 'atx' | 'setext' = 'atx';
 }
 
-export class LinkNode extends Node {
-  public destination: string | null = null;
-  public title: string | null = null;
-  public extendedAutolink = false;
+export class CodeBlockNode extends BlockNode implements CodeBlockMdNode {
+  isFenced = false;
+  fenceChar: string | null = null;
+  fenceLength = 0;
+  fenceOffset = -1;
+  info: string | null = null;
+  infoPadding = 0;
 }
 
-export class CodeBlockNode extends BlockNode {
-  public isFenced = false;
-  public fenceChar: string | null = null;
-  public fenceLength = 0;
-  public fenceOffset = -1;
-  public info: string | null = null;
-  public infoPadding = 0;
+export class TableNode extends BlockNode implements TableMdNode {
+  columns: TableColumn[] = [];
 }
 
-export class HtmlBlockNode extends BlockNode {
-  public htmlBlockType = -1;
+export class TableCellNode extends BlockNode implements TableCellMdNode {
+  startIdx = 0;
+  endIdx = 0;
+  paddingLeft = 0;
+  paddingRight = 0;
+  ignored = false;
 }
 
-export class CodeNode extends Node {
-  public tickCount = 0;
+export class RefDefNode extends BlockNode implements RefDefMdNode {
+  title = '';
+  dest = '';
+  label = '';
 }
 
-export interface TableColumn {
-  align: 'left' | 'center' | 'right' | null;
+export class CustomBlockNode extends BlockNode implements CustomBlockMdNode {
+  syntaxLength = 0;
+  offset = -1;
+  info = '';
 }
 
-export class TableNode extends BlockNode {
-  public columns: TableColumn[] = [];
+export class HtmlBlockNode extends BlockNode implements HtmlBlockMdNode {
+  htmlBlockType = -1;
 }
 
-export class TableCellNode extends BlockNode {
-  public startIdx = 0;
-  public endIdx = 0;
-  public paddingLeft = 0;
-  public paddingRight = 0;
-  public ignored = false;
+export class LinkNode extends Node implements LinkMdNode {
+  destination: string | null = null;
+  title: string | null = null;
+  extendedAutolink = false;
+  lastChild!: Node;
 }
 
-export class RefDefNode extends BlockNode {
-  public title = '';
-  public dest = '';
-  public label = '';
+export class CodeNode extends Node implements CodeMdNode {
+  tickCount = 0;
 }
 
-export class CustomBlockNode extends BlockNode {
-  public syntaxLength = 0;
-  public offset = -1;
-  public info = '';
+export class CustomInlineNode extends Node implements CustomInlineMdNode {
+  info = '';
 }
 
-export class CustomInlineNode extends Node {
-  public info = '';
-}
-
-export function createNode(type: 'heading', sourcepos?: SourcePos): HeadingNode;
-export function createNode(type: 'list' | 'item', sourcepos?: SourcePos): ListNode;
-export function createNode(type: 'codeBlock', sourcepos?: SourcePos): CodeBlockNode;
-export function createNode(type: 'htmlBlock', sourcepos?: SourcePos): HtmlBlockNode;
-export function createNode(type: 'link' | 'image', sourcepos?: SourcePos): LinkNode;
-export function createNode(type: 'code', sourcepos?: SourcePos): CodeNode;
-export function createNode(type: 'table', sourcepos?: SourcePos): TableNode;
-export function createNode(type: 'tableCell', sourcepos?: SourcePos): TableNode;
-export function createNode(type: 'refDef', sourcepos?: SourcePos): RefDefNode;
-export function createNode(type: 'customBlock', sourcepos?: SourcePos): CustomBlockNode;
-export function createNode(type: BlockNodeType, sourcepos?: SourcePos): BlockNode;
-export function createNode(type: NodeType, sourcepos?: SourcePos): Node;
-export function createNode(type: NodeType, sourcepos?: SourcePos) {
+export function createNode(type: 'heading', sourcepos?: Sourcepos): HeadingNode;
+export function createNode(type: 'list' | 'item', sourcepos?: Sourcepos): ListNode;
+export function createNode(type: 'codeBlock', sourcepos?: Sourcepos): CodeBlockNode;
+export function createNode(type: 'htmlBlock', sourcepos?: Sourcepos): HtmlBlockNode;
+export function createNode(type: 'link' | 'image', sourcepos?: Sourcepos): LinkNode;
+export function createNode(type: 'code', sourcepos?: Sourcepos): CodeNode;
+export function createNode(type: 'table', sourcepos?: Sourcepos): TableNode;
+export function createNode(type: 'tableCell', sourcepos?: Sourcepos): TableNode;
+export function createNode(type: 'refDef', sourcepos?: Sourcepos): RefDefNode;
+export function createNode(type: 'customBlock', sourcepos?: Sourcepos): CustomBlockNode;
+export function createNode(type: BlockNodeType, sourcepos?: Sourcepos): BlockNode;
+export function createNode(type: MdNodeType, sourcepos?: Sourcepos): Node;
+export function createNode(type: MdNodeType, sourcepos?: Sourcepos) {
   switch (type) {
     case 'heading':
       return new HeadingNode(type, sourcepos);
@@ -368,7 +335,7 @@ export function isCustomInline(node: Node) {
   return node.type === 'customInline';
 }
 
-export function text(s: string, sourcepos?: SourcePos) {
+export function text(s: string, sourcepos?: Sourcepos) {
   const node = createNode('text', sourcepos);
   node.literal = s;
   return node;

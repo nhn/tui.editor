@@ -1,5 +1,5 @@
 import { Parser } from '../../blocks';
-import { Renderer } from '../../../html/render';
+import { Renderer } from '../../../html/renderer';
 import { convertToArrayTree } from '../../__test__/helper.spec';
 import { BlockNode, TableNode } from 'src/commonmark/node';
 import { source } from 'common-tags';
@@ -10,7 +10,7 @@ const renderer = new Renderer({ gfm: true });
 // Shortcut function to prevent prettier from adding linebreak beetween nested arrays
 const pos = (a: number, b: number, c: number, d: number) => [
   [a, b],
-  [c, d]
+  [c, d],
 ];
 
 describe('table', () => {
@@ -22,7 +22,7 @@ describe('table', () => {
       'stringContent',
       'paddingLeft',
       'paddingRight',
-      'literal'
+      'literal',
     ] as (keyof BlockNode)[]);
 
     expect(result).toEqual({
@@ -50,9 +50,9 @@ describe('table', () => {
                         {
                           type: 'text',
                           literal: 'a',
-                          sourcepos: pos(1, 3, 1, 3)
-                        }
-                      ]
+                          sourcepos: pos(1, 3, 1, 3),
+                        },
+                      ],
                     },
                     {
                       type: 'tableCell',
@@ -63,11 +63,11 @@ describe('table', () => {
                         {
                           type: 'text',
                           literal: 'b',
-                          sourcepos: pos(1, 8, 1, 8)
-                        }
-                      ]
-                    }
-                  ]
+                          sourcepos: pos(1, 8, 1, 8),
+                        },
+                      ],
+                    },
+                  ],
                 },
                 {
                   type: 'tableDelimRow',
@@ -78,18 +78,18 @@ describe('table', () => {
                       paddingLeft: 0,
                       paddingRight: 0,
                       stringContent: '--',
-                      sourcepos: pos(2, 2, 2, 3)
+                      sourcepos: pos(2, 2, 2, 3),
                     },
                     {
                       type: 'tableDelimCell',
                       paddingLeft: 1,
                       paddingRight: 0,
                       stringContent: '---',
-                      sourcepos: pos(2, 5, 2, 8)
-                    }
-                  ]
-                }
-              ]
+                      sourcepos: pos(2, 5, 2, 8),
+                    },
+                  ],
+                },
+              ],
             },
             {
               type: 'tableBody',
@@ -108,21 +108,21 @@ describe('table', () => {
                         {
                           type: 'text',
                           literal: 'c',
-                          sourcepos: pos(3, 4, 3, 4)
-                        }
-                      ]
+                          sourcepos: pos(3, 4, 3, 4),
+                        },
+                      ],
                     },
                     {
                       type: 'tableCell',
                       paddingLeft: 0,
                       paddingRight: 0,
-                      sourcepos: pos(3, 7, 3, 8)
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
+                      sourcepos: pos(3, 7, 3, 8),
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
         },
         {
           type: 'paragraph',
@@ -131,11 +131,11 @@ describe('table', () => {
             {
               type: 'text',
               sourcepos: pos(4, 2, 4, 2),
-              literal: 'e'
-            }
-          ]
-        }
-      ]
+              literal: 'e',
+            },
+          ],
+        },
+      ],
     });
 
     const html = renderer.render(root);
@@ -175,13 +175,13 @@ describe('table', () => {
       children: [
         {
           type: 'paragraph',
-          sourcepos: pos(1, 1, 2, 5)
+          sourcepos: pos(1, 1, 2, 5),
         },
         {
           type: 'table',
-          sourcepos: pos(3, 1, 5, 9)
-        }
-      ]
+          sourcepos: pos(3, 1, 5, 9),
+        },
+      ],
     });
   });
 
@@ -253,7 +253,7 @@ describe('GFM Exmaple', () => {
         </tr>
         </tbody>
         </table>
-      `
+      `,
     },
     {
       no: 199,
@@ -277,7 +277,7 @@ describe('GFM Exmaple', () => {
         </tr>
         </tbody>
         </table>
-      `
+      `,
     },
     {
       no: 200,
@@ -303,7 +303,7 @@ describe('GFM Exmaple', () => {
         </tr>
         </tbody>
         </table>
-      `
+      `,
     },
     {
       no: 201,
@@ -331,7 +331,7 @@ describe('GFM Exmaple', () => {
         <blockquote>
         <p>bar</p>
         </blockquote>
-      `
+      `,
     },
     {
       no: 202,
@@ -360,7 +360,7 @@ describe('GFM Exmaple', () => {
         </table>
         <p>bar</p>
         <p>bar</p>
-      `
+      `,
     },
     // TODO: need to find a way to parse merged-column and re-activate this test case
     // {
@@ -403,7 +403,7 @@ describe('GFM Exmaple', () => {
         </tr>
         </tbody>
         </table>
-      `
+      `,
     },
     {
       no: 205,
@@ -420,8 +420,8 @@ describe('GFM Exmaple', () => {
         </tr>
         </thead>
         </table>
-      `
-    }
+      `,
+    },
   ];
 
   examples.forEach(({ no, input, output }) => {

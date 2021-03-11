@@ -5,8 +5,10 @@
   "scripts": {
     "serve": "webpack-dev-server",
     "build": "webpack --mode=production",
-    "test": "jest --watch"
+    "test": "jest --watch",
+    "test:types": "tsc"
   },
+  "types": "types/index.d.ts",
   "files": [
     "dist",
     "types"
@@ -23,6 +25,7 @@
     "@types/codemirror": "0.0.85",
     "@types/common-tags": "^1.8.0",
     "@types/jest": "^24.0.25",
+    "@types/mdurl": "^1.0.2",
     "@typescript-eslint/eslint-plugin": "^2.13.0",
     "@typescript-eslint/parser": "^2.13.0",
     "codemirror": "^5.51.0",
@@ -36,7 +39,6 @@
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.9.0",
     "mdurl": "^1.0.1",
-    "prettier": "^1.19.1",
     "style-loader": "^1.1.3",
     "terser-webpack-plugin": "^2.3.5",
     "ts-jest": "^24.2.0",

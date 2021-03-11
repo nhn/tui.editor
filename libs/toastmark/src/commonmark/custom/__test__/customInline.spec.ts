@@ -1,5 +1,5 @@
 import { Parser } from '../../blocks';
-import { Renderer } from '../../../html/render';
+import { Renderer } from '../../../html/renderer';
 import { CustomInlineNode } from '../../node';
 
 const reader = new Parser();
@@ -18,11 +18,11 @@ describe('customInline', () => {
     expect(customInline.info).toBe('myInline');
     expect(customInline.sourcepos).toEqual([
       [1, 7],
-      [1, 24]
+      [1, 24],
     ]);
     expect(inlineText.sourcepos).toEqual([
       [1, 17],
-      [1, 22]
+      [1, 22],
     ]);
 
     const html = renderer.render(root);
@@ -41,11 +41,11 @@ describe('customInline', () => {
     expect(customInline.info).toBe('myInline');
     expect(customInline.sourcepos).toEqual([
       [1, 7],
-      [1, 26]
+      [1, 26],
     ]);
     expect(emph.sourcepos).toEqual([
       [1, 18],
-      [1, 24]
+      [1, 24],
     ]);
 
     const html = renderer.render(root);
@@ -61,7 +61,7 @@ describe('customInline', () => {
     expect(text.literal).toBe('Hello $$ world$$');
     expect(text.sourcepos).toEqual([
       [1, 1],
-      [1, 16]
+      [1, 16],
     ]);
 
     const html = renderer.render(root);

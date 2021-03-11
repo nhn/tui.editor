@@ -186,8 +186,9 @@ export function appendNode(node: Element, appended: string | ArrayLike<Element> 
   if (isString(appended)) {
     node.insertAdjacentHTML('beforeend', appended);
   } else {
-    // @ts-ignore
-    const nodes: Element[] = appended.length ? toArray(appended) : [appended];
+    const nodes: Element[] = (appended as ArrayLike<Element>).length
+      ? toArray(appended as ArrayLike<Element>)
+      : [appended as Element];
 
     for (let i = 0, len = nodes.length; i < len; i += 1) {
       node.appendChild(nodes[i]);
@@ -199,8 +200,9 @@ export function prependNode(node: Element, appended: string | ArrayLike<Element>
   if (isString(appended)) {
     node.insertAdjacentHTML('afterbegin', appended);
   } else {
-    // @ts-ignore
-    const nodes: Element[] = appended.length ? toArray(appended) : [appended];
+    const nodes: Element[] = (appended as ArrayLike<Element>).length
+      ? toArray(appended as ArrayLike<Element>)
+      : [appended as Element];
 
     for (let i = nodes.length - 1, len = 0; i >= len; i -= 1) {
       node.insertBefore(nodes[i], node.firstChild);

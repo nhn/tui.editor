@@ -2,7 +2,6 @@
  * @fileoverview Implements editor preivew
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
-// @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import extend from 'tui-code-snippet/object/extend';
@@ -35,7 +34,6 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *         @param {function} [options.events.blur] - It would be emitted when editor loose focus
  *     @param {Array.<function|Array>} [options.plugins] - Array of plugins. A plugin can be either a function or an array in the form of [function, options].
  *     @param {Object} [options.extendedAutolinks] - Using extended Autolinks specified in GFM spec
- *     @param {Object} [options.customConvertor] - convertor extention
  *     @param {Object} [options.linkAttributes] - Attributes of anchor element that should be rel, target, hreflang, type
  *     @param {Object} [options.customHTMLRenderer=null] - Object containing custom renderer functions correspond to change markdown node to preview HTML or wysiwyg node
  *     @param {boolean} [options.referenceDefinition=false] - whether use the specification of link reference definition
@@ -65,7 +63,6 @@ class ToastUIEditorViewer {
       {
         linkAttributes: null,
         extendedAutolinks: false,
-        customConvertor: null,
         customHTMLRenderer: null,
         referenceDefinition: false,
         customHTMLSanitizer: null,
@@ -157,7 +154,7 @@ class ToastUIEditorViewer {
     const lineTexts: string[] = this.toastMark.getLineTexts();
     const { length } = lineTexts;
     const lastLine = last(lineTexts);
-    const endSourcepos = [length, lastLine.length + 1];
+    const endSourcepos: [number, number] = [length, lastLine.length + 1];
     const editResult = this.toastMark.editMarkdown([1, 1], endSourcepos, markdown || '');
 
     this.eventEmitter.emit('updatePreview', editResult);

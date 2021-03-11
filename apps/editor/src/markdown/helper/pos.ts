@@ -1,6 +1,6 @@
 import { AllSelection, Selection } from 'prosemirror-state';
 import { ProsemirrorNode } from 'prosemirror-model';
-import { MdPos, MdSourcepos } from '@t/markdown';
+import { Sourcepos, MdPos, ToastMark } from '@toast-ui/toastmark';
 import { isWidgetNode } from '@/widget/widgetNode';
 import { getTextByMdLine } from './query';
 
@@ -57,7 +57,7 @@ function getWidgetNodePos(node: ProsemirrorNode, chPos: number, direction: 1 | -
   return additionalPos;
 }
 
-export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from): MdSourcepos {
+export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from): Sourcepos {
   const collapsed = from === to;
   const startResolvedPos = doc.resolve(from);
   const lineRange = getEditorToMdLine(from, to, doc);
@@ -97,7 +97,7 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
 
 export function getMdToEditorPos(
   doc: ProsemirrorNode,
-  toastMark: any,
+  toastMark: ToastMark,
   startPos: MdPos,
   endPos: MdPos
 ) {

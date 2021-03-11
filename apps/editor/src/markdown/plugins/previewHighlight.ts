@@ -1,6 +1,6 @@
+import { MdNode, MdPos } from '@toast-ui/toastmark';
 import { Plugin } from 'prosemirror-state';
-import { MdNode } from '@t/markdown';
-import { Context } from '@t/spec';
+import { MdContext } from '@t/spec';
 import { ToolbarState, ToolbarStateKeys } from '@t/ui';
 import { traverseParentNodes, isListNode } from '@/utils/markdown';
 
@@ -41,7 +41,7 @@ function getToolbarState(targetNode: MdNode) {
   return toolbarState;
 }
 
-export function previewHighlight({ toastMark, eventEmitter }: Context) {
+export function previewHighlight({ toastMark, eventEmitter }: MdContext) {
   return new Plugin({
     view() {
       return {
@@ -60,8 +60,8 @@ export function previewHighlight({ toastMark, eventEmitter }: Context) {
           if (from === startChOffset) {
             ch += 1;
           }
-          const cursorPos = [line, ch];
-          const mdNode = toastMark.findNodeAtPosition(cursorPos);
+          const cursorPos: MdPos = [line, ch];
+          const mdNode = toastMark.findNodeAtPosition(cursorPos)!;
           const toolbarState = getToolbarState(mdNode);
 
           eventEmitter.emit('changeToolbarState', {

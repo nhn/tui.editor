@@ -25,5 +25,5 @@ export const frontMatter: BlockHandler = {
   canContain() {
     return false;
   },
-  acceptsLines: true
+  acceptsLines: true,
 };

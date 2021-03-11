@@ -1,9 +1,10 @@
+import { NodeWalker as BaseNodeWalker } from '@t/node';
 import { Node, isContainer } from './node';
 
-export default class NodeWalker {
-  public current: Node | null;
-  public root: Node;
-  public entering: boolean;
+export default class NodeWalker implements BaseNodeWalker {
+  current: Node | null;
+  root: Node;
+  entering: boolean;
 
   constructor(root: Node) {
     this.current = root;

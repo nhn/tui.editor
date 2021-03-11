@@ -1,5 +1,5 @@
 import { Parser } from '../../blocks';
-import { Renderer } from '../../../html/render';
+import { Renderer } from '../../../html/renderer';
 import { LinkNode } from '../../node';
 import { pos } from '../../__test__/helper.spec';
 import { parseUrlLink, parseEmailLink } from '../autoLinks';
@@ -21,16 +21,16 @@ describe('parseUrlLink()', () => {
       {
         text: 'www.nhn.com',
         url: `http://www.nhn.com`,
-        range: [0, 10]
-      }
+        range: [0, 10],
+      },
     ]);
 
     expect(parseUrlLink('Visit www.nhn.com Now!')).toEqual([
       {
         text: 'www.nhn.com',
         url: `http://www.nhn.com`,
-        range: [6, 16]
-      }
+        range: [6, 16],
+      },
     ]);
   });
 
@@ -39,16 +39,16 @@ describe('parseUrlLink()', () => {
       {
         text: 'http://nhn.com',
         url: `http://nhn.com`,
-        range: [0, 13]
-      }
+        range: [0, 13],
+      },
     ]);
 
     expect(parseUrlLink('https://nhn.com')).toEqual([
       {
         text: 'https://nhn.com',
         url: `https://nhn.com`,
-        range: [0, 14]
-      }
+        range: [0, 14],
+      },
     ]);
   });
 
@@ -57,8 +57,8 @@ describe('parseUrlLink()', () => {
       {
         text: 'www.nhn.com/help',
         url: `http://www.nhn.com/help`,
-        range: [0, 15]
-      }
+        range: [0, 15],
+      },
     ]);
   });
 
@@ -72,7 +72,7 @@ describe('parseUrlLink()', () => {
       ['www.nhn.com/*help*', 'www.nhn.com/*help'],
       ['www.nhn.com/~help~', 'www.nhn.com/~help'],
       ['http://nhn.com/~help~', 'http://nhn.com/~help'],
-      ['https://nhn.com/~help~', 'https://nhn.com/~help']
+      ['https://nhn.com/~help~', 'https://nhn.com/~help'],
     ];
 
     pairs.forEach(([input, text]) => {
@@ -89,7 +89,7 @@ describe('parseUrlLink()', () => {
       ['(www.nhn.com/(ui)', 'www.nhn.com/(ui)'],
       ['(www.nhn.com/)))(ui))', 'www.nhn.com/)))(ui)'],
       ['(http://nhn.com/)))(ui))', 'http://nhn.com/)))(ui)'],
-      ['(https://nhn.com/)))(ui))', 'https://nhn.com/)))(ui)']
+      ['(https://nhn.com/)))(ui))', 'https://nhn.com/)))(ui)'],
     ];
 
     pairs.forEach(([input, text]) => {
@@ -103,7 +103,7 @@ describe('parseUrlLink()', () => {
       ['www.nhn.com/ui&grid;', 'www.nhn.com/ui'],
       ['www.nhn.com/ui&?grid;', 'www.nhn.com/ui&?grid;'],
       ['http://nhn.com/ui&?grid;', 'http://nhn.com/ui&?grid;'],
-      ['https://nhn.com/ui&?grid;', 'https://nhn.com/ui&?grid;']
+      ['https://nhn.com/ui&?grid;', 'https://nhn.com/ui&?grid;'],
     ];
 
     pairs.forEach(([input, text]) => {
@@ -116,13 +116,13 @@ describe('parseUrlLink()', () => {
       {
         text: 'www.nhn.com',
         url: 'http://www.nhn.com',
-        range: [6, 16]
+        range: [6, 16],
       },
       {
         text: 'http://toast.com',
         url: 'http://toast.com',
-        range: [22, 37]
-      }
+        range: [22, 37],
+      },
     ]);
   });
 });
@@ -133,16 +133,16 @@ describe('parseEmailLink', () => {
       {
         text: 'ui@toast.com',
         url: 'mailto:ui@toast.com',
-        range: [0, 11]
-      }
+        range: [0, 11],
+      },
     ]);
 
     expect(parseEmailLink('Hello ui@toast.com guys')).toEqual([
       {
         text: 'ui@toast.com',
         url: 'mailto:ui@toast.com',
-        range: [6, 17]
-      }
+        range: [6, 17],
+      },
     ]);
   });
 
@@ -152,22 +152,22 @@ describe('parseEmailLink', () => {
       {
         text: 'u+i@toast.com',
         url: 'mailto:u+i@toast.com',
-        range: [0, 12]
-      }
+        range: [0, 12],
+      },
     ]);
   });
 
   it('trailing dash(-) and underscore(_) are invalid, trailing dot(.) is excluded ', () => {
     const pairs = [
       ['a.b-c_d@a.b', 'a.b-c_d@a.b'],
-      ['a.b-c_d@a.b.', 'a.b-c_d@a.b']
+      ['a.b-c_d@a.b.', 'a.b-c_d@a.b'],
     ];
     const invalids = ['a.b-c_d@a.b-', 'a.b-c_d@a.b_'];
 
     pairs.forEach(([input, text]) => {
       expect(parseEmailLink(input)![0].text).toBe(text);
     });
-    invalids.forEach(input => {
+    invalids.forEach((input) => {
       expect(parseEmailLink(input)).toEqual([]);
     });
   });
@@ -177,13 +177,13 @@ describe('parseEmailLink', () => {
       {
         text: 'ui@toast.com',
         url: 'mailto:ui@toast.com',
-        range: [6, 17]
+        range: [6, 17],
       },
       {
         text: 'file@toast.com',
         url: 'mailto:file@toast.com',
-        range: [23, 36]
-      }
+        range: [23, 36],
+      },
     ]);
   });
 });
@@ -191,7 +191,7 @@ describe('parseEmailLink', () => {
 describe('custom autolink parser', () => {
   const renderer = new Renderer();
   const reader = new Parser({
-    extendedAutolinks: content => {
+    extendedAutolinks: (content) => {
       const regex = /\d{3}/g;
       const result = [];
       let matched;
@@ -205,7 +205,7 @@ describe('custom autolink parser', () => {
         result.push({ text, url, range });
       }
       return result;
-    }
+    },
   });
 
   it('should parse custom pattern', () => {
@@ -219,8 +219,8 @@ describe('custom autolink parser', () => {
       extendedAutolink: true,
       sourcepos: pos(1, 3, 1, 5),
       firstChild: {
-        literal: '111'
-      }
+        literal: '111',
+      },
     });
 
     expect(link2).toMatchObject({
@@ -228,8 +228,8 @@ describe('custom autolink parser', () => {
       extendedAutolink: true,
       sourcepos: pos(1, 9, 1, 11),
       firstChild: {
-        literal: '222'
-      }
+        literal: '222',
+      },
     });
 
     expect(renderer.render(root)).toBe(
@@ -252,12 +252,12 @@ describe('GFM Examples', () => {
       type: 'link',
       destination: 'http://www.commonmark.org',
       extendedAutolink: true,
-      sourcepos: pos(1, 1, 1, 18)
+      sourcepos: pos(1, 1, 1, 18),
     });
 
     expect(linkText).toMatchObject({
       literal: 'www.commonmark.org',
-      sourcepos: pos(1, 1, 1, 18)
+      sourcepos: pos(1, 1, 1, 18),
     });
 
     const html = renderer.render(root);
@@ -276,7 +276,7 @@ describe('GFM Examples', () => {
       type: 'link',
       extendedAutolink: true,
       destination: 'http://www.commonmark.org/help',
-      sourcepos: pos(1, 7, 1, 29)
+      sourcepos: pos(1, 7, 1, 29),
     });
 
     expect(linkText.literal).toBe('www.commonmark.org/help');
@@ -297,8 +297,8 @@ describe('GFM Examples', () => {
       input: ['Visit www.commonmark.org.\n\n', 'Visit www.commonmark.org/a.b.'].join(''),
       output: [
         '<p>Visit <a href="http://www.commonmark.org">www.commonmark.org</a>.</p>\n',
-        '<p>Visit <a href="http://www.commonmark.org/a.b">www.commonmark.org/a.b</a>.</p>\n'
-      ].join('')
+        '<p>Visit <a href="http://www.commonmark.org/a.b">www.commonmark.org/a.b</a>.</p>\n',
+      ].join(''),
     },
     {
       no: 624,
@@ -306,7 +306,7 @@ describe('GFM Examples', () => {
         'www.google.com/search?q=Markup+(business)\n\n',
         'www.google.com/search?q=Markup+(business)))\n\n',
         '(www.google.com/search?q=Markup+(business))\n\n',
-        '(www.google.com/search?q=Markup+(business)'
+        '(www.google.com/search?q=Markup+(business)',
       ].join(''),
       output: [
         '<p><a href="http://www.google.com/search?q=Markup+(business)">',
@@ -316,59 +316,59 @@ describe('GFM Examples', () => {
         '<p>(<a href="http://www.google.com/search?q=Markup+(business)">',
         'www.google.com/search?q=Markup+(business)</a>)</p>\n',
         '<p>(<a href="http://www.google.com/search?q=Markup+(business)">',
-        'www.google.com/search?q=Markup+(business)</a></p>\n'
-      ].join('')
+        'www.google.com/search?q=Markup+(business)</a></p>\n',
+      ].join(''),
     },
     {
       no: 625,
       input: 'www.google.com/search?q=(business))+ok',
       output: [
         '<p><a href="http://www.google.com/search?q=(business))+ok">',
-        'www.google.com/search?q=(business))+ok</a></p>\n'
-      ].join('')
+        'www.google.com/search?q=(business))+ok</a></p>\n',
+      ].join(''),
     },
     {
       no: 626,
       input: [
         'www.google.com/search?q=commonmark&hl=en\n\n',
-        'www.google.com/search?q=commonmark&hl;'
+        'www.google.com/search?q=commonmark&hl;',
       ].join(''),
       output: [
         '<p><a href="http://www.google.com/search?q=commonmark&amp;hl=en">',
         'www.google.com/search?q=commonmark&amp;hl=en</a></p>\n',
         '<p><a href="http://www.google.com/search?q=commonmark">',
-        'www.google.com/search?q=commonmark</a>&amp;hl;</p>\n'
-      ].join('')
+        'www.google.com/search?q=commonmark</a>&amp;hl;</p>\n',
+      ].join(''),
     },
     {
       no: 627,
       input: 'www.commonmark.org/he<lp',
-      output: '<p><a href="http://www.commonmark.org/he">www.commonmark.org/he</a>&lt;lp</p>\n'
+      output: '<p><a href="http://www.commonmark.org/he">www.commonmark.org/he</a>&lt;lp</p>\n',
     },
     {
       no: 628,
       input: [
         'http://commonmark.org\n\n',
-        '(Visit https://encrypted.google.com/search?q=Markup+(business))'
+        '(Visit https://encrypted.google.com/search?q=Markup+(business))',
       ].join(''),
       output: [
         '<p><a href="http://commonmark.org">http://commonmark.org</a></p>\n',
         '<p>(Visit <a href="https://encrypted.google.com/search?q=Markup+(business)">',
-        'https://encrypted.google.com/search?q=Markup+(business)</a>)</p>\n'
-      ].join('')
+        'https://encrypted.google.com/search?q=Markup+(business)</a>)</p>\n',
+      ].join(''),
     },
     {
       no: 629,
       input: 'foo@bar.baz',
-      output: '<p><a href="mailto:foo@bar.baz">foo@bar.baz</a></p>\n'
+      output: '<p><a href="mailto:foo@bar.baz">foo@bar.baz</a></p>\n',
     },
     {
       no: 630,
       input: `hello@mail+xyz.example isn't valid, but hello+xyz@mail.example is.`,
       output: [
         `<p>hello@mail+xyz.example isn't valid, but `,
-        `<a href="mailto:hello+xyz@mail.example">hello+xyz@mail.example</a> is.</p>\n`
-      ].join('')
+        `<a href="mailto:hello+xyz@mail.example">hello+xyz@mail.example</a> is.</p>\n`,
+      ].join(''),
     },
     {
       no: 631,
@@ -377,9 +377,9 @@ describe('GFM Examples', () => {
         '<p><a href="mailto:a.b-c_d@a.b">a.b-c_d@a.b</a></p>\n',
         '<p><a href="mailto:a.b-c_d@a.b">a.b-c_d@a.b</a>.</p>\n',
         '<p>a.b-c_d@a.b-</p>\n',
-        '<p>a.b-c_d@a.b_</p>\n'
-      ].join('')
-    }
+        '<p>a.b-c_d@a.b_</p>\n',
+      ].join(''),
+    },
   ];
 
   examples.forEach(({ no, input, output }) => {

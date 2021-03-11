@@ -5,10 +5,10 @@ import { keymap } from 'prosemirror-keymap';
 import { baseKeymap } from 'prosemirror-commands';
 import { InputRule, inputRules } from 'prosemirror-inputrules';
 import { history } from 'prosemirror-history';
+import { Sourcepos } from '@toast-ui/toastmark';
 import css from 'tui-code-snippet/domUtil/css';
 import { WidgetStyle, EditorType, EditorPos, Base, NodeRangeInfo } from '@t/editor';
 import { Emitter } from '@t/event';
-import { MdSourcepos } from '@t/markdown';
 import { Context, EditorAllCommandMap } from '@t/spec';
 import SpecManager from './spec/specManager';
 import { createTextSelection } from './helper/manipulation';
@@ -219,7 +219,7 @@ export default abstract class EditorBase implements Base {
 
   abstract getSelectedText(start?: EditorPos, end?: EditorPos): string;
 
-  abstract getSelection(): MdSourcepos | [number, number];
+  abstract getSelection(): Sourcepos | [number, number];
 
   abstract getRangeInfoOfNode(pos?: EditorPos): NodeRangeInfo;
 }

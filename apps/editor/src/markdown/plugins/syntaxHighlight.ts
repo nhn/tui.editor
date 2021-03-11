@@ -1,13 +1,13 @@
+import { MdNode, MdPos, EditResult, ToastMark } from '@toast-ui/toastmark';
 import { Plugin, Transaction } from 'prosemirror-state';
 import { Schema } from 'prosemirror-model';
-import { Context } from '@t/spec';
-import { EditResult, MdNode, MdPos } from '@t/markdown';
+import { MdContext } from '@t/spec';
 import { getMdStartLine, getMdEndLine, getMdStartCh, getMdEndCh } from '@/utils/markdown';
 import { includes, last } from '@/utils/common';
 import { getMarkInfo } from './helper/markInfo';
 import { getMdToEditorPos } from '../helper/pos';
 
-export function syntaxHighlight({ schema, toastMark }: Context) {
+export function syntaxHighlight({ schema, toastMark }: MdContext) {
   return new Plugin({
     appendTransaction(transactions, _, newState) {
       const [tr] = transactions;
@@ -47,7 +47,7 @@ export function syntaxHighlight({ schema, toastMark }: Context) {
 
 function removeCodeBlockBackground(
   newTr: Transaction,
-  toastMark: any,
+  toastMark: ToastMark,
   start: MdPos,
   end: MdPos,
   schema: Schema
@@ -70,7 +70,7 @@ function removeCodeBlockBackground(
   return newTr;
 }
 
-function removeMark(nodes: MdNode[], toastMark: any, newTr: Transaction, schema: Schema) {
+function removeMark(nodes: MdNode[], toastMark: ToastMark, newTr: Transaction, schema: Schema) {
   const [start] = nodes[0].sourcepos!;
   const [, end] = last(nodes).sourcepos!;
   const startPos: MdPos = [start[0], start[1]];
@@ -82,7 +82,7 @@ function removeMark(nodes: MdNode[], toastMark: any, newTr: Transaction, schema:
   return newTr.removeMark(pos[0], pos[1]);
 }
 
-function addMark(node: MdNode, toastMark: any, newTr: Transaction, schema: Schema) {
+function addMark(node: MdNode, toastMark: ToastMark, newTr: Transaction, schema: Schema) {
   const lineTexts = toastMark.getLineTexts();
   const startPos: MdPos = [getMdStartLine(node), getMdStartCh(node)];
   const endPos: MdPos = [getMdEndLine(node), getMdEndCh(node) + 1];

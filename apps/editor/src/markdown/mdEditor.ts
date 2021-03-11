@@ -2,10 +2,9 @@ import { Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Fragment, Slice } from 'prosemirror-model';
 import { Step, ReplaceAroundStep } from 'prosemirror-transform';
-// @ts-ignore
-import { ToastMark } from '@toast-ui/toastmark';
+import { MdPos, ToastMark } from '@toast-ui/toastmark';
+import { MdContext } from '@t/spec';
 import { Emitter } from '@t/event';
-import { MdNode, MdPos } from '@t/markdown';
 import { WidgetStyle } from '@t/editor';
 import EditorBase from '@/base';
 import SpecManager from '@/spec/specManager';
@@ -51,6 +50,8 @@ export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
 
   private clipboard!: HTMLTextAreaElement;
+
+  context!: MdContext;
 
   constructor(eventEmitter: Emitter, options: MarkdownOptions) {
     super(eventEmitter);
@@ -325,7 +326,7 @@ export default class MdEditor extends EditorBase {
   getRangeInfoOfNode(pos?: MdPos) {
     const { doc, selection } = this.view.state;
     const mdPos = pos || getEditorToMdPos(doc, selection.from)[0];
-    let mdNode: MdNode = this.toastMark.findNodeAtPosition(mdPos);
+    let mdNode = this.toastMark.findNodeAtPosition(mdPos)!;
 
     if (mdNode.type === 'text' && mdNode.parent!.type !== 'paragraph') {
       mdNode = mdNode.parent!;

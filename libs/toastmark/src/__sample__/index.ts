@@ -1,6 +1,6 @@
 import codemirror from 'codemirror';
 import { ToastMark } from '../toastmark';
-import { Renderer } from '../html/render';
+import { Renderer } from '../html/renderer';
 import { last } from '../helper';
 import 'codemirror/lib/codemirror.css';
 import './index.css';
@@ -28,7 +28,7 @@ const tokenTypes = {
   strike: 'strikethrough',
   item: 'variable-2',
   image: 'variable-3',
-  blockQuote: 'quote'
+  blockQuote: 'quote',
 };
 
 type TokenTypes = typeof tokenTypes;
@@ -41,7 +41,7 @@ cm.on('change', (editor, changeObj) => {
     text.join('\n')
   );
 
-  changed.forEach(result => {
+  changed.forEach((result) => {
     const { nodes, removedNodeRange } = result;
     const html = renderer.render(doc.getRootNode());
     htmlEl.innerText = html;
@@ -52,7 +52,7 @@ cm.on('change', (editor, changeObj) => {
       const [startNodeId, endNodeId] = removedNodeRange.id;
       const startEl = previewEl.querySelector(`[data-nodeid="${startNodeId}"]`);
       const endEl = previewEl.querySelector(`[data-nodeid="${endNodeId}"]`);
-      const newHtml = nodes.map(node => renderer.render(node)).join('');
+      const newHtml = nodes.map((node) => renderer.render(node)).join('');
 
       if (startEl) {
         startEl.insertAdjacentHTML('beforebegin', newHtml);

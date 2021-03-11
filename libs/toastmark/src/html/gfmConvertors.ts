@@ -1,11 +1,11 @@
+import { HTMLConvertorMap, HTMLToken, OpenTagToken } from '@t/renderer';
 import { Node, ListNode, TableNode, TableCellNode } from '../commonmark/node';
-import { HTMLConvertorMap, OpenTagToken, HTMLToken } from './render';
 
 export const gfmConvertors: HTMLConvertorMap = {
   strike(_, { entering }) {
     return {
       type: entering ? 'openTag' : 'closeTag',
-      tagName: 'del'
+      tagName: 'del',
     };
   },
 
@@ -16,7 +16,7 @@ export const gfmConvertors: HTMLConvertorMap = {
       const itemTag: OpenTagToken = {
         type: 'openTag',
         tagName: 'li',
-        outerNewLine: true
+        outerNewLine: true,
       };
 
       if (task) {
@@ -29,13 +29,13 @@ export const gfmConvertors: HTMLConvertorMap = {
             attributes: {
               ...(checked && { checked: '' }),
               disabled: '',
-              type: 'checkbox'
-            }
+              type: 'checkbox',
+            },
           },
           {
             type: 'text',
-            content: ' '
-          }
+            content: ' ',
+          },
         ];
       }
       return itemTag;
@@ -44,7 +44,7 @@ export const gfmConvertors: HTMLConvertorMap = {
     return {
       type: 'closeTag',
       tagName: 'li',
-      outerNewLine: true
+      outerNewLine: true,
     };
   },
 
@@ -52,7 +52,7 @@ export const gfmConvertors: HTMLConvertorMap = {
     return {
       type: entering ? 'openTag' : 'closeTag',
       tagName: 'table',
-      outerNewLine: true
+      outerNewLine: true,
     };
   },
 
@@ -60,7 +60,7 @@ export const gfmConvertors: HTMLConvertorMap = {
     return {
       type: entering ? 'openTag' : 'closeTag',
       tagName: 'thead',
-      outerNewLine: true
+      outerNewLine: true,
     };
   },
 
@@ -68,7 +68,7 @@ export const gfmConvertors: HTMLConvertorMap = {
     return {
       type: entering ? 'openTag' : 'closeTag',
       tagName: 'tbody',
-      outerNewLine: true
+      outerNewLine: true,
     };
   },
 
@@ -77,7 +77,7 @@ export const gfmConvertors: HTMLConvertorMap = {
       return {
         type: 'openTag',
         tagName: 'tr',
-        outerNewLine: true
+        outerNewLine: true,
       };
     }
 
@@ -90,12 +90,12 @@ export const gfmConvertors: HTMLConvertorMap = {
           {
             type: 'openTag',
             tagName: 'td',
-            outerNewLine: true
+            outerNewLine: true,
           },
           {
             type: 'closeTag',
             tagName: 'td',
-            outerNewLine: true
+            outerNewLine: true,
           }
         );
       }
@@ -104,7 +104,7 @@ export const gfmConvertors: HTMLConvertorMap = {
     result.push({
       type: 'closeTag',
       tagName: 'tr',
-      outerNewLine: true
+      outerNewLine: true,
     });
 
     return result;
@@ -114,7 +114,7 @@ export const gfmConvertors: HTMLConvertorMap = {
     if ((node as TableCellNode).ignored) {
       return {
         type: 'text',
-        content: ''
+        content: '',
       };
     }
 
@@ -129,14 +129,14 @@ export const gfmConvertors: HTMLConvertorMap = {
         type: 'openTag',
         tagName,
         outerNewLine: true,
-        ...(attributes && { attributes })
+        ...(attributes && { attributes }),
       };
     }
 
     return {
       type: 'closeTag',
       tagName,
-      outerNewLine: true
+      outerNewLine: true,
     };
-  }
+  },
 };

@@ -1,7 +1,7 @@
 import { Schema, NodeSpec } from 'prosemirror-model';
 import { EditorView } from 'prosemirror-view';
 import { EditorState, Plugin } from 'prosemirror-state';
-import { MdPos, MdSourcepos, CustomHTMLRenderer } from './markdown';
+import { HTMLConvertorMap, MdPos, Sourcepos } from '@toast-ui/toastmark';
 import { Emitter, Handler } from './event';
 import { Context, EditorAllCommandMap, EditorCommandFn } from './spec';
 import { ToMdConvertorMap } from './convertor';
@@ -33,7 +33,7 @@ export interface EventMap {
 
 type HookCallback = (url: string, text?: string) => void;
 
-export type EditorHookMap = {
+export type HookMap = {
   addImageBlobHook?: (blob: Blob | File, callback: HookCallback) => void;
 };
 
@@ -61,7 +61,7 @@ export interface ViewerOptions {
   plugins?: EditorPlugin[];
   extendedAutolinks?: ExtendedAutolinks;
   linkAttributes?: LinkAttributes;
-  customHTMLRenderer?: CustomHTMLRenderer;
+  customHTMLRenderer?: HTMLConvertorMap;
   referenceDefinition?: boolean;
   customHTMLSanitizer?: Sanitizer;
   frontMatter?: boolean;
@@ -72,25 +72,25 @@ export class Viewer {
 
   constructor(options: ViewerOptions);
 
-  isMarkdownMode(): boolean;
-
-  isViewer(): boolean;
-
-  isWysiwygMode(): boolean;
-
-  off(type: string): void;
+  setMarkdown(markdown: string): void;
 
   on(type: string, handler: Handler): void;
 
+  off(type: string): void;
+
   destroy(): void;
 
-  setMarkdown(markdown: string): void;
+  isViewer(): boolean;
+
+  isMarkdownMode(): boolean;
+
+  isWysiwygMode(): boolean;
 
   setCodeBlockLanguages(languages?: string[]): void;
 }
 
 interface EditorPluginInfo {
-  toHTMLRenderers: CustomHTMLRenderer;
+  toHTMLRenderers: HTMLConvertorMap;
   markdownPlugins: PluginProp[];
   wysiwygPlugins: PluginProp[];
   wysiwygNodeViews: NodeViewPropMap;
@@ -110,7 +110,7 @@ export interface EditorOptions {
   previewStyle?: PreviewStyle;
   initialEditType?: EditorType;
   events?: EventMap;
-  hooks?: EditorHookMap;
+  hooks?: HookMap;
   language?: string;
   useCommandShortcut?: boolean;
   usageStatistics?: boolean;
@@ -120,7 +120,7 @@ export interface EditorOptions {
   extendedAutolinks?: ExtendedAutolinks;
   placeholder?: string;
   linkAttributes?: LinkAttributes;
-  customHTMLRenderer?: CustomHTMLRenderer;
+  customHTMLRenderer?: HTMLConvertorMap;
   customMarkdownRenderer?: ToMdConvertorMap;
   referenceDefinition?: boolean;
   customHTMLSanitizer?: Sanitizer;
@@ -166,13 +166,27 @@ export class EditorCore {
 
   setMarkdown(markdown: string, cursorToEnd?: boolean): void;
 
-  setHtml(html: string, cursorToEnd?: boolean): void;
+  setHTML(html: string, cursorToEnd?: boolean): void;
 
   getMarkdown(): string;
 
-  getHtml(): string;
+  getHTML(): string;
 
   insertText(text: string): void;
+
+  setSelection(start: EditorPos, end: EditorPos): void;
+
+  replaceSelection(text: string, start?: EditorPos, end?: EditorPos): void;
+
+  deleteSelection(start?: EditorPos, end?: EditorPos): void;
+
+  getSelectedText(start?: EditorPos, end?: EditorPos): string;
+
+  getRangeInfoOfNode(pos?: EditorPos): NodeRangeInfo;
+
+  addWidget(node: Node, style: WidgetStyle, pos?: EditorPos): void;
+
+  replaceWithWidget(start: EditorPos, end: EditorPos, text: string): void;
 
   setHeight(height: string): void;
 
@@ -181,8 +195,6 @@ export class EditorCore {
   setMinHeight(minHeight: string): void;
 
   getMinHeight(): string;
-
-  getCurrentModeEditor(): any;
 
   isMarkdownMode(): boolean;
 
@@ -200,34 +212,29 @@ export class EditorCore {
 
   show(): void;
 
-  scrollTop(value: number): void;
+  setScrollTop(value: number): void;
+
+  getScrollTop(): number;
 
   reset(): void;
 
-  getRange(): Range;
-
-  getTextObject(): any;
-
-  getSelectedText(): any;
+  getSelection(): SelectionPos;
 
   setPlaceholder(placeholder: string): void;
 
   setCodeBlockLanguages(languages: string[]): void;
 
   getEditorElements(): Slots;
-
-  addWidget(node: Node, style: WidgetStyle, pos?: MdPos | number): void;
-
-  replaceWithWidget(from: MdPos | number, to: MdPos | number, content: string): void;
 }
 
 export class Editor extends EditorCore {
   getDefaultUI(): DefaultUI;
 }
 
+export type SelectionPos = Sourcepos | [from: number, to: number];
 export type EditorPos = MdPos | number;
 export interface NodeRangeInfo {
-  range: MdSourcepos | [number, number];
+  range: SelectionPos;
   type: string;
 }
 
@@ -300,7 +307,7 @@ export interface Base {
 
   getSelectedText(start?: EditorPos, end?: EditorPos): string;
 
-  getSelection(): MdSourcepos | [number, number];
+  getSelection(): SelectionPos;
 
   getRangeInfoOfNode(pos?: EditorPos): NodeRangeInfo;
 }

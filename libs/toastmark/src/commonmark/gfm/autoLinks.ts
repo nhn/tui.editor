@@ -1,17 +1,11 @@
-import { SourcePos, createNode, text } from '../node';
+import { Sourcepos } from '@t/node';
+import { AutolinkParser } from '@t/parser';
+import { createNode, text } from '../node';
 import NodeWalker from '../nodeWalker';
 
 const DOMAIN = '(?:[w-]+.)*[A-Za-z0-9-]+.[A-Za-z0-9-]+';
 const PATH = '[^<\\s]*[^<?!.,:*_?~\\s]';
 const EMAIL = '[\\w.+-]+@(?:[\\w-]+\\.)+[\\w-]+';
-
-export type AutolinkParser = (
-  content: string
-) => {
-  url: string;
-  text: string;
-  range: [number, number];
-}[];
 
 function trimUnmatchedTrailingParens(source: string) {
   const trailingParen = /\)+$/.exec(source);
@@ -57,7 +51,7 @@ export function parseEmailLink(source: string) {
       result.push({
         text,
         range: [m.index, m.index + text.length - 1],
-        url: `mailto:${text}`
+        url: `mailto:${text}`,
       });
     }
   }
@@ -76,7 +70,7 @@ export function parseUrlLink(source: string) {
     result.push({
       text,
       range: [m.index, m.index + text.length - 1],
-      url: `${scheme}${text}`
+      url: `${scheme}${text}`,
     });
   }
 
@@ -107,9 +101,9 @@ export function convertExtAutoLinks(walker: NodeWalker, autolinkParser: boolean 
 
       let lastIdx = 0;
       const [lineNum, chPos] = node.sourcepos![0];
-      const sourcepos = (startIdx: number, endIdx: number): SourcePos => [
+      const sourcepos = (startIdx: number, endIdx: number): Sourcepos => [
         [lineNum, chPos + startIdx],
-        [lineNum, chPos + endIdx]
+        [lineNum, chPos + endIdx],
       ];
       const newNodes = [];
       for (const { range, url, text: linkText } of linkInfos) {

@@ -1,5 +1,5 @@
 import { Parser } from '../../blocks';
-import { Renderer } from '../../../html/render';
+import { Renderer } from '../../../html/renderer';
 import { source } from 'common-tags';
 
 const reader = new Parser({ smart: true });
@@ -58,11 +58,11 @@ describe('strikethrough', () => {
     expect(strikeText.literal).toBe('World');
     expect(strike.sourcepos).toEqual([
       [1, 7],
-      [1, 15]
+      [1, 15],
     ]);
     expect(strikeText.sourcepos).toEqual([
       [1, 9],
-      [1, 13]
+      [1, 13],
     ]);
 
     const html = renderer.render(root);
@@ -86,19 +86,19 @@ describe('strikethrough', () => {
 
     expect(strike1.sourcepos).toEqual([
       [1, 1],
-      [1, 9]
+      [1, 9],
     ]);
     expect(text1.sourcepos).toEqual([
       [1, 10],
-      [1, 11]
+      [1, 11],
     ]);
     expect(strike2.sourcepos).toEqual([
       [1, 12],
-      [1, 20]
+      [1, 20],
     ]);
     expect(text2.sourcepos).toEqual([
       [1, 21],
-      [1, 21]
+      [1, 21],
     ]);
 
     const html = renderer.render(root);
@@ -120,19 +120,19 @@ describe('strikethrough', () => {
 
     expect(text1.sourcepos).toEqual([
       [1, 1],
-      [1, 7]
+      [1, 7],
     ]);
     expect(strike1.sourcepos).toEqual([
       [1, 8],
-      [1, 20]
+      [1, 20],
     ]);
     expect(strike2.sourcepos).toEqual([
       [1, 10],
-      [1, 18]
+      [1, 18],
     ]);
     expect(text2.sourcepos).toEqual([
       [1, 21],
-      [1, 21]
+      [1, 21],
     ]);
 
     const html = renderer.render(root);
@@ -150,19 +150,19 @@ describe('strikethrough', () => {
 
     expect(strike1.sourcepos).toEqual([
       [1, 1],
-      [1, 11]
+      [1, 11],
     ]);
     expect(emph.sourcepos).toEqual([
       [1, 3],
-      [1, 9]
+      [1, 9],
     ]);
     expect(strong.sourcepos).toEqual([
       [1, 12],
-      [1, 24]
+      [1, 24],
     ]);
     expect(strike2.sourcepos).toEqual([
       [1, 14],
-      [1, 22]
+      [1, 22],
     ]);
 
     const html = renderer.render(root);

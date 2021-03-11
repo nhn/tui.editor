@@ -1,13 +1,13 @@
-import { Node, getNodeById, removeNodeById, BlockNode } from './commonmark/node';
-import { Position } from './toastmark';
+import { Pos, Sourcepos } from '@t/node';
+import { Node, getNodeById, removeNodeById } from './commonmark/node';
 
 export const enum Compare {
   LT = 1,
   EQ = 0,
-  GT = -1
+  GT = -1,
 }
 
-function comparePos(p1: Position, p2: Position) {
+function comparePos(p1: Pos, p2: Pos) {
   if (p1[0] < p2[0]) {
     return Compare.LT;
   }
@@ -23,7 +23,7 @@ function comparePos(p1: Position, p2: Position) {
   return Compare.EQ;
 }
 
-function compareRangeAndPos([startPos, endPos]: [Position, Position], pos: Position) {
+function compareRangeAndPos([startPos, endPos]: Sourcepos, pos: Pos) {
   if (comparePos(endPos, pos) === Compare.LT) {
     return Compare.LT;
   }
@@ -106,7 +106,7 @@ export function updateNextLineNumbers(base: Node | null, diff: number) {
   }
 }
 
-function compareRangeAndLine([startPos, endPos]: [Position, Position], line: number) {
+function compareRangeAndLine([startPos, endPos]: Sourcepos, line: number) {
   if (endPos[0] < line) {
     return Compare.LT;
   }
@@ -175,7 +175,7 @@ export function findFirstNodeAtLine(parent: Node, line: number) {
   return null;
 }
 
-export function findNodeAtPosition(parent: Node, pos: Position) {
+export function findNodeAtPosition(parent: Node, pos: Pos) {
   let node: Node | null = parent;
   let prev: Node | null = null;
 
@@ -203,9 +203,11 @@ export function toString(node: Node | null) {
   if (!node) {
     return 'null';
   }
-  return `type: ${node.type}, sourcepos: ${node.sourcepos}, firstChild: ${node.firstChild &&
-    node.firstChild.type}, lastChild: ${node.lastChild && node.lastChild.type}, prev: ${node.prev &&
-    node.prev.type}, next: ${node.next && node.next.type}`;
+  return `type: ${node.type}, sourcepos: ${node.sourcepos}, firstChild: ${
+    node.firstChild && node.firstChild.type
+  }, lastChild: ${node.lastChild && node.lastChild.type}, prev: ${
+    node.prev && node.prev.type
+  }, next: ${node.next && node.next.type}`;
 }
 
 export function findNodeById(id: number) {

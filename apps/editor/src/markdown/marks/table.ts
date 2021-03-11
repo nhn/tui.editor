@@ -1,7 +1,8 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
-import { EditorCommand } from '@t/spec';
-import { MdNode, MdPos, TableCellMdNode } from '@t/markdown';
+import { TableCellMdNode, MdPos, TableMdNode } from '@toast-ui/toastmark';
+import { TableRowMdNode } from '@t/markdown';
+import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import { findClosestNode, getMdEndCh, getMdEndLine, isTableCellNode } from '@/utils/markdown';
 import Mark from '@/spec/mark';
@@ -58,6 +59,8 @@ function createTargetTypes(moveNext: boolean): MovingTypeInfo {
 }
 
 export class Table extends Mark {
+  context!: MdSpecContext;
+
   get name() {
     return 'table';
   }
@@ -78,16 +81,16 @@ export class Table extends Mark {
       const lineText = getTextByMdLine(doc, startPos[0]);
       const isEmpty = !lineText.replace(reEmptyTable, '').trim();
 
-      const mdNode: MdNode = this.context.toastMark.findNodeAtPosition(startPos);
+      const mdNode = this.context.toastMark.findNodeAtPosition(startPos)!;
       const cellNode = findClosestNode(
         mdNode,
         (node) =>
           isTableCellNode(node) &&
-          (node.parent.type === 'tableDelimRow' || node.parent.parent.type === 'tableBody')
+          (node.parent!.type === 'tableDelimRow' || node.parent!.parent!.type === 'tableBody')
       ) as TableCellMdNode;
 
       if (cellNode) {
-        const { parent } = cellNode;
+        const parent = cellNode.parent as TableRowMdNode;
         const columnCount = parent.parent.parent.columns.length;
         const row = createTableRow(columnCount);
 
@@ -114,11 +117,11 @@ export class Table extends Mark {
       const [, endPos] = getEditorToMdPos(doc, to);
       const { toastMark } = this.context;
 
-      const mdNode: MdNode = toastMark.findNodeAtPosition(endPos);
+      const mdNode = toastMark.findNodeAtPosition(endPos)!;
       const cellNode = findClosestNode(mdNode, (node) => isTableCellNode(node)) as TableCellMdNode;
 
       if (cellNode) {
-        const { parent } = cellNode;
+        const parent = cellNode.parent as TableRowMdNode;
         const { type, parentType, childType, diff } = createTargetTypes(moveNext);
 
         let line = getMdEndLine(cellNode);

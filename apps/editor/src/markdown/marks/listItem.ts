@@ -1,9 +1,9 @@
 import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
+import { ListItemMdNode, MdNode } from '@toast-ui/toastmark';
 import isNumber from 'tui-code-snippet/type/isNumber';
-import { EditorCommand } from '@t/spec';
-import { ListItemMdNode, MdNode } from '@t/markdown';
+import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
@@ -34,6 +34,8 @@ function canNotBeListNode({ type }: MdNode) {
 }
 
 export class ListItem extends Mark {
+  context!: MdSpecContext;
+
   get name() {
     return 'listItem';
   }
@@ -83,7 +85,7 @@ export class ListItem extends Mark {
 
         dispatch!(replaceNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
       } else {
-        const mdNode: ListItemMdNode = toastMark.findFirstNodeAtLine(endLine);
+        const mdNode = toastMark.findFirstNodeAtLine(endLine) as ListItemMdNode;
         const slicedText = lineText.slice(to - startOffset);
         const context: ExtendListContext = { toastMark, mdNode, doc, line: endLine };
         const { listSyntax, changedResults, lastListOffset } = extendList[commandType](context);
@@ -125,7 +127,7 @@ export class ListItem extends Mark {
       let changed: ChangedListInfo[] = [];
 
       for (let line = startLine; line <= endLine; line += 1) {
-        const mdNode: MdNode = toastMark.findFirstNodeAtLine(line);
+        const mdNode: MdNode = toastMark.findFirstNodeAtLine(line)!;
 
         if (mdNode && canNotBeListNode(mdNode)) {
           break;
@@ -183,7 +185,7 @@ export class ListItem extends Mark {
       let newTr;
 
       for (let i = startIndex; i <= endIndex; i += 1) {
-        const mdNode = toastMark.findFirstNodeAtLine(i + 1);
+        const mdNode = toastMark.findFirstNodeAtLine(i + 1)!;
 
         if (isListNode(mdNode) && mdNode.listData.task) {
           const { checked, padding } = mdNode.listData;

@@ -1,12 +1,13 @@
+import { OpenTagToken } from '@t/renderer';
 import { Parser } from '../../commonmark/blocks';
-import { Renderer, OpenTagToken } from '../render';
+import { Renderer } from '../renderer';
 
 const parser = new Parser();
 
 describe('softbreak options', () => {
   it('softbreak option value should be used as a raw HTML string', () => {
     const renderer = new Renderer({
-      softbreak: '\n<br />\n'
+      softbreak: '\n<br />\n',
     });
     const html = renderer.render(parser.parse('Hello\nWorld'));
 
@@ -28,7 +29,7 @@ describe('nodeId options', () => {
         `<p data-nodeid="${para.id}">`,
         `<em data-nodeid="${emph.id}">Hello</em> `,
         `<strong data-nodeid="${strong.id}">World</strong>`,
-        '</p>\n'
+        '</p>\n',
       ].join('')
     );
   });
@@ -56,13 +57,13 @@ describe('convertors options', () => {
     const options = {
       gfm: true,
       softbreak: '<br />\n',
-      nodeId: true
+      nodeId: true,
     };
     const renderer = new Renderer({
       ...options,
       convertors: {
-        paragraph: spy
-      }
+        paragraph: spy,
+      },
     });
     const root = parser.parse('Hello World');
     renderer.render(root);
@@ -74,7 +75,7 @@ describe('convertors options', () => {
     expect(firstCall[1]).toMatchObject({
       entering: true,
       leaf: false,
-      options
+      options,
     });
 
     const secondCall = spy.mock.calls[1] as any[];
@@ -82,7 +83,7 @@ describe('convertors options', () => {
     expect(secondCall[1]).toMatchObject({
       entering: false,
       leaf: false,
-      options
+      options,
     });
   });
 
@@ -96,8 +97,8 @@ describe('convertors options', () => {
             return result;
           }
           return result;
-        }
-      }
+        },
+      },
     });
     const html = renderer.render(parser.parse('Hello World'));
 

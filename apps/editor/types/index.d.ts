@@ -1,9 +1,9 @@
 // Type definitions for TOAST UI Editor v3.0.0
 // TypeScript Version: 4.0.2
-
 import {
-  Editor as ToastUIEditor,
-  Viewer as ToastUIViewer,
+  EditorCore,
+  Editor,
+  Viewer,
   EditorOptions,
   ViewerOptions,
   ExtendedAutolinks,
@@ -11,21 +11,29 @@ import {
   Sanitizer,
   EditorType,
   PreviewStyle,
+  EventMap,
+  HookMap,
+  WidgetStyle,
+  WidgetRuleMap,
+  WidgetRule,
 } from './editor';
 
-declare namespace toastui {
-  export const Editor: ToastUIEditor;
-  export const Viewer: ToastUIViewer;
-}
-
-declare module '@toast-ui/editor' {
-  export default toastui.Editor;
-}
-
-declare module '@toast-ui/editor/dist/toastui-editor-viewer' {
-  export default toastui.Viewer;
-}
-
+export {
+  MdNode,
+  MdNodeType,
+  ListMdNode,
+  ListItemMdNode,
+  TableMdNode,
+  TableCellMdNode,
+  CodeBlockMdNode,
+  LinkMdNode,
+  ListData,
+  HeadingMdNode,
+  CodeMdNode,
+  HTMLConvertorMap as ToHTMLConvertorMap,
+} from '@toast-ui/toastmark';
+export { ToMdConvertorMap } from './convertor';
+export { Emitter, Handler } from './event';
 export {
   EditorOptions,
   ViewerOptions,
@@ -34,7 +42,19 @@ export {
   Sanitizer,
   EditorType,
   PreviewStyle,
+  EventMap,
+  HookMap,
+  WidgetStyle,
+  WidgetRuleMap,
+  WidgetRule,
 };
-export * from './markdown';
-export * from './event';
-export * from './convertor';
+export { Editor, EditorCore };
+export default Editor;
+
+declare namespace toastui {
+  export { EditorCore, Editor, Viewer };
+}
+
+declare module '@toast-ui/editor/dist/toastui-editor-viewer' {
+  export default Viewer;
+}

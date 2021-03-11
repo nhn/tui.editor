@@ -1,5 +1,4 @@
 import { source, stripIndent } from 'common-tags';
-// @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdown/mdEditor';
 import EventEmitter from '@/event/eventEmitter';

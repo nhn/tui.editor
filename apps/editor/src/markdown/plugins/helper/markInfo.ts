@@ -1,16 +1,15 @@
-import isFunction from 'tui-code-snippet/type/isFunction';
 import {
-  MdPos,
-  MdNode,
   MdNodeType,
-  CodeBlockMdNode,
-  ListItemMdNode,
+  MdPos,
   HeadingMdNode,
   LinkMdNode,
-  ImageMdNode,
   CodeMdNode,
+  MdNode,
+  CodeBlockMdNode,
   CustomBlockMdNode,
-} from '@t/markdown';
+  ListItemMdNode,
+} from '@toast-ui/toastmark';
+import isFunction from 'tui-code-snippet/type/isFunction';
 import {
   getMdStartLine,
   getMdStartCh,
@@ -100,7 +99,7 @@ function markLink(start: MdPos, end: MdPos, linkTextStart: MdPos, lastChildCh: n
   ];
 }
 
-function image({ lastChild }: ImageMdNode, start: MdPos, end: MdPos) {
+function image({ lastChild }: LinkMdNode, start: MdPos, end: MdPos) {
   const lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 3; // 3: length of '![]'
   const linkTextEnd = addOffsetPos(start, 1);
 
@@ -142,15 +141,8 @@ function lineBackground(parent: MdNode, start: MdPos, end: MdPos, prefix: string
     : null;
 }
 
-function codeBlock(node: MdNode, start: MdPos, end: MdPos, endLine: string) {
-  const {
-    fenceOffset,
-    fenceLength,
-    fenceChar,
-    info,
-    infoPadding,
-    parent,
-  } = node as CodeBlockMdNode;
+function codeBlock(node: CodeBlockMdNode, start: MdPos, end: MdPos, endLine: string) {
+  const { fenceOffset, fenceLength, fenceChar, info, infoPadding, parent } = node;
   const fenceEnd = fenceOffset + fenceLength;
   const marks = [markInfo(setOffsetPos(start, 1), end, CODE_BLOCK)];
 
@@ -177,7 +169,7 @@ function codeBlock(node: MdNode, start: MdPos, end: MdPos, endLine: string) {
 
   return {
     marks,
-    lineBackground: lineBackground(parent, start, end, 'code-block'),
+    lineBackground: lineBackground(parent!, start, end, 'code-block'),
   };
 }
 
@@ -198,7 +190,7 @@ function customBlock(node: MdNode, start: MdPos, end: MdPos) {
 
   return {
     marks,
-    lineBackground: lineBackground(parent, start, end, 'custom-block'),
+    lineBackground: lineBackground(parent!, start, end, 'custom-block'),
   };
 }
 
@@ -329,7 +321,6 @@ export function getMarkInfo(node: MdNode, start: MdPos, end: MdPos, endLine: str
 
   if (isFunction(markNodeFuncMap[type as MarkNodeFuncMapKey])) {
     return markNodeFuncMap[type as MarkNodeFuncMapKey](
-      // @TODO: create node type to cover all markdown node type
       // @ts-ignore
       node,
       start,

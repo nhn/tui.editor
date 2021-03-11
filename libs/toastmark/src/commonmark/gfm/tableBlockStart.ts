@@ -1,6 +1,7 @@
+import { Sourcepos, TableColumn } from '@t/node';
 import { isEmpty } from '../common';
 import { BlockStart, Matched } from '../blockStarts';
-import { createNode, SourcePos, TableNode, TableColumn, TableCellNode } from '../node';
+import { createNode, TableNode, TableCellNode } from '../node';
 import { last } from '../../helper';
 
 function parseRowContent(content: string): [number, string[]] {
@@ -54,7 +55,7 @@ function generateTableCells(
     const chPosStart = chPos + paddingLeft;
     const tableCell = createNode(cellType, [
       [lineNum, chPos],
-      [lineNum, chPos + content.length - 1]
+      [lineNum, chPos + content.length - 1],
     ]) as TableCellNode;
 
     tableCell.stringContent = trimmed.replace(/\\\|/g, '|'); // replace esacped pipe(\|)
@@ -102,7 +103,7 @@ export const tableHead: BlockStart = (parser, container) => {
       // to consider the case of merged-column (via plugin)
       !headerCells.length ||
       !delimCells.length ||
-      delimCells.some(cell => !reValidDelimCell.test(cell)) ||
+      delimCells.some((cell) => !reValidDelimCell.test(cell)) ||
       // to prevent to regard setTextHeading as tabel delim cell with 'disallowDeepHeading' option
       (delimCells.length === 1 && delimContent.indexOf('|') !== 0)
     ) {
@@ -114,7 +115,7 @@ export const tableHead: BlockStart = (parser, container) => {
     const firstLineStart = last(lineOffsets) + 1;
     const table = createNode('table', [
       [firstLineNum, firstLineStart],
-      [parser.lineNumber, parser.offset]
+      [parser.lineNumber, parser.offset],
     ]);
     table.columns = delimCells.map(() => ({ align: null }));
 
@@ -132,17 +133,17 @@ export const tableHead: BlockStart = (parser, container) => {
 
     const tableHead = createNode('tableHead', [
       [firstLineNum, firstLineStart],
-      [parser.lineNumber, parser.offset]
-    ] as SourcePos);
+      [parser.lineNumber, parser.offset],
+    ] as Sourcepos);
     table.appendChild(tableHead);
 
     const tableHeadRow = createNode('tableRow', [
       [firstLineNum, firstLineStart],
-      [firstLineNum, firstLineStart + headerContent.length - 1]
+      [firstLineNum, firstLineStart + headerContent.length - 1],
     ]);
     const tableDelimRow = createNode('tableDelimRow', [
       [parser.lineNumber, parser.nextNonspace + 1],
-      [parser.lineNumber, parser.offset]
+      [parser.lineNumber, parser.offset],
     ]);
     tableHead.appendChild(tableHeadRow);
     tableHead.appendChild(tableDelimRow);
@@ -152,7 +153,7 @@ export const tableHead: BlockStart = (parser, container) => {
       headerCells,
       firstLineNum,
       firstLineStart + headerOffset
-    ).forEach(cellNode => {
+    ).forEach((cellNode) => {
       tableHeadRow.appendChild(cellNode);
     });
 
@@ -163,7 +164,7 @@ export const tableHead: BlockStart = (parser, container) => {
       parser.nextNonspace + 1 + delimOffset
     );
 
-    delimCellNodes.forEach(cellNode => {
+    delimCellNodes.forEach((cellNode) => {
       tableDelimRow.appendChild(cellNode);
     });
 
@@ -203,7 +204,7 @@ export const tableBody: BlockStart = (parser, container) => {
   }
   const tableRow = createNode('tableRow', [
     [parser.lineNumber, parser.nextNonspace + 1],
-    [parser.lineNumber, parser.currentLine.length]
+    [parser.lineNumber, parser.currentLine.length],
   ]);
   tableBody.appendChild(tableRow);
 

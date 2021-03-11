@@ -1,13 +1,13 @@
+import { HTMLConvertorMap } from '@t/renderer';
 import {
   Node,
   HeadingNode,
   CodeBlockNode,
   ListNode,
   LinkNode,
-  CustomBlockNode
+  CustomBlockNode,
 } from '../commonmark/node';
 import { escapeXml } from '../commonmark/common';
-import { HTMLConvertorMap } from './render';
 import { filterDisallowedTags } from './tagFilter';
 
 export const baseConvertors: HTMLConvertorMap = {
@@ -15,42 +15,42 @@ export const baseConvertors: HTMLConvertorMap = {
     return {
       type: entering ? 'openTag' : 'closeTag',
       tagName: `h${(node as HeadingNode).level}`,
-      outerNewLine: true
+      outerNewLine: true,
     };
   },
 
   text(node) {
     return {
       type: 'text',
-      content: node.literal!
+      content: node.literal!,
     };
   },
 
   softbreak(_, { options }) {
     return {
       type: 'html',
-      content: options.softbreak
+      content: options.softbreak,
     };
   },
 
   linebreak() {
     return {
       type: 'html',
-      content: '<br />\n'
+      content: '<br />\n',
     };
   },
 
   emph(_, { entering }) {
     return {
       type: entering ? 'openTag' : 'closeTag',
-      tagName: 'em'
+      tagName: 'em',
     };
   },
 
   strong(_, { entering }) {
     return {
       type: entering ? 'openTag' : 'closeTag',
-      tagName: 'strong'
+      tagName: 'strong',
     };
   },
 
@@ -65,7 +65,7 @@ export const baseConvertors: HTMLConvertorMap = {
     return {
       type: entering ? 'openTag' : 'closeTag',
       tagName: 'p',
-      outerNewLine: true
+      outerNewLine: true,
     };
   },
 
@@ -74,7 +74,7 @@ export const baseConvertors: HTMLConvertorMap = {
       type: 'openTag',
       tagName: 'hr',
       outerNewLine: true,
-      selfClose: true
+      selfClose: true,
     };
   },
 
@@ -83,7 +83,7 @@ export const baseConvertors: HTMLConvertorMap = {
       type: entering ? 'openTag' : 'closeTag',
       tagName: 'blockquote',
       outerNewLine: true,
-      innerNewLine: true
+      innerNewLine: true,
     };
   },
 
@@ -99,7 +99,7 @@ export const baseConvertors: HTMLConvertorMap = {
       type: entering ? 'openTag' : 'closeTag',
       tagName,
       attributes,
-      outerNewLine: true
+      outerNewLine: true,
     };
   },
 
@@ -107,7 +107,7 @@ export const baseConvertors: HTMLConvertorMap = {
     return {
       type: entering ? 'openTag' : 'closeTag',
       tagName: 'li',
-      outerNewLine: true
+      outerNewLine: true,
     };
   },
 
@@ -124,7 +124,7 @@ export const baseConvertors: HTMLConvertorMap = {
       return [
         { type: 'openTag', tagName: 'div', outerNewLine: true },
         { type: 'html', content },
-        { type: 'closeTag', tagName: 'div', outerNewLine: true }
+        { type: 'closeTag', tagName: 'div', outerNewLine: true },
       ];
     }
 
@@ -135,7 +135,7 @@ export const baseConvertors: HTMLConvertorMap = {
     return [
       { type: 'openTag', tagName: 'code' },
       { type: 'text', content: node.literal! },
-      { type: 'closeTag', tagName: 'code' }
+      { type: 'closeTag', tagName: 'code' },
     ];
   },
 
@@ -152,7 +152,7 @@ export const baseConvertors: HTMLConvertorMap = {
       { type: 'openTag', tagName: 'code', classNames: codeClassNames },
       { type: 'text', content: node.literal! },
       { type: 'closeTag', tagName: 'code' },
-      { type: 'closeTag', tagName: 'pre', outerNewLine: true }
+      { type: 'closeTag', tagName: 'pre', outerNewLine: true },
     ];
   },
 
@@ -165,8 +165,8 @@ export const baseConvertors: HTMLConvertorMap = {
         tagName: 'a',
         attributes: {
           href: escapeXml(destination!),
-          ...(title && { title: escapeXml(title) })
-        }
+          ...(title && { title: escapeXml(title) }),
+        },
       };
     }
     return { type: 'closeTag', tagName: 'a' };
@@ -184,8 +184,8 @@ export const baseConvertors: HTMLConvertorMap = {
       attributes: {
         src: escapeXml(destination!),
         alt: getChildrenText(node),
-        ...(title && { title: escapeXml(title) })
-      }
+        ...(title && { title: escapeXml(title) }),
+      },
     };
   },
 
@@ -204,7 +204,7 @@ export const baseConvertors: HTMLConvertorMap = {
     return [
       { type: 'openTag', tagName: 'div', outerNewLine: true },
       { type: 'text', content: node.literal! },
-      { type: 'closeTag', tagName: 'div', outerNewLine: true }
+      { type: 'closeTag', tagName: 'div', outerNewLine: true },
     ];
   },
 
@@ -215,10 +215,10 @@ export const baseConvertors: HTMLConvertorMap = {
         tagName: 'div',
         outerNewLine: true,
         // Because front matter is metadata, it should not be render.
-        attributes: { style: 'white-space: pre; display: none;' }
+        attributes: { style: 'white-space: pre; display: none;' },
       },
       { type: 'text', content: node.literal! },
-      { type: 'closeTag', tagName: 'div', outerNewLine: true }
+      { type: 'closeTag', tagName: 'div', outerNewLine: true },
     ];
   },
 
@@ -232,7 +232,7 @@ export const baseConvertors: HTMLConvertorMap = {
 
     return {
       type: context.entering ? 'openTag' : 'closeTag',
-      tagName: 'span'
+      tagName: 'span',
     };
-  }
+  },
 };

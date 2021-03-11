@@ -1,15 +1,15 @@
+import { MdNodeType } from '@t/node';
 import { Process, BlockHandler } from '../blockHandlers';
-import { NodeType } from '../node';
 
 export const table: BlockHandler = {
   continue() {
     return Process.Go;
   },
   finalize() {},
-  canContain(t: NodeType) {
+  canContain(t: MdNodeType) {
     return t === 'tableHead' || t === 'tableBody';
   },
-  acceptsLines: false
+  acceptsLines: false,
 };
 
 export const tableBody: BlockHandler = {
@@ -17,10 +17,10 @@ export const tableBody: BlockHandler = {
     return Process.Go;
   },
   finalize() {},
-  canContain(t: NodeType) {
+  canContain(t: MdNodeType) {
     return t === 'tableRow';
   },
-  acceptsLines: false
+  acceptsLines: false,
 };
 
 export const tableHead: BlockHandler = {
@@ -28,10 +28,10 @@ export const tableHead: BlockHandler = {
     return Process.Stop;
   },
   finalize() {},
-  canContain(t: NodeType) {
+  canContain(t: MdNodeType) {
     return t === 'tableRow' || t === 'tableDelimRow';
   },
-  acceptsLines: false
+  acceptsLines: false,
 };
 
 export const tableDelimRow: BlockHandler = {
@@ -39,10 +39,10 @@ export const tableDelimRow: BlockHandler = {
     return Process.Stop;
   },
   finalize() {},
-  canContain(t: NodeType) {
+  canContain(t: MdNodeType) {
     return t === 'tableDelimCell';
   },
-  acceptsLines: false
+  acceptsLines: false,
 };
 
 export const tableDelimCell: BlockHandler = {
@@ -53,7 +53,7 @@ export const tableDelimCell: BlockHandler = {
   canContain() {
     return false;
   },
-  acceptsLines: false
+  acceptsLines: false,
 };
 
 export const tableRow: BlockHandler = {
@@ -61,10 +61,10 @@ export const tableRow: BlockHandler = {
     return Process.Stop;
   },
   finalize() {},
-  canContain(t: NodeType) {
+  canContain(t: MdNodeType) {
     return t === 'tableCell';
   },
-  acceptsLines: false
+  acceptsLines: false,
 };
 
 export const tableCell: BlockHandler = {
@@ -75,5 +75,5 @@ export const tableCell: BlockHandler = {
   canContain() {
     return false;
   },
-  acceptsLines: false
+  acceptsLines: false,
 };

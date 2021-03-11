@@ -36,7 +36,6 @@ import Viewer from './viewer';
 import i18n, { I18n } from './i18n/i18n';
 import { getPluginInfo } from './helper/plugin';
 
-// @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
 import { ScrollSync } from './markdown/scroll/scrollSync';
@@ -81,7 +80,9 @@ import { createHTMLSchemaMap } from './wysiwyg/nodes/html';
  *     @param {Object} [options.customMarkdownRenderer=null] - Object containing custom renderer functions correspond to change wysiwyg node to markdown text
  *     @param {boolean} [options.referenceDefinition=false] - whether use the specification of link reference definition
  *     @param {function} [options.customHTMLSanitizer=null] - custom HTML sanitizer
+ *     @param {boolean} [options.previewHighlight=false] - whether highlight preview area
  *     @param {boolean} [options.frontMatter=false] - whether use the front matter
+ *     @param {Array.<object>} [options.widgetRules=[]] - The rules for replacing the text with widget node
  */
 class ToastUIEditor {
   private initialHtml: string;
@@ -141,7 +142,6 @@ class ToastUIEditor {
         hideModeSwitch: false,
         linkAttributes: null,
         extendedAutolinks: false,
-        customConvertor: null,
         customHTMLRenderer: null,
         customMarkdownRenderer: null,
         referenceDefinition: false,
@@ -275,6 +275,10 @@ class ToastUIEditor {
       this.eventEmitter.emit('toggleScrollSync', payload!.active);
     });
     addDefaultImageBlobHook(this.eventEmitter);
+  }
+
+  private getCurrentModeEditor() {
+    return (this.isMarkdownMode() ? this.mdEditor : this.wwEditor) as Base;
   }
 
   /**
@@ -589,22 +593,6 @@ class ToastUIEditor {
    */
   getMinHeight() {
     return this.minHeight;
-  }
-
-  /**
-   * Get current editor mode name
-   * @returns {Object} MarkdownEditor or WysiwygEditor
-   */
-  getCurrentModeEditor() {
-    let editor: Base;
-
-    if (this.isMarkdownMode()) {
-      editor = this.mdEditor;
-    } else {
-      editor = this.wwEditor;
-    }
-
-    return editor;
   }
 
   /**

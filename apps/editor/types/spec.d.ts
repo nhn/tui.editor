@@ -2,18 +2,24 @@ import { Schema } from 'prosemirror-model';
 import { Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Command } from 'prosemirror-commands';
-// @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
 import { Emitter } from './event';
 
 export interface Context {
-  toastMark?: ToastMark;
   schema: Schema;
   eventEmitter: Emitter;
 }
 
+export interface MdContext extends Context {
+  toastMark: ToastMark;
+}
+
 export interface SpecContext extends Context {
   view: EditorView;
+}
+
+export interface MdSpecContext extends SpecContext {
+  toastMark: ToastMark;
 }
 
 type DefaultPayload = Record<string, any>;

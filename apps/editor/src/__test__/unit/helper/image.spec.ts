@@ -9,12 +9,13 @@ describe('image processor', () => {
   });
 
   function mockReadAsDataURL() {
-    jest.spyOn(FileReader.prototype, 'readAsDataURL').mockImplementation(function () {
-      const ev = { target: { result: '/file.jpg' } };
+    jest
+      .spyOn(FileReader.prototype, 'readAsDataURL')
+      .mockImplementation(function (this: FileReader) {
+        const ev = { target: { result: '/file.jpg' } } as ProgressEvent<FileReader>;
 
-      // @ts-ignore
-      this.onload(ev);
-    });
+        this.onload!(ev);
+      });
   }
 
   it('should call addImageBlobHook hook on calling emitImageBlobHook function', () => {

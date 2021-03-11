@@ -7,12 +7,10 @@ import off from 'tui-code-snippet/domEvent/off';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import on from 'tui-code-snippet/domEvent/on';
-// @ts-ignore
-import { Renderer } from '@toast-ui/toastmark';
+import { EditResult, HTMLConvertorMap, MdNode, MdPos, Renderer } from '@toast-ui/toastmark';
 
 import { Emitter } from '@t/event';
 import { LinkAttributes } from '@t/editor';
-import { CustomHTMLRendererMap, EditResult, MdNode, MdPos } from '@t/markdown';
 import Preview from '@/preview';
 import { cls, removeNode, toggleClass } from '@/utils/dom';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
@@ -39,7 +37,7 @@ type Sanitizer = (html: string) => string;
 
 interface Options {
   linkAttributes: LinkAttributes | null;
-  customHTMLRenderer: CustomHTMLRendererMap;
+  customHTMLRenderer: HTMLConvertorMap;
   isViewer: boolean;
   highlight?: boolean;
   sanitizer: Sanitizer;
@@ -62,7 +60,7 @@ class MarkdownPreview extends Preview {
 
   private renderer: Renderer;
 
-  private customHTMLRenderer: CustomHTMLRendererMap;
+  private customHTMLRenderer: HTMLConvertorMap;
 
   private sanitizer: Sanitizer;
 

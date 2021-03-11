@@ -1,16 +1,15 @@
-// @ts-ignore
-import { Renderer } from '@toast-ui/toastmark';
-import { DOMOutputSpecArray, Node as ProsemirrorNode, Mark } from 'prosemirror-model';
-import isArray from 'tui-code-snippet/type/isArray';
-import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import {
   Context,
-  CustomHTMLRendererMap,
+  HTMLConvertorMap,
   HTMLToken,
   MdNode,
   MdNodeType,
   TextToken,
-} from '@t/markdown';
+  Renderer,
+} from '@toast-ui/toastmark';
+import { DOMOutputSpecArray, Node as ProsemirrorNode, Mark } from 'prosemirror-model';
+import isArray from 'tui-code-snippet/type/isArray';
+import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { ToDOMAdaptor } from '@t/convertor';
 import { includes } from '@/utils/common';
 import { LinkAttributes } from '@t/editor';
@@ -22,9 +21,9 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
 
   public renderer: Renderer;
 
-  public convertors: CustomHTMLRendererMap;
+  public convertors: HTMLConvertorMap;
 
-  constructor(linkAttributes: LinkAttributes | null, customRenderer: CustomHTMLRendererMap) {
+  constructor(linkAttributes: LinkAttributes | null, customRenderer: HTMLConvertorMap) {
     const convertors = getHTMLRenderConvertors(linkAttributes, customRenderer);
     const customHTMLConvertor = { ...customRenderer.htmlBlock, ...customRenderer.htmlInline };
 

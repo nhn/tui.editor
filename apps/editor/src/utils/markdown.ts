@@ -5,9 +5,9 @@ import {
   ListItemMdNode,
   MdNode,
   MdNodeType,
-  MdPos,
   TableCellMdNode,
-} from '@t/markdown';
+  MdPos,
+} from '@toast-ui/toastmark';
 import { includes } from './common';
 
 export function hasSpecificTypeAncestor(mdNode: MdNode, ...types: MdNodeType[]) {

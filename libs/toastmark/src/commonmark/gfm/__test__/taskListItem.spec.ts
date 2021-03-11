@@ -1,6 +1,6 @@
 import { source } from 'common-tags';
 import { Parser } from '../../blocks';
-import { Renderer } from '../../../html/render';
+import { Renderer } from '../../../html/renderer';
 import { pos } from '../../__test__/helper.spec';
 
 const reader = new Parser();
@@ -20,36 +20,36 @@ describe('Task list item', () => {
           type: 'item',
           listData: {
             task: true,
-            checked: false
+            checked: false,
           },
           firstChild: {
             type: 'paragraph',
-            sourcepos: pos(1, 7, 1, 11)
+            sourcepos: pos(1, 7, 1, 11),
           },
           next: {
             type: 'item',
             listData: {
               task: true,
-              checked: true
+              checked: true,
             },
             firstChild: {
               type: 'paragraph',
-              sourcepos: pos(2, 8, 2, 12)
+              sourcepos: pos(2, 8, 2, 12),
             },
             next: {
               type: 'item',
               listData: {
                 task: true,
-                checked: true
+                checked: true,
               },
               firstChild: {
                 type: 'paragraph',
-                sourcepos: pos(3, 10, 3, 14)
-              }
-            }
-          }
-        }
-      }
+                sourcepos: pos(3, 10, 3, 14),
+              },
+            },
+          },
+        },
+      },
     });
   });
 

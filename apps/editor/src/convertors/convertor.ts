@@ -1,6 +1,6 @@
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
+import { MdNode } from '@toast-ui/toastmark';
 
-import { MdNode } from '@t/markdown';
 import { ToWwConvertorMap, ToMdConvertors, ToMdConvertorMap } from '@t/convertor';
 import { Emitter } from '@t/event';
 

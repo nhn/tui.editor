@@ -4,7 +4,7 @@ import { BlockNode } from '../node';
 
 export const reFrontMatter = /^---$/;
 
-export const frontMatter: BlockStart = parser => {
+export const frontMatter: BlockStart = (parser) => {
   const { currentLine: line, lines } = parser;
   const totalLineLen = lines.length;
   let canBeFrontmatter = false;

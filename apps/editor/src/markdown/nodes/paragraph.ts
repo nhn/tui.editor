@@ -1,10 +1,8 @@
 import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 import { EditorState, Transaction } from 'prosemirror-state';
 import { Command, joinForward } from 'prosemirror-commands';
-// @ts-ignore
 import { ToastMark } from '@toast-ui/toastmark';
-import { EditorCommand } from '@t/spec';
-import { MdNode } from '@t/markdown';
+import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Node from '@/spec/node';
 import { hasSpecificTypeAncestor, isOrderedListNode, isTableCellNode } from '@/utils/markdown';
@@ -37,7 +35,7 @@ function isBlockUnit(from: number, to: number, text: string) {
 
 function isInTableCellNode(doc: ProsemirrorNode, toastMark: ToastMark, pos: number) {
   const [startPos] = getEditorToMdPos(doc, pos);
-  const mdNode = toastMark.findNodeAtPosition(startPos);
+  const mdNode = toastMark.findNodeAtPosition(startPos)!;
 
   return hasSpecificTypeAncestor(mdNode, 'tableCell', 'tableDelimCell') || isTableCellNode(mdNode);
 }
@@ -68,6 +66,8 @@ function createSelection(tr: Transaction, posInfo: SelectionInfo, indent: boolea
 }
 
 export class Paragraph extends Node {
+  context!: MdSpecContext;
+
   get name() {
     return 'paragraph';
   }
@@ -96,8 +96,8 @@ export class Paragraph extends Node {
     const { tr, selection } = view.state;
     const { doc } = tr;
 
-    let mdNode: MdNode = toastMark.findFirstNodeAtLine(startLine);
-    let topListNode: MdNode | null = mdNode;
+    let mdNode = toastMark.findFirstNodeAtLine(startLine);
+    let topListNode = mdNode;
 
     while (mdNode && mdNode.parent!.type !== 'document') {
       mdNode = mdNode.parent!;

@@ -8,7 +8,6 @@ export function createComponent(Comp: ComponentClass, vnode: VNode) {
   const { props, component } = vnode;
 
   if (component) {
-    // @ts-ignore
     component.prevProps = component.props;
     component.props = vnode.props;
     return component;

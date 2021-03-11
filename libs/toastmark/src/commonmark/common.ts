@@ -9,7 +9,7 @@ const reEntityOrEscapedChar = new RegExp(`\\\\${ESCAPABLE}|${ENTITY}`, 'gi');
 const XMLSPECIAL = '[&<>"]';
 const reXmlSpecial = new RegExp(XMLSPECIAL, 'g');
 
-const unescapeChar = function(s: string) {
+const unescapeChar = function (s: string) {
   if (s.charCodeAt(0) === C_BACKSLASH) {
     return s.charAt(1);
   }

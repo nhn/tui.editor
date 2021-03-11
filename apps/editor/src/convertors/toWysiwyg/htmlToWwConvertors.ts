@@ -1,8 +1,8 @@
+import { MdNode } from '@toast-ui/toastmark';
 import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
 import { includes } from '@/utils/common';
 
 import { HTMLToWwConvertorMap, FlattenHTMLToWwConvertorMap } from '@t/convertor';
-import { MdNode } from '@t/markdown';
 
 const TAG_NAME = '[A-Za-z][A-Za-z0-9-]*';
 const ATTRIBUTE_NAME = '[a-zA-Z_:][a-zA-Z0-9:._-]*';

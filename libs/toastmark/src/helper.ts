@@ -18,14 +18,14 @@ export function normalizeReference(str: string) {
 }
 
 export function iterateObject<T>(obj: T, iteratee: (key: keyof T, value: T[keyof T]) => void) {
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     iteratee(key as keyof T, obj[key as keyof T]);
   });
 }
 
 export function omit<T extends object>(obj: T, ...propNames: (keyof T)[]) {
   const resultMap = { ...obj };
-  propNames.forEach(key => {
+  propNames.forEach((key) => {
     delete resultMap[key];
   });
   return resultMap;
@@ -36,7 +36,7 @@ export function isEmptyObj<T extends object>(obj: T) {
 }
 
 export function clearObj<T extends object>(obj: T) {
-  Object.keys(obj).forEach(key => {
+  Object.keys(obj).forEach((key) => {
     delete obj[key as keyof T];
   });
 }

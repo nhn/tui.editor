@@ -1,6 +1,6 @@
 import { source } from 'common-tags';
 import { Parser } from '../../blocks';
-import { Renderer } from '../../../html/render';
+import { Renderer } from '../../../html/renderer';
 
 const reader = new Parser({ frontMatter: true });
 const renderer = new Renderer();
@@ -16,9 +16,9 @@ describe('front matter parsing', () => {
         literal: '---\ntitle: front matter\n---',
         sourcepos: [
           [1, 1],
-          [3, 3]
-        ]
-      }
+          [3, 3],
+        ],
+      },
     });
   });
 
@@ -32,9 +32,9 @@ describe('front matter parsing', () => {
         literal: '---\n\ntitle: front matter\n\ndescription: with empty line\n\n---',
         sourcepos: [
           [1, 1],
-          [7, 3]
-        ]
-      }
+          [7, 3],
+        ],
+      },
     });
   });
 
@@ -48,9 +48,9 @@ describe('front matter parsing', () => {
         literal: '---\ntitle: front matter\n---',
         sourcepos: [
           [2, 1],
-          [4, 3]
-        ]
-      }
+          [4, 3],
+        ],
+      },
     });
   });
 
@@ -64,24 +64,24 @@ describe('front matter parsing', () => {
         literal: '---\ntitle: front matter\n---',
         sourcepos: [
           [1, 1],
-          [3, 3]
-        ]
+          [3, 3],
+        ],
       },
       lastChild: {
         type: 'paragraph',
         literal: null,
         sourcepos: [
           [4, 1],
-          [4, 4]
+          [4, 4],
         ],
         firstChild: {
           literal: 'para',
           sourcepos: [
             [4, 1],
-            [4, 4]
-          ]
-        }
-      }
+            [4, 4],
+          ],
+        },
+      },
     });
   });
 });
@@ -99,7 +99,7 @@ describe('Exmaple', () => {
         <div style="white-space: pre; display: none;">---
         title: front matter
         ---</div>
-      `
+      `,
     },
     {
       no: 2,
@@ -120,7 +120,7 @@ describe('Exmaple', () => {
         description: with empty line
 
         ---</div>
-      `
+      `,
     },
     {
       no: 3,
@@ -134,7 +134,7 @@ describe('Exmaple', () => {
         <div style="white-space: pre; display: none;">---
         title: front matter
         ---</div>
-      `
+      `,
     },
     {
       no: 4,
@@ -149,7 +149,7 @@ describe('Exmaple', () => {
         title: front matter
         ---</div>
         <p>para</p>
-      `
+      `,
     },
     {
       no: 5,
@@ -162,8 +162,8 @@ describe('Exmaple', () => {
       output: source`
         <h2>para</h2>
         <h2>title: front matter</h2>
-      `
-    }
+      `,
+    },
   ];
 
   examples.forEach(({ no, input, output }) => {

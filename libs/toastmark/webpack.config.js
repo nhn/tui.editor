@@ -9,20 +9,27 @@ const commonConfig = {
     rules: [
       {
         test: /\.ts$/,
-        use: 'ts-loader',
-        exclude: /node_modules/
-      }
-    ]
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+            },
+          },
+        ],
+        exclude: /node_modules/,
+      },
+    ],
   },
   resolve: {
-    extensions: ['.ts', '.js']
+    extensions: ['.ts', '.js'],
   },
   output: {
     filename: 'toastmark.js',
     libraryTarget: 'commonjs',
     publicPath: '/dist',
-    path: path.resolve(__dirname, 'dist')
-  }
+    path: path.resolve(__dirname, 'dist'),
+  },
 };
 
 module.exports = (env, { mode = 'development' }) => {
@@ -35,26 +42,26 @@ module.exports = (env, { mode = 'development' }) => {
     mode,
     devtool: 'inline-source-map',
     output: {
-      libraryTarget: 'umd'
+      libraryTarget: 'umd',
     },
     module: {
       rules: [
         {
           test: /\.css$/,
-          use: [{ loader: 'style-loader' }, { loader: 'css-loader' }]
-        }
-      ]
+          use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+        },
+      ],
     },
     plugins: [
       new HtmlWebpackPlugin({
-        filename: 'index.html'
-      })
+        filename: 'index.html',
+      }),
     ],
     devServer: {
       inline: true,
       host: '0.0.0.0',
       port: 8000,
-      disableHostCheck: true
-    }
+      disableHostCheck: true,
+    },
   });
 };

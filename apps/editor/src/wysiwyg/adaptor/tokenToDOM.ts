@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
-import { HTMLToken, OpenTagToken, RawHTMLToken, TextToken } from '@t/markdown';
 import { last } from '@/utils/common';
+import { HTMLToken, OpenTagToken, RawHTMLToken, TextToken } from '@toast-ui/toastmark';
 
 export type SpecArray = DOMOutputSpecArray & {
   push: typeof Array.prototype.push;

@@ -1,13 +1,13 @@
 import { Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { Context } from '@t/spec';
+import { MdContext } from '@t/spec';
 import { findClosestNode } from '@/utils/markdown';
 import { getEditorToMdPos, getMdToEditorPos } from '../helper/pos';
 
 const reTaskMarkerKey = /x|backspace/i;
 const reTaskMarker = /^\[(\s*)(x?)(\s*)\](?:\s+)/i;
 
-export function smartTask({ schema, toastMark }: Context) {
+export function smartTask({ schema, toastMark }: MdContext) {
   return new Plugin({
     props: {
       handleDOMEvents: {
@@ -17,7 +17,7 @@ export function smartTask({ schema, toastMark }: Context) {
 
           if (from === to && reTaskMarkerKey.test((ev as KeyboardEvent).key)) {
             const [pos] = getEditorToMdPos(doc, from);
-            const mdNode = toastMark.findNodeAtPosition([pos[0], pos[1]]);
+            const mdNode = toastMark.findNodeAtPosition([pos[0], pos[1]])!;
             const paraNode = findClosestNode(
               mdNode,
               (node) => node!.type === 'paragraph' && node.parent?.type === 'item'
