@@ -42,8 +42,8 @@ describe('codeSyntaxHighlightPlugin', () => {
     mdPreview = elements.mdPreview!;
     wwEditor = elements.wwEditor!;
 
-    container.append(mdPreview!);
-    container.append(wwEditor!);
+    container.append(mdPreview);
+    container.append(wwEditor);
 
     document.body.appendChild(container);
   });

@@ -2,6 +2,8 @@ import { CodeBlockMdNode, MdNode } from '@t/markdown';
 
 import * as Hljs from 'highlight.js';
 
+const BACKTICK_COUNT = 3;
+
 export function getHTMLRenderers(hljs: typeof Hljs) {
   return {
     codeBlock(node: MdNode) {
@@ -10,13 +12,13 @@ export function getHTMLRenderers(hljs: typeof Hljs) {
       const preClasses = [];
       const codeAttrs: Record<string, any> = {};
 
-      if (fenceLength > 3) {
+      if (fenceLength > BACKTICK_COUNT) {
         codeAttrs['data-backticks'] = fenceLength;
       }
 
       let content = '';
 
-      if (infoWords.length > 0 && infoWords[0].length > 0) {
+      if (infoWords.length && infoWords[0].length) {
         const [lang] = infoWords;
 
         preClasses.push(`lang-${lang}`);
