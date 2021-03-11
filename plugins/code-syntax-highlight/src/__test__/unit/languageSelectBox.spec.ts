@@ -54,31 +54,29 @@ describe('languageSelectBox', () => {
     expect(document.body.innerHTML).toBe(expected);
   });
 
-  describe('method', () => {
-    it('show() should show language select box element', () => {
-      selectBox.show();
+  it('show() should show language select box element', () => {
+    selectBox.show();
 
-      expect(wrapper).not.toHaveStyle('display: none');
-    });
+    expect(wrapper).not.toHaveStyle('display: none');
+  });
 
-    it('hide() should hide language select box element', () => {
-      selectBox.show();
-      selectBox.hide();
+  it('hide() should hide language select box element', () => {
+    selectBox.show();
+    selectBox.hide();
 
-      expect(wrapper).toHaveStyle('display: none');
-    });
+    expect(wrapper).toHaveStyle('display: none');
+  });
 
-    it('destory() should remove element on body', () => {
-      selectBox.destroy();
+  it('destory() should remove element on body', () => {
+    selectBox.destroy();
 
-      expect(document.body).toBeEmptyDOMElement();
-    });
+    expect(document.body).toBeEmptyDOMElement();
+  });
 
-    it('setLanguage() should change input value to selected language', () => {
-      selectBox.setLanguage('foo');
+  it('setLanguage() should change input value to selected language', () => {
+    selectBox.setLanguage('foo');
 
-      expect(input).toHaveValue('foo');
-    });
+    expect(input).toHaveValue('foo');
   });
 
   describe('wrapper element', () => {

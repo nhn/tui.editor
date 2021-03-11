@@ -5,6 +5,8 @@ import { Node as ProsemirrorNode } from 'prosemirror-model';
 import * as Hljs from 'highlight.js';
 import * as Low from 'lowlight/lib/core';
 
+import { flatten } from '@/utils/common';
+
 interface ChildNodeInfo {
   node: ProsemirrorNode;
   pos: number;
@@ -16,10 +18,6 @@ interface HighlightedNodeInfo {
 }
 
 const NODE_TYPE = 'codeBlock';
-
-function flatten<T>(arr: T[]): T[] {
-  return arr.reduce<T[]>((a, b) => a.concat(Array.isArray(b) ? flatten(b) : b), []);
-}
 
 function findCodeBlocks(doc: ProsemirrorNode) {
   const descendants: ChildNodeInfo[] = [];
@@ -60,28 +58,24 @@ function getDecorations(doc: ProsemirrorNode, hljs: typeof Hljs, low: typeof Low
 
     const { language } = node.attrs;
     const registeredLang = hljs.getLanguage(language);
-    const tree = registeredLang ? low.highlight(language, node.textContent).value : [];
-    const nodeInfos = flatten(parseNodes(tree)) as HighlightedNodeInfo[];
+    const hljsAST = registeredLang ? low.highlight(language, node.textContent).value : [];
+    const nodeInfos = flatten(parseNodes(hljsAST)) as HighlightedNodeInfo[];
 
-    nodeInfos
-      .map((nodeInfo) => {
-        const from = startPos;
-        const to = from + nodeInfo.text.length;
+    nodeInfos.forEach(({ text, classes }) => {
+      const from = startPos;
+      const to = from + text.length;
 
-        startPos = to;
+      startPos = to;
 
-        return { ...nodeInfo, from, to };
-      })
-      .forEach(({ classes, from, to }) => {
-        const classNames = classes.join(' ');
-        const decoration = Decoration.inline(from, to, {
-          class: classNames,
-        });
-
-        if (classNames.length) {
-          decorations.push(decoration);
-        }
+      const classNames = classes.join(' ');
+      const decoration = Decoration.inline(from, to, {
+        class: classNames,
       });
+
+      if (classNames.length) {
+        decorations.push(decoration);
+      }
+    });
   });
 
   return DecorationSet.create(doc, decorations);

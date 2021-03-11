@@ -34,9 +34,9 @@ export class LanguageSelectBox {
 
   private list!: HTMLElement;
 
-  private buttons: HTMLButtonElement[] = [];
+  private buttons: Element[] = [];
 
-  private currentButton!: HTMLButtonElement;
+  private currentButton!: Element;
 
   private prevStoredLanguage = '';
 
@@ -87,7 +87,7 @@ export class LanguageSelectBox {
     addClass(buttonsContainer, 'buttons');
     buttonsContainer.innerHTML = getButtonsHTML(this.languages);
 
-    this.buttons = toArray(buttonsContainer.children) as HTMLButtonElement[];
+    this.buttons = toArray(buttonsContainer.children);
     this.list.appendChild(buttonsContainer);
     this.wrapper.appendChild(this.list);
 
@@ -96,36 +96,18 @@ export class LanguageSelectBox {
   }
 
   private bindDOMEvent() {
-    this.wrapper.addEventListener('mousedown', this.handleMousedown);
+    this.wrapper.addEventListener('mousedown', this.onSelectToggleButton);
     this.input.addEventListener('keydown', this.handleKeydown);
-    this.input.addEventListener('focus', () => this.activeSelectBox());
-    this.input.addEventListener('blur', () => this.deactiveSelectBox());
-    this.list.addEventListener('mousedown', this.handleMousedownLanguageButtons);
+    this.input.addEventListener('focus', () => this.activateSelectBox());
+    this.input.addEventListener('blur', () => this.inactivateSelectBox());
+    this.list.addEventListener('mousedown', this.onSelectLanguageButtons);
   }
 
   private bindEvent() {
-    this.eventEmitter.listen(
-      'showCodeBlockLanguages',
-      ({ top, right }: { top: number; right: number }, language: string) => {
-        if (language) {
-          this.setLanguage(language);
-        }
-
-        this.show();
-
-        const { width } = this.input.parentElement!.getBoundingClientRect();
-
-        css(this.wrapper!, {
-          top: `${top + CODE_BLOCK_PADDING}px`,
-          left: `${right - width - CODE_BLOCK_PADDING}px`,
-        });
-
-        this.toggleFocus();
-      }
-    );
+    this.eventEmitter.listen('showCodeBlockLanguages', this.showLangugaeSelectBox);
   }
 
-  private handleMousedown = (ev: MouseEvent) => {
+  private onSelectToggleButton = (ev: MouseEvent) => {
     const target = ev.target as HTMLElement;
     const style = getComputedStyle(target, ':after');
     const { offsetX, offsetY } = ev;
@@ -136,49 +118,58 @@ export class LanguageSelectBox {
     }
   };
 
-  private handleMousedownLanguageButtons = (ev: MouseEvent) => {
+  private onSelectLanguageButtons = (ev: MouseEvent) => {
     const target = ev.target as HTMLElement;
     const language = target.getAttribute('data-language');
 
     if (language) {
-      this.selectLanguageFromList(language);
+      this.selectLanguage(language);
     }
   };
 
   private handleKeydown = (ev: KeyboardEvent) => {
     const { key } = ev;
 
-    if (this.languages.length) {
-      switch (key) {
-        case 'ArrowUp':
-          this.selectPrevLanguage();
-          ev.preventDefault();
-          break;
-        case 'ArrowDown':
-          this.selectNextLanguage();
-          ev.preventDefault();
-          break;
-        case 'Enter':
-        case 'Tab': {
-          this.storeInputLanguage();
-          ev.preventDefault();
-          break;
-        }
-        default:
-          this.hideList();
-      }
+    if (key === 'ArrowUp') {
+      this.selectPrevLanguage();
+      ev.preventDefault();
+    } else if (key === 'ArrowDown') {
+      this.selectNextLanguage();
+      ev.preventDefault();
     } else if (key === 'Enter' || key === 'Tab') {
       this.storeInputLanguage();
       ev.preventDefault();
+    } else {
+      this.hideList();
     }
   };
 
-  private activeSelectBox() {
+  private showLangugaeSelectBox = (
+    { top, right }: { top: number; right: number },
+    language: string
+  ) => {
+    if (language) {
+      this.setLanguage(language);
+    }
+
+    this.show();
+
+    const { width } = this.input.parentElement!.getBoundingClientRect();
+
+    css(this.wrapper!, {
+      top: `${top + CODE_BLOCK_PADDING}px`,
+      left: `${right - width - CODE_BLOCK_PADDING}px`,
+    });
+
+    this.toggleFocus();
+  };
+
+  private activateSelectBox() {
     addClass(this.wrapper, 'active');
     css(this.list, { display: 'block' });
   }
 
-  private deactiveSelectBox() {
+  private inactivateSelectBox() {
     this.input!.value = this.prevStoredLanguage;
     removeClass(this.wrapper, 'active');
     this.hideList();
@@ -190,11 +181,6 @@ export class LanguageSelectBox {
     } else {
       this.input.focus();
     }
-  }
-
-  private selectLanguageFromList(selectedLanguage: string) {
-    this.input!.value = selectedLanguage;
-    this.storeInputLanguage();
   }
 
   private storeInputLanguage() {
@@ -218,6 +204,11 @@ export class LanguageSelectBox {
     }
   }
 
+  private selectLanguage(selectedLanguage: string) {
+    this.input!.value = selectedLanguage;
+    this.storeInputLanguage();
+  }
+
   private selectPrevLanguage() {
     let index = inArray(this.currentButton, this.buttons) - 1;
 
@@ -229,10 +220,10 @@ export class LanguageSelectBox {
   }
 
   private selectNextLanguage() {
-    let index = inArray(this.currentButton, this.buttons) + 1;
+    let index = 0;
 
-    if (index >= this.buttons.length) {
-      index = 0;
+    if (index < this.buttons.length) {
+      index = inArray(this.currentButton, this.buttons) + 1;
     }
 
     this.activateButtonByIndex(index);
@@ -256,7 +247,7 @@ export class LanguageSelectBox {
 
     const item = this.buttons.filter((button) => button.getAttribute('data-language') === language);
 
-    if (item.length > 0) {
+    if (item.length) {
       const index = inArray(item[0], this.buttons);
 
       this.activateButtonByIndex(index);
@@ -265,5 +256,6 @@ export class LanguageSelectBox {
 
   destroy() {
     removeNode(this.wrapper);
+    this.eventEmitter.removeEventHandler('showCodeBlockLanguages', this.showLangugaeSelectBox);
   }
 }

@@ -2,6 +2,7 @@ import { EditorView, NodeView } from 'prosemirror-view';
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 
 import isFunction from 'tui-code-snippet/type/isFunction';
+import addClass from 'tui-code-snippet/domUtil/addClass';
 
 import { isPositionInBox, cls } from '@/utils/dom';
 import { LanguageSelectBox } from '@/nodeViews/languageSelectBox';
@@ -18,35 +19,25 @@ type GetPos = (() => number) | boolean;
 
 type CodeBlockPos = { top: number; right: number };
 
+const WRAPPER_CLASS_NAME = 'ww-code-block';
+
 class CodeSyntaxHighlightView implements NodeView {
   dom: HTMLElement | null = null;
 
   contentDOM: HTMLElement | null = null;
 
-  private node: ProsemirrorNode;
-
-  private view: EditorView;
-
-  private getPos: GetPos;
-
-  private toDOMAdaptor: ToDOMAdaptor;
-
-  private eventEmitter: Emitter;
-
-  private languageSelectBox!: LanguageSelectBox | null;
+  private languageSelectBox: LanguageSelectBox | null = null;
 
   private languageEditing: boolean;
 
-  private languages: string[];
-
   // eslint-disable-next-line max-params
   constructor(
-    node: ProsemirrorNode,
-    view: EditorView,
-    getPos: GetPos,
-    eventEmitter: Emitter,
-    toDOMAdaptor: ToDOMAdaptor,
-    languages: string[]
+    private node: ProsemirrorNode,
+    private view: EditorView,
+    private getPos: GetPos,
+    private eventEmitter: Emitter,
+    private toDOMAdaptor: ToDOMAdaptor,
+    private languages: string[]
   ) {
     this.node = node;
     this.view = view;
@@ -66,7 +57,7 @@ class CodeSyntaxHighlightView implements NodeView {
     const wrapper = document.createElement('div');
 
     wrapper.setAttribute('data-language', language || 'text');
-    wrapper.className = cls('ww-code-block');
+    addClass(wrapper, cls(WRAPPER_CLASS_NAME));
 
     const pre = this.createCodeBlockElement();
     const code = pre.firstChild as HTMLElement;
@@ -85,29 +76,25 @@ class CodeSyntaxHighlightView implements NodeView {
 
   private bindDOMEvent() {
     if (this.dom) {
-      this.dom.addEventListener('click', this.handleClick);
-      this.view.dom.addEventListener('mousedown', this.handleMousedown);
+      this.dom.addEventListener('click', this.onClickEditingButton);
+      this.view.dom.addEventListener('mousedown', this.finishLanguageEditing);
       window.addEventListener('resize', this.finishLanguageEditing);
     }
   }
 
   private bindEvent() {
-    this.eventEmitter.listen('selectLanguage', (language: string) => {
-      if (this.languageEditing) {
-        this.changeLanguage(language);
-      }
-    });
-
-    this.eventEmitter.listen('scroll', () => {
-      this.finishLanguageEditing();
-    });
-
-    this.eventEmitter.listen('finishLanguageEditing', () => {
-      this.finishLanguageEditing();
-    });
+    this.eventEmitter.listen('selectLanguage', this.onSelectLanguage);
+    this.eventEmitter.listen('scroll', this.finishLanguageEditing);
+    this.eventEmitter.listen('finishLanguageEditing', this.finishLanguageEditing);
   }
 
-  private handleClick = (ev: MouseEvent) => {
+  private onSelectLanguage = (language: string) => {
+    if (this.languageEditing) {
+      this.changeLanguage(language);
+    }
+  };
+
+  private onClickEditingButton = (ev: MouseEvent) => {
     const target = ev.target as HTMLElement;
     const style = getComputedStyle(target, ':after');
     const { offsetX, offsetY } = ev;
@@ -117,10 +104,6 @@ class CodeSyntaxHighlightView implements NodeView {
 
       this.openLanguageSelectBox(pos);
     }
-  };
-
-  private handleMousedown = () => {
-    this.finishLanguageEditing();
   };
 
   private openLanguageSelectBox(pos: CodeBlockPos) {
@@ -174,10 +157,14 @@ class CodeSyntaxHighlightView implements NodeView {
     this.reset();
 
     if (this.dom) {
-      this.dom.removeEventListener('click', this.handleClick);
-      this.view.dom.removeEventListener('mousedown', this.handleMousedown);
+      this.dom.removeEventListener('click', this.onClickEditingButton);
+      this.view.dom.removeEventListener('mousedown', this.finishLanguageEditing);
       window.removeEventListener('resize', this.finishLanguageEditing);
     }
+
+    this.eventEmitter.removeEventHandler('selectLanguage', this.onSelectLanguage);
+    this.eventEmitter.removeEventHandler('scroll', this.finishLanguageEditing);
+    this.eventEmitter.removeEventHandler('finishLanguageEditing', this.finishLanguageEditing);
   }
 }
 
