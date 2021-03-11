@@ -278,15 +278,7 @@ class ToastUIEditor {
   }
 
   private getCurrentModeEditor() {
-    let editor: Base;
-
-    if (this.isMarkdownMode()) {
-      editor = this.mdEditor;
-    } else {
-      editor = this.wwEditor;
-    }
-
-    return editor;
+    return (this.isMarkdownMode() ? this.mdEditor : this.wwEditor) as Base;
   }
 
   /**

@@ -215,7 +215,7 @@ export class EditorCore {
 
   reset(): void;
 
-  getSelection(): Sourcepos | [from: number, to: number];
+  getSelection(): SelectionPos;
 
   setPlaceholder(placeholder: string): void;
 
@@ -228,9 +228,10 @@ export class Editor extends EditorCore {
   getDefaultUI(): DefaultUI;
 }
 
+export type SelectionPos = Sourcepos | [from: number, to: number];
 export type EditorPos = MdPos | number;
 export interface NodeRangeInfo {
-  range: Sourcepos | [number, number];
+  range: SelectionPos;
   type: string;
 }
 
@@ -303,7 +304,7 @@ export interface Base {
 
   getSelectedText(start?: EditorPos, end?: EditorPos): string;
 
-  getSelection(): Sourcepos | [from: number, to: number];
+  getSelection(): SelectionPos;
 
   getRangeInfoOfNode(pos?: EditorPos): NodeRangeInfo;
 }
