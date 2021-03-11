@@ -33,7 +33,7 @@
     "lint": "eslint .",
     "test": "jest --watch",
     "test:types": "tsc",
-    "serve": "snowpack dev",
+    "serve": "snowpack dev --polyfill-node",
     "serve:webpack": "webpack-dev-server",
     "serve:all": "webpack-dev-server --all",
     "build:cdn": "webpack --mode=production --cdn & webpack --mode=production --cdn --minify",

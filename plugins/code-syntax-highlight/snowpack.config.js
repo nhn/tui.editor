@@ -9,7 +9,7 @@ module.exports = {
     src: '/dist',
   },
   packageOptions: {
-    source: 'remote',
+    source: 'local',
   },
   devOptions: {
     port: 8081,
