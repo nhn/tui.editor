@@ -1,4 +1,4 @@
-import { CodeBlockMdNode, MdNode } from '@t/markdown';
+import { CodeBlockMdNode, MdNode } from '@toast-ui/editor';
 
 import * as Hljs from 'highlight.js';
 

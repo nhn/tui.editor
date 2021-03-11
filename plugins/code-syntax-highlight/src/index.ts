@@ -1,12 +1,9 @@
 import { codeSyntaxHighlightPlugin } from '@/plugin';
-
-import '@/css/plugin.css';
-
 import low from 'lowlight/lib/core';
 
-// @TODO change import editor's type
-// import { Emitter } from '@t/event';
-type Emitter = any;
+import { Emitter } from '@toast-ui/editor';
+
+import '@/css/plugin.css';
 
 export default (eventEmitter: Emitter, options = {}) =>
   codeSyntaxHighlightPlugin(eventEmitter, low, options);

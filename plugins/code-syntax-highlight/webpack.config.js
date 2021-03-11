@@ -23,7 +23,7 @@ function getEntryConfig(isAll) {
 function getOutputConfig(isProduction, isCDN, isAll, minify) {
   if (!isProduction || isCDN) {
     const config = {
-      library: ['toastui', 'Editor', 'plugin', 'codeSyntaxHighlight'],
+      library: ['toastui', 'editor', 'plugin', 'codeSyntaxHighlight'],
       libraryExport: 'default',
       libraryTarget: 'umd',
       path: path.resolve(__dirname, 'dist/cdn'),
