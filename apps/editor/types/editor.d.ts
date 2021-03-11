@@ -96,8 +96,11 @@ interface EditorPluginInfo {
   wysiwygNodeViews: NodeViewPropMap;
 }
 
-export type PluginFn = (editor: Editor | Viewer, options?: any) => void;
-export type EditorPlugin = PluginFn | [PluginFn, any];
+export type PluginFn = (
+  eventEmitter: Emitter,
+  options?: Record<string, any>
+) => EditorPluginInfo | null;
+export type EditorPlugin = PluginFn | [PluginFn, Record<string, any>];
 
 export interface EditorOptions {
   el: HTMLElement;

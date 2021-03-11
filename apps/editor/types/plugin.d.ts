@@ -1,7 +1,7 @@
 import { Plugin } from 'prosemirror-state';
 import { EditorView, NodeView } from 'prosemirror-view';
 
-import { CustomHTMLRendererMap } from '@t/markdown';
+import { HTMLConvertorMap } from '@toast-ui/toastmark';
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
 
@@ -20,7 +20,7 @@ interface NodeViewPropMap {
 }
 
 export interface PluginInfoResult {
-  toHTMLRenderers: CustomHTMLRendererMap;
+  toHTMLRenderers: HTMLConvertorMap;
   mdPlugins: PluginProp[];
   wwPlugins: PluginProp[];
   wwNodeViews: NodeViewPropMap;
