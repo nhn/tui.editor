@@ -9,17 +9,17 @@ import Low from 'lowlight/lib/core';
 
 import { Emitter } from '@toast-ui/editor';
 
-function registerLanguages(hljs: typeof Hljs, low: typeof Low, languages: string[]) {
+function registerLanguages(hljs: typeof Hljs, low: typeof Low, languages: any[]) {
   languages.forEach((lang) => {
-    const { rawDefinition } = hljs.getLanguage(lang);
+    const { name } = lang;
 
-    low.registerLanguage(lang, rawDefinition);
+    hljs.registerLanguage(name, lang);
+    low.registerLanguage(name, lang);
   });
 }
 
 export function codeSyntaxHighlightPlugin(eventEmitter: Emitter, low: typeof Low, options = {}) {
-  const { hljs } = options as PluginOptions;
-  const languages = hljs.listLanguages();
+  const { hljs, languages } = options as PluginOptions;
 
   eventEmitter.addEventType('showCodeBlockLanguages');
   eventEmitter.addEventType('selectLanguage');

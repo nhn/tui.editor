@@ -3,6 +3,7 @@ import { EditorPlugin } from '@toast-ui/editor';
 
 export interface PluginOptions {
   hljs: typeof Hljs;
+  languages: any[];
 }
 
 export default function codeSyntaxHighlightPlugin(): () => EditorPlugin;
