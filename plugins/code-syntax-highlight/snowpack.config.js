@@ -8,9 +8,6 @@ module.exports = {
     'demo-esm': '/',
     src: '/dist',
   },
-  packageOptions: {
-    source: 'remote',
-  },
   devOptions: {
     port: 8081,
   },
