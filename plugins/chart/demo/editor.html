@@ -3,15 +3,128 @@
   <head lang="en">
     <meta charset="UTF-8" />
     <title>Editor</title>
-    <!-- Editor's Dependencies -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"
-    />
-    <!-- Editor -->
-    <link rel="stylesheet" href="http://localhost:8080/dist/cdn/toastui-editor.css" />
-    <!-- Plugin -->
-    <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/v3.7.0/tui-chart.css" />
+    <style>
+      .toastui-chart-wrapper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* export menu */
+
+      .toastui-chart-export-menu {
+        font-family: Arial, sans-serif;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: #fff;
+        user-select: none;
+        box-sizing: border-box;
+      }
+
+      .toastui-chart-export-menu-title {
+        height: 34px;
+        width: 140px;
+        margin: 0;
+        padding: 10px;
+        box-sizing: inherit;
+      }
+
+      .toastui-chart-export-menu-btn-wrapper {
+        width: 100%;
+        height: 76px;
+      }
+
+      .toastui-chart-export-menu-btn {
+        width: 50%;
+        height: 50%;
+        border: none;
+        padding: 12px 3px;
+        float: left;
+        color: inherit;
+        font-family: inherit;
+        background: transparent;
+        cursor: pointer;
+      }
+
+      .toastui-chart-export-menu-btn:hover {
+        font-weight: bold;
+      }
+
+      .toastui-chart-export-menu-btn:nth-child(3) {
+        border-bottom-left-radius: inherit;
+      }
+
+      .toastui-chart-export-menu-btn:nth-child(4) {
+        border-bottom-right-radius: inherit;
+      }
+
+      /* tooltip */
+      .toastui-chart-tooltip-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        user-select: none;
+        pointer-events: none;
+      }
+
+      .toastui-chart-tooltip {
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        min-width: 150px;
+      }
+
+      .toastui-chart-tooltip-category {
+        padding: 8px 15px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      .toastui-chart-tooltip-series-wrapper {
+        display: flex;
+        padding: 13px 15px;
+        flex-direction: column;
+      }
+
+      .toastui-chart-tooltip-series {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .toastui-chart-series-name {
+        display: flex;
+        align-items: center;
+        /* for IE */
+        line-height: 10px;
+      }
+
+      .toastui-chart-series-name .toastui-chart-icon,
+      .toastui-chart-tooltip-series .toastui-chart-icon {
+        width: 10px;
+        height: 10px;
+        margin-right: 8px;
+        /* for IE */
+        display: inline-block;
+      }
+
+      .toastui-chart-series-name .toastui-chart-name {
+        white-space: nowrap;
+      }
+
+      .toastui-chart-series-value {
+        white-space: nowrap;
+        margin-left: 10px;
+      }
+
+      .toastui-chart-tooltip-series-wrapper .toastui-chart-tooltip-title {
+        padding: 8px 0 5px;
+      }
+
+      .toastui-chart-tooltip-series-wrapper .toastui-chart-tooltip-title:first-child {
+        padding-top: 0;
+      }
+    </style>
   </head>
   <body>
     <div class="code-html">
@@ -23,12 +136,12 @@
       <div id="viewer"></div>
     </div>
     <!-- Editor -->
-    <script src="http://localhost:8080/dist/cdn/toastui-editor-all.js"></script>
-    <!-- Plugin -->
-    <script src="../dist/cdn/toastui-editor-plugin-chart.js"></script>
-    <script class="code-js">
+    <script type="module">
+      import { Editor } from 'http://localhost:8080/dist/index.js';
+      import chartPlugin from '/dist/index.js';
+
       const content = [
-        '```chart',
+        '$$chart',
         ',category1,category2',
         'Jan,21,23',
         'Feb,31,17',
@@ -40,11 +153,8 @@
         'y.min: 1',
         'y.max: 40',
         'y.suffix: $',
-        '```'
+        '$$'
       ].join('\n');
-
-      const { Editor } = toastui;
-      const { chart } = Editor.plugin;
 
       const chartOptions = {
         minWidth: 100,
@@ -58,7 +168,7 @@
         previewStyle: 'vertical',
         height: '500px',
         initialValue: content,
-        plugins: [chart, chartOptions]
+        plugins: [[chartPlugin, chartOptions]]
       });
 
       const viewer = Editor.factory({
@@ -66,7 +176,7 @@
         viewer: true,
         height: '500px',
         initialValue: content,
-        plugins: [chart, chartOptions]
+        plugins: [[chartPlugin, chartOptions]]
       });
     </script>
   </body>
