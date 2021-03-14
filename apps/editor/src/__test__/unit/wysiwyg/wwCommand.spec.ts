@@ -85,19 +85,35 @@ describe('wysiwyg commands', () => {
   });
 
   describe('hr command', () => {
-    it('should add hr element with wrapping div element', () => {
+    it('should add hr element with empty pararaphs in empty document', () => {
       cmd.exec('wysiwyg', 'hr');
 
-      expect(wwe.getHTML()).toBe('<div><hr></div>');
+      expect(wwe.getHTML()).toBe('<p><br></p><div><hr></div><p><br></p>');
     });
 
-    it('should change hr element to selection', () => {
+    it('should add hr element with after empty paragraph', () => {
+      setTextToEditor('foo');
+      wwe.setSelection(2, 2);
+      cmd.exec('wysiwyg', 'hr');
+
+      expect(wwe.getHTML()).toBe('<p>foo</p><div><hr></div><p><br></p>');
+    });
+
+    it('should add only hr element', () => {
+      setTextToEditor('foo\nbar');
+      wwe.setSelection(2, 2);
+      cmd.exec('wysiwyg', 'hr');
+
+      expect(wwe.getHTML()).toBe('<p>foo</p><div><hr></div><p>bar</p>');
+    });
+
+    it('should not add hr element when there is selection', () => {
       setTextToEditor('foo');
 
       cmd.exec('wysiwyg', 'selectAll');
       cmd.exec('wysiwyg', 'hr');
 
-      expect(wwe.getHTML()).toBe('<div><hr></div>');
+      expect(wwe.getHTML()).toBe('<p>foo</p>');
     });
   });
 
