@@ -4,6 +4,7 @@ import { EditorView, NodeView } from 'prosemirror-view';
 import { HTMLConvertorMap } from '@toast-ui/toastmark';
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
+import { EditorCommand } from '@t/spec';
 
 export type PluginProp = (eventEmitter: Emitter) => Plugin;
 
@@ -15,13 +16,15 @@ export type ExtraNodeViews = (
   toDOMAdaptor: ToDOMAdaptor
 ) => NodeView;
 
-interface NodeViewPropMap {
-  [k: string]: ExtraNodeViews;
-}
+type NodeViewPropMap = Record<string, ExtraNodeViews>;
+
+export type PluginCommandMap = Record<string, EditorCommand>;
 
 export interface PluginInfoResult {
   toHTMLRenderers: HTMLConvertorMap;
   mdPlugins: PluginProp[];
   wwPlugins: PluginProp[];
   wwNodeViews: NodeViewPropMap;
+  mdCommands: PluginCommandMap;
+  wwCommands: PluginCommandMap;
 }

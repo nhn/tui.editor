@@ -9,6 +9,63 @@
     <!-- Editor -->
     <script type="module">
       import { Editor } from '/dist/index.js';
+      import { Plugin } from 'prosemirror-state';
+
+      function fooPlugin() {
+        return null;
+      }
+
+      function barPlugin(eventEmitter, options) {
+        const { pluginOption } = options || {};
+
+        function customWwPlugin() {
+          console.log('## test wysiwyg plugin', arguments);
+
+          return new Plugin({ key: 'ww' });
+        }
+
+        function customMdPlugin() {
+          console.log('## test markdown plugin', arguments);
+
+          return new Plugin({ key: 'md' });
+        }
+
+        function customNodeView() {
+          console.log('## test nodeview', arguments);
+
+          const dom = document.createElement('span');
+
+          dom.innerHTML = 'nodeview';
+
+          return { dom };
+        }
+
+        return {
+          markdownPlugins: [
+            (eventEmitter) => {
+              return customMdPlugin(eventEmitter, pluginOption);
+            },
+          ],
+          wysiwygPlugins: [
+            (eventEmitter) => {
+              return customWwPlugin(eventEmitter, pluginOption);
+            },
+          ],
+          wysiwygNodeViews: {
+            codeBlock: (node, view, getPos, eventEmitter, toDOMAdaptor) => {
+              return customNodeView(node, view, getPos, eventEmitter, toDOMAdaptor, pluginOption);
+            },
+          },
+          markdownCommands: {
+            foo: (payload) => {
+              return (state, dispatch) => {
+                console.log(payload, state, dispatch);
+                return true;
+              };
+            },
+          },
+        };
+      }
 
       const editor = new Editor({
         el: document.querySelector('#editor'),
@@ -18,6 +75,7 @@
         useCommandShortcut: true,
         extendedAutolinks: true,
         frontMatter: true,
+        plugins: [barPlugin],
       });
 
       window.editor = editor;
