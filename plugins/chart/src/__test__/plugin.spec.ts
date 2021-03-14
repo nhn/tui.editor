@@ -1,21 +1,18 @@
-/**
- * @fileoverview Test chart plugin
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
+import 'jest-canvas-mock';
 import {
-  parseCode2ChartOption,
-  parseDSV2ChartData,
-  parseURL2ChartData,
-  parseCode2DataAndOptions,
+  parseToChartOption,
+  parseToChartData,
   detectDelimiter,
   setDefaultOptions,
-} from '../src/index';
+  ChartOptions,
+  PluginOptions,
+} from '../index';
 
 describe('chart plugin', () => {
-  describe('parseCode2ChartOption()', () => {
+  describe('parseToChartOption()', () => {
     it('should parse option code into object', () => {
       expect(
-        parseCode2ChartOption(`
+        parseToChartOption(`
           key1.keyA: value1
           key1.keyB: value2
         `)
@@ -30,7 +27,7 @@ describe('chart plugin', () => {
     it('should parse option code into object with reserved keys(type, url)', () => {
       // type & url -> editor.Chart & editorChart.url
       expect(
-        parseCode2ChartOption(`
+        parseToChartOption(`
           type: line
           url: http://some.url/to/data/file
         `)
@@ -45,7 +42,7 @@ describe('chart plugin', () => {
     it('should parse option code into object with 1 depth keys(without dot)', () => {
       // keyA & keyB ... -> chart.keyA, chart.keyB ...
       expect(
-        parseCode2ChartOption(`
+        parseToChartOption(`
           keyA: value1
           keyB: value2
         `)
@@ -60,7 +57,7 @@ describe('chart plugin', () => {
     it('should parse option code into object with x & y keys', () => {
       // x & y keys should be translated to xAxis & yAxis
       expect(
-        parseCode2ChartOption(`
+        parseToChartOption(`
           x.keyA: value1
           y.keyB: value2
         `)
@@ -76,7 +73,7 @@ describe('chart plugin', () => {
 
     it('should parse option code into object with string numeric value', () => {
       expect(
-        parseCode2ChartOption(`
+        parseToChartOption(`
           key1.keyA: 1.234
           key1.keyB: 12
         `)
@@ -90,7 +87,7 @@ describe('chart plugin', () => {
 
     it('should parse option code into object with string array value', () => {
       expect(
-        parseCode2ChartOption(`
+        parseToChartOption(`
           key1.keyA: [1,2]
           key1.keyB: ["a", "b"]
         `)
@@ -104,7 +101,7 @@ describe('chart plugin', () => {
 
     it('should parse option code into object with string object value', () => {
       expect(
-        parseCode2ChartOption(`
+        parseToChartOption(`
           key1.keyA: {"k1": "v1"}
           key1.keyB: {"k2": "v2"}
         `)
@@ -121,10 +118,10 @@ describe('chart plugin', () => {
     });
   });
 
-  describe('parseDSV2ChartData()', () => {
+  describe('parseToChartData()', () => {
     it('should parse csv to tui.chart data format', () => {
       expect(
-        parseDSV2ChartData(
+        parseToChartData(
           `
             ,series a,series b
             category 1, 1.234, 2.345
@@ -149,7 +146,7 @@ describe('chart plugin', () => {
 
     it('should parse tsv to tui.chart data format', () => {
       expect(
-        parseDSV2ChartData(
+        parseToChartData(
           `
             \tseries a\tseries b
             category 1\t1.234\t2.345
@@ -174,7 +171,7 @@ describe('chart plugin', () => {
 
     it('should parse whitespace separated values to tui.chart data format', () => {
       expect(
-        parseDSV2ChartData(
+        parseToChartData(
           ['\t"series a" "series b"', '"category 1" 1.234 2.345', '"category 2" 3.456 4.567'].join(
             '\n'
           ),
@@ -197,7 +194,7 @@ describe('chart plugin', () => {
 
     it('should parse data with legends to tui.chart data format', () => {
       expect(
-        parseDSV2ChartData(
+        parseToChartData(
           `
             series a,series b
             1.234, 2.345
@@ -222,7 +219,7 @@ describe('chart plugin', () => {
 
     it('should parse data with categories to tui.chart data format', () => {
       expect(
-        parseDSV2ChartData(
+        parseToChartData(
           `
             category 1, 1.234, 2.345
             category 2, 3.456, 4.567
@@ -275,217 +272,8 @@ describe('chart plugin', () => {
     });
   });
 
-  // describe('parseURL2ChartData()', () => {
-  //   beforeEach(() => {
-  //     jasmine.Ajax.install();
-  //   });
-
-  //   afterEach(() => {
-  //     jasmine.Ajax.uninstall();
-  //   });
-
-  //   it('should parse csv from remote', () => {
-  //     const callback = jasmine.createSpy('onChartData');
-
-  //     parseURL2ChartData('http://url.to/chart-data.csv', callback);
-
-  //     const request = jasmine.Ajax.requests.mostRecent();
-
-  //     request.respondWith({
-  //       status: 200,
-  //       contentType: 'text/csv',
-  //       responseText: `
-  //         ,series a,series b
-  //         category 1, 1.234, 2.345
-  //         category 2, 3.456, 4.567
-  //       `,
-  //     });
-
-  //     expect(callback).toHaveBeenCalledWith({
-  //       categories: ['category 1', 'category 2'],
-  //       series: [
-  //         {
-  //           name: 'series a',
-  //           data: [1.234, 3.456],
-  //         },
-  //         {
-  //           name: 'series b',
-  //           data: [2.345, 4.567],
-  //         },
-  //       ],
-  //     });
-  //   });
-
-  //   it('should parse tsv from remote', () => {
-  //     const callback = jasmine.createSpy('onChartData');
-
-  //     parseURL2ChartData('http://url.to/chart-data.tsv', callback);
-
-  //     const request = jasmine.Ajax.requests.mostRecent();
-
-  //     request.respondWith({
-  //       status: 200,
-  //       contentType: 'text/tsv',
-  //       responseText: `
-  //         \tseries a\tseries b
-  //         category 1\t1.234\t2.345
-  //         category 2\t3.456\t4.567
-  //       `,
-  //     });
-
-  //     expect(callback).toHaveBeenCalledWith({
-  //       categories: ['category 1', 'category 2'],
-  //       series: [
-  //         {
-  //           name: 'series a',
-  //           data: [1.234, 3.456],
-  //         },
-  //         {
-  //           name: 'series b',
-  //           data: [2.345, 4.567],
-  //         },
-  //       ],
-  //     });
-  //   });
-
-  //   it('should result null on ajax fail', () => {
-  //     const callback = jasmine.createSpy('onChartData');
-
-  //     parseURL2ChartData('http://wrong.url.to/chart-data.tsv', callback);
-
-  //     const request = jasmine.Ajax.requests.mostRecent();
-
-  //     request.respondWith({
-  //       status: 404,
-  //       contentType: 'text/tsv',
-  //     });
-
-  //     expect(callback).toHaveBeenCalledWith(null);
-  //   });
-  // });
-
-  // describe('parseCode2DataAndOptions', () => {
-  //   beforeEach(() => {
-  //     jasmine.Ajax.install();
-  //   });
-
-  //   afterEach(() => {
-  //     jasmine.Ajax.uninstall();
-  //   });
-
-  //   it('should parse code containing data & options', () => {
-  //     const callback = jasmine.createSpy('onChartDataAndOptions');
-
-  //     parseCode2DataAndOptions(
-  //       `
-  //         \tseries a\tseries b
-  //         category 1\t1.234\t2.345
-  //         category 2\t3.456\t4.567
-
-  //         title: hello
-  //       `,
-  //       callback
-  //     );
-
-  //     expect(callback).toHaveBeenCalledWith({
-  //       data: {
-  //         categories: ['category 1', 'category 2'],
-  //         series: [
-  //           {
-  //             name: 'series a',
-  //             data: [1.234, 3.456],
-  //           },
-  //           {
-  //             name: 'series b',
-  //             data: [2.345, 4.567],
-  //           },
-  //         ],
-  //       },
-  //       options: {
-  //         chart: {
-  //           title: 'hello',
-  //         },
-  //       },
-  //     });
-  //   });
-
-  //   it('should parse code containing data only', () => {
-  //     const callback = jasmine.createSpy('onChartDataAndOptions');
-
-  //     parseCode2DataAndOptions(
-  //       `
-  //         \tseries a\tseries b
-  //         category 1\t1.234\t2.345
-  //         category 2\t3.456\t4.567
-  //       `,
-  //       callback
-  //     );
-
-  //     expect(callback).toHaveBeenCalledWith({
-  //       data: {
-  //         categories: ['category 1', 'category 2'],
-  //         series: [
-  //           {
-  //             name: 'series a',
-  //             data: [1.234, 3.456],
-  //           },
-  //           {
-  //             name: 'series b',
-  //             data: [2.345, 4.567],
-  //           },
-  //         ],
-  //       },
-  //       options: {},
-  //     });
-  //   });
-
-  //   it('should parse code containing options only, url option included', () => {
-  //     const callback = jasmine.createSpy('onChartDataAndOptions');
-
-  //     parseCode2DataAndOptions(
-  //       `
-  //         url: http://url.to/chart-data.tsv
-  //       `,
-  //       callback
-  //     );
-
-  //     const request = jasmine.Ajax.requests.mostRecent();
-
-  //     request.respondWith({
-  //       status: 200,
-  //       contentType: 'text/tsv',
-  //       responseText: `
-  //         \tseries a\tseries b
-  //         category 1\t1.234\t2.345
-  //         category 2\t3.456\t4.567
-  //       `,
-  //     });
-
-  //     expect(callback).toHaveBeenCalledWith({
-  //       data: {
-  //         categories: ['category 1', 'category 2'],
-  //         series: [
-  //           {
-  //             name: 'series a',
-  //             data: [1.234, 3.456],
-  //           },
-  //           {
-  //             name: 'series b',
-  //             data: [2.345, 4.567],
-  //           },
-  //         ],
-  //       },
-  //       options: {
-  //         editorChart: {
-  //           url: 'http://url.to/chart-data.tsv',
-  //         },
-  //       },
-  //     });
-  //   });
-  // });
-
   describe('setDefaultOptions', () => {
-    let container;
+    let container: HTMLElement;
 
     beforeEach(() => {
       container = document.createElement('div');
@@ -493,7 +281,7 @@ describe('chart plugin', () => {
     });
 
     afterEach(() => {
-      container.parentNode.removeChild(container);
+      document.body.removeChild(container);
     });
 
     it('should respect default min/max width/height', () => {
@@ -503,27 +291,27 @@ describe('chart plugin', () => {
             width: -10,
             height: -10,
           },
-        },
-        {},
+        } as ChartOptions,
+        {} as PluginOptions,
         container
       );
 
-      expect(chartOptions.chart.width).toBe(0);
-      expect(chartOptions.chart.height).toBe(0);
+      expect(chartOptions.chart!.width).toBe(0);
+      expect(chartOptions.chart!.height).toBe(0);
     });
 
     it('should respect default width/height', () => {
       const chartOptions = setDefaultOptions(
-        {},
+        {} as ChartOptions,
         {
           width: 300,
           height: 400,
-        },
+        } as PluginOptions,
         container
       );
 
-      expect(chartOptions.chart.width).toBe(300);
-      expect(chartOptions.chart.height).toBe(400);
+      expect(chartOptions.chart!.width).toBe(300);
+      expect(chartOptions.chart!.height).toBe(400);
     });
 
     it('should use width/height from codeblock', () => {
@@ -541,13 +329,13 @@ describe('chart plugin', () => {
             width: 500,
             height: 600,
           },
-        },
+        } as ChartOptions,
         pluginOptions,
         container
       );
 
-      expect(chartOptions.chart.width).toBe(500);
-      expect(chartOptions.chart.height).toBe(600);
+      expect(chartOptions.chart!.width).toBe(500);
+      expect(chartOptions.chart!.height).toBe(600);
     });
 
     it('should respect min/max width/height', () => {
@@ -556,20 +344,20 @@ describe('chart plugin', () => {
         minHeight: 400,
         maxWidth: 700,
         maxHeight: 800,
-      };
+      } as PluginOptions;
       let chartOptions = setDefaultOptions(
         {
           chart: {
             width: 200,
             height: 200,
           },
-        },
+        } as ChartOptions,
         pluginOptions,
         container
       );
 
-      expect(chartOptions.chart.width).toBe(300);
-      expect(chartOptions.chart.height).toBe(400);
+      expect(chartOptions.chart!.width).toBe(300);
+      expect(chartOptions.chart!.height).toBe(400);
 
       chartOptions = setDefaultOptions(
         {
@@ -577,12 +365,12 @@ describe('chart plugin', () => {
             width: 1000,
             height: 1000,
           },
-        },
+        } as ChartOptions,
         pluginOptions,
         container
       );
-      expect(chartOptions.chart.width).toBe(700);
-      expect(chartOptions.chart.height).toBe(800);
+      expect(chartOptions.chart!.width).toBe(700);
+      expect(chartOptions.chart!.height).toBe(800);
     });
   });
 });
