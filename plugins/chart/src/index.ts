@@ -32,15 +32,9 @@ import {
   PieChart,
   BaseOptions,
 } from '@toast-ui/chart';
-// @ts-ignore
 import isString from 'tui-code-snippet/type/isString';
-// @ts-ignore
-import isNull from 'tui-code-snippet/type/isNull';
-// @ts-ignore
 import isUndefined from 'tui-code-snippet/type/isUndefined';
-// @ts-ignore
 import inArray from 'tui-code-snippet/array/inArray';
-// @ts-ignore
 import extend from 'tui-code-snippet/object/extend';
 // @ts-ignore
 import ajax from 'tui-code-snippet/ajax/index.js';
@@ -55,10 +49,12 @@ csv.DETECT_TYPES = false;
 
 const reEOL = /[\n\r]/;
 const reGroupByDelimiter = /([^:]+)?:?(.*)/;
-const DSV_DELIMITERS = [',', '\t', /\s+/];
-const SUPPORTED_CHART_TYPES = ['barChart', 'columnChart', 'lineChart', 'areaChart', 'pieChart'];
-const CATEGORY_CHART_TYPES = ['lineChart', 'areaChart'];
-const DEFAULT_CHART_OPTIONS = {
+const DEFAULT_DELIMITER = /\s+/;
+const DELIMITERS = [',', '\t'];
+const MINIMUM_DELIM_CNT = 2;
+const SUPPORTED_CHART_TYPES = ['bar', 'column', 'line', 'area', 'pie'];
+const CATEGORY_CHART_TYPES = ['line', 'area'];
+const DEFAULT_DIMENSION_OPTIONS = {
   minWidth: 0,
   maxWidth: Infinity,
   minHeight: 0,
@@ -77,7 +73,7 @@ const chart = {
 const chartMap: Record<string, ChartInstance> = {};
 
 type ChartType = keyof typeof chart;
-type ChartOptions = BaseOptions & { editorChart: { type?: ChartType; url?: string } };
+export type ChartOptions = BaseOptions & { editorChart: { type?: ChartType; url?: string } };
 type ChartInstance = BarChart | ColumnChart | AreaChart | LineChart | PieChart;
 type ChartData = {
   categories: string[];
@@ -85,7 +81,6 @@ type ChartData = {
 };
 type ParserCallback = (parsedInfo?: { data: ChartData; options?: ChartOptions }) => void;
 type OnSuccess = (res: { data: any }) => void;
-type DelimInfo = { delim: string | RegExp; cnt: number };
 
 export function parse(text: string, callback: ParserCallback) {
   text = trimKeepingTabs(text);
@@ -93,7 +88,7 @@ export function parse(text: string, callback: ParserCallback) {
   const urlOptions = parseToChartOption(firstTexts);
   const url = urlOptions?.editorChart?.url;
 
-  // if first code block is `options` and has `url` option, fetch data from url
+  // if first text is `options` and has `url` option, fetch data from url
   if (isString(url)) {
     // url option provided
     // fetch data from url
@@ -112,30 +107,28 @@ export function parse(text: string, callback: ParserCallback) {
 }
 
 export function detectDelimiter(text: string) {
-  let delimInfo: DelimInfo | null = null;
+  let delimiter: string | RegExp = DEFAULT_DELIMITER;
+  let delimCnt = 0;
 
   text = trimKeepingTabs(text);
 
-  DSV_DELIMITERS.forEach((delim) => {
-    const matched = text.match(new RegExp(delim, 'g'));
+  DELIMITERS.forEach((delim) => {
+    const matched = text.match(new RegExp(delim, 'g'))!;
 
-    if (!delimInfo || matched?.length > delimInfo.cnt) {
-      delimInfo = { delim, cnt: matched!.length };
+    if (matched?.length > Math.max(MINIMUM_DELIM_CNT, delimCnt)) {
+      delimiter = delim;
+      delimCnt = matched.length;
     }
   });
 
-  if (isNull(delimInfo)) {
-    // parsing completely failed
-    throw new Error('The chart data should be split into consistent delimiter.');
-  }
-
-  return delimInfo.delim;
+  return delimiter;
 }
 
-export function parseToChartData(text: string, delimiter?: string) {
+export function parseToChartData(text: string, delimiter?: string | RegExp) {
   // trim all heading/trailing blank lines
   text = trimKeepingTabs(text);
 
+  // @ts-ignore
   csv.COLUMN_SEPARATOR = delimiter || detectDelimiter(text);
   let dsv: string[][] = csv.parse(text);
 
@@ -192,11 +185,11 @@ function createOptionKeys(keyString: string) {
     keys[0] = `${topKey}Axis`;
   }
 
-  return keys as (keyof ChartOptions)[];
+  return keys;
 }
 
 export function parseToChartOption(text: string) {
-  const options = {} as ChartOptions;
+  const options: Record<string, any> = {};
 
   if (!isUndefined(text)) {
     const lineTexts = text.split(reEOL);
@@ -230,7 +223,7 @@ export function parseToChartOption(text: string) {
     });
   }
 
-  return options;
+  return options as ChartOptions;
 }
 
 function getAdjustedDimension(size: 'auto' | number, containerWidth: number) {
@@ -242,10 +235,11 @@ function getChartDimension(
   pluginOptions: PluginOptions,
   chartContainer: HTMLElement
 ) {
-  const { maxWidth, minWidth, maxHeight, minHeight } = pluginOptions;
+  const dimensionOptions = extend({ ...DEFAULT_DIMENSION_OPTIONS }, pluginOptions);
+  const { maxWidth, minWidth, maxHeight, minHeight } = dimensionOptions;
   // if no width or height specified, set width and height to container width
   const { width: containerWidth } = chartContainer.getBoundingClientRect();
-  let { width = pluginOptions.width, height = pluginOptions.height } = chartOptions.chart!;
+  let { width = dimensionOptions.width, height = dimensionOptions.height } = chartOptions.chart!;
 
   width = getAdjustedDimension(width, containerWidth);
   height = getAdjustedDimension(height, containerWidth);
@@ -271,8 +265,6 @@ export function setDefaultOptions(
     chartOptions
   );
 
-  pluginOptions = extend({}, DEFAULT_CHART_OPTIONS, pluginOptions);
-
   const { width, height } = getChartDimension(chartOptions, pluginOptions, chartContainer);
 
   chartOptions.chart!.width = width;
@@ -286,50 +278,53 @@ export function setDefaultOptions(
   return chartOptions;
 }
 
-function renderChart(id: string, text: string, pluginOptions: PluginOptions) {
-  // should draw the chart after rendering container element in the preview
-  const chartContainer = document.querySelector<HTMLElement>(`[data-chart-id=${id}]`)!;
-
+function destroyUnecessaryChart() {
   Object.keys(chartMap).forEach((id) => {
-    const con = document.querySelector<HTMLElement>(`[data-chart-id=${id}]`)!;
+    const container = document.querySelector<HTMLElement>(`[data-chart-id=${id}]`);
 
-    if (!con) {
+    if (!container) {
       chartMap[id].destroy();
 
       delete chartMap[id];
     }
   });
-  if (!chartContainer) {
-    return;
-  }
+}
 
-  try {
-    parse(text, (parsedInfo) => {
-      const { data, options } = parsedInfo || {};
-      const chartOptions = setDefaultOptions(options!, pluginOptions, chartContainer);
-      const chartType = chartOptions.editorChart.type!;
+function renderChart(id: string, text: string, pluginOptions: PluginOptions) {
+  // should draw the chart after rendering container element
+  const chartContainer = document.querySelector<HTMLElement>(`[data-chart-id=${id}]`)!;
 
-      if (isNull(data)) {
-        chartContainer.innerHTML = 'invalid chart data';
-      } else if (SUPPORTED_CHART_TYPES.indexOf(chartType) < 0) {
-        chartContainer.innerHTML = `invalid chart type. type: bar, column, line, area, pie`;
-      } else if (
-        CATEGORY_CHART_TYPES.indexOf(chartType) > -1 &&
-        data.categories.length !== data.series[0].data.length
-      ) {
-        chartContainer.innerHTML = 'invalid chart data';
-      } else {
-        const Constructor = chart[chartType];
+  destroyUnecessaryChart();
 
-        chartMap[id] = new Constructor({ el: chartContainer, data, options: chartOptions });
-      }
-    });
-  } catch (e) {
-    chartContainer.innerHTML = 'invalid chart data';
+  if (chartContainer) {
+    try {
+      parse(text, (parsedInfo) => {
+        const { data, options } = parsedInfo || {};
+        const chartOptions = setDefaultOptions(options!, pluginOptions, chartContainer);
+        const chartType = chartOptions.editorChart.type!;
+
+        if (
+          !data ||
+          (CATEGORY_CHART_TYPES.indexOf(chartType) > -1 &&
+            data.categories.length !== data.series[0].data.length)
+        ) {
+          chartContainer.innerHTML = 'invalid chart data';
+        } else if (SUPPORTED_CHART_TYPES.indexOf(chartType) < 0) {
+          chartContainer.innerHTML = `invalid chart type. type: bar, column, line, area, pie`;
+        } else {
+          const Constructor = chart[chartType];
+
+          // @ts-ignore
+          chartMap[id] = new Constructor({ el: chartContainer, data, options: chartOptions });
+        }
+      });
+    } catch (e) {
+      chartContainer.innerHTML = 'invalid chart data';
+    }
   }
 }
 
-interface PluginOptions {
+export interface PluginOptions {
   usageStatistics?: boolean;
   minWidth: number;
   maxWidth: number;
@@ -348,9 +343,9 @@ interface PluginOptions {
  * @param {number} [options.maxWidth=Infinity] - maximum width
  * @param {number} [options.maxHeight=Infinity] - maximum height
  * @param {number|string} [options.width='auto'] - default width
- * @param {number|string} [options.c='auto'] - default height
+ * @param {number|string} [options.height='auto'] - default height
  */
-export default function chartPlugin(emitter: Emitter, options: PluginOptions = {}) {
+export default function chartPlugin(_: any, options: PluginOptions) {
   options = extend(
     {
       usageStatistics: options.usageStatistics ?? true,
@@ -360,7 +355,7 @@ export default function chartPlugin(emitter: Emitter, options: PluginOptions = {
 
   return {
     toHTMLRenderers: {
-      chart(node: MdNode) {
+      chart(node: any) {
         const id = `chart-${Math.random().toString(36).substr(2, 10)}`;
 
         setTimeout(() => {
