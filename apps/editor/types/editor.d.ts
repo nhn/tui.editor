@@ -91,6 +91,7 @@ export class Viewer {
 
 interface EditorPluginInfo {
   toHTMLRenderers: HTMLConvertorMap;
+  toMarkdownRenderers: ToMdConvertorMap;
   markdownPlugins: PluginProp[];
   wysiwygPlugins: PluginProp[];
   wysiwygNodeViews: NodeViewPropMap;

@@ -26,6 +26,7 @@ export function getPluginInfo(plugins: EditorPlugin[], eventEmitter: Emitter) {
 
         const {
           toHTMLRenderers,
+          toMarkdownRenderers,
           markdownPlugins,
           wysiwygPlugins,
           wysiwygNodeViews,
@@ -35,6 +36,10 @@ export function getPluginInfo(plugins: EditorPlugin[], eventEmitter: Emitter) {
 
         if (toHTMLRenderers) {
           acc.toHTMLRenderers = { ...acc.toHTMLRenderers, ...toHTMLRenderers };
+        }
+
+        if (toMarkdownRenderers) {
+          acc.toMarkdownRenderers = { ...acc.toMarkdownRenderers, ...toMarkdownRenderers };
         }
 
         if (markdownPlugins) {
@@ -61,6 +66,7 @@ export function getPluginInfo(plugins: EditorPlugin[], eventEmitter: Emitter) {
       },
       {
         toHTMLRenderers: {},
+        toMarkdownRenderers: {},
         mdPlugins: [],
         wwPlugins: [],
         wwNodeViews: {},

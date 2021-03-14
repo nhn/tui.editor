@@ -64,6 +64,19 @@
               };
             },
           },
+          toMarkdownRenderers: {
+            heading({ node }, { origin }) {
+              const { level, headingType } = node.attrs;
+
+              if (headingType === 'setext') {
+                const delim = level === 1 ? '========' : '------';
+
+                return { delim };
+              }
+
+              return origin();
+            },
+          },
         };
       }
 
