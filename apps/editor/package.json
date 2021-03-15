@@ -38,6 +38,7 @@
     "test": "jest --watch",
     "test:types": "tsc",
     "serve": "snowpack dev --polyfill-node",
+    "serve:all": "webpack-dev-server --all",
     "build:i18n": "cross-env webpack --config scripts/webpack.config.i18n.js && webpack --config scripts/webpack.config.i18n.js --minify",
     "build:prod": "cross-env webpack --mode=production && webpack --mode=production --minify && node tsBannerGenerator.js",
     "build": "npm run build:i18n && npm run build:prod",
