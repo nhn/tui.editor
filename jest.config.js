@@ -1,3 +1,3 @@
 module.exports = {
-  projects: ['<rootDir>/apps/editor/jest.config.js'],
+  projects: ['<rootDir>/libs/toastmark/jest.config.js', '<rootDir>/apps/editor/jest.config.js'],
 };
