@@ -35,9 +35,6 @@
   "browserslist": "last 2 versions, not ie <= 10",
   "scripts": {
     "lint": "eslint .",
-    "test": "../../node_modules/.bin/jest --watch",
-    "test:types": "../../node_modules/.bin/tsc",
-    "serve": "../../node_modules/.bin/snowpack dev",
     "build:i18n": "cross-env webpack --config scripts/webpack.config.i18n.js && webpack --config scripts/webpack.config.i18n.js --minify",
     "build:prod": "cross-env webpack --mode=production && webpack --mode=production --minify && node tsBannerGenerator.js",
     "build": "npm run build:i18n && npm run build:prod",

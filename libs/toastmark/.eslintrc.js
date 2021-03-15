@@ -1,5 +1,4 @@
 module.exports = {
-  extends: '../../.eslintrc.js',
   rules: {
     'prefer-destructuring': 0,
     'padding-line-between-statements': 0,
