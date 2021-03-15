@@ -36,7 +36,7 @@
   "scripts": {
     "lint": "eslint .",
     "test": "../../node_modules/.bin/jest --watch",
-    "test:types": "tsc",
+    "test:types": "../../node_modules/.bin/tsc",
     "serve": "snowpack dev --polyfill-node",
     "serve:all": "webpack-dev-server --all",
     "build:i18n": "cross-env webpack --config scripts/webpack.config.i18n.js && webpack --config scripts/webpack.config.i18n.js --minify",
