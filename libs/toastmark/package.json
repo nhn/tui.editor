@@ -3,11 +3,8 @@
   "version": "0.0.1-alpha.1",
   "description": "ToastMark - Incremental markdown parser extended from CommonMark.js",
   "scripts": {
-    "lint": "../../node_modules/.bin/eslint ./src/**/*.ts",
     "serve": "webpack-dev-server",
-    "build": "webpack --mode=production",
-    "test": "../../node_modules/.bin/jest --watch",
-    "test:types": "../../node_modules/.bin/tsc"
+    "build": "webpack --mode=production"
   },
   "types": "types/index.d.ts",
   "files": [
@@ -31,7 +28,6 @@
     "css-loader": "^3.4.2",
     "entities": "^2.0.0",
     "html-webpack-plugin": "^3.2.0",
-    "jest": "^24.9.0",
     "mdurl": "^1.0.1",
     "style-loader": "^1.1.3",
     "terser-webpack-plugin": "^2.3.5",

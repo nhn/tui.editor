@@ -21,10 +21,16 @@
     "prettier": "^2.1.2",
     "snowpack": "^3.0.13",
     "ts-jest": "^26.5.3",
-    "typescript": "^4.2.3"
+    "typescript": "^4.2.3",
+    "vm": "^0.1.0"
   },
   "scripts": {
-    "test": "jest --watch",
+    "test:all": "jest --watch",
+    "lint:all": "eslint .",
+    "check-types:editor": "tsc --project ./apps/editor/tsconfig.json",
+    "check-types:toastmark": "tsc --project ./libs/toastmark/tsconfig.json",
+    "serve:editor": "node ./scripts/snowpack.js editor",
+    "serve:toastmark": "node ./scripts/snowpack.js toastmark",
     "build:editor": "lerna run --scope @toast-ui/editor build",
     "build:jquery": "lerna run --scope @toast-ui/jquery-editor build",
     "build:react": "lerna run --scope @toast-ui/react-editor build",
