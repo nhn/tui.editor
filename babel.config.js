@@ -1,4 +1,4 @@
-module.exports = api => {
+module.exports = (api) => {
   const env = api.env();
 
   return {
@@ -7,11 +7,11 @@ module.exports = api => {
         '@babel/preset-env',
         {
           modules: env === 'test' ? 'commonjs' : false,
-          loose: true
-        }
-      ]
+          loose: true,
+        },
+      ],
     ],
     plugins: ['@babel/plugin-proposal-class-properties'],
-    babelrcRoots: ['.', 'apps/*', 'plugins/*']
+    babelrcRoots: ['.', 'apps/*', 'plugins/*'],
   };
 };
