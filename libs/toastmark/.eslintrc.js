@@ -16,7 +16,6 @@ module.exports = {
     'no-empty': 0,
     'dot-notation': 0,
     'spaced-comment': 0,
-    complexity: 0,
     eqeqeq: 0,
   },
 };

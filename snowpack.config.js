@@ -2,8 +2,11 @@
 module.exports = {
   mount: {
     'test/demo': '/',
-    'src/img': '/img',
     src: '/dist',
+    'src/img': '/img',
+  },
+  packageOptions: {
+    polyfillNode: true,
   },
   devOptions: {
     port: 8080,
