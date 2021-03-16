@@ -38,7 +38,14 @@ function getOutputConfig(isProduction, isCDN, minify) {
 
 function getExternalsConfig(isProduction, isCDN) {
   if (isProduction && !isCDN) {
-    return ['@toast-ui/chart'];
+    return [
+      '@toast-ui/chart',
+      '@toast-ui/chart/dist/esm/charts/barChart',
+      '@toast-ui/chart/dist/esm/charts/columnChart',
+      '@toast-ui/chart/dist/esm/charts/pieChart',
+      '@toast-ui/chart/dist/esm/charts/areaChart',
+      '@toast-ui/chart/dist/esm/charts/lineChart'
+    ];
   }
 
   return [];
