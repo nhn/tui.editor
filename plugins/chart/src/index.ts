@@ -39,6 +39,7 @@ import extend from 'tui-code-snippet/object/extend';
 // @ts-ignore
 import ajax from 'tui-code-snippet/ajax/index.js';
 
+import { PluginOptions } from '../index';
 import csv from './csv';
 import { trimKeepingTabs, isNumeric, clamp } from './util';
 
@@ -278,7 +279,7 @@ export function setDefaultOptions(
   return chartOptions;
 }
 
-function destroyUnecessaryChart() {
+function destroyChart() {
   Object.keys(chartMap).forEach((id) => {
     const container = document.querySelector<HTMLElement>(`[data-chart-id=${id}]`);
 
@@ -294,7 +295,7 @@ function renderChart(id: string, text: string, pluginOptions: PluginOptions) {
   // should draw the chart after rendering container element
   const chartContainer = document.querySelector<HTMLElement>(`[data-chart-id=${id}]`)!;
 
-  destroyUnecessaryChart();
+  destroyChart();
 
   if (chartContainer) {
     try {
@@ -324,14 +325,8 @@ function renderChart(id: string, text: string, pluginOptions: PluginOptions) {
   }
 }
 
-export interface PluginOptions {
-  usageStatistics?: boolean;
-  minWidth: number;
-  maxWidth: number;
-  minHeight: number;
-  maxHeight: number;
-  width: number | 'auto';
-  height: number | 'auto';
+function generateId() {
+  return `chart-${Math.random().toString(36).substr(2, 10)}`;
 }
 
 /**
@@ -356,7 +351,7 @@ export default function chartPlugin(_: any, options: PluginOptions) {
   return {
     toHTMLRenderers: {
       chart(node: any) {
-        const id = `chart-${Math.random().toString(36).substr(2, 10)}`;
+        const id = generateId();
 
         setTimeout(() => {
           renderChart(id, node.literal, options);
