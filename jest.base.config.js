@@ -1,6 +1,10 @@
+const path = require('path');
+const setupFile = path.resolve(__dirname, './jest-setup.js')
+
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  setupFilesAfterEnv: [setupFile],
   transform: {
     '^.+\\.ts$': 'ts-jest',
     '^.+\\.js$': 'jest-esm-transformer',

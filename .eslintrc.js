@@ -13,7 +13,7 @@ module.exports = {
   globals: {
     jest: true,
   },
-  ignorePatterns: ['node_modules/*'],
+  ignorePatterns: ['node_modules/*', '**/*.config.js'],
   rules: {
     '@typescript-eslint/no-non-null-assertion': 0,
     '@typescript-eslint/explicit-function-return-type': 0,
