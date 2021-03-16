@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
-import { TableCellMdNode, MdNode } from '@toast-ui/toastmark';
+import { TableCellMdNode, MdNode, MdPos } from '@toast-ui/toastmark';
 import { EditorCommand, MdSpecContext } from '@t/spec';
 import { TableRowMdNode } from '@t/markdown';
 import { clsWithMdPrefix } from '@/utils/dom';
@@ -78,9 +78,8 @@ export class Table extends Mark {
       const textContent = getTextContent(doc, endIndex);
       // should add `1` to line for the markdown parser
       // because markdown parser has `1`(not zero) as the start number
-      const mdPos = [endIndex + 1, to - endFromOffset + 1];
-
-      const mdNode: MdNode = this.context.toastMark.findNodeAtPosition(mdPos);
+      const mdPos: MdPos = [endIndex + 1, to - endFromOffset + 1];
+      const mdNode: MdNode = this.context.toastMark.findNodeAtPosition(mdPos)!;
       const cellNode = findClosestNode(
         mdNode,
         (node) =>
@@ -113,8 +112,8 @@ export class Table extends Mark {
   private moveTableCell(moveNext: boolean): Command {
     return ({ selection, tr }, dispatch) => {
       const { endFromOffset, endIndex, to } = getRangeInfo(selection);
-      const mdPos = [endIndex + 1, to - endFromOffset];
-      const mdNode: MdNode = this.context.toastMark.findNodeAtPosition(mdPos);
+      const mdPos: MdPos = [endIndex + 1, to - endFromOffset];
+      const mdNode: MdNode = this.context.toastMark.findNodeAtPosition(mdPos)!;
       const cellNode = findClosestNode(mdNode, (node) => isTableCellNode(node)) as TableCellMdNode;
 
       if (cellNode) {

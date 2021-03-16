@@ -1,5 +1,6 @@
 import { Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
+import { MdPos } from '@toast-ui/toastmark';
 import { MdContext } from '@t/spec';
 import { findClosestNode } from '@/utils/markdown';
 import { getRangeInfo, getNodeOffsetRange } from '../helper/pos';
@@ -18,8 +19,8 @@ export function smartTask({ schema, toastMark }: MdContext) {
             const { startIndex, startFromOffset, from } = getRangeInfo(selection);
             // should add `1` to line for the markdown parser
             // because markdown parser has `1`(not zero) as the start number
-            const mdPos = [startIndex + 1, from - startFromOffset + 1];
-            const mdNode = toastMark.findNodeAtPosition(mdPos);
+            const mdPos: MdPos = [startIndex + 1, from - startFromOffset + 1];
+            const mdNode = toastMark.findNodeAtPosition(mdPos)!;
             const paraNode = findClosestNode(
               mdNode,
               (node) => node!.type === 'paragraph' && node.parent?.type === 'item'
