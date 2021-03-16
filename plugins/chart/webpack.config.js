@@ -40,11 +40,11 @@ function getExternalsConfig(isProduction, isCDN) {
   if (isProduction && !isCDN) {
     return [
       '@toast-ui/chart',
-      '@toast-ui/chart/dist/esm/charts/barChart',
-      '@toast-ui/chart/dist/esm/charts/columnChart',
-      '@toast-ui/chart/dist/esm/charts/pieChart',
-      '@toast-ui/chart/dist/esm/charts/areaChart',
-      '@toast-ui/chart/dist/esm/charts/lineChart'
+      '@toast-ui/chart/bar',
+      '@toast-ui/chart/column',
+      '@toast-ui/chart/pie',
+      '@toast-ui/chart/area',
+      '@toast-ui/chart/line'
     ];
   }
 
@@ -79,6 +79,13 @@ module.exports = (env, argv) => {
         stream: require.resolve('stream-browserify'),
         buffer: require.resolve('buffer'),
         os: require.resolve('os-browserify')
+      },
+      alias: {
+        '@toast-ui/chart/line': '@toast-ui/chart/dist/esm/charts/lineChart.js',
+        '@toast-ui/chart/area': '@toast-ui/chart/dist/esm/charts/areaChart.js',
+        '@toast-ui/chart/pie': '@toast-ui/chart/dist/esm/charts/pieChart.js',
+        '@toast-ui/chart/column': '@toast-ui/chart/dist/esm/charts/columnChart.js',
+        '@toast-ui/chart/bar': '@toast-ui/chart/dist/esm/charts/barChart.js',
       },
       extensions: ['.ts', '.js'],
     },

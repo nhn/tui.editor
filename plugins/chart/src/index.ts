@@ -25,11 +25,16 @@
  * $$
  */
 import { BaseOptions } from '@toast-ui/chart';
-import LineChart from '@toast-ui/chart/dist/esm/charts/lineChart';
-import AreaChart from '@toast-ui/chart/dist/esm/charts/areaChart';
-import PieChart from '@toast-ui/chart/dist/esm/charts/pieChart';
-import ColumnChart from '@toast-ui/chart/dist/esm/charts/columnChart';
-import BarChart from '@toast-ui/chart/dist/esm/charts/barChart';
+// @ts-ignore
+import LineChart from '@toast-ui/chart/line';
+// @ts-ignore
+import AreaChart from '@toast-ui/chart/area';
+// @ts-ignore
+import PieChart from '@toast-ui/chart/pie';
+// @ts-ignore
+import ColumnChart from '@toast-ui/chart/column';
+// @ts-ignore
+import BarChart from '@toast-ui/chart/bar';
 import isString from 'tui-code-snippet/type/isString';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import inArray from 'tui-code-snippet/array/inArray';
