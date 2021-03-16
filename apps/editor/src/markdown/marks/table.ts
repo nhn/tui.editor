@@ -2,6 +2,7 @@ import { DOMOutputSpecArray } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
 import { TableCellMdNode, MdNode } from '@toast-ui/toastmark';
 import { EditorCommand, MdSpecContext } from '@t/spec';
+import { TableRowMdNode } from '@t/markdown';
 import { clsWithMdPrefix } from '@/utils/dom';
 import { findClosestNode, getMdEndCh, isTableCellNode } from '@/utils/markdown';
 import Mark from '@/spec/mark';
@@ -89,7 +90,8 @@ export class Table extends Mark {
 
       if (cellNode) {
         const isEmpty = !textContent.replace(reEmptyTable, '').trim();
-        const columnCount = cellNode.parent.parent.parent.columns.length;
+        const parent = cellNode.parent as TableRowMdNode;
+        const columnCount = parent.parent.parent.columns.length;
         const row = createTableRow(columnCount);
 
         if (isEmpty) {
@@ -116,7 +118,7 @@ export class Table extends Mark {
       const cellNode = findClosestNode(mdNode, (node) => isTableCellNode(node)) as TableCellMdNode;
 
       if (cellNode) {
-        const { parent } = cellNode;
+        const parent = cellNode.parent as TableRowMdNode;
         const { type, parentType, childType } = createTargetTypes(moveNext);
         let chOffset = getMdEndCh(cellNode);
 
