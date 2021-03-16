@@ -52,5 +52,7 @@
     "build:uml": "lerna run --stream --scope @toast-ui/editor-plugin-uml build",
     "build:toastmark": "lerna run --stream --scope @toast-ui/toastmark build"
   },
-  "dependencies": {}
+  "dependencies": {
+    "tslib": "^2.1.0"
+  }
 }

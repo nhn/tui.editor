@@ -6,6 +6,7 @@
     "strict": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
+    "importHelpers": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
