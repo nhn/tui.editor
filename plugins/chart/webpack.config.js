@@ -7,6 +7,7 @@ const webpack = require('webpack');
 const { name, version, author, license } = require('./package.json');
 
 const TerserPlugin = require('terser-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 function getOutputConfig(isProduction, isCDN, minify) {
   const filename = `toastui-${name.replace(/@toast-ui\//, '')}`;
@@ -37,7 +38,7 @@ function getOutputConfig(isProduction, isCDN, minify) {
 
 function getExternalsConfig(isProduction, isCDN) {
   if (isProduction && !isCDN) {
-    return ['tui-chart/dist/tui-chart-polyfill'];
+    return ['@toast-ui/chart'];
   }
 
   return [];
@@ -49,10 +50,8 @@ function getOptimizationConfig(isProduction, minify) {
   if (isProduction && minify) {
     minimizer.push(
       new TerserPlugin({
-        cache: true,
         parallel: true,
-        sourceMap: false,
-        extractComments: false
+        extractComments: false,
       })
     );
   }
@@ -62,32 +61,34 @@ function getOptimizationConfig(isProduction, minify) {
 
 module.exports = (env, argv) => {
   const isProduction = argv.mode === 'production';
-  const minify = !!argv.minify;
-  const isCDN = !!argv.cdn;
+  const { minify = false, cdn = false } = env;
   const config = {
     mode: isProduction ? 'production' : 'development',
-    entry: './src/js/index.js',
-    output: getOutputConfig(isProduction, isCDN, minify),
-    externals: getExternalsConfig(isProduction, isCDN),
+    entry: './src/index.ts',
+    output: getOutputConfig(isProduction, cdn, minify),
+    externals: getExternalsConfig(isProduction, cdn),
+    resolve: {
+      fallback: { 
+        stream: require.resolve('stream-browserify'),
+        buffer: require.resolve('buffer'),
+        os: require.resolve('os-browserify')
+      },
+      extensions: ['.ts', '.js'],
+    },
     module: {
       rules: [
         {
-          test: /\.js$/,
-          exclude: /node_modules|dist/,
-          loader: 'eslint-loader',
-          enforce: 'pre',
-          options: {
-            failOnError: isProduction
-          }
+          test: /\.ts$|\.js$/,
+          use: [
+            {
+              loader: 'ts-loader',
+              options: {
+                transpileOnly: true,
+              },
+            },
+          ],
+          exclude: /node_modules/,
         },
-        {
-          test: /\.js$/,
-          exclude: /node_modules|dist/,
-          loader: 'babel-loader?cacheDirectory',
-          options: {
-            rootMode: 'upward'
-          }
-        }
       ]
     },
     optimization: getOptimizationConfig(isProduction, minify)

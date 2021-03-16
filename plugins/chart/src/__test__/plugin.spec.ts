@@ -1,5 +1,5 @@
 import 'jest-canvas-mock';
-import { PluginOptions } from '../../index';
+import { PluginOptions } from '@t/index';
 import {
   parseToChartOption,
   parseToChartData,
