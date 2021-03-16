@@ -38,7 +38,7 @@ export class ThematicBreak extends Node {
         const rootBlock = $from.node(ROOT_BLOCK_DEPTH);
         const lastBlock = doc.child(doc.childCount - 1) === rootBlock;
         const blockEnd = doc.resolve($from.after(ROOT_BLOCK_DEPTH));
-        const nextHr = blockEnd.nodeAfter?.type.name === this.name;
+        const nextHr = $from.nodeAfter?.type.name === this.name;
 
         if (lastBlock || nextHr) {
           nodes.push(paragraph.create());

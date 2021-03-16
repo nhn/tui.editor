@@ -85,10 +85,14 @@ describe('wysiwyg commands', () => {
   });
 
   describe('hr command', () => {
-    it('should add hr element with empty pararaphs in empty document', () => {
+    it('should add hr element with empty paragraphs in empty document', () => {
       cmd.exec('wysiwyg', 'hr');
 
-      expect(wwe.getHTML()).toBe('<p><br></p><div><hr></div><p><br></p>');
+      expect(wwe.getHTML()).toBe(oneLineTrim`
+        <p><br></p>
+        <div><hr></div>
+        <p><br></p>
+      `);
     });
 
     it('should add hr element with after empty paragraph', () => {
@@ -96,7 +100,11 @@ describe('wysiwyg commands', () => {
       wwe.setSelection(2, 2);
       cmd.exec('wysiwyg', 'hr');
 
-      expect(wwe.getHTML()).toBe('<p>foo</p><div><hr></div><p><br></p>');
+      expect(wwe.getHTML()).toBe(oneLineTrim`
+        <p>foo</p>
+        <div><hr></div>
+        <p><br></p>
+      `);
     });
 
     it('should add only hr element', () => {
@@ -104,7 +112,11 @@ describe('wysiwyg commands', () => {
       wwe.setSelection(2, 2);
       cmd.exec('wysiwyg', 'hr');
 
-      expect(wwe.getHTML()).toBe('<p>foo</p><div><hr></div><p>bar</p>');
+      expect(wwe.getHTML()).toBe(oneLineTrim`
+        <p>foo</p>
+        <div><hr></div>
+        <p>bar</p>
+      `);
     });
 
     it('should not add hr element when there is selection', () => {
@@ -154,9 +166,13 @@ describe('wysiwyg commands', () => {
     it('should add pre element including code element', () => {
       cmd.exec('wysiwyg', 'codeBlock');
 
-      expect(wwe.getHTML()).toBe(
-        '<div data-language="text" class="tui-editor-ww-code-block"><pre><code><br></code></pre></div>'
-      );
+      expect(wwe.getHTML()).toBe(oneLineTrim`
+        <div data-language="text" class="tui-editor-ww-code-block">
+          <pre>
+            <code><br></code>
+          </pre>
+        </div>
+      `);
     });
 
     it('should change pre element to selection', () => {
@@ -165,9 +181,13 @@ describe('wysiwyg commands', () => {
       cmd.exec('wysiwyg', 'selectAll');
       cmd.exec('wysiwyg', 'codeBlock');
 
-      expect(wwe.getHTML()).toBe(
-        '<div data-language="text" class="tui-editor-ww-code-block"><pre><code>foo</code></pre></div>'
-      );
+      expect(wwe.getHTML()).toBe(oneLineTrim`
+        <div data-language="text" class="tui-editor-ww-code-block">
+          <pre>
+            <code>foo</code>
+          </pre>
+        </div>
+      `);
     });
   });
 
