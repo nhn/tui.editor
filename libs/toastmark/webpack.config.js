@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
-const merge = require('webpack-merge');
+const { merge } = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const commonConfig = {
-  entry: './src/index.ts',
+  entry: path.resolve(__dirname, './src/index.ts'),
   module: {
     rules: [
       {
@@ -25,6 +25,10 @@ const commonConfig = {
     extensions: ['.ts', '.js'],
   },
   output: {
+    environment: {
+      arrowFunction: false,
+      const: false
+    },
     filename: 'toastmark.js',
     libraryTarget: 'commonjs',
     publicPath: '/dist',
@@ -38,11 +42,13 @@ module.exports = (env, { mode = 'development' }) => {
   }
 
   return merge(commonConfig, {
-    entry: './src/__sample__/index.ts',
+    entry: path.resolve(__dirname, './src/__sample__/index.ts'),
     mode,
     devtool: 'inline-source-map',
     output: {
       libraryTarget: 'umd',
+      publicPath: '/',
+      path: path.resolve(__dirname, '/'),
     },
     module: {
       rules: [
@@ -58,6 +64,7 @@ module.exports = (env, { mode = 'development' }) => {
       }),
     ],
     devServer: {
+      open: true,
       inline: true,
       host: '0.0.0.0',
       port: 8000,
