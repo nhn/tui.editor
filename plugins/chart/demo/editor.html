@@ -3,15 +3,7 @@
   <head lang="en">
     <meta charset="UTF-8" />
     <title>Editor</title>
-    <!-- Editor's Dependencies -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"
-    />
-    <!-- Editor -->
-    <link rel="stylesheet" href="http://localhost:8080/dist/cdn/toastui-editor.css" />
-    <!-- Plugin -->
-    <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/v3.7.0/tui-chart.css" />
+    <link rel="stylesheet" href="https://uicdn.toast.com/chart/v4.1.4/toastui-chart.min.css" />
   </head>
   <body>
     <div class="code-html">
@@ -23,12 +15,12 @@
       <div id="viewer"></div>
     </div>
     <!-- Editor -->
-    <script src="http://localhost:8080/dist/cdn/toastui-editor-all.js"></script>
-    <!-- Plugin -->
-    <script src="../dist/cdn/toastui-editor-plugin-chart.js"></script>
-    <script class="code-js">
+    <script type="module">
+      import { Editor } from 'http://localhost:8080/dist/index.js';
+      import chartPlugin from '/dist/index.js';
+
       const content = [
-        '```chart',
+        '$$chart',
         ',category1,category2',
         'Jan,21,23',
         'Feb,31,17',
@@ -40,11 +32,8 @@
         'y.min: 1',
         'y.max: 40',
         'y.suffix: $',
-        '```'
+        '$$'
       ].join('\n');
-
-      const { Editor } = toastui;
-      const { chart } = Editor.plugin;
 
       const chartOptions = {
         minWidth: 100,
@@ -58,7 +47,7 @@
         previewStyle: 'vertical',
         height: '500px',
         initialValue: content,
-        plugins: [chart, chartOptions]
+        plugins: [[chartPlugin, chartOptions]]
       });
 
       const viewer = Editor.factory({
@@ -66,7 +55,7 @@
         viewer: true,
         height: '500px',
         initialValue: content,
-        plugins: [chart, chartOptions]
+        plugins: [[chartPlugin, chartOptions]]
       });
     </script>
   </body>
