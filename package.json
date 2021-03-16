@@ -58,5 +58,7 @@
     "build:libs": "npm run build:toastmark && npm run build:to-mark",
     "setup:libs": "npm run install:libs && npm run build:libs"
   },
-  "dependencies": {}
+  "dependencies": {
+    "tslib": "^2.1.0"
+  }
 }
