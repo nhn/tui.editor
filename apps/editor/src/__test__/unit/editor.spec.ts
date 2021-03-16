@@ -473,6 +473,52 @@ describe('editor', () => {
         // @ts-ignore
         expect(plugin).toHaveBeenCalledWith(editor.eventEmitter, options);
       });
+
+      it(`should add command to command manager when plugin return 'markdownCommands' value`, () => {
+        const plugin = () => {
+          return {
+            markdownCommands: {
+              foo: () => () => true,
+            },
+          };
+        };
+
+        editor = new Editor({
+          el: container,
+          plugins: [plugin],
+        });
+
+        // @ts-ignore
+        jest.spyOn(editor.commandManager, 'exec');
+
+        editor.exec('markdown', 'foo');
+
+        // @ts-ignore
+        expect(editor.commandManager.exec).toHaveBeenCalled();
+      });
+
+      it(`should add command to command manager when plugin return 'wysiwygCommands' value`, () => {
+        const plugin = () => {
+          return {
+            wysiwygCommands: {
+              foo: () => () => true,
+            },
+          };
+        };
+
+        editor = new Editor({
+          el: container,
+          plugins: [plugin],
+        });
+
+        // @ts-ignore
+        jest.spyOn(editor.commandManager, 'exec');
+
+        editor.exec('wysiwyg', 'foo');
+
+        // @ts-ignore
+        expect(editor.commandManager.exec).toHaveBeenCalled();
+      });
     });
   });
 });

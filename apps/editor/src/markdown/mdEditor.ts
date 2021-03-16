@@ -189,8 +189,8 @@ export default class MdEditor extends EditorBase {
     });
   }
 
-  createCommands(extraCommands?: PluginCommandMap) {
-    return this.specs.commands(this.view, extraCommands);
+  createCommands(commands?: PluginCommandMap) {
+    return this.specs.commands(this.view, commands);
   }
 
   private updateMarkdown(tr: Transaction) {

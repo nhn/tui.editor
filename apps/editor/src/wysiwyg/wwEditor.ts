@@ -192,8 +192,8 @@ export default class WysiwygEditor extends EditorBase {
     });
   }
 
-  createCommands(extraCommands?: PluginCommandMap) {
-    return this.specs.commands(this.view, { ...getWwCommands(), ...extraCommands });
+  createCommands(commands?: PluginCommandMap) {
+    return this.specs.commands(this.view, { ...getWwCommands(), ...commands });
   }
 
   getHTML() {

@@ -90,13 +90,13 @@ export class Viewer {
 }
 
 interface EditorPluginInfo {
-  toHTMLRenderers: HTMLConvertorMap;
-  toMarkdownRenderers: ToMdConvertorMap;
-  markdownPlugins: PluginProp[];
-  wysiwygPlugins: PluginProp[];
-  wysiwygNodeViews: NodeViewPropMap;
-  markdownCommands: PluginCommandMap;
-  wysiwygCommands: PluginCommandMap;
+  toHTMLRenderers?: HTMLConvertorMap;
+  toMarkdownRenderers?: ToMdConvertorMap;
+  markdownPlugins?: PluginProp[];
+  wysiwygPlugins?: PluginProp[];
+  wysiwygNodeViews?: NodeViewPropMap;
+  markdownCommands?: PluginCommandMap;
+  wysiwygCommands?: PluginCommandMap;
 }
 
 export type PluginFn = (
