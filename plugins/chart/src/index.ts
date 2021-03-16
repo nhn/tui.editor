@@ -39,7 +39,7 @@ import extend from 'tui-code-snippet/object/extend';
 // @ts-ignore
 import ajax from 'tui-code-snippet/ajax/index.js';
 
-import { PluginOptions } from '../index';
+import { PluginOptions } from '@t/index';
 import csv from './csv';
 import { trimKeepingTabs, isNumeric, clamp } from './util';
 
