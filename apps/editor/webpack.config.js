@@ -12,95 +12,13 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 const ENTRY_EDITOR = './src/index.ts';
 const ENTRY_VIEWER = './src/indexViewer.ts';
 
-const isDevelopAll = process.argv.indexOf('--all') >= 0;
-const isDevelopViewer = process.argv.indexOf('--viewer') >= 0;
 const isProduction = process.argv.indexOf('--mode=production') >= 0;
-const minify = process.argv.indexOf('--minify') >= 0;
-
-const defaultConfigs = Array(isProduction ? 2 : 1)
-  .fill(0)
-  .map(() => {
-    return {
-      mode: isProduction ? 'production' : 'development',
-      cache: false,
-      output: {
-        library: ['toastui', 'Editor'],
-        libraryTarget: 'umd',
-        libraryExport: 'default',
-        path: path.resolve(__dirname, minify ? 'dist/cdn' : 'dist'),
-        filename: `toastui-[name]${minify ? '.min' : ''}.js`,
-      },
-      module: {
-        rules: [
-          {
-            test: /\.js$/,
-            exclude: /node_modules|dist|build/,
-            loader: 'eslint-loader',
-            enforce: 'pre',
-            options: {
-              configFile: './.eslintrc.js',
-              failOnWarning: false,
-              failOnError: false,
-            },
-          },
-          {
-            test: /\.ts$|\.js$/,
-            use: [
-              {
-                loader: 'ts-loader',
-                options: {
-                  transpileOnly: true,
-                },
-              },
-            ],
-            exclude: /node_modules/,
-          },
-
-          {
-            test: /\.css$/,
-            use: [MiniCssExtractPlugin.loader, 'css-loader'],
-          },
-          {
-            test: /\.png$/i,
-            use: 'url-loader',
-          },
-        ],
-      },
-      resolve: {
-        extensions: ['.ts', '.js'],
-        alias: {
-          '@': path.resolve('src'),
-          '@t': path.resolve('types'),
-        },
-      },
-      plugins: [
-        new MiniCssExtractPlugin({
-          moduleFilename: ({ name }) =>
-            `toastui-${name.replace('-all', '')}${minify ? '.min' : ''}.css`,
-        }),
-        new webpack.BannerPlugin({
-          banner: [
-            pkg.name,
-            `@version ${pkg.version} | ${new Date().toDateString()}`,
-            `@author ${pkg.author}`,
-            `@license ${pkg.license}`,
-          ].join('\n'),
-          raw: false,
-          entryOnly: true,
-        }),
-      ],
-      optimization: {
-        minimize: false,
-      },
-      performance: {
-        hints: false,
-      },
-    };
-  });
+let minify;
 
 function addFileManagerPlugin(config) {
   // When an entry option's value is set to a CSS file,
@@ -154,22 +72,10 @@ function addAnalyzerPlugin(config, type) {
 }
 
 function setDevelopConfig(config) {
-  if (isDevelopAll) {
-    // check in examples
-    config.entry = { 'editor-all': ENTRY_EDITOR };
-    config.output.publicPath = 'dist/cdn';
-    config.externals = [];
-  } else if (isDevelopViewer) {
-    // check in examples
-    config.entry = { 'editor-viewer': ENTRY_VIEWER };
-    config.output.publicPath = 'dist/cdn';
-  } else {
-    // check in demo
-    config.module.rules = config.module.rules.slice(1);
-    config.entry = { editor: ENTRY_EDITOR };
-    config.output.publicPath = 'dist/';
-  }
-
+  // check in examples
+  config.entry = { 'editor-all': ENTRY_EDITOR };
+  config.output.publicPath = 'dist/cdn';
+  config.externals = [];
   config.devtool = 'inline-source-map';
   config.devServer = {
     inline: true,
@@ -183,13 +89,9 @@ function setProductionConfig(config) {
   config.entry = {
     editor: ENTRY_EDITOR,
     'editor-viewer': ENTRY_VIEWER,
-    'editor-only': './src/js/indexEditorOnlyStyle.ts',
-    // legacy styles
-    'editor-old': './src/js/indexOldStyle.ts',
-    'editor-viewer-old': './src/css/old/contents.css',
   };
 
-  addFileManagerPlugin(config);
+  // addFileManagerPlugin(config);
 
   if (minify) {
     addMinifyPlugin(config);
@@ -208,10 +110,91 @@ function setProductionConfigForAll(config) {
   }
 }
 
-if (isProduction) {
-  setProductionConfig(defaultConfigs[0]);
-  setProductionConfigForAll(defaultConfigs[1]);
-} else {
-  setDevelopConfig(defaultConfigs[0]);
-}
-module.exports = defaultConfigs;
+module.exports = (env) => {
+  minify = !!env.minify;
+  
+  const configs = Array(isProduction ? 2 : 1)
+    .fill(0)
+    .map(() => {
+      return {
+        mode: isProduction ? 'production' : 'development',
+        cache: false,
+        output: {
+          library: ['toastui', 'Editor'],
+          libraryTarget: 'umd',
+          libraryExport: 'default',
+          path: path.resolve(__dirname, minify ? 'dist/cdn' : 'dist'),
+          filename: `toastui-[name]${minify ? '.min' : ''}.js`,
+        },
+        module: {
+          rules: [
+            {
+              test: /\.ts$|\.js$/,
+              use: [
+                {
+                  loader: 'ts-loader',
+                  options: {
+                    transpileOnly: true,
+                  },
+                },
+              ],
+              exclude: /node_modules/,
+            },
+
+            {
+              test: /\.css$/,
+              use: [MiniCssExtractPlugin.loader, 'css-loader'],
+            },
+            {
+              test: /\.png$/i,
+              use: 'url-loader',
+            },
+          ],
+        },
+        resolve: {
+          extensions: ['.ts', '.js'],
+          alias: {
+            '@': path.resolve('src'),
+            '@t': path.resolve('types'),
+          },
+        },
+        plugins: [
+          new MiniCssExtractPlugin({
+            moduleFilename: ({ name }) =>
+              `toastui-${name.replace('-all', '')}${minify ? '.min' : ''}.css`,
+          }),
+          new webpack.BannerPlugin({
+            banner: [
+              pkg.name,
+              `@version ${pkg.version} | ${new Date().toDateString()}`,
+              `@author ${pkg.author}`,
+              `@license ${pkg.license}`,
+            ].join('\n'),
+            raw: false,
+            entryOnly: true,
+          }),
+          new ESLintPlugin({
+            extensions: ['js', 'ts'],
+            exclude: ['node_modules', 'dist'],
+            failOnError: false
+          })
+        ],
+        optimization: {
+          minimize: false,
+        },
+        performance: {
+          hints: false,
+        },
+      };
+    });
+
+
+  if (isProduction) {
+    setProductionConfig(configs[0]);
+    setProductionConfigForAll(configs[1]);
+  } else {
+    setDevelopConfig(configs[0]);
+  }
+
+  return configs;
+};

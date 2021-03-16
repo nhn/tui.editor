@@ -1,4 +1,5 @@
 module.exports = {
+  root: true,
   plugins: ['prettier', '@typescript-eslint'],
   extends: ['tui/es6', 'plugin:prettier/recommended', 'plugin:@typescript-eslint/recommended'],
   parser: '@typescript-eslint/parser',
@@ -13,7 +14,7 @@ module.exports = {
   globals: {
     jest: true,
   },
-  ignorePatterns: ['node_modules/*', '**/*.config.js'],
+  ignorePatterns: ['node_modules/*', '**/*.config.js', 'dist'],
   rules: {
     '@typescript-eslint/no-non-null-assertion': 0,
     '@typescript-eslint/explicit-function-return-type': 0,
