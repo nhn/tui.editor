@@ -9,7 +9,8 @@ import {
   insertNodes,
   replaceNodes,
 } from '@/helper/manipulation';
-import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
+import { getRangeInfo } from '../helper/pos';
+import { getTextContent } from '../helper/query';
 
 export const reBlockQuote = /^\s*> ?/;
 
@@ -26,36 +27,30 @@ export class BlockQuote extends Mark {
     };
   }
 
-  private getChangedText(text: string, isBlockQuote?: boolean) {
-    if (isBlockQuote) {
-      return text.replace(reBlockQuote, '').trim();
-    }
-    return text.trim() ? `> ${text.trim()}` : `> `;
+  private createBlockQuoteText(text: string, isBlockQuote?: boolean) {
+    return isBlockQuote ? text.replace(reBlockQuote, '').trim() : `> ${text.trim()}`;
   }
 
   private extendBlockQuote(): Command {
     return ({ selection, doc, tr, schema }, dispatch) => {
-      const [, to] = resolveSelectionPos(selection);
-      const startResolvedPos = doc.resolve(to);
-
-      const lineText = startResolvedPos.node().textContent;
-      const isBlockQuote = reBlockQuote.test(lineText);
-
-      const [startOffset, endOffset] = getExtendedRangeOffset(to, to, doc);
+      const { endFromOffset, endToOffset, endIndex, to } = getRangeInfo(selection);
+      const textContent = getTextContent(doc, endIndex);
+      const isBlockQuote = reBlockQuote.test(textContent);
 
       if (isBlockQuote) {
-        const isEmpty = !lineText.replace(reBlockQuote, '').trim();
+        const isEmpty = !textContent.replace(reBlockQuote, '').trim();
 
         if (isEmpty) {
           const emptyNode = createParagraph(schema);
 
-          dispatch!(replaceNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
+          dispatch!(replaceNodes(tr, endFromOffset, endToOffset, [emptyNode, emptyNode]));
         } else {
-          const slicedText = lineText.slice(to - startOffset).trim();
-          const node = createParagraph(schema, this.getChangedText(slicedText));
+          const slicedText = textContent.slice(to - endFromOffset).trim();
+          const node = createParagraph(schema, this.createBlockQuoteText(slicedText));
           const newTr = slicedText
-            ? replaceNodes(tr, to, endOffset, node, { from: 0, to: 1 })
-            : insertNodes(tr, endOffset, node);
+            ? replaceNodes(tr, to, endToOffset, node, { from: 0, to: 1 })
+            : insertNodes(tr, endToOffset, node);
+          // should add `4` to selection end position considering `> ` text and start, end block tag position
           const newSelection = createTextSelection(newTr, to + slicedText.length + 4);
 
           dispatch!(newTr.setSelection(newSelection));
@@ -70,30 +65,21 @@ export class BlockQuote extends Mark {
 
   commands(): EditorCommand {
     return () => ({ selection, doc, tr, schema }, dispatch) => {
-      const [from, to] = resolveSelectionPos(selection);
-      const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
-      const startResolvedPos = doc.resolve(from);
-
-      const lineText = startResolvedPos.node().textContent;
-      const isBlockQuote = reBlockQuote.test(lineText);
-
+      const { startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(selection);
+      const isBlockQuote = reBlockQuote.test(getTextContent(doc, startIndex));
       const nodes: ProsemirrorNode[] = [];
 
-      doc.nodesBetween(startOffset, endOffset, (node) => {
-        const { isBlock, textContent } = node;
+      for (let i = startIndex; i <= endIndex; i += 1) {
+        const textContent = getTextContent(doc, i);
+        const result = this.createBlockQuoteText(textContent, isBlockQuote);
 
-        if (isBlock) {
-          const result = this.getChangedText(textContent, isBlockQuote);
-
-          nodes.push(createParagraph(schema, result));
-        }
-      });
-
-      if (nodes.length) {
-        dispatch!(replaceNodes(tr, startOffset, endOffset, nodes));
-        return true;
+        nodes.push(createParagraph(schema, result));
       }
 
+      if (nodes.length) {
+        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, nodes));
+        return true;
+      }
       return false;
     };
   }

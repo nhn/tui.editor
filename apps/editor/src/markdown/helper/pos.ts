@@ -135,11 +135,47 @@ export function getExtendedRangeOffset(from: number, to: number, doc: Prosemirro
   return [startOffset, endOffset];
 }
 
-export function getPosInfo(doc: ProsemirrorNode, selection: Selection, endCursor = false) {
-  const [from, to] = resolveSelectionPos(selection);
-  const resolvedFrom = endCursor ? to : from;
-  const [startOffset, endOffset] = getExtendedRangeOffset(resolvedFrom, to, doc);
-  const [startLine, endLine] = getEditorToMdLine(resolvedFrom, to, doc);
+export function getRangeInfo(selection: Selection) {
+  let { $from, $to } = selection;
+  const { from, to } = selection;
+  const { doc } = $from;
 
-  return { from: resolvedFrom, to, startOffset, endOffset, startLine, endLine };
+  if (selection instanceof AllSelection) {
+    $from = doc.resolve(from + 1);
+    $to = doc.resolve(to - 1);
+  }
+  if ($from.depth === 0) {
+    $from = doc.resolve(from - 1);
+    $to = $from;
+  }
+
+  return {
+    startFromOffset: $from.start(1),
+    endFromOffset: $to.start(1),
+    startToOffset: $from.end(1),
+    endToOffset: $to.end(1),
+    startIndex: $from.index(0),
+    endIndex: $to.index(0),
+    from: $from.pos,
+    to: $to.pos,
+  };
+}
+
+export function getNodeOffsetRange(doc: ProsemirrorNode, targetIndex: number) {
+  let startOffset = 1;
+  let endOffset = 1;
+
+  for (let i = 0, offset = 0; i < doc.childCount; i += 1) {
+    const { nodeSize } = doc.child(i);
+
+    startOffset = offset + 1;
+    endOffset = offset + nodeSize;
+
+    if (i === targetIndex) {
+      break;
+    }
+
+    offset += nodeSize;
+  }
+  return { startOffset, endOffset };
 }

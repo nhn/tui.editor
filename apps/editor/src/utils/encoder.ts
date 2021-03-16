@@ -21,7 +21,7 @@ export function decodeURIGraceful(uri: string) {
     .join('%20');
 }
 
-export function replaceMarkdownText(text: string, encode: boolean) {
+export function encodeMarkdownText(text: string, encode: boolean) {
   const expectedValues = encode ? encodedList : escapedList;
 
   return encodingRegExps.reduce(
@@ -31,5 +31,5 @@ export function replaceMarkdownText(text: string, encode: boolean) {
 }
 
 export function decodeURL(text: string) {
-  return text.replace(reURL, (matched) => replaceMarkdownText(decodeURIGraceful(matched), true));
+  return text.replace(reURL, (matched) => encodeMarkdownText(decodeURIGraceful(matched), true));
 }

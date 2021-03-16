@@ -2,7 +2,7 @@ import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { decodeURIGraceful, replaceMarkdownText } from '@/utils/encoder';
+import { decodeURIGraceful, encodeMarkdownText } from '@/utils/encoder';
 import { createText } from '@/helper/manipulation';
 import { resolveSelectionPos } from '../helper/pos';
 
@@ -56,13 +56,11 @@ export class Link extends Mark {
         syntax = '!';
       }
 
-      text = replaceMarkdownText(text, false);
-      url = replaceMarkdownText(decodeURIGraceful(url), true);
+      text = encodeMarkdownText(text, false);
+      url = encodeMarkdownText(decodeURIGraceful(url), true);
       syntax += `[${text}](${url})`;
 
-      const newTr = tr.replaceWith(from, to, createText(schema, syntax));
-
-      dispatch!(newTr);
+      dispatch!(tr.replaceWith(from, to, createText(schema, syntax)));
 
       return true;
     };

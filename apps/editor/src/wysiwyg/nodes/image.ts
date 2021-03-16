@@ -1,7 +1,7 @@
 import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
-import { decodeURIGraceful, replaceMarkdownText } from '@/utils/encoder';
+import { decodeURIGraceful, encodeMarkdownText } from '@/utils/encoder';
 import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
 
 import { EditorCommand } from '@t/spec';
@@ -57,8 +57,8 @@ export class Image extends NodeSchema {
       }
 
       const node = schema.nodes.image.createAndFill({
-        imageUrl: replaceMarkdownText(decodeURIGraceful(imageUrl), true),
-        ...(altText && { altText: replaceMarkdownText(altText, false) }),
+        imageUrl: encodeMarkdownText(decodeURIGraceful(imageUrl), true),
+        ...(altText && { altText: encodeMarkdownText(altText, false) }),
       });
 
       dispatch!(tr.replaceSelectionWith(node!).scrollIntoView());

@@ -3,7 +3,7 @@ import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { createParagraph, createTextSelection } from '@/helper/manipulation';
-import { resolveSelectionPos } from '../helper/pos';
+import { getRangeInfo } from '../helper/pos';
 
 const thematicBreakSyntax = '***';
 
@@ -20,32 +20,31 @@ export class ThematicBreak extends Mark {
     };
   }
 
-  private line(): EditorCommand {
+  private hr(): EditorCommand {
     return () => (state, dispatch) => {
-      const [from, to] = resolveSelectionPos(state.selection);
-      const emptyNode = createParagraph(state.schema);
-      const lineNode = createParagraph(state.schema, thematicBreakSyntax);
-      const nodes = [lineNode];
+      const { selection, schema, tr } = state;
+      const { from, to, endToOffset } = getRangeInfo(selection);
+      const emptyNode = createParagraph(schema);
+      const hrNode = createParagraph(schema, thematicBreakSyntax);
+      const nodes = [hrNode];
 
-      if (to >= state.doc.resolve(to).end()) {
+      if (to >= endToOffset) {
         nodes.push(emptyNode);
       }
 
-      const tr = state.tr.replaceWith(from, to, nodes);
-
       // add 3(`***` length) and 3(start, end block tag position)
-      dispatch!(tr.setSelection(createTextSelection(tr, from + 6)));
+      dispatch!(tr.replaceWith(from, to, nodes).setSelection(createTextSelection(tr, from + 6)));
 
       return true;
     };
   }
 
   commands() {
-    return { hr: this.line() };
+    return { hr: this.hr() };
   }
 
   keymaps() {
-    const lineCommand = this.line()();
+    const lineCommand = this.hr()();
 
     return { 'Mod-l': lineCommand, 'Mod-L': lineCommand };
   }

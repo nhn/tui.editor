@@ -3,7 +3,8 @@ import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { createParagraph, replaceNodes } from '@/helper/manipulation';
-import { getExtendedRangeOffset, resolveSelectionPos } from '../helper/pos';
+import { getRangeInfo } from '../helper/pos';
+import { getTextContent } from '../helper/query';
 
 const reHeading = /^#{1,6}\s/;
 
@@ -34,46 +35,41 @@ export class Heading extends Mark {
     };
   }
 
-  private getChangedText(level: number, text: string, curHeadingSyntax: string) {
-    const textContent = text.replace(curHeadingSyntax, '');
-    let newLevel = '';
+  private createHeadingText(level: number, text: string, curHeadingSyntax: string) {
+    const textContent = text.replace(curHeadingSyntax, '').trim();
+    let headingText = '';
 
     while (level > 0) {
-      newLevel += '#';
+      headingText += '#';
       level -= 1;
     }
 
-    return textContent ? `${newLevel} ${textContent}` : `${newLevel} `;
+    return `${headingText} ${textContent}`;
   }
 
   commands(): EditorCommand<Payload> {
     return (payload) => ({ selection, doc, tr, schema }, dispatch) => {
       const { level } = payload!;
-      const [from, to] = resolveSelectionPos(selection);
-      const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
-
+      const { startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(selection);
       const nodes: ProsemirrorNode[] = [];
 
-      doc.nodesBetween(startOffset, endOffset, ({ isBlock, textContent }) => {
-        if (isBlock) {
-          const matchedHeading = textContent.match(reHeading);
+      for (let i = startIndex; i <= endIndex; i += 1) {
+        const textContent = getTextContent(doc, i);
+        const matchedHeading = textContent.match(reHeading);
+        const curHeadingSyntax = matchedHeading ? matchedHeading[0] : '';
+        const curLevel = curHeadingSyntax.trim().length;
 
-          const curHeadingSyntax = matchedHeading ? matchedHeading[0] : '';
-          const curLevel = curHeadingSyntax.trim().length;
+        if (curLevel !== level) {
+          const result = this.createHeadingText(level, textContent, curHeadingSyntax);
 
-          if (!curLevel || curLevel !== level) {
-            const result = this.getChangedText(level, textContent, curHeadingSyntax);
-
-            nodes.push(createParagraph(schema, result));
-          }
+          nodes.push(createParagraph(schema, result));
         }
-      });
-
-      if (nodes.length) {
-        dispatch!(replaceNodes(tr, startOffset, endOffset, nodes));
-        return true;
       }
 
+      if (nodes.length) {
+        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, nodes));
+        return true;
+      }
       return false;
     };
   }

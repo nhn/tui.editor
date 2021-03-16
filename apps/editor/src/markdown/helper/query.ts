@@ -1,5 +1,9 @@
 import { ProsemirrorNode } from 'prosemirror-model';
 
 export function getTextByMdLine(doc: ProsemirrorNode, mdLine: number) {
-  return doc.content.child(mdLine - 1).textContent;
+  return getTextContent(doc, mdLine - 1);
+}
+
+export function getTextContent(doc: ProsemirrorNode, index: number) {
+  return doc.child(index).textContent;
 }

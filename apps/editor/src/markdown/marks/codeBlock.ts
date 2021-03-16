@@ -10,8 +10,8 @@ import {
   replaceNodes,
 } from '@/helper/manipulation';
 import { isCodeBlockNode } from '@/utils/markdown';
-import { getExtendedRangeOffset, getPosInfo, resolveSelectionPos } from '../helper/pos';
-import { getTextByMdLine } from '../helper/query';
+import { getRangeInfo } from '../helper/pos';
+import { getTextContent } from '../helper/query';
 
 export class CodeBlock extends Mark {
   context!: MdSpecContext;
@@ -31,22 +31,20 @@ export class CodeBlock extends Mark {
   commands(): EditorCommand {
     return () => (state, dispatch) => {
       const { selection, doc, schema } = state;
-      const [from, to] = resolveSelectionPos(selection);
-      const [startOffset, endOffset] = getExtendedRangeOffset(from, to, doc);
-
+      const { startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(selection);
       const fencedNode = createParagraph(schema, '```');
       const nodes: ProsemirrorNode[] = [fencedNode];
 
-      doc.nodesBetween(startOffset, endOffset, ({ isBlock, textContent }) => {
-        if (isBlock) {
-          nodes.push(createParagraph(schema, textContent));
-        }
-      });
+      for (let i = startIndex; i <= endIndex; i += 1) {
+        const textContent = getTextContent(doc, i);
+
+        nodes.push(createParagraph(schema, textContent));
+      }
       nodes.push(fencedNode);
 
-      const tr = replaceNodes(state.tr, startOffset, endOffset, nodes);
+      const tr = replaceNodes(state.tr, startFromOffset, endToOffset, nodes);
 
-      dispatch!(tr.setSelection(createTextSelection(tr, startOffset + 4)));
+      dispatch!(tr.setSelection(createTextSelection(tr, startFromOffset + 4)));
 
       return true;
     };
@@ -55,22 +53,21 @@ export class CodeBlock extends Mark {
   private keepIndentation(): Command {
     return ({ selection, tr, doc, schema }, dispatch) => {
       const { toastMark } = this.context;
-      const { to, startOffset, endOffset, endLine } = getPosInfo(doc, selection, true);
-      const lineText = getTextByMdLine(doc, endLine);
+      const { startFromOffset, endToOffset, endIndex, from, to } = getRangeInfo(selection);
+      const textContent = getTextContent(doc, endIndex);
 
-      if (selection.from === selection.to && lineText.trim()) {
-        let matched;
-        const mdNode = toastMark.findFirstNodeAtLine(endLine)!;
+      if (from === to && textContent.trim()) {
+        const matched = textContent.match(/^\s+/);
+        const mdNode = toastMark.findFirstNodeAtLine(endIndex + 1);
 
-        if (isCodeBlockNode(mdNode) && (matched = lineText.match(/^\s+/))) {
+        if (isCodeBlockNode(mdNode) && matched) {
           const [spaces] = matched;
-          const slicedText = lineText.slice(to - startOffset);
-
+          const slicedText = textContent.slice(to - startFromOffset);
           const node = createParagraph(schema, spaces + slicedText);
           const newTr = slicedText
-            ? replaceNodes(tr, to, endOffset, node, { from: 0, to: 1 })
-            : insertNodes(tr, endOffset, node);
-          const newSelection = createTextSelection(newTr, endOffset + spaces.length + 2);
+            ? replaceNodes(tr, to, endToOffset, node, { from: 0, to: 1 })
+            : insertNodes(tr, endToOffset, node);
+          const newSelection = createTextSelection(newTr, endToOffset + spaces.length + 2);
 
           dispatch!(newTr.setSelection(newSelection));
 

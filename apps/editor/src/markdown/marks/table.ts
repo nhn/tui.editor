@@ -1,19 +1,19 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
-import { TableCellMdNode, MdPos, TableMdNode } from '@toast-ui/toastmark';
-import { TableRowMdNode } from '@t/markdown';
+import { TableCellMdNode, MdNode } from '@toast-ui/toastmark';
 import { EditorCommand, MdSpecContext } from '@t/spec';
+import { TableRowMdNode } from '@t/markdown';
 import { clsWithMdPrefix } from '@/utils/dom';
-import { findClosestNode, getMdEndCh, getMdEndLine, isTableCellNode } from '@/utils/markdown';
+import { findClosestNode, getMdEndCh, isTableCellNode } from '@/utils/markdown';
 import Mark from '@/spec/mark';
-import { getEditorToMdPos, getMdToEditorPos, getPosInfo, resolveSelectionPos } from '../helper/pos';
+import { getRangeInfo } from '../helper/pos';
 import {
   createParagraph,
   createTextSelection,
   insertNodes,
   replaceNodes,
 } from '@/helper/manipulation';
-import { getTextByMdLine } from '../helper/query';
+import { getTextContent } from '../helper/query';
 
 interface Payload {
   columnCount: number;
@@ -24,7 +24,6 @@ interface MovingTypeInfo {
   type: 'next' | 'prev';
   parentType: 'tableHead' | 'tableBody';
   childType: 'firstChild' | 'lastChild';
-  diff: 1 | -1;
 }
 
 const reEmptyTable = /\||\s/g;
@@ -54,8 +53,8 @@ function createTableRow(columnCount: number, delim?: boolean) {
 
 function createTargetTypes(moveNext: boolean): MovingTypeInfo {
   return moveNext
-    ? { type: 'next', parentType: 'tableHead', childType: 'firstChild', diff: 1 }
-    : { type: 'prev', parentType: 'tableBody', childType: 'lastChild', diff: -1 };
+    ? { type: 'next', parentType: 'tableHead', childType: 'firstChild' }
+    : { type: 'prev', parentType: 'tableBody', childType: 'lastChild' };
 }
 
 export class Table extends Mark {
@@ -75,13 +74,13 @@ export class Table extends Mark {
 
   private extendTable(): Command {
     return ({ selection, doc, tr, schema }, dispatch) => {
-      const { to, startOffset, endOffset } = getPosInfo(doc, selection, true);
+      const { startFromOffset, endFromOffset, endToOffset, endIndex, to } = getRangeInfo(selection);
+      const textContent = getTextContent(doc, endIndex);
+      // should add `1` to line for the markdown parser
+      // because markdown parser has `1`(not zero) as the start number
+      const mdPos = [endIndex + 1, to - endFromOffset + 1];
 
-      const [startPos] = getEditorToMdPos(doc, to);
-      const lineText = getTextByMdLine(doc, startPos[0]);
-      const isEmpty = !lineText.replace(reEmptyTable, '').trim();
-
-      const mdNode = this.context.toastMark.findNodeAtPosition(startPos)!;
+      const mdNode: MdNode = this.context.toastMark.findNodeAtPosition(mdPos);
       const cellNode = findClosestNode(
         mdNode,
         (node) =>
@@ -90,6 +89,7 @@ export class Table extends Mark {
       ) as TableCellMdNode;
 
       if (cellNode) {
+        const isEmpty = !textContent.replace(reEmptyTable, '').trim();
         const parent = cellNode.parent as TableRowMdNode;
         const columnCount = parent.parent.parent.columns.length;
         const row = createTableRow(columnCount);
@@ -97,75 +97,75 @@ export class Table extends Mark {
         if (isEmpty) {
           const emptyNode = createParagraph(schema);
 
-          dispatch!(replaceNodes(tr, startOffset, endOffset, [emptyNode, emptyNode]));
+          dispatch!(replaceNodes(tr, startFromOffset, endToOffset, [emptyNode, emptyNode]));
         } else {
-          const newTr = insertNodes(tr, endOffset, createParagraph(schema, row));
+          const newTr = insertNodes(tr, endToOffset, createParagraph(schema, row));
 
-          dispatch!(newTr.setSelection(createTextSelection(newTr, endOffset + 4)));
+          // should add `4` to selection end position considering `| ` text and start, end block tag position
+          dispatch!(newTr.setSelection(createTextSelection(newTr, endToOffset + 4)));
         }
-
         return true;
       }
-
       return false;
     };
   }
 
   private moveTableCell(moveNext: boolean): Command {
-    return ({ selection, doc, tr }, dispatch) => {
-      const [, to] = resolveSelectionPos(selection);
-      const [, endPos] = getEditorToMdPos(doc, to);
-      const { toastMark } = this.context;
-
-      const mdNode = toastMark.findNodeAtPosition(endPos)!;
+    return ({ selection, tr }, dispatch) => {
+      const { endFromOffset, endIndex, to } = getRangeInfo(selection);
+      const mdPos = [endIndex + 1, to - endFromOffset];
+      const mdNode: MdNode = this.context.toastMark.findNodeAtPosition(mdPos);
       const cellNode = findClosestNode(mdNode, (node) => isTableCellNode(node)) as TableCellMdNode;
 
       if (cellNode) {
         const parent = cellNode.parent as TableRowMdNode;
-        const { type, parentType, childType, diff } = createTargetTypes(moveNext);
-
-        let line = getMdEndLine(cellNode);
-        let ch = moveNext ? getMdEndCh(cellNode) + 2 : 1;
+        const { type, parentType, childType } = createTargetTypes(moveNext);
+        let chOffset = getMdEndCh(cellNode);
 
         if (cellNode[type]) {
-          ch = getMdEndCh(cellNode[type]!);
+          chOffset = getMdEndCh(cellNode[type]!) - 1;
         } else {
           const row =
             !parent[type] && parent.parent.type === parentType
               ? parent.parent[type]![childType]
               : parent[type];
 
-          if (row) {
-            line = line + diff;
-            ch = getMdEndCh(row[childType]!);
+          if (type === 'next') {
+            // if there is next row, the base offset would be end position of the next row's first child.
+            // Otherwise, the base offset is zero.
+            const baseOffset = row ? getMdEndCh(row[childType]!) : 0;
+
+            // calculate tag(open, close) position('2') for selection
+            chOffset += baseOffset + 2;
+          } else if (type === 'prev') {
+            // if there is prev row, the target position would be '-4' for calculating ' |' characters and tag(open, close)
+            // Otherwise, the target position is zero.
+            chOffset = row ? -4 : 0;
           }
         }
 
-        const mdPos: MdPos = [line, ch];
-        const [pos] = getMdToEditorPos(doc, toastMark, mdPos, mdPos);
+        const pos = endFromOffset + chOffset;
 
         dispatch!(tr.setSelection(createTextSelection(tr, pos)));
 
         return true;
       }
-
       return false;
     };
   }
 
   private addTable(): EditorCommand<Payload> {
-    return (payload) => ({ selection, doc, tr, schema }, dispatch) => {
+    return (payload) => ({ selection, tr, schema }, dispatch) => {
       const { columnCount, rowCount } = payload!;
-      const [, to] = resolveSelectionPos(selection);
-      const endOffset = doc.resolve(to).end();
+      const { endToOffset } = getRangeInfo(selection);
 
       const headerRows = createTableHeader(columnCount);
       const bodyRows = createTableBody(columnCount, rowCount - 1);
 
       const nodes = [...headerRows, ...bodyRows].map((row) => createParagraph(schema, row));
-      const newTr = insertNodes(tr, endOffset, nodes);
+      const newTr = insertNodes(tr, endToOffset, nodes);
 
-      dispatch!(tr.setSelection(createTextSelection(newTr, endOffset + 4)));
+      dispatch!(tr.setSelection(createTextSelection(newTr, endToOffset + 4)));
 
       return true;
     };
