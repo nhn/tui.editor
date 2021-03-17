@@ -2,7 +2,7 @@
  * @fileoverview I18N for Português
  * @author Nícolas Huber <nicolasluishuber@gmail.com>
  */
-import Editor from '../editor';
+import Editor from '../editorCore';
 
 Editor.setLanguage(['pt', 'pt-BR'], {
   Markdown: 'Markdown',
