@@ -4,6 +4,8 @@ import Node from '@/spec/node';
 
 import { EditorCommand } from '@t/spec';
 
+const ROOT_BLOCK_DEPTH = 1;
+
 export class ThematicBreak extends Node {
   get name() {
     return 'thematicBreak';
@@ -25,12 +27,29 @@ export class ThematicBreak extends Node {
 
   private hr(): EditorCommand {
     return () => (state, dispatch) => {
-      const node = state.schema.nodes.thematicBreak.create();
-      const tr = state.tr.replaceSelectionWith(node);
+      const { $from, $to } = state.selection;
 
-      dispatch!(tr.scrollIntoView());
+      if ($from === $to) {
+        const { doc } = state;
+        const { thematicBreak, paragraph } = state.schema.nodes;
 
-      return true;
+        const nodes: ProsemirrorNode[] = [thematicBreak.create()];
+
+        const rootBlock = $from.node(ROOT_BLOCK_DEPTH);
+        const lastBlock = doc.child(doc.childCount - 1) === rootBlock;
+        const blockEnd = doc.resolve($from.after(ROOT_BLOCK_DEPTH));
+        const nextHr = $from.nodeAfter?.type.name === this.name;
+
+        if (lastBlock || nextHr) {
+          nodes.push(paragraph.create());
+        }
+
+        dispatch!(state.tr.insert(blockEnd.pos, nodes).scrollIntoView());
+
+        return true;
+      }
+
+      return false;
     };
   }
 
