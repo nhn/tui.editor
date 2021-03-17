@@ -42,7 +42,9 @@ module.exports = (env) => {
     mode: 'production',
     entry: getEntries(),
     output: {
-      libraryTarget: 'umd',
+      library: {
+        type: 'umd',
+      },
       path: path.resolve(__dirname, minify ? '../dist/cdn/i18n' : '../dist/i18n'),
       filename: `[name]${minify ? '.min' : ''}.js`,
     },

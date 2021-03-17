@@ -40,8 +40,10 @@ function getOutputConfig(isProduction, isCDN, minify) {
 
   return {
     ...config,
-    libraryExport: 'default',
-    libraryTarget: 'commonjs2',
+    library: {
+      type: 'commonjs2',
+      export: 'default',
+    },
     path: path.resolve(__dirname, 'dist'),
     filename: `${filename}.js`,
   };

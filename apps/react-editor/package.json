@@ -5,10 +5,10 @@
   "main": "dist/toastui-react-editor.js",
   "files": [
     "dist",
-    "src",
     "index.d.ts"
   ],
   "scripts": {
+    "test:types": "tsc",
     "lint": "eslint .",
     "build": "webpack build",
     "storybook": "start-storybook -p 6006",
