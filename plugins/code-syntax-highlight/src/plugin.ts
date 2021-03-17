@@ -15,9 +15,9 @@ export function codeSyntaxHighlightPlugin(eventEmitter: Emitter, options = {}) {
   eventEmitter.addEventType('finishLanguageEditing');
 
   const { languages } = prism;
-  const registerdlanguages = Object.keys(languages)
-    .filter((language) => !isFunction(languages[language]))
-    .map((language) => language);
+  const registerdlanguages = Object.keys(languages).filter(
+    (language) => !isFunction(languages[language])
+  );
 
   return {
     toHTMLRenderers: getHTMLRenderers(prism),

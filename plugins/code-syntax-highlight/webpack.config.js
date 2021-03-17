@@ -45,41 +45,8 @@ function getOutputConfig(isProduction, isCDN, isAll, minify) {
   };
 }
 
-/* eslint-disable complexity */
-function getExternalsConfig(isProduction, isCDN, isAll) {
-  const isProdCdnSolo = isProduction && isCDN && !isAll;
-  const isProdNpm = isProduction && !isCDN;
-  const isDevSolo = !isProduction && !isAll;
-
-  // The code-syntax-highlight plugin should provide a CDN bundle without the highlight.js dependency
-  // so that users can inject their own highlight.js instance when using only selected languages.
-  if (isProdCdnSolo || isDevSolo) {
-    // @TODO decide whether to extenal in cdn
-    // return [
-    //   {
-    //     'prosemirror-state': {
-    //       commonjs: 'prosemirror-state',
-    //       commonjs2: 'prosemirror-state',
-    //       amd: 'prosemirror-state',
-    //       root: ['prosemirror-state'],
-    //     },
-    //   },
-    //   {
-    //     'prosemirror-view': {
-    //       commonjs: 'prosemirror-view',
-    //       commonjs2: 'prosemirror-view',
-    //       amd: 'prosemirror-view',
-    //       root: ['prosemirror-view'],
-    //     },
-    //   },
-    // ];
-  }
-
-  if (isProdNpm) {
-    return ['prosemirror-state', 'prosemirror-view'];
-  }
-
-  return [];
+function getExternalsConfig(isProduction) {
+  return isProduction ? ['prosemirror-state', 'prosemirror-view'] : [];
 }
 
 function getOptimizationConfig(isProduction, minify) {
@@ -108,7 +75,7 @@ module.exports = (_, argv) => {
     mode: isProduction ? 'production' : 'development',
     entry: getEntryConfig(isAll),
     output: getOutputConfig(isProduction, isCDN, isAll, minify),
-    externals: getExternalsConfig(isProduction, isCDN, isAll),
+    externals: getExternalsConfig(isProduction),
     module: {
       rules: [
         {

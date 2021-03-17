@@ -218,10 +218,10 @@ export class LanguageSelectBox {
   }
 
   private selectNextLanguage() {
-    let index = 0;
+    let index = inArray(this.currentButton, this.buttons) + 1;
 
-    if (index < this.buttons.length) {
-      index = inArray(this.currentButton, this.buttons) + 1;
+    if (index >= this.buttons.length) {
+      index = 0;
     }
 
     this.activateButtonByIndex(index);

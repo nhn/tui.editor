@@ -56,14 +56,12 @@ function parseTokens(
 
     const classes: string[] = [...classNames, ...typeClassNames, ...aliasClassNames];
 
-    if (!isString(token)) {
-      return parseTokens(token.content as Prism.Token[], classes);
-    }
-
-    return {
-      text: token,
-      classes,
-    };
+    return isString(token)
+      ? {
+          text: token,
+          classes,
+        }
+      : parseTokens(token.content as Prism.Token[], classes);
   }) as HighlightedNodeInfo[];
 }
 
