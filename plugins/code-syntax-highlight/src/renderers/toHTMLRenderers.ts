@@ -1,10 +1,10 @@
 import { CodeBlockMdNode, MdNode } from '@toast-ui/editor';
 
-import * as Prism from 'prismjs';
+import { PrismJs } from 'prismjs';
 
 const BACKTICK_COUNT = 3;
 
-export function getHTMLRenderers(prism: typeof Prism) {
+export function getHTMLRenderers(prism: PrismJs) {
   return {
     codeBlock(node: MdNode) {
       const { fenceLength, info } = node as CodeBlockMdNode;

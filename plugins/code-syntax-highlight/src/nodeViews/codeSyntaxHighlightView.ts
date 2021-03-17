@@ -167,7 +167,7 @@ class CodeSyntaxHighlightView implements NodeView {
   }
 }
 
-export function createCodeSyntaxHighlightView(languages: any[]) {
+export function createCodeSyntaxHighlightView(languages: string[]) {
   return (
     node: ProsemirrorNode,
     view: EditorView,

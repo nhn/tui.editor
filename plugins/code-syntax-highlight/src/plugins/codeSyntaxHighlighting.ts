@@ -6,7 +6,7 @@ import isString from 'tui-code-snippet/type/isString';
 
 import { flatten } from '@/utils/common';
 
-import * as Prism from 'prismjs';
+import { PrismJs } from 'prismjs';
 
 interface ChildNodeInfo {
   node: ProsemirrorNode;
@@ -65,7 +65,7 @@ function parseTokens(
   }) as HighlightedNodeInfo[];
 }
 
-function getDecorations(doc: ProsemirrorNode, prism: typeof Prism) {
+function getDecorations(doc: ProsemirrorNode, prism: PrismJs) {
   const decorations: Decoration[] = [];
   const codeBlocks = findCodeBlocks(doc);
 
@@ -97,7 +97,7 @@ function getDecorations(doc: ProsemirrorNode, prism: typeof Prism) {
   return DecorationSet.create(doc, decorations);
 }
 
-export function codeSyntaxHighlighting(prism: typeof Prism) {
+export function codeSyntaxHighlighting(prism: PrismJs) {
   return new Plugin({
     state: {
       init(_, { doc }) {

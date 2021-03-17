@@ -4,11 +4,11 @@ import { Emitter } from '@toast-ui/editor';
 
 import '@/css/plugin.css';
 
-import * as Prism from 'prismjs';
+import { PrismJs } from 'prismjs';
 
 declare global {
   interface Window {
-    Prism: typeof Prism;
+    Prism: PrismJs;
   }
 }
 
@@ -17,9 +17,7 @@ declare global {
 // eslint-disable-next-line no-undefined
 if (typeof window !== undefined) {
   window.Prism = window.Prism || {};
-
-  // @ts-ignore
-  // Prism.manual = true;
+  window.Prism.manual = true;
 }
 
 export default (eventEmitter: Emitter, options = {}) =>

@@ -1,8 +1,8 @@
-import * as Prism from 'prismjs';
+import { PrismJs } from 'prismjs';
 import { EditorPlugin } from '@toast-ui/editor';
 
 export interface PluginOptions {
-  highlighter: typeof Prism;
+  highlighter: PrismJs;
 }
 
 export default function codeSyntaxHighlightPlugin(): () => EditorPlugin;
