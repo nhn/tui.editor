@@ -40,8 +40,8 @@
     "serve": "snowpack dev",
     "serve:ie": "webpack serve",
     "build:i18n": "cross-env webpack --config scripts/webpack.config.i18n.js && webpack --config scripts/webpack.config.i18n.js --env minify",
-    "build:prod": "cross-env webpack build && webpack build --env minify",
-    "build": "npm run build:prod",
+    "build:prod": "cross-env webpack build && webpack build --env minify && node tsBannerGenerator.js",
+    "build": "npm run build:i18n && npm run build:prod",
     "note": "tui-note --tag=$(git describe --tags)",
     "doc:serve": "tuidoc --serv",
     "doc": "tuidoc"
@@ -64,8 +64,7 @@
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "tui-code-snippet": "^2.3.1",
     "url-loader": "^3.0.0",
-    "webpack-bundle-analyzer": "^3.6.0",
-    "webpack-glob-entry": "^2.1.1"
+    "webpack-bundle-analyzer": "^3.6.0"
   },
   "dependencies": {
     "htm": "^3.0.4",

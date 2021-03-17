@@ -21,9 +21,11 @@ function getOutputConfig(isProduction, isCDN, minify) {
   if (!isProduction || isCDN) {
     config = {
       ...config,
-      library: ['toastui', 'Editor', 'plugin', 'chart'],
-      libraryExport: 'default',
-      libraryTarget: 'umd',
+      library: {
+        name: ['toastui', 'Editor', 'plugin', 'chart'],
+        type: 'umd',
+        export: 'default',
+      },
       path: path.resolve(__dirname, 'dist/cdn'),
       filename: `${filename}${minify ? '.min' : ''}.js`,
     };

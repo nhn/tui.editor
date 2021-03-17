@@ -30,7 +30,9 @@ const commonConfig = {
       const: false
     },
     filename: 'toastmark.js',
-    libraryTarget: 'commonjs',
+    library: {
+      type: 'commonjs',
+    },
     publicPath: '/dist',
     path: path.resolve(__dirname, 'dist'),
   },

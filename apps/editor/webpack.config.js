@@ -15,9 +15,10 @@ const FileManagerPlugin = require('filemanager-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
 const ENTRY_EDITOR = './src/index.ts';
+const ENTRY_ONLY_STYLE = './src/indexEditorOnlyStyle.ts';
 const ENTRY_VIEWER = './src/indexViewer.ts';
 
-const isProduction = process.argv.indexOf('--mode=production') >= 0;
+let isProduction;
 let minify;
 
 function addFileManagerPlugin(config) {
@@ -27,20 +28,12 @@ function addFileManagerPlugin(config) {
   const options = minify
     ? [
         {
-          delete: [
-            './dist/cdn/toastui-editor-only.min.js',
-            './dist/cdn/toastui-editor-old.min.js',
-            './dist/cdn/toastui-editor-viewer-old.min.js',
-          ],
+          delete: ['./dist/cdn/toastui-editor-only.min.js'],
         },
       ]
     : [
         {
-          delete: [
-            './dist/toastui-editor-only.js',
-            './dist/toastui-editor-old.js',
-            './dist/toastui-editor-viewer-old.js',
-          ],
+          delete: ['./dist/toastui-editor-only.js'],
         },
         { copy: [{ source: './dist/*.{js,css}', destination: './dist/cdn' }] },
       ];
@@ -52,9 +45,7 @@ function addMinifyPlugin(config) {
   config.optimization = {
     minimizer: [
       new TerserPlugin({
-        cache: true,
         parallel: true,
-        sourceMap: false,
         extractComments: false,
       }),
       new OptimizeCSSAssetsPlugin(),
@@ -75,7 +66,10 @@ function setDevelopConfig(config) {
   // check in examples
   config.entry = { 'editor-all': ENTRY_EDITOR };
   config.output.publicPath = '/dist/cdn';
+
+  config.plugins.pop();
   config.externals = [];
+
   config.devtool = 'inline-source-map';
   config.devServer = {
     inline: true,
@@ -88,10 +82,11 @@ function setDevelopConfig(config) {
 function setProductionConfig(config) {
   config.entry = {
     editor: ENTRY_EDITOR,
+    'editor-only': ENTRY_ONLY_STYLE,
     'editor-viewer': ENTRY_VIEWER,
   };
 
-  // addFileManagerPlugin(config);
+  addFileManagerPlugin(config);
 
   if (minify) {
     addMinifyPlugin(config);
@@ -112,6 +107,7 @@ function setProductionConfigForAll(config) {
 
 module.exports = (env) => {
   minify = !!env.minify;
+  isProduction = env.WEBPACK_BUILD;
 
   const configs = Array(isProduction ? 2 : 1)
     .fill(0)
@@ -178,11 +174,50 @@ module.exports = (env) => {
             raw: false,
             entryOnly: true,
           }),
-          // new ESLintPlugin({
-          //   extensions: ['js', 'ts'],
-          //   exclude: ['node_modules', 'dist'],
-          //   failOnError: false
-          // })
+          new ESLintPlugin({
+            extensions: ['js', 'ts'],
+            exclude: ['node_modules', 'dist'],
+            failOnError: false
+          })
+        ],
+        externals: [
+          {
+            'prosemirror-commands': {
+              commonjs: 'prosemirror-commands',
+              commonjs2: 'prosemirror-commands',
+              amd: 'prosemirror-commands',
+            },
+            'prosemirror-history': {
+              commonjs: 'prosemirror-history',
+              commonjs2: 'prosemirror-history',
+              amd: 'prosemirror-history',
+            },
+            'prosemirror-inputrules': {
+              commonjs: 'prosemirror-inputrules',
+              commonjs2: 'prosemirror-inputrules',
+              amd: 'prosemirror-inputrules',
+            },
+            'prosemirror-keymap': {
+              commonjs: 'prosemirror-keymap',
+              commonjs2: 'prosemirror-keymap',
+              amd: 'prosemirror-keymap',
+            },
+            'prosemirror-model': {
+              commonjs: 'prosemirror-model',
+              commonjs2: 'prosemirror-model',
+              amd: 'prosemirror-model',
+            },
+            'prosemirror-state': {
+              commonjs: 'prosemirror-state',
+              commonjs2: 'prosemirror-state',
+              amd: 'prosemirror-state',
+            },
+            'prosemirror-view': {
+              commonjs: 'prosemirror-view',
+              commonjs2: 'prosemirror-view',
+              amd: 'prosemirror-view',
+            },
+          }
         ],
         optimization: {
           minimize: false,
