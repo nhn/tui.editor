@@ -27,7 +27,7 @@ const commonConfig = {
   output: {
     environment: {
       arrowFunction: false,
-      const: false
+      const: false,
     },
     filename: 'toastmark.js',
     library: {
@@ -38,7 +38,7 @@ const commonConfig = {
   },
   optimization: {
     minimize: false,
-  }
+  },
 };
 
 module.exports = (env, { mode = 'development' }) => {

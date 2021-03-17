@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 /**
  * @fileoverview Configs for plugin's bundle file
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
@@ -16,7 +17,7 @@ function getOutputConfig(isProduction, isCDN, minify) {
       arrowFunction: false,
       const: false,
     },
-  }
+  };
 
   if (!isProduction || isCDN) {
     config = {
@@ -42,7 +43,7 @@ function getOutputConfig(isProduction, isCDN, minify) {
     libraryExport: 'default',
     libraryTarget: 'commonjs2',
     path: path.resolve(__dirname, 'dist'),
-    filename: `${filename}.js`
+    filename: `${filename}.js`,
   };
 }
 
@@ -78,10 +79,10 @@ module.exports = (env, argv) => {
     output: getOutputConfig(isProduction, cdn, minify),
     externals: getExternalsConfig(isProduction, cdn),
     resolve: {
-      fallback: { 
+      fallback: {
         stream: require.resolve('stream-browserify'),
         buffer: require.resolve('buffer'),
-        os: require.resolve('os-browserify')
+        os: require.resolve('os-browserify'),
       },
       extensions: ['.ts', '.js'],
     },
@@ -98,16 +99,16 @@ module.exports = (env, argv) => {
             },
           ],
         },
-      ]
+      ],
     },
     plugins: [
       new ESLintPlugin({
         extensions: ['js', 'ts'],
         exclude: ['node_modules', 'dist'],
-        failOnError: false
-      })
+        failOnError: false,
+      }),
     ],
-    optimization: getOptimizationConfig(isProduction, minify)
+    optimization: getOptimizationConfig(isProduction, minify),
   };
 
   if (isProduction) {
@@ -117,14 +118,14 @@ module.exports = (env, argv) => {
           'TOAST UI Editor : Chart Plugin',
           `@version ${version} | ${new Date().toDateString()}`,
           `@author ${author}`,
-          `@license ${license}`
+          `@license ${license}`,
         ].join('\n')
       )
     );
   } else {
     config.devServer = {
       inline: true,
-      host: '0.0.0.0'
+      host: '0.0.0.0',
     };
     config.devtool = 'inline-source-map';
   }

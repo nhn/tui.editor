@@ -14,7 +14,7 @@ module.exports = {
   globals: {
     jest: true,
   },
-  ignorePatterns: ['node_modules/*', '**/*.config.js', 'dist'],
+  ignorePatterns: ['node_modules/*', 'dist'],
   rules: {
     '@typescript-eslint/no-non-null-assertion': 0,
     '@typescript-eslint/explicit-function-return-type': 0,
