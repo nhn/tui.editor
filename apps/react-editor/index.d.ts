@@ -2,15 +2,34 @@ import { Component } from 'react';
 import ToastuiEditor, { EditorOptions } from '@toast-ui/editor';
 import ToastuiEditorViewer, { ViewerOptions } from '@toast-ui/editor/dist/toastui-editor-viewer';
 
-type EditorProps = Omit<EditorOptions, 'el'>;
-type ViewerProps = Omit<ViewerOptions, 'el'>;
+export type EventNameMapping = {
+  load: 'onLoad';
+  change: 'onChange';
+  caretChange: 'onCaretChange';
+  focus: 'onFocus';
+  blur: 'onBlur';
+  keydown: 'onKeydown';
+  keyup: 'onKeyup';
+  beforePreviewRender: 'onBeforePreviewRender';
+  beforeConvertWysiwygToMarkdown: 'onBeforeConvertWysiwygToMarkdown';
+};
+
+export type EventMaps = {
+  // @TODO apply editor handler
+  [K in keyof EventNameMapping]?: (...args: any[]) => void;
+};
+
+type EditorProps = Omit<EditorOptions, 'el'> & EventMaps;
+type ViewerProps = Omit<ViewerOptions, 'el'> & EventMaps;
 
 export class Editor extends Component<EditorProps> {
-  public getInstance(): ToastuiEditor;
-  public getRootElement(): HTMLElement;
+  getInstance(): ToastuiEditor;
+
+  getRootElement(): HTMLElement;
 }
 
 export class Viewer extends Component<ViewerProps> {
-  public getInstance(): ToastuiEditorViewer;
-  public getRootElement(): HTMLElement;
+  getInstance(): ToastuiEditorViewer;
+
+  getRootElement(): HTMLElement;
 }
