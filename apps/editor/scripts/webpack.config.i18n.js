@@ -29,9 +29,10 @@ function getOptimizationConfig(minify) {
 }
 
 function getEntries() {
-  const entries = entry('./src/js/i18n/*.js');
+  const entries = entry('./src/i18n/*.ts');
 
   delete entries['en-us'];
+  delete entries.i18n;
 
   return entries;
 }
@@ -49,7 +50,7 @@ module.exports = (env, argv) => {
     },
     externals: [
       {
-        '../editor': {
+        '../editorCore': {
           commonjs: '@toast-ui/editor',
           commonjs2: '@toast-ui/editor',
           amd: '@toast-ui/editor',
@@ -69,12 +70,16 @@ module.exports = (env, argv) => {
           },
         },
         {
-          test: /\.js$/,
-          exclude: /node_modules|dist/,
-          loader: 'babel-loader?cacheDirectory',
-          options: {
-            rootMode: 'upward',
-          },
+          test: /\.ts$|\.js$/,
+          use: [
+            {
+              loader: 'ts-loader',
+              options: {
+                transpileOnly: true,
+              },
+            },
+          ],
+          exclude: /node_modules/,
         },
       ],
     },
