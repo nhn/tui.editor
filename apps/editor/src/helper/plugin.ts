@@ -15,47 +15,66 @@ function execPlugin(plugin: EditorPlugin, eventEmitter: Emitter) {
 }
 
 export function getPluginInfo(plugins: EditorPlugin[], eventEmitter: Emitter) {
-  const result = {
-    toHTMLRenderers: {},
-    mdPlugins: [],
-    wwPlugins: [],
-    wwNodeViews: {},
-  };
-
   if (plugins) {
-    return plugins.reduce<PluginInfoResult>((acc, plugin) => {
-      const pluginInfoResult = execPlugin(plugin, eventEmitter);
+    return plugins.reduce<PluginInfoResult>(
+      (acc, plugin) => {
+        const pluginInfoResult = execPlugin(plugin, eventEmitter);
 
-      if (!pluginInfoResult) {
-        throw new Error('The return value of the executed plugin is empty.');
+        if (!pluginInfoResult) {
+          throw new Error('The return value of the executed plugin is empty.');
+        }
+
+        const {
+          toHTMLRenderers,
+          toMarkdownRenderers,
+          markdownPlugins,
+          wysiwygPlugins,
+          wysiwygNodeViews,
+          markdownCommands,
+          wysiwygCommands,
+        } = pluginInfoResult;
+
+        if (toHTMLRenderers) {
+          acc.toHTMLRenderers = { ...acc.toHTMLRenderers, ...toHTMLRenderers };
+        }
+
+        if (toMarkdownRenderers) {
+          acc.toMarkdownRenderers = { ...acc.toMarkdownRenderers, ...toMarkdownRenderers };
+        }
+
+        if (markdownPlugins) {
+          acc.mdPlugins = acc.mdPlugins!.concat(markdownPlugins);
+        }
+
+        if (wysiwygPlugins) {
+          acc.wwPlugins = acc.wwPlugins!.concat(wysiwygPlugins);
+        }
+
+        if (wysiwygNodeViews) {
+          acc.wwNodeViews = { ...acc.wwNodeViews, ...wysiwygNodeViews };
+        }
+
+        if (markdownCommands) {
+          acc.mdCommands = { ...acc.mdCommands, ...markdownCommands };
+        }
+
+        if (wysiwygCommands) {
+          acc.wwCommands = { ...acc.wwCommands, ...wysiwygCommands };
+        }
+
+        return acc;
+      },
+      {
+        toHTMLRenderers: {},
+        toMarkdownRenderers: {},
+        mdPlugins: [],
+        wwPlugins: [],
+        wwNodeViews: {},
+        mdCommands: {},
+        wwCommands: {},
       }
-
-      const {
-        toHTMLRenderers,
-        markdownPlugins,
-        wysiwygPlugins,
-        wysiwygNodeViews,
-      } = pluginInfoResult;
-
-      if (toHTMLRenderers) {
-        acc.toHTMLRenderers = { ...acc.toHTMLRenderers, ...toHTMLRenderers };
-      }
-
-      if (markdownPlugins) {
-        acc.mdPlugins = acc.mdPlugins!.concat(markdownPlugins);
-      }
-
-      if (wysiwygPlugins) {
-        acc.wwPlugins = acc.wwPlugins!.concat(wysiwygPlugins);
-      }
-
-      if (wysiwygNodeViews) {
-        acc.wwNodeViews = { ...acc.wwNodeViews, ...wysiwygNodeViews };
-      }
-
-      return acc;
-    }, result);
+    );
   }
 
-  return result;
+  return null;
 }

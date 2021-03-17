@@ -173,10 +173,15 @@ class ToastUIEditor {
     setWidgetRules(widgetRules);
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
-    const { toHTMLRenderers, mdPlugins, wwPlugins, wwNodeViews } = getPluginInfo(
-      this.options.plugins,
-      this.eventEmitter
-    );
+    const {
+      toHTMLRenderers,
+      toMarkdownRenderers,
+      mdPlugins,
+      wwPlugins,
+      wwNodeViews,
+      mdCommands,
+      wwCommands,
+    } = getPluginInfo(this.options.plugins, this.eventEmitter) || {};
     const rendererOptions = {
       linkAttributes,
       customHTMLRenderer: { ...toHTMLRenderers, ...customHTMLRenderer },
@@ -215,6 +220,7 @@ class ToastUIEditor {
       toastMark: this.toastMark,
       useCommandShortcut,
       mdPlugins,
+      mdCommands,
     });
 
     this.preview = new MarkdownPreview(this.eventEmitter, {
@@ -230,11 +236,12 @@ class ToastUIEditor {
       linkAttributes,
       wwPlugins,
       wwNodeViews,
+      wwCommands,
     });
 
     this.convertor = new Convertor(
       this.wwEditor.getSchema(),
-      customMarkdownRenderer,
+      { ...toMarkdownRenderers, ...customMarkdownRenderer },
       this.eventEmitter
     );
 

@@ -7,7 +7,7 @@ import { Context, EditorAllCommandMap, EditorCommandFn } from './spec';
 import { ToMdConvertorMap } from './convertor';
 import { DefaultUI, ToolbarItemOptions } from './ui';
 import SpecManager from '@/spec/specManager';
-import { PluginProp, NodeViewPropMap } from './plugin';
+import { PluginProp, NodeViewPropMap, PluginCommandMap } from './plugin';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -90,10 +90,13 @@ export class Viewer {
 }
 
 interface EditorPluginInfo {
-  toHTMLRenderers: HTMLConvertorMap;
-  markdownPlugins: PluginProp[];
-  wysiwygPlugins: PluginProp[];
-  wysiwygNodeViews: NodeViewPropMap;
+  toHTMLRenderers?: HTMLConvertorMap;
+  toMarkdownRenderers?: ToMdConvertorMap;
+  markdownPlugins?: PluginProp[];
+  wysiwygPlugins?: PluginProp[];
+  wysiwygNodeViews?: NodeViewPropMap;
+  markdownCommands?: PluginCommandMap;
+  wysiwygCommands?: PluginCommandMap;
 }
 
 export type PluginFn = (
