@@ -74,7 +74,7 @@ function addAnalyzerPlugin(config, type) {
 function setDevelopConfig(config) {
   // check in examples
   config.entry = { 'editor-all': ENTRY_EDITOR };
-  config.output.publicPath = 'dist/cdn';
+  config.output.publicPath = '/dist/cdn';
   config.externals = [];
   config.devtool = 'inline-source-map';
   config.devServer = {
@@ -112,7 +112,7 @@ function setProductionConfigForAll(config) {
 
 module.exports = (env) => {
   minify = !!env.minify;
-  
+
   const configs = Array(isProduction ? 2 : 1)
     .fill(0)
     .map(() => {
@@ -120,9 +120,15 @@ module.exports = (env) => {
         mode: isProduction ? 'production' : 'development',
         cache: false,
         output: {
-          library: ['toastui', 'Editor'],
-          libraryTarget: 'umd',
-          libraryExport: 'default',
+          environment: {
+            arrowFunction: false,
+            const: false,
+          },
+          library: {
+            name: ['toastui', 'Editor'],
+            type: 'umd',
+            export: 'default',
+          },
           path: path.resolve(__dirname, minify ? 'dist/cdn' : 'dist'),
           filename: `toastui-[name]${minify ? '.min' : ''}.js`,
         },
@@ -172,11 +178,11 @@ module.exports = (env) => {
             raw: false,
             entryOnly: true,
           }),
-          new ESLintPlugin({
-            extensions: ['js', 'ts'],
-            exclude: ['node_modules', 'dist'],
-            failOnError: false
-          })
+          // new ESLintPlugin({
+          //   extensions: ['js', 'ts'],
+          //   exclude: ['node_modules', 'dist'],
+          //   failOnError: false
+          // })
         ],
         optimization: {
           minimize: false,
