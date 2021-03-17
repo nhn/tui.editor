@@ -1,10 +1,18 @@
+function stringToNumber(value: string) {
+  return parseInt(value, 10);
+}
+
 export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
-  const left = parseInt(style.left, 10);
-  const top = parseInt(style.top, 10);
+  const left = stringToNumber(style.left);
+  const top = stringToNumber(style.top);
   const width =
-    parseInt(style.width, 10) + parseInt(style.paddingLeft, 10) + parseInt(style.paddingRight, 10);
+    stringToNumber(style.width) +
+    stringToNumber(style.paddingLeft) +
+    stringToNumber(style.paddingRight);
   const height =
-    parseInt(style.height, 10) + parseInt(style.paddingTop, 10) + parseInt(style.paddingBottom, 10);
+    stringToNumber(style.height) +
+    stringToNumber(style.paddingTop) +
+    stringToNumber(style.paddingBottom);
 
   return offsetX >= left && offsetX <= left + width && offsetY >= top && offsetY <= top + height;
 }
@@ -15,8 +23,7 @@ export function removeNode(node: Node) {
   }
 }
 
-// @TODO change to 'toastui-' prefix
-const CLS_PREFIX = 'tui-editor-';
+const CLS_PREFIX = 'toastui-editor-';
 
 export function cls(...names: string[]) {
   return names.map((className) => `${CLS_PREFIX}${className}`).join(' ');
