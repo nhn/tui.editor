@@ -63,7 +63,7 @@ describe('codeSyntaxHighlightPlugin', () => {
     editor.changeMode('wysiwyg');
 
     const expected = oneLineTrim`
-      <div data-language="js" class="tui-editor-ww-code-block">
+      <div data-language="js" class="tui-editor-ww-code-block-highlight">
         <pre class="lang-js language-js">
           <code data-language="js" class="language-js">
             <span class="token keyword">const</span> a <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">;</span>

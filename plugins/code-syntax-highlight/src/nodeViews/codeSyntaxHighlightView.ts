@@ -13,7 +13,7 @@ type GetPos = (() => number) | boolean;
 
 type CodeBlockPos = { top: number; right: number };
 
-const WRAPPER_CLASS_NAME = 'ww-code-block';
+const WRAPPER_CLASS_NAME = 'ww-code-block-highlighting';
 
 class CodeSyntaxHighlightView implements NodeView {
   dom: HTMLElement | null = null;
