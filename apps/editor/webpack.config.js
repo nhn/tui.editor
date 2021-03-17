@@ -8,7 +8,7 @@ const webpack = require('webpack');
 const pkg = require('./package.json');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
@@ -26,29 +26,26 @@ function addFileManagerPlugin(config) {
   // empty JavaScript files are created. (e.g. toastui-editor-only.js)
   // These files are unnecessary, so use the FileManager plugin to delete them.
   const options = minify
-    ? [
-        {
-          delete: ['./dist/cdn/toastui-editor-only.min.js'],
-        },
-      ]
-    : [
-        {
-          delete: ['./dist/toastui-editor-only.js'],
-        },
-        { copy: [{ source: './dist/*.{js,css}', destination: './dist/cdn' }] },
-      ];
+    ? {
+        delete: ['./dist/cdn/toastui-editor-only.min.js'],
+      }
+    : {
+        delete: ['./dist/toastui-editor-only.js'],
+        copy: [{ source: './dist/*.{js,css}', destination: './dist/cdn' }],
+      };
 
-  config.plugins.push(new FileManagerPlugin({ onEnd: options }));
+  config.plugins.push(new FileManagerPlugin({ events: { onEnd: options } }));
 }
 
 function addMinifyPlugin(config) {
   config.optimization = {
+    minimize: true,
     minimizer: [
       new TerserPlugin({
         parallel: true,
         extractComments: false,
       }),
-      new OptimizeCSSAssetsPlugin(),
+      new CssMinimizerPlugin(),
     ],
   };
 }
@@ -161,8 +158,8 @@ module.exports = (env) => {
         },
         plugins: [
           new MiniCssExtractPlugin({
-            moduleFilename: ({ name }) =>
-              `toastui-${name.replace('-all', '')}${minify ? '.min' : ''}.css`,
+            filename: ({ chunk }) =>
+              `toastui-${chunk.name.replace('-all', '')}${minify ? '.min' : ''}.css`,
           }),
           new webpack.BannerPlugin({
             banner: [
@@ -177,8 +174,8 @@ module.exports = (env) => {
           new ESLintPlugin({
             extensions: ['js', 'ts'],
             exclude: ['node_modules', 'dist'],
-            failOnError: false
-          })
+            failOnError: false,
+          }),
         ],
         externals: [
           {
@@ -217,7 +214,7 @@ module.exports = (env) => {
               commonjs2: 'prosemirror-view',
               amd: 'prosemirror-view',
             },
-          }
+          },
         ],
         optimization: {
           minimize: false,
@@ -227,7 +224,6 @@ module.exports = (env) => {
         },
       };
     });
-
 
   if (isProduction) {
     setProductionConfig(configs[0]);
