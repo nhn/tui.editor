@@ -1,10 +1,10 @@
 import { CodeBlockMdNode, MdNode } from '@toast-ui/editor';
 
-import * as Hljs from 'highlight.js';
+import * as Prism from 'prismjs';
 
 const BACKTICK_COUNT = 3;
 
-export function getHTMLRenderers(hljs: typeof Hljs) {
+export function getHTMLRenderers(prism: typeof Prism) {
   return {
     codeBlock(node: MdNode) {
       const { fenceLength, info } = node as CodeBlockMdNode;
@@ -24,9 +24,11 @@ export function getHTMLRenderers(hljs: typeof Hljs) {
         preClasses.push(`lang-${lang}`);
         codeAttrs['data-language'] = lang;
 
-        const registeredLang = hljs.getLanguage(lang);
+        const registeredLang = prism.languages[lang];
 
-        content = registeredLang ? hljs.highlight(lang, node.literal!).value : node.literal!;
+        content = registeredLang
+          ? prism.highlight(node.literal!, registeredLang, lang)
+          : node.literal!;
       }
 
       return [

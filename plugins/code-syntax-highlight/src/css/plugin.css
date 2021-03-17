@@ -1,5 +1,5 @@
 .tui-editor-code-block-language {
-  position: absolute;
+  position: fixed;
   display: inline-block;
   right: 35px;
   z-index: 100;

@@ -2,10 +2,11 @@ import { Plugin } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 import { Node as ProsemirrorNode } from 'prosemirror-model';
 
-import * as Hljs from 'highlight.js';
-import * as Low from 'lowlight/lib/core';
+import isString from 'tui-code-snippet/type/isString';
 
 import { flatten } from '@/utils/common';
+
+import * as Prism from 'prismjs';
 
 interface ChildNodeInfo {
   node: ProsemirrorNode;
@@ -31,35 +32,52 @@ function findCodeBlocks(doc: ProsemirrorNode) {
   return descendants;
 }
 
-function parseNodes(nodes: any[], classNames: string[] = []): HighlightedNodeInfo[] {
-  return nodes.map((node) => {
-    const classes: string[] = [
-      ...classNames,
-      ...(node.properties ? node.properties.className : []),
-    ];
+function parseTokens(
+  tokens: (string | Prism.Token)[],
+  classNames: string[] = []
+): HighlightedNodeInfo[] {
+  if (isString(tokens)) {
+    return [{ text: tokens, classes: classNames }];
+  }
 
-    if (node.children) {
-      return parseNodes(node.children, classes);
+  return tokens.map((token) => {
+    const { type, alias } = token as Prism.Token;
+
+    let typeClassNames: string[] = [];
+    let aliasClassNames: string[] = [];
+
+    if (type) {
+      typeClassNames = ['token', type];
+    }
+
+    if (alias) {
+      aliasClassNames = isString(alias) ? [alias] : alias;
+    }
+
+    const classes: string[] = [...classNames, ...typeClassNames, ...aliasClassNames];
+
+    if (!isString(token)) {
+      return parseTokens(token.content as Prism.Token[], classes);
     }
 
     return {
-      text: node.value,
+      text: token,
       classes,
     };
   }) as HighlightedNodeInfo[];
 }
 
-function getDecorations(doc: ProsemirrorNode, hljs: typeof Hljs, low: typeof Low) {
+function getDecorations(doc: ProsemirrorNode, prism: typeof Prism) {
   const decorations: Decoration[] = [];
   const codeBlocks = findCodeBlocks(doc);
 
   codeBlocks.forEach(({ pos, node }) => {
-    let startPos = pos + 1;
-
     const { language } = node.attrs;
-    const registeredLang = hljs.getLanguage(language);
-    const hljsAST = registeredLang ? low.highlight(language, node.textContent).value : [];
-    const nodeInfos = flatten(parseNodes(hljsAST)) as HighlightedNodeInfo[];
+    const registeredLang = prism.languages[language];
+    const prismTokens = registeredLang ? prism.tokenize(node.textContent, registeredLang) : [];
+    const nodeInfos = flatten(parseTokens(prismTokens));
+
+    let startPos = pos + 1;
 
     nodeInfos.forEach(({ text, classes }) => {
       const from = startPos;
@@ -81,18 +99,18 @@ function getDecorations(doc: ProsemirrorNode, hljs: typeof Hljs, low: typeof Low
   return DecorationSet.create(doc, decorations);
 }
 
-export function codeSyntaxHighlighting(hljs: typeof Hljs, low: typeof Low) {
+export function codeSyntaxHighlighting(prism: typeof Prism) {
   return new Plugin({
     state: {
       init(_, { doc }) {
-        return getDecorations(doc, hljs, low);
+        return getDecorations(doc, prism);
       },
       apply(tr, set) {
         if (!tr.docChanged) {
           return set.map(tr.mapping, tr.doc);
         }
 
-        return getDecorations(tr.doc, hljs, low);
+        return getDecorations(tr.doc, prism);
       },
     },
     props: {

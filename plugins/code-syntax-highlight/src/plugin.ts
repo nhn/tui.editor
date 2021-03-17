@@ -1,37 +1,29 @@
+import isFunction from 'tui-code-snippet/type/isFunction';
+
 import { getHTMLRenderers } from '@/renderers/toHTMLRenderers';
 import { codeSyntaxHighlighting } from '@/plugins/codeSyntaxHighlighting';
 import { createCodeSyntaxHighlightView } from '@/nodeViews/codeSyntaxHighlightView';
 
+import { Emitter } from '@toast-ui/editor';
 import { PluginOptions } from '@t/plugin';
 
-import Hljs from 'highlight.js';
-import Low from 'lowlight/lib/core';
-
-import { Emitter } from '@toast-ui/editor';
-
-function registerLanguages(hljs: typeof Hljs, low: typeof Low, languages: string[]) {
-  languages.forEach((lang) => {
-    const { rawDefinition } = hljs.getLanguage(lang);
-
-    low.registerLanguage(lang, rawDefinition);
-  });
-}
-
-export function codeSyntaxHighlightPlugin(eventEmitter: Emitter, low: typeof Low, options = {}) {
-  const { hljs } = options as PluginOptions;
-  const languages = hljs.listLanguages();
+export function codeSyntaxHighlightPlugin(eventEmitter: Emitter, options = {}) {
+  const { highlighter: prism } = options as PluginOptions;
 
   eventEmitter.addEventType('showCodeBlockLanguages');
   eventEmitter.addEventType('selectLanguage');
   eventEmitter.addEventType('finishLanguageEditing');
 
-  registerLanguages(hljs, low, languages);
+  const { languages } = prism;
+  const registerdlanguages = Object.keys(languages)
+    .filter((language) => !isFunction(languages[language]))
+    .map((language) => language);
 
   return {
-    toHTMLRenderers: getHTMLRenderers(hljs),
-    wysiwygPlugins: [() => codeSyntaxHighlighting(hljs, low)],
+    toHTMLRenderers: getHTMLRenderers(prism),
+    wysiwygPlugins: [() => codeSyntaxHighlighting(prism)],
     wysiwygNodeViews: {
-      codeBlock: createCodeSyntaxHighlightView(languages),
+      codeBlock: createCodeSyntaxHighlightView(registerdlanguages),
     },
   };
 }

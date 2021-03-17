@@ -56,6 +56,11 @@ class CodeSyntaxHighlightView implements NodeView {
     const pre = this.createCodeBlockElement();
     const code = pre.firstChild as HTMLElement;
 
+    if (language) {
+      addClass(pre, `language-${language}`);
+      addClass(code, `language-${language}`);
+    }
+
     wrapper.appendChild(pre);
 
     this.dom = wrapper;

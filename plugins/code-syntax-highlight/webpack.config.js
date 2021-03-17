@@ -23,7 +23,7 @@ function getEntryConfig(isAll) {
 function getOutputConfig(isProduction, isCDN, isAll, minify) {
   if (!isProduction || isCDN) {
     const config = {
-      library: ['toastui', 'editor', 'plugin', 'codeSyntaxHighlight'],
+      library: ['toastui', 'Editor', 'plugin', 'codeSyntaxHighlight'],
       libraryExport: 'default',
       libraryTarget: 'umd',
       path: path.resolve(__dirname, 'dist/cdn'),
@@ -54,20 +54,29 @@ function getExternalsConfig(isProduction, isCDN, isAll) {
   // The code-syntax-highlight plugin should provide a CDN bundle without the highlight.js dependency
   // so that users can inject their own highlight.js instance when using only selected languages.
   if (isProdCdnSolo || isDevSolo) {
-    return [
-      {
-        'highlight.js/lib/highlight': {
-          commonjs: 'highlight.js',
-          commonjs2: 'highlight.js',
-          amd: 'highlight.js',
-          root: ['hljs'],
-        },
-      },
-    ];
+    // @TODO decide whether to extenal in cdn
+    // return [
+    //   {
+    //     'prosemirror-state': {
+    //       commonjs: 'prosemirror-state',
+    //       commonjs2: 'prosemirror-state',
+    //       amd: 'prosemirror-state',
+    //       root: ['prosemirror-state'],
+    //     },
+    //   },
+    //   {
+    //     'prosemirror-view': {
+    //       commonjs: 'prosemirror-view',
+    //       commonjs2: 'prosemirror-view',
+    //       amd: 'prosemirror-view',
+    //       root: ['prosemirror-view'],
+    //     },
+    //   },
+    // ];
   }
 
   if (isProdNpm) {
-    return ['highlight.js/lib/highlight'];
+    return ['prosemirror-state', 'prosemirror-view'];
   }
 
   return [];

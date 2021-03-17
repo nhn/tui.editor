@@ -6,7 +6,7 @@
     <!-- Plugin -->
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"
     />
   </head>
   <body>
@@ -16,16 +16,13 @@
       import { Editor } from 'http://localhost:8080/dist/index.js';
       import codeSyntaxHighlightPlugin from '/dist/index.js';
 
-      import hljs from 'highlight.js';
+      import Prism from 'prismjs';
 
-      // @description import only the languages ​​to use
-      // import hljs from 'highlight.js/lib/core';
+      // method 1: import selected languages
+      import 'prismjs/components/prism-clojure.js';
 
-      // import javascript from 'highlight.js/lib/languages/javascript';
-      // import clojure from 'highlight.js/lib/languages/clojure';
-
-      // hljs.registerLanguage('javascript', javascript);
-      // hljs.registerLanguage('clojure', clojure);
+      // method 2: import all languages
+      // import '/dist/prismjs-langs.js';
 
       const content = [
         '```js',
@@ -54,7 +51,7 @@
         previewStyle: 'vertical',
         height: '500px',
         initialValue: content,
-        plugins: [[codeSyntaxHighlightPlugin, { hljs }]],
+        plugins: [[codeSyntaxHighlightPlugin, { highlighter: Prism }]],
       });
 
       window.editor = editor;

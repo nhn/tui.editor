@@ -3,7 +3,8 @@ import { source, oneLineTrim } from 'common-tags';
 import { Editor } from '@toast-ui/editor';
 import codeSyntaxHighlightPlugin from '@/index';
 
-import hljs from 'highlight.js';
+import Prism from 'prismjs';
+// @TODO import to all languages importing file
 
 describe('codeSyntaxHighlightPlugin', () => {
   let container: HTMLElement, mdPreview: HTMLElement, wwEditor: HTMLElement, editor: Editor;
@@ -27,7 +28,7 @@ describe('codeSyntaxHighlightPlugin', () => {
       el: container,
       previewStyle: 'vertical',
       initialValue,
-      plugins: [[codeSyntaxHighlightPlugin, { hljs }]],
+      plugins: [[codeSyntaxHighlightPlugin, { prism: Prism }]],
     });
 
     const elements = editor.getEditorElements();
@@ -48,9 +49,9 @@ describe('codeSyntaxHighlightPlugin', () => {
 
   it('should render highlighted codeblock element in markdown preview', () => {
     const expected = oneLineTrim`
-      <pre class="lang-javascript">
-        <code data-language="javascript">
-          <span class="hljs-keyword">const</span> a = <span class="hljs-number">100</span>;
+      <pre class="lang-js">
+        <code data-language="js">
+          <span class="token keyword">const</span> a <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">;</span>
         </code>
       </pre>
     `;
@@ -62,10 +63,10 @@ describe('codeSyntaxHighlightPlugin', () => {
     editor.changeMode('wysiwyg');
 
     const expected = oneLineTrim`
-      <div data-language="javascript" class="tui-editor-ww-code-block">
-        <pre class="lang-javascript">
-          <code data-language="javascript">
-            <span class="hljs-keyword">const</span> a = <span class="hljs-number">100</span>;
+      <div data-language="js" class="tui-editor-ww-code-block">
+        <pre class="lang-js language-js">
+          <code data-language="js" class="language-js">
+            <span class="token keyword">const</span> a <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">;</span>
           </code>
         </pre>
       </div>
