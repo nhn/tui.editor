@@ -82,8 +82,10 @@ module.exports = (env) => {
         ].join('\n')
       ),
       new FileManagerPlugin({
-        onEnd: {
-          copy: [{ source: './dist/i18n/*.js', destination: './dist/cdn/i18n' }],
+        events: {
+          onEnd: {
+            copy: [{ source: './dist/i18n/*.js', destination: './dist/cdn/i18n' }],
+          },
         },
       }),
       new ESLintPlugin({
