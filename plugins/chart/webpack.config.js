@@ -11,14 +11,21 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 
 function getOutputConfig(isProduction, isCDN, minify) {
   const filename = `toastui-${name.replace(/@toast-ui\//, '')}`;
+  let config = {
+    environment: {
+      arrowFunction: false,
+      const: false,
+    },
+  }
 
   if (!isProduction || isCDN) {
-    const config = {
+    config = {
+      ...config,
       library: ['toastui', 'Editor', 'plugin', 'chart'],
       libraryExport: 'default',
       libraryTarget: 'umd',
       path: path.resolve(__dirname, 'dist/cdn'),
-      filename: `${filename}${minify ? '.min' : ''}.js`
+      filename: `${filename}${minify ? '.min' : ''}.js`,
     };
 
     if (!isProduction) {
@@ -29,6 +36,7 @@ function getOutputConfig(isProduction, isCDN, minify) {
   }
 
   return {
+    ...config,
     libraryExport: 'default',
     libraryTarget: 'commonjs2',
     path: path.resolve(__dirname, 'dist'),
@@ -38,14 +46,7 @@ function getOutputConfig(isProduction, isCDN, minify) {
 
 function getExternalsConfig(isProduction, isCDN) {
   if (isProduction && !isCDN) {
-    return [
-      '@toast-ui/chart',
-      '@toast-ui/chart/bar',
-      '@toast-ui/chart/column',
-      '@toast-ui/chart/pie',
-      '@toast-ui/chart/area',
-      '@toast-ui/chart/line'
-    ];
+    return ['@toast-ui/chart'];
   }
 
   return [];
@@ -80,13 +81,6 @@ module.exports = (env, argv) => {
         buffer: require.resolve('buffer'),
         os: require.resolve('os-browserify')
       },
-      alias: {
-        '@toast-ui/chart/line': '@toast-ui/chart/dist/esm/charts/lineChart.js',
-        '@toast-ui/chart/area': '@toast-ui/chart/dist/esm/charts/areaChart.js',
-        '@toast-ui/chart/pie': '@toast-ui/chart/dist/esm/charts/pieChart.js',
-        '@toast-ui/chart/column': '@toast-ui/chart/dist/esm/charts/columnChart.js',
-        '@toast-ui/chart/bar': '@toast-ui/chart/dist/esm/charts/barChart.js',
-      },
       extensions: ['.ts', '.js'],
     },
     module: {
@@ -101,15 +95,21 @@ module.exports = (env, argv) => {
               },
             },
           ],
-          exclude: /node_modules/,
         },
       ]
     },
+    plugins: [
+      new ESLintPlugin({
+        extensions: ['js', 'ts'],
+        exclude: ['node_modules', 'dist'],
+        failOnError: false
+      })
+    ],
     optimization: getOptimizationConfig(isProduction, minify)
   };
 
   if (isProduction) {
-    config.plugins = [
+    config.plugins.push(
       new webpack.BannerPlugin(
         [
           'TOAST UI Editor : Chart Plugin',
@@ -118,7 +118,7 @@ module.exports = (env, argv) => {
           `@license ${license}`
         ].join('\n')
       )
-    ];
+    );
   } else {
     config.devServer = {
       inline: true,

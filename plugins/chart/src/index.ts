@@ -24,17 +24,14 @@
  * y.title: Month              => yAxis.title
  * $$
  */
-import { BaseOptions } from '@toast-ui/chart';
-// @ts-ignore
-import LineChart from '@toast-ui/chart/line';
-// @ts-ignore
-import AreaChart from '@toast-ui/chart/area';
-// @ts-ignore
-import PieChart from '@toast-ui/chart/pie';
-// @ts-ignore
-import ColumnChart from '@toast-ui/chart/column';
-// @ts-ignore
-import BarChart from '@toast-ui/chart/bar';
+import {
+  BaseOptions,
+  LineChart,
+  AreaChart,
+  BarChart,
+  PieChart,
+  ColumnChart,
+} from '@toast-ui/chart';
 import isString from 'tui-code-snippet/type/isString';
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import inArray from 'tui-code-snippet/array/inArray';
