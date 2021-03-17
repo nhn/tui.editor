@@ -10,20 +10,20 @@ export default {
   mixins: [optionsMixin],
   props: {
     previewStyle: {
-      type: String
+      type: String,
     },
     height: {
-      type: String
+      type: String,
     },
     initialEditType: {
-      type: String
+      type: String,
     },
     initialValue: {
-      type: String
+      type: String,
     },
     options: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   watch: {
     previewStyle(newValue) {
@@ -31,16 +31,17 @@ export default {
     },
     height(newValue) {
       this.editor.height(newValue);
-    }
+    },
   },
   mounted() {
     const options = { ...this.computedOptions, el: this.$refs.toastuiEditor };
+
     this.editor = new Editor(options);
   },
   methods: {
     getRootElement() {
       return this.$refs.toastuiEditor;
-    }
-  }
+    },
+  },
 };
 </script>

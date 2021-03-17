@@ -51,7 +51,9 @@ module.exports = (env, { mode = 'development' }) => {
     mode,
     devtool: 'inline-source-map',
     output: {
-      libraryTarget: 'umd',
+      library: {
+        type: 'umd',
+      },
       publicPath: '/',
       path: path.resolve(__dirname, '/'),
     },

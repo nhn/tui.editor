@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const webpack = require('webpack');
@@ -8,51 +9,33 @@ module.exports = {
   output: {
     filename: 'toastui-vue-editor.js',
     path: path.resolve(__dirname, 'dist'),
-    library: 'toastui',
-    libraryTarget: 'umd'
-  },
-  resolve: {
-    alias: {
-      vue: 'vue/dist/vue.esm.js'
-    }
+    library: {
+      name: 'toastui',
+      type: 'umd',
+    },
   },
   externals: {
     '@toast-ui/editor': {
       commonjs: '@toast-ui/editor',
       commonjs2: '@toast-ui/editor',
       amd: '@toast-ui/editor',
-      root: ['toastui', 'Editor']
+      root: ['toastui', 'Editor'],
     },
     '@toast-ui/editor/dist/toastui-editor-viewer': {
       commonjs: '@toast-ui/editor/dist/toastui-editor-viewer',
       commonjs2: '@toast-ui/editor/dist/toastui-editor-viewer',
       amd: '@toast-ui/editor/dist/toastui-editor-viewer',
-      root: ['toastui', 'Editor']
-    }
+      root: ['toastui', 'Editor'],
+    },
   },
   module: {
     rules: [
       {
-        enforce: 'pre',
-        test: /\.(js|vue)$/,
-        exclude: /node_modules/,
-        loader: 'eslint-loader'
-      },
-      {
-        test: /\.js$/,
-        include: [path.resolve(__dirname, 'src')],
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env']
-          }
-        }
-      },
-      {
         test: /\.vue$/,
-        loader: 'vue-loader'
-      }
-    ]
+        loader: 'vue-loader',
+        exclude: /node_modules/,
+      },
+    ],
   },
   plugins: [
     new VueLoaderPlugin(),
@@ -61,8 +44,8 @@ module.exports = {
         'TOAST UI Editor : Vue Wrapper',
         `@version ${version} | ${new Date().toDateString()}`,
         `@author ${author}`,
-        `@license ${license}`
-      ].join('\n')
-    })
-  ]
+        `@license ${license}`,
+      ].join('\n'),
+    }),
+  ],
 };

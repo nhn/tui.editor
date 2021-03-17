@@ -1,12 +1,8 @@
 module.exports = {
-  extends: ['tui/es6', 'plugin:prettier/recommended', 'plugin:vue/base'],
+  parser: 'vue-eslint-parser',
   parserOptions: {
-    parser: 'babel-eslint',
-    ecmaVersion: 7,
-    sourceType: 'module'
+    parser: '@typescript-eslint/parser',
   },
+  extends: ['plugin:vue/base'],
   plugins: ['vue'],
-  rules: {
-    'object-property-newline': 0
-  }
 };

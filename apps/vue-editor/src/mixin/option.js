@@ -1,15 +1,26 @@
-const editorEvents = ['load', 'change', 'stateChange', 'focus', 'blur'];
+const editorEvents = [
+  'load',
+  'change',
+  'caretChange',
+  'focus',
+  'blur',
+  'keydown',
+  'keyup',
+  'beforePreviewRender',
+  'beforeConvertWysiwygToMarkdown',
+];
 const defaultValueMap = {
   initialEditType: 'markdown',
   initialValue: '',
   height: '300px',
-  previewStyle: 'vertical'
+  previewStyle: 'vertical',
 };
 
 export const optionsMixin = {
   data() {
     const eventOptions = {};
-    editorEvents.forEach(event => {
+
+    editorEvents.forEach((event) => {
       eventOptions[event] = (...args) => {
         this.$emit(event, ...args);
       };
@@ -20,9 +31,10 @@ export const optionsMixin = {
       initialValue: this.initialValue,
       height: this.height,
       previewStyle: this.previewStyle,
-      events: eventOptions
+      events: eventOptions,
     };
-    Object.keys(defaultValueMap).forEach(key => {
+
+    Object.keys(defaultValueMap).forEach((key) => {
       if (!options[key]) {
         options[key] = defaultValueMap[key];
       }
@@ -33,17 +45,18 @@ export const optionsMixin = {
   methods: {
     invoke(methodName, ...args) {
       let result = null;
+
       if (this.editor[methodName]) {
         result = this.editor[methodName](...args);
       }
 
       return result;
-    }
+    },
   },
   destroyed() {
-    editorEvents.forEach(event => {
+    editorEvents.forEach((event) => {
       this.editor.off(event);
     });
     this.editor.remove();
-  }
+  },
 };

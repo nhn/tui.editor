@@ -10,23 +10,24 @@ export default {
   mixins: [optionsMixin],
   props: {
     height: {
-      type: String
+      type: String,
     },
     initialValue: {
-      type: String
+      type: String,
     },
     options: {
-      type: Object
-    }
+      type: Object,
+    },
   },
   mounted() {
     const options = { ...this.computedOptions, el: this.$refs.toastuiEditorViewer };
+
     this.editor = new Viewer(options);
   },
   methods: {
     getRootElement() {
       return this.$refs.toastuiEditorViewer;
-    }
-  }
+    },
+  },
 };
 </script>
