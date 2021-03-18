@@ -1,4 +1,3 @@
-import { oneLineTrim } from 'common-tags';
 import {
   LanguageSelectBox,
   WRAPPER_CLASS_NAME,
@@ -10,6 +9,7 @@ import { cls } from '@/utils/dom';
 interface Emitter {
   emit: () => void;
   listen: () => void;
+  removeEventHandler: () => void;
 }
 
 describe('languageSelectBox', () => {
@@ -23,7 +23,10 @@ describe('languageSelectBox', () => {
     eventEmitter = {
       emit: jest.fn(),
       listen: jest.fn(),
+      removeEventHandler: jest.fn(),
     };
+
+    // @ts-ignore
     selectBox = new LanguageSelectBox(eventEmitter, ['js', 'css', 'ts']);
 
     wrapper = document.body.querySelector(`.${cls(WRAPPER_CLASS_NAME)}`)!;
@@ -35,23 +38,8 @@ describe('languageSelectBox', () => {
     selectBox.destroy();
   });
 
-  it('should create language select box element on body', () => {
-    const expected = oneLineTrim`
-      <div class="tui-editor-code-block-language" style="display: none;">
-        <span class="tui-editor-code-block-language-input">
-          <input type="text" maxlength="20">
-        </span>
-        <div class="tui-editor-code-block-language-list" style="display: none;">
-          <div class="buttons">
-            <button type="button" data-language="js" class="active">js</button>
-            <button type="button" data-language="css">css</button>
-            <button type="button" data-language="ts">ts</button>
-          </div>
-        </div>
-      </div>
-    `;
-
-    expect(document.body.innerHTML).toBe(expected);
+  it('should create language select box element', () => {
+    expect(wrapper).toHaveClass(`${cls(WRAPPER_CLASS_NAME)}`);
   });
 
   it('show() should show language select box element', () => {
