@@ -117,6 +117,7 @@ export const tableHead: BlockStart = (parser, container) => {
       [firstLineNum, firstLineStart],
       [parser.lineNumber, parser.offset],
     ]);
+    // eslint-disable-next-line arrow-body-style
     table.columns = delimCells.map(() => ({ align: null }));
 
     container.insertAfter(table);

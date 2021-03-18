@@ -58,7 +58,7 @@ export class CodeBlock extends Mark {
 
       if (from === to && textContent.trim()) {
         const matched = textContent.match(/^\s+/);
-        const mdNode = toastMark.findFirstNodeAtLine(endIndex + 1);
+        const mdNode = toastMark.findFirstNodeAtLine(endIndex + 1)!;
 
         if (isCodeBlockNode(mdNode) && matched) {
           const [spaces] = matched;

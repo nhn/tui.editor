@@ -10,6 +10,7 @@ const pkg = require('../package.json');
 
 const TerserPlugin = require('terser-webpack-plugin');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 function getOptimizationConfig(minify) {
   const minimizer = [];
@@ -17,9 +18,7 @@ function getOptimizationConfig(minify) {
   if (minify) {
     minimizer.push(
       new TerserPlugin({
-        cache: true,
         parallel: true,
-        sourceMap: false,
         extractComments: false,
       })
     );
@@ -29,27 +28,29 @@ function getOptimizationConfig(minify) {
 }
 
 function getEntries() {
-  const entries = entry('./src/js/i18n/*.js');
+  const entries = entry('./src/i18n/*.js');
 
   delete entries['en-us'];
 
   return entries;
 }
 
-module.exports = (env, argv) => {
-  const minify = !!argv.minify;
+module.exports = (env) => {
+  const { minify = false } = env;
 
   return {
     mode: 'production',
     entry: getEntries(),
     output: {
-      libraryTarget: 'umd',
+      library: {
+        type: 'umd',
+      },
       path: path.resolve(__dirname, minify ? '../dist/cdn/i18n' : '../dist/i18n'),
       filename: `[name]${minify ? '.min' : ''}.js`,
     },
     externals: [
       {
-        '../editor': {
+        '../editorCore': {
           commonjs: '@toast-ui/editor',
           commonjs2: '@toast-ui/editor',
           amd: '@toast-ui/editor',
@@ -60,21 +61,16 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
-          test: /\.js$/,
+          test: /\.ts$|\.js$/,
+          use: [
+            {
+              loader: 'ts-loader',
+              options: {
+                transpileOnly: true,
+              },
+            },
+          ],
           exclude: /node_modules/,
-          loader: 'eslint-loader',
-          enforce: 'pre',
-          options: {
-            failOnError: true,
-          },
-        },
-        {
-          test: /\.js$/,
-          exclude: /node_modules|dist/,
-          loader: 'babel-loader?cacheDirectory',
-          options: {
-            rootMode: 'upward',
-          },
         },
       ],
     },
@@ -88,9 +84,16 @@ module.exports = (env, argv) => {
         ].join('\n')
       ),
       new FileManagerPlugin({
-        onEnd: {
-          copy: [{ source: './dist/i18n/*.js', destination: './dist/cdn/i18n' }],
+        events: {
+          onEnd: {
+            copy: [{ source: './dist/i18n/*.js', destination: './dist/cdn/i18n' }],
+          },
         },
+      }),
+      new ESLintPlugin({
+        extensions: ['js', 'ts'],
+        exclude: ['node_modules', 'dist'],
+        failOnError: false,
       }),
     ],
     optimization: getOptimizationConfig(minify),

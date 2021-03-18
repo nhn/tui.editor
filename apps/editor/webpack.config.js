@@ -8,138 +8,44 @@ const webpack = require('webpack');
 const pkg = require('./package.json');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 const ENTRY_EDITOR = './src/index.ts';
+const ENTRY_ONLY_STYLE = './src/indexEditorOnlyStyle.ts';
 const ENTRY_VIEWER = './src/indexViewer.ts';
 
-const isDevelopAll = process.argv.indexOf('--all') >= 0;
-const isDevelopViewer = process.argv.indexOf('--viewer') >= 0;
-const isProduction = process.argv.indexOf('--mode=production') >= 0;
-const minify = process.argv.indexOf('--minify') >= 0;
-
-const defaultConfigs = Array(isProduction ? 2 : 1)
-  .fill(0)
-  .map(() => {
-    return {
-      mode: isProduction ? 'production' : 'development',
-      cache: false,
-      output: {
-        library: ['toastui', 'Editor'],
-        libraryTarget: 'umd',
-        libraryExport: 'default',
-        path: path.resolve(__dirname, minify ? 'dist/cdn' : 'dist'),
-        filename: `toastui-[name]${minify ? '.min' : ''}.js`,
-      },
-      module: {
-        rules: [
-          {
-            test: /\.js$/,
-            exclude: /node_modules|dist|build/,
-            loader: 'eslint-loader',
-            enforce: 'pre',
-            options: {
-              configFile: './.eslintrc.js',
-              failOnWarning: false,
-              failOnError: false,
-            },
-          },
-          {
-            test: /\.ts$|\.js$/,
-            use: [
-              {
-                loader: 'ts-loader',
-                options: {
-                  transpileOnly: true,
-                },
-              },
-            ],
-            exclude: /node_modules/,
-          },
-
-          {
-            test: /\.css$/,
-            use: [MiniCssExtractPlugin.loader, 'css-loader'],
-          },
-          {
-            test: /\.png$/i,
-            use: 'url-loader',
-          },
-        ],
-      },
-      resolve: {
-        extensions: ['.ts', '.js'],
-        alias: {
-          '@': path.resolve('src'),
-          '@t': path.resolve('types'),
-        },
-      },
-      plugins: [
-        new MiniCssExtractPlugin({
-          moduleFilename: ({ name }) =>
-            `toastui-${name.replace('-all', '')}${minify ? '.min' : ''}.css`,
-        }),
-        new webpack.BannerPlugin({
-          banner: [
-            pkg.name,
-            `@version ${pkg.version} | ${new Date().toDateString()}`,
-            `@author ${pkg.author}`,
-            `@license ${pkg.license}`,
-          ].join('\n'),
-          raw: false,
-          entryOnly: true,
-        }),
-      ],
-      optimization: {
-        minimize: false,
-      },
-      performance: {
-        hints: false,
-      },
-    };
-  });
+let isProduction;
+let minify;
 
 function addFileManagerPlugin(config) {
   // When an entry option's value is set to a CSS file,
   // empty JavaScript files are created. (e.g. toastui-editor-only.js)
   // These files are unnecessary, so use the FileManager plugin to delete them.
   const options = minify
-    ? [
-        {
-          delete: [
-            './dist/cdn/toastui-editor-only.min.js',
-            './dist/cdn/toastui-editor-old.min.js',
-            './dist/cdn/toastui-editor-viewer-old.min.js',
-          ],
-        },
-      ]
-    : [
-        {
-          delete: [
-            './dist/toastui-editor-only.js',
-            './dist/toastui-editor-old.js',
-            './dist/toastui-editor-viewer-old.js',
-          ],
-        },
-        { copy: [{ source: './dist/*.{js,css}', destination: './dist/cdn' }] },
-      ];
+    ? {
+        delete: ['./dist/cdn/toastui-editor-only.min.js'],
+      }
+    : {
+        delete: ['./dist/toastui-editor-only.js'],
+        copy: [{ source: './dist/*.{js,css}', destination: './dist/cdn' }],
+      };
 
-  config.plugins.push(new FileManagerPlugin({ onEnd: options }));
+  config.plugins.push(new FileManagerPlugin({ events: { onEnd: options } }));
 }
 
 function addMinifyPlugin(config) {
   config.optimization = {
+    minimize: true,
     minimizer: [
       new TerserPlugin({
-        cache: true,
         parallel: true,
-        sourceMap: false,
         extractComments: false,
       }),
-      new OptimizeCSSAssetsPlugin(),
+      new CssMinimizerPlugin(),
     ],
   };
 }
@@ -154,21 +60,12 @@ function addAnalyzerPlugin(config, type) {
 }
 
 function setDevelopConfig(config) {
-  if (isDevelopAll) {
-    // check in examples
-    config.entry = { 'editor-all': ENTRY_EDITOR };
-    config.output.publicPath = 'dist/cdn';
-    config.externals = [];
-  } else if (isDevelopViewer) {
-    // check in examples
-    config.entry = { 'editor-viewer': ENTRY_VIEWER };
-    config.output.publicPath = 'dist/cdn';
-  } else {
-    // check in demo
-    config.module.rules = config.module.rules.slice(1);
-    config.entry = { editor: ENTRY_EDITOR };
-    config.output.publicPath = 'dist/';
-  }
+  // check in examples
+  config.entry = { 'editor-all': ENTRY_EDITOR };
+  config.output.publicPath = '/dist/cdn';
+
+  config.plugins.pop();
+  config.externals = [];
 
   config.devtool = 'inline-source-map';
   config.devServer = {
@@ -182,11 +79,8 @@ function setDevelopConfig(config) {
 function setProductionConfig(config) {
   config.entry = {
     editor: ENTRY_EDITOR,
+    'editor-only': ENTRY_ONLY_STYLE,
     'editor-viewer': ENTRY_VIEWER,
-    'editor-only': './src/js/indexEditorOnlyStyle.ts',
-    // legacy styles
-    'editor-old': './src/js/indexOldStyle.ts',
-    'editor-viewer-old': './src/css/old/contents.css',
   };
 
   addFileManagerPlugin(config);
@@ -208,10 +102,135 @@ function setProductionConfigForAll(config) {
   }
 }
 
-if (isProduction) {
-  setProductionConfig(defaultConfigs[0]);
-  setProductionConfigForAll(defaultConfigs[1]);
-} else {
-  setDevelopConfig(defaultConfigs[0]);
-}
-module.exports = defaultConfigs;
+module.exports = (env) => {
+  minify = !!env.minify;
+  isProduction = env.WEBPACK_BUILD;
+
+  const configs = Array(isProduction ? 2 : 1)
+    .fill(0)
+    .map(() => {
+      return {
+        mode: isProduction ? 'production' : 'development',
+        cache: false,
+        output: {
+          environment: {
+            arrowFunction: false,
+            const: false,
+          },
+          library: {
+            name: ['toastui', 'Editor'],
+            type: 'umd',
+            export: 'default',
+          },
+          path: path.resolve(__dirname, minify ? 'dist/cdn' : 'dist'),
+          filename: `toastui-[name]${minify ? '.min' : ''}.js`,
+        },
+        module: {
+          rules: [
+            {
+              test: /\.ts$|\.js$/,
+              use: [
+                {
+                  loader: 'ts-loader',
+                  options: {
+                    transpileOnly: true,
+                  },
+                },
+              ],
+              exclude: /node_modules/,
+            },
+            {
+              test: /\.css$/,
+              use: [MiniCssExtractPlugin.loader, 'css-loader'],
+            },
+            {
+              test: /\.png$/i,
+              use: 'url-loader',
+            },
+          ],
+        },
+        resolve: {
+          extensions: ['.ts', '.js'],
+          alias: {
+            '@': path.resolve('src'),
+            '@t': path.resolve('types'),
+          },
+        },
+        plugins: [
+          new MiniCssExtractPlugin({
+            filename: ({ chunk }) =>
+              `toastui-${chunk.name.replace('-all', '')}${minify ? '.min' : ''}.css`,
+          }),
+          new webpack.BannerPlugin({
+            banner: [
+              pkg.name,
+              `@version ${pkg.version} | ${new Date().toDateString()}`,
+              `@author ${pkg.author}`,
+              `@license ${pkg.license}`,
+            ].join('\n'),
+            raw: false,
+            entryOnly: true,
+          }),
+          new ESLintPlugin({
+            extensions: ['js', 'ts'],
+            exclude: ['node_modules', 'dist'],
+            failOnError: false,
+          }),
+        ],
+        externals: [
+          {
+            'prosemirror-commands': {
+              commonjs: 'prosemirror-commands',
+              commonjs2: 'prosemirror-commands',
+              amd: 'prosemirror-commands',
+            },
+            'prosemirror-history': {
+              commonjs: 'prosemirror-history',
+              commonjs2: 'prosemirror-history',
+              amd: 'prosemirror-history',
+            },
+            'prosemirror-inputrules': {
+              commonjs: 'prosemirror-inputrules',
+              commonjs2: 'prosemirror-inputrules',
+              amd: 'prosemirror-inputrules',
+            },
+            'prosemirror-keymap': {
+              commonjs: 'prosemirror-keymap',
+              commonjs2: 'prosemirror-keymap',
+              amd: 'prosemirror-keymap',
+            },
+            'prosemirror-model': {
+              commonjs: 'prosemirror-model',
+              commonjs2: 'prosemirror-model',
+              amd: 'prosemirror-model',
+            },
+            'prosemirror-state': {
+              commonjs: 'prosemirror-state',
+              commonjs2: 'prosemirror-state',
+              amd: 'prosemirror-state',
+            },
+            'prosemirror-view': {
+              commonjs: 'prosemirror-view',
+              commonjs2: 'prosemirror-view',
+              amd: 'prosemirror-view',
+            },
+          },
+        ],
+        optimization: {
+          minimize: false,
+        },
+        performance: {
+          hints: false,
+        },
+      };
+    });
+
+  if (isProduction) {
+    setProductionConfig(configs[0]);
+    setProductionConfigForAll(configs[1]);
+  } else {
+    setDevelopConfig(configs[0]);
+  }
+
+  return configs;
+};

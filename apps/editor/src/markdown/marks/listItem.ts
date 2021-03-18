@@ -86,7 +86,7 @@ export class ListItem extends Mark {
         const commandType = getListType(textContent);
         // should add `1` to line for the markdown parser
         // because markdown parser has `1`(not zero) as the start number
-        const mdNode: ListItemMdNode = toastMark.findFirstNodeAtLine(endIndex + 1);
+        const mdNode = toastMark.findFirstNodeAtLine(endIndex + 1) as ListItemMdNode;
         const slicedText = textContent.slice(to - endFromOffset);
         const context: ExtendListContext = { toastMark, mdNode, doc, line: endIndex + 1 };
         const { listSyntax, changedResults, lastIndex } = extendList[commandType](context);

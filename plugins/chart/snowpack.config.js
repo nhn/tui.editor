@@ -5,7 +5,7 @@ const proxy = httpProxy.createServer({ target: 'http://localhost:8080' });
 /** @type {import("snowpack").SnowpackUserConfig } */
 module.exports = {
   mount: {
-    demo: '/',
+    'demo/esm': '/',
     src: '/dist',
   },
   devOptions: {
@@ -20,6 +20,10 @@ module.exports = {
       },
     },
   ],
+  alias: {
+    '@': './src',
+    '@t': './types',
+  },
   buildOptions: {
     clean: true,
     sourceMaps: false,
