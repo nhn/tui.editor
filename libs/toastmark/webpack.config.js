@@ -36,9 +36,6 @@ const commonConfig = {
     publicPath: '/dist',
     path: path.resolve(__dirname, 'dist'),
   },
-  optimization: {
-    minimize: false,
-  },
 };
 
 module.exports = (env, { mode = 'development' }) => {
