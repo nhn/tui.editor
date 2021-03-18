@@ -1,13 +1,11 @@
-import { CodeBlockMdNode, MdNode } from '@toast-ui/editor';
-
 import { PrismJs } from 'prismjs';
 
 const BACKTICK_COUNT = 3;
 
 export function getHTMLRenderers(prism: PrismJs) {
   return {
-    codeBlock(node: MdNode) {
-      const { fenceLength, info } = node as CodeBlockMdNode;
+    codeBlock(node: any) {
+      const { fenceLength, info } = node;
       const infoWords = info ? info.split(/\s+/) : [];
       const preClasses = [];
       const codeAttrs: Record<string, any> = {};

@@ -7,8 +7,6 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 import { isPositionInBox, cls } from '@/utils/dom';
 import { LanguageSelectBox } from '@/nodeViews/languageSelectBox';
 
-import { Emitter, ToDOMAdaptor } from '@toast-ui/editor';
-
 type GetPos = (() => number) | boolean;
 
 type CodeBlockPos = { top: number; right: number };
@@ -29,8 +27,8 @@ class CodeSyntaxHighlightView implements NodeView {
     private node: ProsemirrorNode,
     private view: EditorView,
     private getPos: GetPos,
-    private eventEmitter: Emitter,
-    private toDOMAdaptor: ToDOMAdaptor,
+    private eventEmitter: any,
+    private toDOMAdaptor: any,
     private languages: string[]
   ) {
     this.node = node;
@@ -172,7 +170,7 @@ export function createCodeSyntaxHighlightView(languages: string[]) {
     node: ProsemirrorNode,
     view: EditorView,
     getPos: GetPos,
-    evtEmitter: Emitter,
-    toDOMAdaptor: ToDOMAdaptor
+    evtEmitter: any,
+    toDOMAdaptor: any
   ) => new CodeSyntaxHighlightView(node, view, getPos, evtEmitter, toDOMAdaptor, languages);
 }

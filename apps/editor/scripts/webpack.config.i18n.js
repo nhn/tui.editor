@@ -94,7 +94,7 @@ module.exports = (env) => {
       new ESLintPlugin({
         extensions: ['js', 'ts'],
         exclude: ['node_modules', 'dist'],
-        failOnError: false,
+        failOnError: true,
       }),
     ],
     optimization: getOptimizationConfig(minify),

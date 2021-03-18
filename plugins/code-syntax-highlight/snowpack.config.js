@@ -5,11 +5,14 @@ const proxy = httpProxy.createServer({ target: 'http://localhost:8080' });
 /** @type {import("snowpack").SnowpackUserConfig } */
 module.exports = {
   mount: {
-    'demo-esm': '/',
+    'demo/esm': '/',
     src: '/dist',
   },
   devOptions: {
     port: 8081,
+  },
+  packageOptions: {
+    polyfillNode: true,
   },
   routes: [
     {

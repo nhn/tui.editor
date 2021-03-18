@@ -9,44 +9,49 @@ const { name, version, author, license } = require('./package.json');
 
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
 
 const filename = `toastui-${name.replace(/@toast-ui\//, '')}`;
 
-function getEntryConfig(isAll) {
-  if (isAll) {
-    return './src/indexAll.ts';
-  }
-
-  return './src/index.ts';
-}
+const ENTRY = './src/index.ts';
+const ENTRY_ALL_LANG = './src/indexAll.ts';
 
 function getOutputConfig(isProduction, isCDN, isAll, minify) {
+  const defaultConfig = {
+    environment: {
+      arrowFunction: false,
+      const: false,
+    },
+  };
+
   if (!isProduction || isCDN) {
     const config = {
-      library: ['toastui', 'Editor', 'plugin', 'codeSyntaxHighlight'],
-      libraryExport: 'default',
-      libraryTarget: 'umd',
+      ...defaultConfig,
+      library: {
+        name: ['toastui', 'Editor', 'plugin', 'codeSyntaxHighlight'],
+        export: 'default',
+        type: 'umd',
+      },
       path: path.resolve(__dirname, 'dist/cdn'),
       filename: `${filename}${isAll ? '-all' : ''}${minify ? '.min' : ''}.js`,
     };
 
     if (!isProduction) {
-      config.publicPath = 'dist/cdn';
+      config.publicPath = '/dist/cdn';
     }
 
     return config;
   }
 
   return {
-    libraryExport: 'default',
-    libraryTarget: 'commonjs2',
+    ...defaultConfig,
+    library: {
+      export: 'default',
+      type: 'commonjs2',
+    },
     path: path.resolve(__dirname, 'dist'),
     filename: `${filename}.js`,
   };
-}
-
-function getExternalsConfig(isProduction) {
-  return isProduction ? ['prosemirror-state', 'prosemirror-view'] : [];
 }
 
 function getOptimizationConfig(isProduction, minify) {
@@ -55,9 +60,7 @@ function getOptimizationConfig(isProduction, minify) {
   if (isProduction && minify) {
     minimizer.push(
       new TerserPlugin({
-        cache: true,
         parallel: true,
-        sourceMap: false,
         extractComments: false,
       })
     );
@@ -66,27 +69,16 @@ function getOptimizationConfig(isProduction, minify) {
   return { minimizer };
 }
 
-module.exports = (_, argv) => {
-  const isProduction = argv.mode === 'production';
-  const minify = !!argv.minify;
-  const isCDN = !!argv.cdn;
-  const isAll = !!argv.all;
+module.exports = (env) => {
+  const isProduction = env.WEBPACK_BUILD;
+  const { minify = false, cdn = false, all = false } = env;
   const config = {
     mode: isProduction ? 'production' : 'development',
-    entry: getEntryConfig(isAll),
-    output: getOutputConfig(isProduction, isCDN, isAll, minify),
-    externals: getExternalsConfig(isProduction),
+    entry: all ? ENTRY_ALL_LANG : ENTRY,
+    output: getOutputConfig(isProduction, cdn, all, minify),
+    // externals: ['prosemirror-state', 'prosemirror-view'],
     module: {
       rules: [
-        {
-          test: /\.js$/,
-          exclude: /node_modules|dist/,
-          loader: 'eslint-loader',
-          enforce: 'pre',
-          options: {
-            failOnError: isProduction,
-          },
-        },
         {
           test: /\.ts$|\.js$/,
           use: [
@@ -116,6 +108,11 @@ module.exports = (_, argv) => {
       new MiniCssExtractPlugin({
         filename: () => `${filename}${minify ? '.min' : ''}.css`,
       }),
+      new ESLintPlugin({
+        extensions: ['js', 'ts'],
+        exclude: ['node_modules', 'dist'],
+        failOnError: isProduction,
+      }),
     ],
     optimization: getOptimizationConfig(isProduction, minify),
   };
@@ -135,6 +132,7 @@ module.exports = (_, argv) => {
     config.devServer = {
       inline: true,
       host: '0.0.0.0',
+      port: 8081,
     };
     config.devtool = 'inline-source-map';
   }

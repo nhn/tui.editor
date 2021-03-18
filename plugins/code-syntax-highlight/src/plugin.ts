@@ -4,10 +4,9 @@ import { getHTMLRenderers } from '@/renderers/toHTMLRenderers';
 import { codeSyntaxHighlighting } from '@/plugins/codeSyntaxHighlighting';
 import { createCodeSyntaxHighlightView } from '@/nodeViews/codeSyntaxHighlightView';
 
-import { Emitter } from '@toast-ui/editor';
 import { PluginOptions } from '@t/plugin';
 
-export function codeSyntaxHighlightPlugin(eventEmitter: Emitter, options = {}) {
+export function codeSyntaxHighlightPlugin(eventEmitter: any, options = {}) {
   const { highlighter: prism } = options as PluginOptions;
 
   eventEmitter.addEventType('showCodeBlockLanguages');
