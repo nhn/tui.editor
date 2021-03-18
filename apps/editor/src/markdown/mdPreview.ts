@@ -70,12 +70,6 @@ class MarkdownPreview extends Preview {
     super(el, eventEmitter, options.isViewer);
     this.el = el;
     this.el.className = cls('md-preview');
-    this.lazyRunner.registerLazyRunFunction(
-      'invokeCodeBlock',
-      this.invokeCodeBlockPlugins,
-      this.delayCodeBlockTime,
-      this
-    );
 
     const { linkAttributes, customHTMLRenderer, sanitizer, highlight = false } = options;
 
@@ -203,13 +197,6 @@ class MarkdownPreview extends Preview {
           removeOffsetInfoByNode(el);
         }
       }
-    }
-
-    const codeBlockEls = this.getCodeBlockElements(nodes.map((node) => node.id));
-
-    if (codeBlockEls.length) {
-      // @ts-ignore
-      this.lazyRunner.run('invokeCodeBlock', codeBlockEls);
     }
   }
 

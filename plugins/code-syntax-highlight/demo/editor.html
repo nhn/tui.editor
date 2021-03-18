@@ -3,18 +3,14 @@
   <head lang="en">
     <meta charset="UTF-8" />
     <title>Editor</title>
-    <!-- Editor's Dependencies -->
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"
     />
     <!-- Editor -->
     <link rel="stylesheet" href="http://localhost:8080/dist/cdn/toastui-editor.css" />
     <!-- Plugin -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
-    />
+    <link rel="stylesheet" href="../dist/cdn/toastui-editor-plugin-code-syntax-highlight.css" />
   </head>
   <body>
     <div class="code-html">
@@ -25,13 +21,13 @@
       <h2>Viewer</h2>
       <div id="viewer"></div>
     </div>
-    <!-- highlight.js Languages -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/clojure.min.js"></script>
     <!-- Editor -->
     <script src="http://localhost:8080/dist/cdn/toastui-editor-all.js"></script>
     <!-- Plugin -->
     <script src="../dist/cdn/toastui-editor-plugin-code-syntax-highlight.js"></script>
+    <!-- Prismjs Languages -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-clojure.min.js"></script>
     <script class="code-js">
       const content = [
         '```js',
@@ -48,18 +44,19 @@
         '```',
         '```clojure',
         '[1 2 3]',
-        '```'
+        '```',
       ].join('\n');
 
       const { Editor } = toastui;
       const { codeSyntaxHighlight } = Editor.plugin;
+      const { Prism } = window;
 
       const editor = new Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
         initialValue: content,
-        plugins: [codeSyntaxHighlight]
+        plugins: [[codeSyntaxHighlight, { highlighter: Prism }]],
       });
 
       const viewer = Editor.factory({
@@ -67,7 +64,7 @@
         viewer: true,
         height: '500px',
         initialValue: content,
-        plugins: [codeSyntaxHighlight]
+        plugins: [[codeSyntaxHighlight, { highlighter: Prism }]],
       });
     </script>
   </body>

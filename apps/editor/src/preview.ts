@@ -4,8 +4,6 @@
  */
 import css from 'tui-code-snippet/domUtil/css';
 import { Emitter } from '@t/event';
-import LazyRunner from './lazyRunner';
-import codeBlockManager from './codeBlockManager';
 import { cls, createElementWith, empty, findNodes } from './utils/dom';
 
 /**
@@ -24,8 +22,6 @@ class Preview {
 
   delayCodeBlockTime: number;
 
-  lazyRunner: LazyRunner;
-
   private isViewer: boolean;
 
   constructor(el: HTMLElement, eventEmitter: Emitter, isViewer: boolean) {
@@ -35,7 +31,6 @@ class Preview {
     this.delayCodeBlockTime = 500;
 
     this.initContentSection();
-    this.lazyRunner = new LazyRunner();
   }
 
   private initContentSection() {
@@ -63,19 +58,6 @@ class Preview {
     });
 
     return codeEls;
-  }
-
-  invokeCodeBlockPlugins(codeBlocks: HTMLElement[]) {
-    codeBlocks.forEach((codeBlock) => {
-      const lang = codeBlock.getAttribute('data-language')!;
-      const html = codeBlockManager.createCodeBlockHtml(lang, codeBlock.textContent!);
-
-      codeBlock.innerHTML = html;
-    });
-  }
-
-  refresh() {
-    this.invokeCodeBlockPlugins(this.getCodeBlockElements());
   }
 
   /**

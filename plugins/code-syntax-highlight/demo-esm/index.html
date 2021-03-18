@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>Test to use plugin in node environment</title>
+    <!-- Plugin -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"
+    />
+  </head>
+  <body>
+    <div id="editor"></div>
+    <!-- Editor -->
+    <script type="module">
+      import { Editor } from 'http://localhost:8080/dist/index.js';
+      import codeSyntaxHighlightPlugin from '/dist/index.js';
+
+      import Prism from 'prismjs';
+
+      // method 1: import selected languages
+      import 'prismjs/components/prism-clojure.js';
+
+      // method 2: import all languages
+      // import '/dist/prismjs-langs.js';
+
+      const content = [
+        '```js',
+        `console.log('foo')`,
+        '```',
+        '',
+        '```javascript',
+        `console.log('bar')`,
+        '```',
+        '',
+        '```html',
+        '<div id="editor"><span>baz</span></div>',
+        '```',
+        '',
+        '```wrong',
+        '[1 2 3]',
+        '```',
+        '',
+        '```clojure',
+        '[1 2 3]',
+        '```',
+      ].join('\n');
+
+      const editor = new Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: content,
+        plugins: [[codeSyntaxHighlightPlugin, { highlighter: Prism }]],
+      });
+
+      window.editor = editor;
+    </script>
+  </body>
+</html>

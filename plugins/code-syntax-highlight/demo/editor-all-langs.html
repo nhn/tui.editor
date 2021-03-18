@@ -3,18 +3,14 @@
   <head lang="en">
     <meta charset="UTF-8" />
     <title>Editor</title>
-    <!-- Editor's Dependencies -->
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"
     />
     <!-- Editor -->
     <link rel="stylesheet" href="http://localhost:8080/dist/cdn/toastui-editor.css" />
     <!-- Plugin -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
-    />
+    <link rel="stylesheet" href="../dist/cdn/toastui-editor-plugin-code-syntax-highlight.css" />
   </head>
   <body>
     <div class="code-html">
@@ -45,7 +41,7 @@
         '```',
         '```clojure',
         '[1 2 3]',
-        '```'
+        '```',
       ].join('\n');
 
       const { Editor } = toastui;
@@ -56,7 +52,7 @@
         previewStyle: 'vertical',
         height: '500px',
         initialValue: content,
-        plugins: [codeSyntaxHighlight]
+        plugins: [codeSyntaxHighlight],
       });
 
       const viewer = Editor.factory({
@@ -64,7 +60,7 @@
         viewer: true,
         height: '500px',
         initialValue: content,
-        plugins: [codeSyntaxHighlight]
+        plugins: [codeSyntaxHighlight],
       });
     </script>
   </body>
