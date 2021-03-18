@@ -299,10 +299,10 @@ class ToastUIEditor {
 
   /**
    * Set language
-   * @param {string} code - code for I18N language
+   * @param {string|string[]} code - code for I18N language
    * @param {object} data - language set
    */
-  static setLanguage(code: string, data: Record<string, string>) {
+  static setLanguage(code: string | string[], data: Record<string, string>) {
     i18n.setLanguage(code, data);
   }
 

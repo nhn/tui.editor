@@ -28,9 +28,10 @@ function getOptimizationConfig(minify) {
 }
 
 function getEntries() {
-  const entries = entry('./src/i18n/*.js');
+  const entries = entry('./src/i18n/*.ts');
 
   delete entries['en-us'];
+  delete entries.i18n;
 
   return entries;
 }
