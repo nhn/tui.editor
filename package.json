@@ -50,9 +50,8 @@
   "scripts": {
     "lint:all": "lerna run --stream lint",
     "test:all": "jest --watch",
-    "install:libs": "npm run install:toastmark && npm run install:to-mark",
-    "build:libs": "npm run build:toastmark && npm run build:to-mark",
-    "setup:libs": "npm run install:libs && npm run build:libs",
+    "test:types:all": "lerna run --stream test:types",
+    "build:all": "lerna run --stream build",
     "lint": "node ./scripts/pkg-script.js --script lint --type $type",
     "test:types": "node ./scripts/pkg-script.js --script test:types --type $type",
     "serve": "node ./scripts/pkg-script.js --script serve --type $type",
