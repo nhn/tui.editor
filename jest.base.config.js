@@ -1,5 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const path = require('path');
-const setupFile = path.resolve(__dirname, './jest-setup.js')
+const setupFile = path.resolve(__dirname, './jest-setup.js');
 
 module.exports = {
   preset: 'ts-jest',
