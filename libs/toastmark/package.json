@@ -5,6 +5,7 @@
   "scripts": {
     "lint": "eslint .",
     "test:types": "tsc",
+    "test": "jest --watch",
     "serve": "snowpack dev",
     "serve:ie": "webpack serve",
     "build": "webpack --mode=production"

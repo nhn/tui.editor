@@ -35,8 +35,8 @@
   "browserslist": "last 2 versions, not ie <= 10",
   "scripts": {
     "lint": "eslint .",
-    "test": "../../node_modules/.bin/jest --watch",
-    "test:types": "../../node_modules/.bin/tsc",
+    "test:types": "tsc",
+    "test": "jest --watch",
     "serve": "snowpack dev",
     "serve:ie": "webpack serve",
     "build:i18n": "cross-env webpack --config scripts/webpack.config.i18n.js && webpack --config scripts/webpack.config.i18n.js --env minify",
