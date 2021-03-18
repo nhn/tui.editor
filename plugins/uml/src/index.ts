@@ -37,7 +37,7 @@ export default function umlPlugin(editor, options = {}) {
   }
 
   editor.setCodeBlockLanguages(UML_LANGUAGES);
-  UML_LANGUAGES.forEach(umlLanguage => {
+  UML_LANGUAGES.forEach((umlLanguage) => {
     const { codeBlockManager } = Object.getPrototypeOf(editor).constructor;
 
     codeBlockManager.setReplacer(umlLanguage, plantUMLReplacer);
