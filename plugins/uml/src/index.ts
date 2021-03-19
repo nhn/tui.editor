@@ -5,7 +5,7 @@
 import plantumlEncoder from 'plantuml-encoder';
 import { UMLPluginOptions } from '../index';
 
-const DEFAULT_RENDERER_URL = 'http://www.plantuml.com/plantuml/png/';
+const DEFAULT_RENDERER_URL = '//www.plantuml.com/plantuml/png/';
 
 function createUMLTokens(text: string, rendererURL: string) {
   let renderedHTML;

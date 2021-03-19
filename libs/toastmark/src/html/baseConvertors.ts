@@ -191,7 +191,7 @@ export const baseConvertors: HTMLConvertorMap = {
 
   customBlock(node, context, convertors) {
     const info = (node as CustomBlockNode).info!;
-    const customConvertor = convertors![info];
+    const customConvertor = convertors![info.toLowerCase()];
 
     if (customConvertor) {
       try {
