@@ -11,13 +11,6 @@ const convertors: HTMLConvertorMap = {
       { type: 'closeTag', tagName: 'div', outerNewLine: true },
     ];
   },
-  MYCUSTOM(node) {
-    return [
-      { type: 'openTag', tagName: 'div', outerNewLine: true, classNames: ['myCustom-block'] },
-      { type: 'html', content: node.literal! },
-      { type: 'closeTag', tagName: 'div', outerNewLine: true },
-    ];
-  },
 };
 const reader = new Parser();
 const renderer = new Renderer({ gfm: true, convertors });
@@ -61,7 +54,7 @@ describe('customBlock', () => {
 
   it('should be rendered regardless of the case insensitive', () => {
     const input = source`
-      $$MYCUSTOM
+      $$MYCuSTOM
       my custom block
 
       should be parsed

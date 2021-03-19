@@ -33,8 +33,8 @@
     "test": "jest --watch",
     "serve": "snowpack dev",
     "serve:ie": "webpack serve",
-    "build:cdn": "webpack --mode=production --env cdn & webpack --mode=production --env cdn minify",
-    "build": "webpack --mode=production && npm run build:cdn"
+    "build:cdn": "webpack build --env cdn & webpack build --env cdn minify",
+    "build": "webpack build && npm run build:cdn"
   },
   "devDependencies": {
     "jest-canvas-mock": "^2.3.1"

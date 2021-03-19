@@ -7,9 +7,6 @@ import inArray from 'tui-code-snippet/array/inArray';
 
 import { isPositionInBox, removeNode, cls } from '@/utils/dom';
 
-// @ts-ignore
-import { Emitter } from '@toast-ui/editor';
-
 export const WRAPPER_CLASS_NAME = 'code-block-language';
 export const INPUT_CLASS_NANE = 'code-block-language-input';
 export const LIST_CLASS_NAME = 'code-block-language-list';
@@ -23,7 +20,7 @@ function getButtonsHTML(languages: string[]) {
 }
 
 export class LanguageSelectBox {
-  private eventEmitter: Emitter;
+  private eventEmitter: any;
 
   private languages: string[];
 
@@ -39,7 +36,7 @@ export class LanguageSelectBox {
 
   private prevStoredLanguage = '';
 
-  constructor(eventEmitter: Emitter, languages: string[]) {
+  constructor(eventEmitter: any, languages: string[]) {
     this.eventEmitter = eventEmitter;
     this.languages = languages;
 

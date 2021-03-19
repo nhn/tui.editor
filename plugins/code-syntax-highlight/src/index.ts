@@ -1,7 +1,5 @@
 import { codeSyntaxHighlightPlugin } from '@/plugin';
 
-import { Emitter } from '@toast-ui/editor';
-
 import '@/css/plugin.css';
 
 import { PrismJs } from 'prismjs';
@@ -20,5 +18,5 @@ if (typeof window !== undefined) {
   window.Prism.manual = true;
 }
 
-export default (eventEmitter: Emitter, options = {}) =>
+export default (eventEmitter: any, options = {}) =>
   codeSyntaxHighlightPlugin(eventEmitter, options);

@@ -72,8 +72,8 @@ function getOptimizationConfig(isProduction, minify) {
   return { minimizer };
 }
 
-module.exports = (env, argv) => {
-  const isProduction = argv.mode === 'production';
+module.exports = (env) => {
+  const isProduction = env.WEBPACK_BUILD;
   const { minify = false, cdn = false } = env;
   const config = {
     mode: isProduction ? 'production' : 'development',
@@ -107,7 +107,7 @@ module.exports = (env, argv) => {
       new ESLintPlugin({
         extensions: ['js', 'ts'],
         exclude: ['node_modules', 'dist'],
-        failOnError: false,
+        failOnError: isProduction,
       }),
     ],
     optimization: getOptimizationConfig(isProduction, minify),

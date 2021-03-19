@@ -11,10 +11,8 @@ module.exports = {
   devOptions: {
     port: 8081,
   },
-  packageOptions: {
-    polyfillNode: true,
-  },
   routes: [
+    { match: 'routes', src: '.*', dest: '/editor.html' },
     {
       src: '/img/.*',
       dest: (req, res) => {
@@ -26,9 +24,5 @@ module.exports = {
     clean: true,
     sourceMaps: false,
     out: 'dist',
-  },
-  alias: {
-    '@': './src',
-    '@t': './types',
   },
 };

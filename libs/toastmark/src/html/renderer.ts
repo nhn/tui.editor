@@ -65,13 +65,16 @@ export class Renderer implements HTMLRenderer {
       nodeTypes.forEach((nodeType) => {
         const orgConvertor = convertors[nodeType];
         const convertor = customConvertors[nodeType]!;
+        const convertorType =
+          Object.keys(baseConvertors).indexOf(nodeType) === -1 ? nodeType.toLowerCase() : nodeType;
+
         if (orgConvertor) {
-          convertors[nodeType] = (node, context) => {
+          convertors[convertorType] = (node, context) => {
             context.origin = () => orgConvertor(node, context);
             return convertor(node, context);
           };
         } else {
-          convertors[nodeType] = convertor;
+          convertors[convertorType] = convertor;
         }
       });
     }
