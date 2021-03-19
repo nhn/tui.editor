@@ -12,6 +12,7 @@
     "uml"
   ],
   "main": "dist/toastui-editor-plugin-uml.js",
+  "types": "index.d.ts",
   "files": [
     "dist/*.js",
     "index.d.ts"
