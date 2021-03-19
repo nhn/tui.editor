@@ -6,7 +6,7 @@ import { Emitter } from '@t/event';
 import { ToDOMAdaptor, ToMdConvertorMap } from '@t/convertor';
 import { EditorCommand } from '@t/spec';
 
-export type PluginProp = (eventEmitter: Emitter) => Plugin;
+export type PluginProp = (eventEmitter?: Emitter) => Plugin;
 
 export type ExtraNodeViews = (
   node: Node,
@@ -21,11 +21,11 @@ type NodeViewPropMap = Record<string, ExtraNodeViews>;
 export type PluginCommandMap = Record<string, EditorCommand>;
 
 export interface PluginInfoResult {
-  toHTMLRenderers: HTMLConvertorMap;
-  toMarkdownRenderers: ToMdConvertorMap;
-  mdPlugins: PluginProp[];
-  wwPlugins: PluginProp[];
-  wwNodeViews: NodeViewPropMap;
-  mdCommands: PluginCommandMap;
-  wwCommands: PluginCommandMap;
+  toHTMLRenderers?: HTMLConvertorMap;
+  toMarkdownRenderers?: ToMdConvertorMap;
+  mdPlugins?: PluginProp[];
+  wwPlugins?: PluginProp[];
+  wwNodeViews?: NodeViewPropMap;
+  mdCommands?: PluginCommandMap;
+  wwCommands?: PluginCommandMap;
 }

@@ -1,12 +1,12 @@
 import { Plugin } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
-import { Node as ProsemirrorNode } from 'prosemirror-model';
+import type { Node as ProsemirrorNode } from 'prosemirror-model';
 
 import isString from 'tui-code-snippet/type/isString';
 
 import { flatten } from '@/utils/common';
 
-import { PrismJs } from 'prismjs';
+import { PrismJs } from '@t/index';
 
 interface ChildNodeInfo {
   node: ProsemirrorNode;

@@ -48,6 +48,7 @@ export {
   WidgetRuleMap,
   WidgetRule,
 };
+export { PluginInfoResult } from './plugin';
 export { Editor, EditorCore };
 export default Editor;
 

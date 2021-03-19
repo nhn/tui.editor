@@ -5,6 +5,8 @@
 import plantumlEncoder from 'plantuml-encoder';
 import { UMLPluginOptions } from '../index';
 
+import type { Emitter, MdNode, PluginInfoResult } from '@toast-ui/editor';
+
 const DEFAULT_RENDERER_URL = '//www.plantuml.com/plantuml/png/';
 
 function createUMLTokens(text: string, rendererURL: string) {
@@ -32,15 +34,15 @@ function createUMLTokens(text: string, rendererURL: string) {
  * @param {Object} options - options for plugin
  * @param {string} [options.rendererURL] - url of plant uml renderer
  */
-export default function umlPlugin(_: any, options: UMLPluginOptions = {}) {
+export default function umlPlugin(_: Emitter, options: UMLPluginOptions = {}): PluginInfoResult {
   const { rendererURL = DEFAULT_RENDERER_URL } = options;
 
   return {
     toHTMLRenderers: {
-      uml(node: any) {
+      uml(node: MdNode) {
         return createUMLTokens(node.literal!, rendererURL);
       },
-      plantUml(node: any) {
+      plantUml(node: MdNode) {
         return createUMLTokens(node.literal!, rendererURL);
       },
     },
