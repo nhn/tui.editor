@@ -44,10 +44,10 @@ interface WysiwygOptions {
   wwCommands?: PluginCommandMap;
 }
 
-type ExtraNodeVeiwFn = (node: Node, view: EditorView, getPos: () => number) => NodeView;
+type PluginNodeVeiwFn = (node: ProsemirrorNode, view: EditorView, getPos: () => number) => NodeView;
 
-interface ExtraNodeViews {
-  [k: string]: ExtraNodeVeiwFn;
+interface PluginNodeViews {
+  [k: string]: PluginNodeVeiwFn;
 }
 
 const CONTENTS_CLASS_NAME = cls('contents');
@@ -57,7 +57,7 @@ export default class WysiwygEditor extends EditorBase {
 
   private linkAttributes: LinkAttributes;
 
-  private extraNodeViews: NodeViewPropMap;
+  private pluginNodeViews: NodeViewPropMap;
 
   constructor(eventEmitter: Emitter, options: WysiwygOptions) {
     super(eventEmitter);
@@ -76,7 +76,7 @@ export default class WysiwygEditor extends EditorBase {
     this.toDOMAdaptor = toDOMAdaptor;
     this.linkAttributes = linkAttributes!;
     this.extraPlugins = wwPlugins;
-    this.extraNodeViews = wwNodeViews;
+    this.pluginNodeViews = wwNodeViews;
     this.specs = this.createSpecs();
     this.schema = this.createSchema(htmlSchemaMap);
     this.context = this.createContext();
@@ -115,18 +115,18 @@ export default class WysiwygEditor extends EditorBase {
     ]);
   }
 
-  createExtraNodeViews() {
-    const { eventEmitter, toDOMAdaptor, extraNodeViews } = this;
-    const extraNodeViewMap: ExtraNodeViews = {};
+  createPluginNodeViews() {
+    const { eventEmitter, toDOMAdaptor, pluginNodeViews } = this;
+    const pluginNodeViewMap: PluginNodeViews = {};
 
-    if (extraNodeViews) {
-      Object.keys(extraNodeViews).forEach((key) => {
-        extraNodeViewMap[key] = (node, view, getPos) =>
-          extraNodeViews[key](node, view, getPos, eventEmitter, toDOMAdaptor);
+    if (pluginNodeViews) {
+      Object.keys(pluginNodeViews).forEach((key) => {
+        pluginNodeViewMap[key] = (node, view, getPos) =>
+          pluginNodeViews[key](node, view, getPos, eventEmitter, toDOMAdaptor);
       });
     }
 
-    return extraNodeViewMap;
+    return pluginNodeViewMap;
   }
 
   createView() {
@@ -148,7 +148,7 @@ export default class WysiwygEditor extends EditorBase {
           return new CodeBlockView(node, view, getPos, toDOMAdaptor, eventEmitter);
         },
         widget: widgetNodeView,
-        ...this.createExtraNodeViews(),
+        ...this.createPluginNodeViews(),
       },
       dispatchTransaction: (tr) => {
         const { state } = this.view.state.applyTransaction(tr);

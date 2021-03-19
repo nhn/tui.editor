@@ -1,6 +1,4 @@
-import type { Emitter, PluginInfoResult } from '@toast-ui/editor';
 import { codeSyntaxHighlightPlugin } from '@/plugin';
-import { PluginOptions } from '@t/index';
 
 import '@/css/plugin.css';
 
@@ -12,6 +10,4 @@ if (typeof window !== undefined) {
   window.Prism.manual = true;
 }
 
-export default function (eventEmitter: Emitter, options: PluginOptions): PluginInfoResult {
-  return codeSyntaxHighlightPlugin(eventEmitter, options || {});
-}
+export default codeSyntaxHighlightPlugin;

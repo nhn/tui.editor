@@ -3,10 +3,9 @@ import { EditorView } from 'prosemirror-view';
 import { EditorState, Plugin } from 'prosemirror-state';
 import { HTMLConvertorMap, MdPos, Sourcepos } from '@toast-ui/toastmark';
 import { Emitter, Handler } from './event';
-import { Context, EditorAllCommandMap, EditorCommandFn } from './spec';
+import { Context, EditorAllCommandMap, EditorCommandFn, SpecManager } from './spec';
 import { ToMdConvertorMap } from './convertor';
 import { DefaultUI, ToolbarItemOptions } from './ui';
-import SpecManager from '@/spec/specManager';
 import { PluginProp, NodeViewPropMap, PluginCommandMap } from './plugin';
 
 export type PreviewStyle = 'tab' | 'vertical';
@@ -99,10 +98,7 @@ interface EditorPluginInfo {
   wysiwygCommands?: PluginCommandMap;
 }
 
-export type PluginFn = (
-  eventEmitter: Emitter,
-  options?: Record<string, any>
-) => EditorPluginInfo | null;
+export type PluginFn = (eventEmitter: Emitter, options?: any) => EditorPluginInfo | null;
 export type EditorPlugin = PluginFn | [PluginFn, Record<string, any>];
 
 export interface EditorOptions {

@@ -171,7 +171,7 @@ export function createCodeSyntaxHighlightView(languages: string[]) {
     node: ProsemirrorNode,
     view: EditorView,
     getPos: GetPos,
-    evtEmitter: any,
-    toDOMAdaptor: any
-  ) => new CodeSyntaxHighlightView(node, view, getPos, evtEmitter, toDOMAdaptor, languages);
+    emitter: Emitter,
+    toDOMAdaptor: ToDOMAdaptor
+  ) => new CodeSyntaxHighlightView(node, view, getPos, emitter, toDOMAdaptor, languages);
 }

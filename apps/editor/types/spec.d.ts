@@ -1,5 +1,5 @@
 import { Schema } from 'prosemirror-model';
-import { Transaction } from 'prosemirror-state';
+import { Transaction, Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Command } from 'prosemirror-commands';
 import { ToastMark } from '@toast-ui/toastmark';
@@ -30,3 +30,14 @@ export type EditorCommand<T = DefaultPayload> = (payload?: Payload<T>) => Comman
 export type EditorCommandMap<T = DefaultPayload> = Record<string, EditorCommand<T>>;
 export type EditorCommandFn<T = DefaultPayload> = (payload?: Payload<T>) => boolean | void;
 export type EditorAllCommandMap<T = DefaultPayload> = Record<string, EditorCommandFn<T>>;
+
+export interface SpecManager {
+  commands(
+    view: EditorView,
+    addedCommands?: Record<string, EditorCommand>
+  ): EditorAllCommandMap<DefaultPayload>;
+
+  keymaps(): Plugin<any, any>[];
+
+  setContext(context: SpecContext): void;
+}
