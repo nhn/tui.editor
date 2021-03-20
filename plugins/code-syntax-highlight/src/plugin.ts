@@ -9,7 +9,7 @@ import { PluginOptions } from '@t/index';
 
 export function codeSyntaxHighlightPlugin(
   eventEmitter: Emitter,
-  options?: PluginOptions
+  options: PluginOptions
 ): PluginInfo {
   if (options) {
     const { highlighter: prism } = options;
@@ -25,7 +25,7 @@ export function codeSyntaxHighlightPlugin(
 
     return {
       toHTMLRenderers: getHTMLRenderers(prism),
-      wysiwygPlugins: [() => codeSyntaxHighlighting(prism)],
+      wysiwygPlugins: [() => codeSyntaxHighlighting(options)],
       wysiwygNodeViews: {
         codeBlock: createCodeSyntaxHighlightView(registerdlanguages),
       },

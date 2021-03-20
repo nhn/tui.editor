@@ -76,7 +76,7 @@ module.exports = (env) => {
     mode: isProduction ? 'production' : 'development',
     entry: all ? ENTRY_ALL_LANG : ENTRY,
     output: getOutputConfig(isProduction, cdn, all, minify),
-    // externals: ['prosemirror-state', 'prosemirror-view'],
+    externals: ['prosemirror-state', 'prosemirror-view'],
     module: {
       rules: [
         {

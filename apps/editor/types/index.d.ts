@@ -16,6 +16,7 @@ import {
   WidgetStyle,
   WidgetRuleMap,
   WidgetRule,
+  PluginDefaultOptions,
 } from './editor';
 
 export {
@@ -47,6 +48,7 @@ export {
   WidgetStyle,
   WidgetRuleMap,
   WidgetRule,
+  PluginDefaultOptions,
 };
 export { PluginInfo, PluginNodeViews } from './plugin';
 export { Editor, EditorCore };
