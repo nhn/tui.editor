@@ -1,26 +1,23 @@
 import { Component } from 'react';
-import ToastuiEditor, { EditorOptions } from '@toast-ui/editor';
-import ToastuiEditorViewer, { ViewerOptions } from '@toast-ui/editor/dist/toastui-editor-viewer';
+import ToastuiEditor, { EditorOptions, ViewerOptions, EventMap } from '@toast-ui/editor';
+import ToastuiEditorViewer from '@toast-ui/editor/dist/toastui-editor-viewer';
 
-export type EventNameMapping = {
-  load: 'onLoad';
-  change: 'onChange';
-  caretChange: 'onCaretChange';
-  focus: 'onFocus';
-  blur: 'onBlur';
-  keydown: 'onKeydown';
-  keyup: 'onKeyup';
-  beforePreviewRender: 'onBeforePreviewRender';
-  beforeConvertWysiwygToMarkdown: 'onBeforeConvertWysiwygToMarkdown';
+export type EventMapping = {
+  onLoad: EventMap['load'];
+  onChange: EventMap['change'];
+  onCaretChange: EventMap['caretChange'];
+  onFocus: EventMap['focus'];
+  onBlur: EventMap['blur'];
+  onBlur: EventMap['keydown'];
+  onKeyup: EventMap['keyup'];
+  onBeforePreviewRender: EventMap['beforePreviewRender'];
+  onBeforeConvertWysiwygToMarkdown: EventMap['beforeConvertWysiwygToMarkdown'];
 };
 
-export type EventMaps = {
-  // @TODO apply editor handler
-  [K in keyof EventNameMapping]?: (...args: any[]) => void;
-};
+export type EventNames = keyof EventMapping;
 
-type EditorProps = Omit<EditorOptions, 'el'> & EventMaps;
-type ViewerProps = Omit<ViewerOptions, 'el'> & EventMaps;
+export type EditorProps = Omit<EditorOptions, 'el'> & EventMapping;
+export type ViewerProps = Omit<ViewerOptions, 'el'> & EventMapping;
 
 export class Editor extends Component<EditorProps> {
   getInstance(): ToastuiEditor;
