@@ -3,11 +3,6 @@
   <head lang="en">
     <meta charset="UTF-8" />
     <title>Editor</title>
-    <!-- Editor's Dependencies -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.css"
-    />
     <!-- Editor -->
     <link rel="stylesheet" href="http://localhost:8080/dist/cdn/toastui-editor.css" />
   </head>
@@ -26,7 +21,7 @@
     <script src="../dist/cdn/toastui-editor-plugin-uml.js"></script>
     <script class="code-js">
       const content = [
-        '```uml',
+        '$$uml',
         'partition Conductor {',
         '  (*) --> "Climbs on Platform"',
         '  --> === S1 ===',
@@ -47,7 +42,7 @@
         '  WavesArmes --> Introduction',
         '  --> "Play music"',
         '}',
-        '```'
+        '$$'
       ].join('\n');
 
       const { Editor } = toastui;
