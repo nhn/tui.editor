@@ -28,7 +28,7 @@ describe('codeSyntaxHighlightPlugin', () => {
       el: container,
       previewStyle: 'vertical',
       initialValue,
-      plugins: [[codeSyntaxHighlightPlugin, { prism: Prism }]],
+      plugins: [[codeSyntaxHighlightPlugin, { highlighter: Prism }]],
     });
 
     const elements = editor.getEditorElements();

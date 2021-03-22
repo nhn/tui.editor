@@ -12,6 +12,7 @@
     "chart"
   ],
   "main": "dist/toastui-editor-plugin-chart.js",
+  "types": "types/index.d.ts",
   "files": [
     "dist/*.js",
     "types/index.d.ts"

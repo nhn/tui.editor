@@ -1,8 +1,6 @@
 import React from 'react';
 import Editor from '@toast-ui/editor';
-import { EditorProps, EventNameMapping } from '../index';
-
-type EventName = keyof EventNameMapping;
+import { EditorProps, EventNames } from '../index';
 
 export default class extends React.Component<EditorProps> {
   rootEl = React.createRef<HTMLDivElement>();
@@ -24,7 +22,7 @@ export default class extends React.Component<EditorProps> {
         const eventName = key[2].toLowerCase() + key.slice(3);
 
         this.editorInst.off(eventName);
-        this.editorInst.on(eventName, props[key as EventName]!);
+        this.editorInst.on(eventName, props[key as EventNames]!);
       });
   }
 
@@ -43,7 +41,7 @@ export default class extends React.Component<EditorProps> {
 
     if (height && this.props.height !== height) {
       // @TODO: change API for 3.x
-      instance.height(height);
+      instance.setHeight(height);
     }
 
     if (previewStyle && this.props.previewStyle !== previewStyle) {

@@ -3,11 +3,14 @@
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  */
 import plantumlEncoder from 'plantuml-encoder';
-import { UMLPluginOptions } from '../index';
+import { PluginOptions } from '../index';
+
+import type { Emitter, MdNode, PluginInfo } from '@toast-ui/editor';
+import type { HTMLToken } from '@toast-ui/toastmark';
 
 const DEFAULT_RENDERER_URL = '//www.plantuml.com/plantuml/png/';
 
-function createUMLTokens(text: string, rendererURL: string) {
+function createUMLTokens(text: string, rendererURL: string): HTMLToken[] {
   let renderedHTML;
 
   try {
@@ -32,15 +35,15 @@ function createUMLTokens(text: string, rendererURL: string) {
  * @param {Object} options - options for plugin
  * @param {string} [options.rendererURL] - url of plant uml renderer
  */
-export default function umlPlugin(_: any, options: UMLPluginOptions = {}) {
+export default function umlPlugin(_: Emitter, options: PluginOptions = {}): PluginInfo {
   const { rendererURL = DEFAULT_RENDERER_URL } = options;
 
   return {
     toHTMLRenderers: {
-      uml(node: any) {
+      uml(node: MdNode) {
         return createUMLTokens(node.literal!, rendererURL);
       },
-      plantUml(node: any) {
+      plantUml(node: MdNode) {
         return createUMLTokens(node.literal!, rendererURL);
       },
     },

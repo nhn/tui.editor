@@ -1,14 +1,10 @@
-import Prism, { PrismJs } from 'prismjs';
+import Prism from 'prismjs';
+import type { Emitter, PluginInfo } from '@toast-ui/editor';
 import { codeSyntaxHighlightPlugin } from '@/plugin';
+import { PluginOptions } from '@t/index';
 
 import '@/prismjs-langs';
 import '@/css/plugin.css';
-
-declare global {
-  interface Window {
-    Prism: PrismJs;
-  }
-}
 
 // Prevent to highlight all code elements automatically.
 // @link https://prismjs.com/docs/Prism.html#.manual
@@ -18,5 +14,9 @@ if (typeof window !== undefined) {
   window.Prism.manual = true;
 }
 
-export default (eventEmitter: any, options = {}) =>
-  codeSyntaxHighlightPlugin(eventEmitter, { ...options, ...{ highlighter: Prism } });
+export default function plugin(eventEmitter: Emitter, options: PluginOptions): PluginInfo {
+  return codeSyntaxHighlightPlugin(eventEmitter, {
+    ...options,
+    ...{ highlighter: Prism },
+  } as PluginOptions);
+}

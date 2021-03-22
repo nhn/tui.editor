@@ -1,24 +1,35 @@
 import { Plugin } from 'prosemirror-state';
 import { EditorView, NodeView } from 'prosemirror-view';
+import { Node } from 'prosemirror-model';
 
 import { HTMLConvertorMap } from '@toast-ui/toastmark';
-import { Emitter } from '@t/event';
-import { ToDOMAdaptor, ToMdConvertorMap } from '@t/convertor';
-import { EditorCommand } from '@t/spec';
+import { Emitter } from './event';
+import { ToDOMAdaptor, ToMdConvertorMap } from './convertor';
+import { EditorCommand } from './spec';
 
-export type PluginProp = (eventEmitter: Emitter) => Plugin;
+export type PluginProp = (eventEmitter?: Emitter) => Plugin;
 
-export type ExtraNodeViews = (
+export type PluginNodeViews = (
   node: Node,
   view: EditorView,
   getPos: () => number,
-  evnetEmitter: Emitter,
+  eventEmitter: Emitter,
   toDOMAdaptor: ToDOMAdaptor
 ) => NodeView;
 
-type NodeViewPropMap = Record<string, ExtraNodeViews>;
+type NodeViewPropMap = Record<string, PluginNodeViews>;
 
 export type PluginCommandMap = Record<string, EditorCommand>;
+
+export interface PluginInfo {
+  toHTMLRenderers?: HTMLConvertorMap;
+  toMarkdownRenderers?: ToMdConvertorMap;
+  markdownPlugins?: PluginProp[];
+  wysiwygPlugins?: PluginProp[];
+  wysiwygNodeViews?: NodeViewPropMap;
+  markdownCommands?: PluginCommandMap;
+  wysiwygCommands?: PluginCommandMap;
+}
 
 export interface PluginInfoResult {
   toHTMLRenderers: HTMLConvertorMap;

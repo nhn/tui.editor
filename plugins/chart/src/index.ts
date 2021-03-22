@@ -24,7 +24,8 @@
  * y.title: Month              => yAxis.title
  * $$
  */
-import {
+import type { Emitter, PluginInfo, MdNode } from '@toast-ui/editor';
+import Chart, {
   BaseOptions,
   LineChart,
   AreaChart,
@@ -65,11 +66,11 @@ const DEFAULT_DIMENSION_OPTIONS = {
 };
 const RESERVED_KEYS = ['type', 'url'];
 const chart = {
-  bar: BarChart,
-  column: ColumnChart,
-  area: AreaChart,
-  line: LineChart,
-  pie: PieChart,
+  bar: Chart.barChart,
+  column: Chart.columnChart,
+  area: Chart.areaChart,
+  line: Chart.lineChart,
+  pie: Chart.pieChart,
 };
 const chartMap: Record<string, ChartInstance> = {};
 
@@ -313,10 +314,10 @@ function renderChart(id: string, text: string, pluginOptions: PluginOptions) {
         } else if (SUPPORTED_CHART_TYPES.indexOf(chartType) < 0) {
           chartContainer.innerHTML = `invalid chart type. type: bar, column, line, area, pie`;
         } else {
-          const Constructor = chart[chartType];
+          const toastuiChart = chart[chartType];
 
           // @ts-ignore
-          chartMap[id] = new Constructor({ el: chartContainer, data, options: chartOptions });
+          chartMap[id] = toastuiChart({ el: chartContainer, data, options: chartOptions });
         }
       });
     } catch (e) {
@@ -331,7 +332,7 @@ function generateId() {
 
 /**
  * Chart plugin
- * @param {Editor|Viewer} editor - instance of Editor or Viewer
+ * @param {Object} emitter - event emitter for communicating with editor
  * @param {Object} options - chart options
  * @param {number} [options.minWidth=0] - minimum width
  * @param {number} [options.minHeight=0] - minimum height
@@ -340,7 +341,7 @@ function generateId() {
  * @param {number|string} [options.width='auto'] - default width
  * @param {number|string} [options.height='auto'] - default height
  */
-export default function chartPlugin(_: any, options: PluginOptions) {
+export default function chartPlugin(_: Emitter, options: PluginOptions): PluginInfo {
   options = extend(
     {
       usageStatistics: options.usageStatistics ?? true,
@@ -350,11 +351,11 @@ export default function chartPlugin(_: any, options: PluginOptions) {
 
   return {
     toHTMLRenderers: {
-      chart(node: any) {
+      chart(node: MdNode) {
         const id = generateId();
 
         setTimeout(() => {
-          renderChart(id, node.literal, options);
+          renderChart(id, node.literal!, options);
         });
         return [
           {

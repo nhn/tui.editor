@@ -1,12 +1,11 @@
-import { Plugin } from 'prosemirror-state';
-import { Decoration, DecorationSet } from 'prosemirror-view';
-import { Node as ProsemirrorNode } from 'prosemirror-model';
+import type { Node as ProsemirrorNode } from 'prosemirror-model';
+import type { Decoration } from 'prosemirror-view';
 
 import isString from 'tui-code-snippet/type/isString';
 
 import { flatten } from '@/utils/common';
 
-import { PrismJs } from 'prismjs';
+import { PluginOptions } from '@t/index';
 
 interface ChildNodeInfo {
   node: ProsemirrorNode;
@@ -65,7 +64,8 @@ function parseTokens(
   }) as HighlightedNodeInfo[];
 }
 
-function getDecorations(doc: ProsemirrorNode, prism: PrismJs) {
+function getDecorations(doc: ProsemirrorNode, options: PluginOptions) {
+  const { highlighter: prism, pmView } = options;
   const decorations: Decoration[] = [];
   const codeBlocks = findCodeBlocks(doc);
 
@@ -84,7 +84,7 @@ function getDecorations(doc: ProsemirrorNode, prism: PrismJs) {
       startPos = to;
 
       const classNames = classes.join(' ');
-      const decoration = Decoration.inline(from, to, {
+      const decoration = pmView.Decoration.inline(from, to, {
         class: classNames,
       });
 
@@ -94,21 +94,21 @@ function getDecorations(doc: ProsemirrorNode, prism: PrismJs) {
     });
   });
 
-  return DecorationSet.create(doc, decorations);
+  return pmView.DecorationSet.create(doc, decorations);
 }
 
-export function codeSyntaxHighlighting(prism: PrismJs) {
-  return new Plugin({
+export function codeSyntaxHighlighting(options: PluginOptions) {
+  return new options.pmState.Plugin({
     state: {
       init(_, { doc }) {
-        return getDecorations(doc, prism);
+        return getDecorations(doc, options);
       },
       apply(tr, set) {
         if (!tr.docChanged) {
           return set.map(tr.mapping, tr.doc);
         }
 
-        return getDecorations(tr.doc, prism);
+        return getDecorations(tr.doc, options);
       },
     },
     props: {

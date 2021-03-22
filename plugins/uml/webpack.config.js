@@ -77,18 +77,22 @@ module.exports = (env) => {
   const { minify = false, cdn = false } = env;
   const config = {
     mode: isProduction ? 'production' : 'development',
-    entry: './src/js/index.js',
+    entry: './src/index.ts',
     output: getOutputConfig(isProduction, cdn, minify),
     externals: getExternalsConfig(isProduction, cdn),
     module: {
       rules: [
         {
-          test: /\.js$/,
-          exclude: /node_modules|dist/,
-          loader: 'babel-loader?cacheDirectory',
-          options: {
-            rootMode: 'upward',
-          },
+          test: /\.ts$|\.js$/,
+          use: [
+            {
+              loader: 'ts-loader',
+              options: {
+                transpileOnly: true,
+              },
+            },
+          ],
+          exclude: /node_modules/,
         },
       ],
     },

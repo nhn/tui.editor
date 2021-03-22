@@ -1,7 +1,7 @@
-type Plugin = (editor: any, options?: any) => void;
+import type { Emitter, PluginInfo } from '@toast-ui/editor';
 
-export interface UMLPluginOptions {
+export interface PluginOptions {
   rendererURL?: string;
 }
 
-export default function umlPlugin(): Plugin;
+export default function umlPlugin(emitter: Emitter, options: PluginOptions): PluginInfo;

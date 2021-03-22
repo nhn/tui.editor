@@ -1,11 +1,12 @@
-import { EditorView, NodeView } from 'prosemirror-view';
-import { Node as ProsemirrorNode } from 'prosemirror-model';
+import type { EditorView, NodeView } from 'prosemirror-view';
+import type { Node as ProsemirrorNode } from 'prosemirror-model';
 
 import isFunction from 'tui-code-snippet/type/isFunction';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 
 import { isPositionInBox, cls } from '@/utils/dom';
 import { LanguageSelectBox } from '@/nodeViews/languageSelectBox';
+import type { Emitter, ToDOMAdaptor } from '@toast-ui/editor';
 
 type GetPos = (() => number) | boolean;
 
@@ -27,8 +28,8 @@ class CodeSyntaxHighlightView implements NodeView {
     private node: ProsemirrorNode,
     private view: EditorView,
     private getPos: GetPos,
-    private eventEmitter: any,
-    private toDOMAdaptor: any,
+    private eventEmitter: Emitter,
+    private toDOMAdaptor: ToDOMAdaptor,
     private languages: string[]
   ) {
     this.node = node;
@@ -68,7 +69,7 @@ class CodeSyntaxHighlightView implements NodeView {
   private createCodeBlockElement() {
     const toDOMNode = this.toDOMAdaptor.getToDOMNode('codeBlock');
 
-    return toDOMNode!(this.node);
+    return toDOMNode!(this.node) as HTMLPreElement;
   }
 
   private bindDOMEvent() {
@@ -170,7 +171,7 @@ export function createCodeSyntaxHighlightView(languages: string[]) {
     node: ProsemirrorNode,
     view: EditorView,
     getPos: GetPos,
-    evtEmitter: any,
-    toDOMAdaptor: any
-  ) => new CodeSyntaxHighlightView(node, view, getPos, evtEmitter, toDOMAdaptor, languages);
+    emitter: Emitter,
+    toDOMAdaptor: ToDOMAdaptor
+  ) => new CodeSyntaxHighlightView(node, view, getPos, emitter, toDOMAdaptor, languages);
 }

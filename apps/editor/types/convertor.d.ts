@@ -2,7 +2,7 @@ import {
   NodeType,
   MarkType,
   Schema,
-  ProsemirrorNode,
+  Node as ProsemirrorNode,
   Mark,
   DOMOutputSpecArray,
 } from 'prosemirror-model';

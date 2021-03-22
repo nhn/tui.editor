@@ -1,4 +1,4 @@
-type Plugin = (editor: any, options?: any) => void;
+import type { Emitter, PluginInfo } from '@toast-ui/editor';
 
 export interface PluginOptions {
   usageStatistics?: boolean;
@@ -10,5 +10,4 @@ export interface PluginOptions {
   height: number | 'auto';
 }
 
-// @TODO change type
-export default function chartPlugin(): Plugin;
+export default function chartPlugin(emitter: Emitter, options: PluginOptions): PluginInfo;

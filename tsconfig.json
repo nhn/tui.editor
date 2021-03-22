@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "skipLibCheck": true,
     "target": "es5",
     "module": "es6",
     "allowJs": true,

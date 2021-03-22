@@ -1,17 +1,23 @@
 import isArray from 'tui-code-snippet/type/isArray';
+import { Plugin, Selection } from 'prosemirror-state';
+import { Decoration, DecorationSet } from 'prosemirror-view';
 
 import { EditorPlugin } from '@t/editor';
 import { Emitter } from '@t/event';
 import { PluginInfoResult } from '@t/plugin';
 
 function execPlugin(plugin: EditorPlugin, eventEmitter: Emitter) {
+  const pmState = { Plugin, Selection };
+  const pmView = { Decoration, DecorationSet };
+  const defaultOptions = { pmState, pmView };
+
   if (isArray(plugin)) {
     const [pluginFn, options = {}] = plugin;
 
-    return pluginFn(eventEmitter, options);
+    return pluginFn(eventEmitter, { ...defaultOptions, ...options });
   }
 
-  return plugin(eventEmitter);
+  return plugin(eventEmitter, defaultOptions);
 }
 
 export function getPluginInfo(plugins: EditorPlugin[], eventEmitter: Emitter) {

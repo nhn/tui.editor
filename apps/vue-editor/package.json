@@ -29,8 +29,5 @@
   },
   "peerDependencies": {
     "vue": "^2.5.0"
-  },
-  "dependencies": {
-    "@toast-ui/editor": "^2.4.0"
   }
 }

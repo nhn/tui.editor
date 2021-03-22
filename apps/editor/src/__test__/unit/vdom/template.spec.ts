@@ -99,8 +99,10 @@ describe('lit-html syntax', () => {
     const vnode = html`
       <div class="my-class">
         ${null && html`<span>123</span>`}
-        ${// eslint-disable-next-line no-undefined
-        undefined && html`<span>123</span>`}
+        ${
+          // eslint-disable-next-line no-undefined
+          undefined && html`<span>123</span>`
+        }
         ${false && html`<span>123</span>`}test
       </div>
     ` as VNode;

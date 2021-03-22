@@ -16,6 +16,7 @@ import {
   WidgetStyle,
   WidgetRuleMap,
   WidgetRule,
+  PluginDefaultOptions,
 } from './editor';
 
 export {
@@ -47,14 +48,16 @@ export {
   WidgetStyle,
   WidgetRuleMap,
   WidgetRule,
+  PluginDefaultOptions,
 };
+export { PluginInfo, PluginNodeViews } from './plugin';
 export { Editor, EditorCore };
 export default Editor;
 
-declare namespace toastui {
+export declare namespace toastui {
   export { EditorCore, Editor, Viewer };
 }
 
-declare module '@toast-ui/editor/dist/toastui-editor-viewer' {
+export declare module '@toast-ui/editor/dist/toastui-editor-viewer' {
   export default Viewer;
 }

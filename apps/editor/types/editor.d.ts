@@ -1,12 +1,11 @@
 import { Schema, NodeSpec } from 'prosemirror-model';
-import { EditorView } from 'prosemirror-view';
-import { EditorState, Plugin } from 'prosemirror-state';
+import { EditorView, Decoration, DecorationSet } from 'prosemirror-view';
+import { EditorState, Plugin, Selection } from 'prosemirror-state';
 import { HTMLConvertorMap, MdPos, Sourcepos } from '@toast-ui/toastmark';
 import { Emitter, Handler } from './event';
-import { Context, EditorAllCommandMap, EditorCommandFn } from './spec';
+import { Context, EditorAllCommandMap, EditorCommandFn, SpecManager } from './spec';
 import { ToMdConvertorMap } from './convertor';
 import { DefaultUI, ToolbarItemOptions } from './ui';
-import SpecManager from '@/spec/specManager';
 import { PluginProp, NodeViewPropMap, PluginCommandMap } from './plugin';
 
 export type PreviewStyle = 'tab' | 'vertical';
@@ -99,9 +98,13 @@ interface EditorPluginInfo {
   wysiwygCommands?: PluginCommandMap;
 }
 
+export interface PluginDefaultOptions {
+  pmState: { Plugin: typeof Plugin; Selection: typeof Selection };
+  pmView: { Decoration: typeof Decoration; DecorationSet: typeof DecorationSet };
+}
 export type PluginFn = (
   eventEmitter: Emitter,
-  options?: Record<string, any>
+  options: PluginDefaultOptions & any
 ) => EditorPluginInfo | null;
 export type EditorPlugin = PluginFn | [PluginFn, Record<string, any>];
 
