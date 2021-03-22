@@ -25,7 +25,7 @@
  * $$
  */
 import type { Emitter, PluginInfo, MdNode } from '@toast-ui/editor';
-import {
+import Chart, {
   BaseOptions,
   LineChart,
   AreaChart,
@@ -66,11 +66,11 @@ const DEFAULT_DIMENSION_OPTIONS = {
 };
 const RESERVED_KEYS = ['type', 'url'];
 const chart = {
-  bar: BarChart,
-  column: ColumnChart,
-  area: AreaChart,
-  line: LineChart,
-  pie: PieChart,
+  bar: Chart.barChart,
+  column: Chart.columnChart,
+  area: Chart.areaChart,
+  line: Chart.lineChart,
+  pie: Chart.pieChart,
 };
 const chartMap: Record<string, ChartInstance> = {};
 
@@ -314,10 +314,10 @@ function renderChart(id: string, text: string, pluginOptions: PluginOptions) {
         } else if (SUPPORTED_CHART_TYPES.indexOf(chartType) < 0) {
           chartContainer.innerHTML = `invalid chart type. type: bar, column, line, area, pie`;
         } else {
-          const Constructor = chart[chartType];
+          const toastuiChart = chart[chartType];
 
           // @ts-ignore
-          chartMap[id] = new Constructor({ el: chartContainer, data, options: chartOptions });
+          chartMap[id] = toastuiChart({ el: chartContainer, data, options: chartOptions });
         }
       });
     } catch (e) {

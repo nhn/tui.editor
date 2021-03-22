@@ -12,49 +12,55 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 
 function getOutputConfig(isProduction, isCDN, minify) {
   const filename = `toastui-${name.replace(/@toast-ui\//, '')}`;
-  let config = {
+  const defaultConfig = {
     environment: {
       arrowFunction: false,
       const: false,
+      module: true,
     },
   };
 
   if (!isProduction || isCDN) {
-    config = {
-      ...config,
+    const config = {
+      ...defaultConfig,
       library: {
         name: ['toastui', 'Editor', 'plugin', 'chart'],
-        type: 'umd',
         export: 'default',
+        type: 'umd',
       },
       path: path.resolve(__dirname, 'dist/cdn'),
       filename: `${filename}${minify ? '.min' : ''}.js`,
     };
 
     if (!isProduction) {
-      config.publicPath = 'dist/cdn';
+      config.publicPath = '/dist/cdn';
     }
 
     return config;
   }
 
   return {
-    ...config,
+    ...defaultConfig,
     library: {
-      type: 'commonjs2',
       export: 'default',
+      type: 'commonjs2',
     },
     path: path.resolve(__dirname, 'dist'),
     filename: `${filename}.js`,
   };
 }
 
-function getExternalsConfig(isProduction, isCDN) {
-  if (isProduction && !isCDN) {
-    return ['@toast-ui/chart'];
-  }
-
-  return [];
+function getExternalsConfig() {
+  return [
+    {
+      '@toast-ui/chart': {
+        commonjs: '@toast-ui/chart',
+        commonjs2: '@toast-ui/chart',
+        amd: '@toast-ui/chart',
+        root: ['toastui', 'Chart'],
+      },
+    },
+  ];
 }
 
 function getOptimizationConfig(isProduction, minify) {
@@ -126,8 +132,10 @@ module.exports = (env) => {
     );
   } else {
     config.devServer = {
+      injectClient: false,
       inline: true,
       host: '0.0.0.0',
+      port: 8081,
     };
     config.devtool = 'inline-source-map';
   }
