@@ -21,8 +21,9 @@ import {
   WidgetStyle,
 } from '@t/editor';
 import { EditorCommandFn } from '@t/spec';
+import { PluginInfoResult } from '@t/plugin';
 
-import { sendHostName, sanitizeLinkAttribute } from './utils/common';
+import { sendHostName, sanitizeLinkAttribute, deepMergedCopy } from './utils/common';
 
 import MarkdownEditor from './markdown/mdEditor';
 import MarkdownPreview from './markdown/mdPreview';
@@ -117,6 +118,8 @@ class ToastUIEditor {
 
   protected options: Required<EditorOptions>;
 
+  protected pluginInfo: PluginInfoResult;
+
   constructor(options: EditorOptions) {
     this.initialHtml = options.el.innerHTML;
     options.el.innerHTML = '';
@@ -173,6 +176,8 @@ class ToastUIEditor {
     setWidgetRules(widgetRules);
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
+
+    this.pluginInfo = getPluginInfo(this.options.plugins, this.eventEmitter);
     const {
       toHTMLRenderers,
       toMarkdownRenderers,
@@ -181,10 +186,10 @@ class ToastUIEditor {
       wwNodeViews,
       mdCommands,
       wwCommands,
-    } = getPluginInfo(this.options.plugins, this.eventEmitter) || {};
+    } = this.pluginInfo;
     const rendererOptions = {
       linkAttributes,
-      customHTMLRenderer: { ...toHTMLRenderers, ...customHTMLRenderer },
+      customHTMLRenderer: deepMergedCopy(toHTMLRenderers, customHTMLRenderer),
       extendedAutolinks,
       referenceDefinition,
       frontMatter,

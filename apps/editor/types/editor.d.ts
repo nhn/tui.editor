@@ -6,7 +6,7 @@ import { Emitter, Handler } from './event';
 import { Context, EditorAllCommandMap, EditorCommandFn, SpecManager } from './spec';
 import { ToMdConvertorMap } from './convertor';
 import { DefaultUI, ToolbarItemOptions } from './ui';
-import { PluginProp, NodeViewPropMap, PluginCommandMap } from './plugin';
+import { PluginProp, NodeViewPropMap, PluginCommandMap, PluginToolbarItem } from './plugin';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -88,7 +88,7 @@ export class Viewer {
   setCodeBlockLanguages(languages?: string[]): void;
 }
 
-interface EditorPluginInfo {
+export interface EditorPluginInfo {
   toHTMLRenderers?: HTMLConvertorMap;
   toMarkdownRenderers?: ToMdConvertorMap;
   markdownPlugins?: PluginProp[];
@@ -96,6 +96,7 @@ interface EditorPluginInfo {
   wysiwygNodeViews?: NodeViewPropMap;
   markdownCommands?: PluginCommandMap;
   wysiwygCommands?: PluginCommandMap;
+  toolbarItems?: PluginToolbarItem[];
 }
 
 export interface PluginDefaultOptions {

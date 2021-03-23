@@ -6,6 +6,7 @@ import { HTMLConvertorMap } from '@toast-ui/toastmark';
 import { Emitter } from './event';
 import { ToDOMAdaptor, ToMdConvertorMap } from './convertor';
 import { EditorCommand } from './spec';
+import { ToolbarItemOptions } from './ui';
 
 export type PluginProp = (eventEmitter?: Emitter) => Plugin;
 
@@ -21,6 +22,12 @@ type NodeViewPropMap = Record<string, PluginNodeViews>;
 
 export type PluginCommandMap = Record<string, EditorCommand>;
 
+interface PluginToolbarItem {
+  groupIndex: number;
+  itemIndex: number;
+  item: string | ToolbarItemOptions;
+}
+
 export interface PluginInfo {
   toHTMLRenderers?: HTMLConvertorMap;
   toMarkdownRenderers?: ToMdConvertorMap;
@@ -29,6 +36,7 @@ export interface PluginInfo {
   wysiwygNodeViews?: NodeViewPropMap;
   markdownCommands?: PluginCommandMap;
   wysiwygCommands?: PluginCommandMap;
+  toolbarItems?: PluginToolbarItem[];
 }
 
 export interface PluginInfoResult {
@@ -39,4 +47,5 @@ export interface PluginInfoResult {
   wwNodeViews: NodeViewPropMap;
   mdCommands: PluginCommandMap;
   wwCommands: PluginCommandMap;
+  toolbarItems: PluginToolbarItem[];
 }
