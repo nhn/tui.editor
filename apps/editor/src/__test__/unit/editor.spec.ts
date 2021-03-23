@@ -1,7 +1,8 @@
+import '@/i18n/en-us';
 import { oneLineTrim } from 'common-tags';
-import Editor from '@/editorCore';
-import Viewer from '@/Viewer';
 import i18n from '@/i18n/i18n';
+import Editor from '@/editor';
+import Viewer from '@/Viewer';
 
 describe('editor', () => {
   let container: HTMLElement,
@@ -41,9 +42,9 @@ describe('editor', () => {
     mdPreview = elements.mdPreview!;
     wwEditor = elements.wwEditor!;
 
-    container.append(mdEditor);
-    container.append(mdPreview!);
-    container.append(wwEditor!);
+    // container.append(mdEditor);
+    // container.append(mdPreview!);
+    // container.append(wwEditor!);
 
     document.body.appendChild(container);
   });
@@ -456,9 +457,10 @@ describe('editor', () => {
         });
 
         // @ts-ignore
-        expect(fooPlugin).toHaveBeenCalledWith(editor.eventEmitter);
-        // @ts-ignore
-        expect(barPlugin).toHaveBeenCalledWith(editor.eventEmitter);
+        const { eventEmitter } = editor;
+
+        expect(fooPlugin).toHaveBeenCalledWith(eventEmitter, expect.anything());
+        expect(barPlugin).toHaveBeenCalledWith(eventEmitter, expect.anything());
       });
 
       it('should invoke plugin function with options of plugin', () => {
@@ -471,14 +473,17 @@ describe('editor', () => {
         });
 
         // @ts-ignore
-        expect(plugin).toHaveBeenCalledWith(editor.eventEmitter, options);
+        const { eventEmitter } = editor;
+
+        expect(plugin).toHaveBeenCalledWith(eventEmitter, expect.objectContaining(options));
       });
 
       it(`should add command to command manager when plugin return 'markdownCommands' value`, () => {
+        const spy = jest.fn();
         const plugin = () => {
           return {
             markdownCommands: {
-              foo: () => () => true,
+              foo: () => spy,
             },
           };
         };
@@ -487,21 +492,17 @@ describe('editor', () => {
           el: container,
           plugins: [plugin],
         });
-
-        // @ts-ignore
-        jest.spyOn(editor.commandManager, 'exec');
-
         editor.exec('markdown', 'foo');
 
-        // @ts-ignore
-        expect(editor.commandManager.exec).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
       });
 
       it(`should add command to command manager when plugin return 'wysiwygCommands' value`, () => {
+        const spy = jest.fn();
         const plugin = () => {
           return {
             wysiwygCommands: {
-              foo: () => () => true,
+              foo: () => spy,
             },
           };
         };
@@ -510,14 +511,31 @@ describe('editor', () => {
           el: container,
           plugins: [plugin],
         });
-
-        // @ts-ignore
-        jest.spyOn(editor.commandManager, 'exec');
-
         editor.exec('wysiwyg', 'foo');
 
-        // @ts-ignore
-        expect(editor.commandManager.exec).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
+      });
+
+      it(`should add toolbar item when plugin return 'toolbarItems' value`, () => {
+        const toolbarItem = {
+          name: 'color',
+          tooltip: 'Text color',
+          className: 'tui-editor-toolbar-icons color',
+        };
+        const plugin = () => {
+          return {
+            toolbarItems: [{ groupIndex: 1, itemIndex: 2, item: toolbarItem }],
+          };
+        };
+
+        editor = new Editor({
+          el: container,
+          plugins: [plugin],
+        });
+
+        const toolbar = document.querySelector('.tui-editor-toolbar-icons.color');
+
+        expect(toolbar).toBeInTheDocument();
       });
     });
   });
