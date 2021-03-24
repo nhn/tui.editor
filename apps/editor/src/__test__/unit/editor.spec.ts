@@ -197,23 +197,22 @@ describe('editor', () => {
       // @ts-ignore
       jest.spyOn(editor.commandManager, 'exec');
 
-      editor.exec('markdown', 'bold');
+      editor.exec('bold');
 
       // @ts-ignore
       // eslint-disable-next-line no-undefined
-      expect(editor.commandManager.exec).toHaveBeenCalledWith('markdown', 'bold', undefined);
+      expect(editor.commandManager.exec).toHaveBeenCalledWith('bold', undefined);
     });
 
     it('addCommand()', () => {
-      const handler = jest.fn();
-
-      // @ts-ignore
-      jest.spyOn(editor.commandManager, 'addCommand');
+      const spy = jest.fn();
+      const handler = jest.fn().mockImplementation(() => spy);
 
       editor.addCommand('markdown', 'custom', handler);
+      editor.exec('custom', { prop: 'prop' });
 
-      // @ts-ignore
-      expect(editor.commandManager.addCommand).toHaveBeenCalledWith('markdown', 'custom', handler);
+      expect(handler).toHaveBeenCalledWith({ prop: 'prop' });
+      expect(spy).toHaveBeenCalled();
     });
 
     describe('insertText()', () => {
@@ -491,7 +490,7 @@ describe('editor', () => {
           el: container,
           plugins: [plugin],
         });
-        editor.exec('markdown', 'foo');
+        editor.exec('foo');
 
         expect(spy).toHaveBeenCalled();
       });
@@ -510,7 +509,8 @@ describe('editor', () => {
           el: container,
           plugins: [plugin],
         });
-        editor.exec('wysiwyg', 'foo');
+        editor.changeMode('wysiwyg');
+        editor.exec('foo');
 
         expect(spy).toHaveBeenCalled();
       });
