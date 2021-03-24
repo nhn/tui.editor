@@ -2,7 +2,11 @@ import { MdNode } from '@toast-ui/toastmark';
 import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
 import { includes } from '@/utils/common';
 
-import { HTMLToWwConvertorMap, FlattenHTMLToWwConvertorMap } from '@t/convertor';
+import {
+  HTMLToWwConvertorMap,
+  FlattenHTMLToWwConvertorMap,
+  ToWwConvertorState,
+} from '@t/convertor';
 
 const TAG_NAME = '[A-Za-z][A-Za-z0-9-]*';
 const ATTRIBUTE_NAME = '[a-zA-Z_:][a-zA-Z0-9:._-]*';
@@ -27,11 +31,18 @@ export function getTextWithoutTrailingNewline(text: string) {
   return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
 }
 
+export function isCustomHTMLInlineNode(state: ToWwConvertorState, node: MdNode) {
+  const html = node.literal!;
+  const matched = html.match(reHTMLTag)!;
+  const [, openTagName, , closeTagName] = matched;
+  const typeName = (openTagName || closeTagName).toLowerCase();
+  const nodeType = state.schema.nodes[typeName];
+
+  return node.type === 'htmlInline' && nodeType?.spec.attrs!.htmlAttrs;
+}
+
 export function isInlineNode({ type }: MdNode) {
-  return includes(
-    ['text', 'strong', 'emph', 'strike', 'image', 'link', 'code', 'htmlInline'],
-    type
-  );
+  return includes(['text', 'strong', 'emph', 'strike', 'image', 'link', 'code'], type);
 }
 
 function isListNode({ type, literal }: MdNode) {
@@ -173,11 +184,11 @@ const convertors: HTMLToWwConvertorMap = {
         state.closeNode();
       }
     } else if (node.parent?.type === 'tableCell') {
-      if (node.prev && isInlineNode(node.prev)) {
+      if (node.prev && (isInlineNode(node.prev) || isCustomHTMLInlineNode(state, node.prev))) {
         state.closeNode();
       }
 
-      if (node.next && isInlineNode(node.next)) {
+      if (node.next && (isInlineNode(node.next) || isCustomHTMLInlineNode(state, node.next))) {
         state.openNode(paragraph);
       }
     }
