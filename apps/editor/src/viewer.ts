@@ -67,6 +67,7 @@ class ToastUIEditorViewer {
         referenceDefinition: false,
         customHTMLSanitizer: null,
         frontMatter: false,
+        usageStatistics: true,
       },
       options
     );
@@ -75,7 +76,8 @@ class ToastUIEditorViewer {
     this.eventEmitter = new EventEmitter();
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
-    const { toHTMLRenderers } = getPluginInfo(this.options.plugins, this.eventEmitter) || {};
+    const { toHTMLRenderers } =
+      getPluginInfo(this.options.plugins, this.eventEmitter, this.options.usageStatistics) || {};
     const {
       customHTMLRenderer,
       extendedAutolinks,

@@ -28,7 +28,10 @@ export function getTextWithoutTrailingNewline(text: string) {
 }
 
 export function isInlineNode({ type }: MdNode) {
-  return includes(['text', 'strong', 'emph', 'strike', 'image', 'link', 'code'], type);
+  return includes(
+    ['text', 'strong', 'emph', 'strike', 'image', 'link', 'code', 'htmlInline'],
+    type
+  );
 }
 
 function isListNode({ type, literal }: MdNode) {

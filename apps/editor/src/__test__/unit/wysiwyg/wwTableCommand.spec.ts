@@ -47,7 +47,7 @@ describe('wysiwyg table commands', () => {
 
     em = new EventEmitter();
     wwe = new WysiwygEditor(em, { toDOMAdaptor });
-    cmd = new CommandManager(em, {}, wwe.commands);
+    cmd = new CommandManager(em, {}, wwe.commands, () => 'wysiwyg');
   });
 
   afterEach(() => {

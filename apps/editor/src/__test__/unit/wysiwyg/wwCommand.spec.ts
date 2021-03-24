@@ -36,7 +36,7 @@ describe('wysiwyg commands', () => {
 
     em = new EventEmitter();
     wwe = new WysiwygEditor(em, { toDOMAdaptor });
-    cmd = new CommandManager(em, {}, wwe.commands);
+    cmd = new CommandManager(em, {}, wwe.commands, () => 'wysiwyg');
   });
 
   afterEach(() => {
@@ -563,7 +563,7 @@ describe('wysiwyg commands', () => {
 
       em = new EventEmitter();
       wwe = new WysiwygEditor(em, { toDOMAdaptor, linkAttributes });
-      cmd = new CommandManager(em, {}, wwe.commands);
+      cmd = new CommandManager(em, {}, wwe.commands, () => 'wysiwyg');
     });
 
     it('should add link element with link attributes', () => {

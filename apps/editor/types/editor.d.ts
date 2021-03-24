@@ -64,6 +64,7 @@ export interface ViewerOptions {
   referenceDefinition?: boolean;
   customHTMLSanitizer?: Sanitizer;
   frontMatter?: boolean;
+  usageStatistics?: boolean;
 }
 
 export class Viewer {

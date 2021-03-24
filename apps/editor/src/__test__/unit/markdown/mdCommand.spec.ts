@@ -10,7 +10,7 @@ let mde: MarkdownEditor, em: EventEmitter, cmd: CommandManager;
 beforeEach(() => {
   em = new EventEmitter();
   mde = new MarkdownEditor(em, { toastMark: new ToastMark() });
-  cmd = new CommandManager(em, mde.commands, {});
+  cmd = new CommandManager(em, mde.commands, {}, () => 'markdown');
 });
 
 afterEach(() => {
