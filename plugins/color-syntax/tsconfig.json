@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "include": ["src/**/*.ts", "src/**/*.js", "types/**/*"],
+  "exclude": ["node_modules"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "typeRoots": ["./types", "node_modules/@types", "../../node_modules/@types"],
+    "lib": ["esnext", "dom", "dom.iterable"]
+  }
+}
