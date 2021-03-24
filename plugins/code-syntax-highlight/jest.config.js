@@ -1,14 +1,10 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const base = require('../../jest.base.config');
+
 module.exports = {
-  preset: 'ts-jest',
-  testMatch: ['**/__test__/**/*.spec.ts'],
+  ...base,
   testEnvironment: 'jsdom',
-  transformIgnorePatterns: ['<rootDir>/node_modules/'],
-  transform: {
-    '^.+\\.js$': 'ts-jest',
-  },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
-  snapshotSerializers: ['jest-serializer-html'],
-  setupFilesAfterEnv: ['<rootDir>/src/__test__/jest-setup.ts'],
 };
