@@ -17,6 +17,7 @@
     "dist/*.js",
     "types/index.d.ts"
   ],
+  "browserslist": "last 2 versions, not ie <= 10",
   "author": "NHN FE Development Lab <dl_javascript@nhn.com>",
   "license": "MIT",
   "repository": {
