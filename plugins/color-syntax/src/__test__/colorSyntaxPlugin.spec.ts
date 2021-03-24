@@ -36,6 +36,7 @@ describe('colorSyntax', () => {
 
   // we need to wait squire input event process
   afterEach(() => {
+    editor.destroy();
     document.body.removeChild(container);
   });
 
