@@ -16,7 +16,6 @@ function getOutputConfig(isProduction, isCDN, minify) {
     environment: {
       arrowFunction: false,
       const: false,
-      module: true,
     },
   };
 
