@@ -50,6 +50,7 @@ export {
   WidgetRule,
   PluginDefaultOptions,
 };
+export { Dispatch } from './spec';
 export { PluginInfo, PluginNodeViews } from './plugin';
 export { Editor, EditorCore };
 export default Editor;
