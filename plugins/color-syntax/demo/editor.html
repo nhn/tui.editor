@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>Editor</title>
+    <!-- Editor -->
+    <link rel="stylesheet" href="http://localhost:8080/dist/cdn/toastui-editor.css" />
+    <!-- Plugin -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.css" />
+    <link rel="stylesheet" href="../dist/cdn/toastui-editor-plugin-color-syntax.css" />
+  </head>
+  <body>
+    <div class="code-html">
+      <div id="editor"></div>
+    </div>
+    <!-- Editor -->
+    <script src="http://localhost:8080/dist/cdn/toastui-editor-all.js"></script>
+    <script src="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.min.js"></script>
+    <!-- Plugin -->
+    <script src="../dist/cdn/toastui-editor-plugin-color-syntax.js"></script>
+    <script class="code-js">
+      const { Editor } = toastui;
+      const { colorSyntax } = Editor.plugin;
+
+      const editor = new Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialEditType: 'wysiwyg',
+        initialValue: 'Select some text and choose a color from the toolbar.',
+        plugins: [colorSyntax]
+      });
+    </script>
+  </body>
+</html>

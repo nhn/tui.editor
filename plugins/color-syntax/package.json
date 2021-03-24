@@ -30,14 +30,16 @@
   "homepage": "https://ui.toast.com",
   "browserslist": "last 2 versions, not ie <= 10",
   "scripts": {
+    "lint": "eslint .",
+    "test:types": "tsc",
+    "test": "jest --watch",
     "serve": "snowpack dev",
     "serve:ie": "webpack serve",
-    "build:cdn": "webpack build --env cdn & webpack --mode=production --env cdn minify",
+    "build:cdn": "webpack build --env cdn & webpack build --env cdn minify",
     "build": "webpack build && npm run build:cdn"
   },
   "devDependencies": {
-    "cross-env": "^6.0.3",
-    "tui-code-snippet": "^2.3.1"
+    "cross-env": "^6.0.3"
   },
   "dependencies": {
     "tui-color-picker": "^2.2.6"
