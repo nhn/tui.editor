@@ -2,6 +2,7 @@ import { EditorType } from '@t/editor';
 import { EditorAllCommandMap, EditorCommandFn } from '@t/spec';
 import { Emitter } from '@t/event';
 
+type GetEditorType = () => EditorType;
 export default class CommandManager {
   private eventEmitter: Emitter;
 
@@ -9,20 +10,24 @@ export default class CommandManager {
 
   private wwCommands: EditorAllCommandMap;
 
+  private getEditorType: GetEditorType;
+
   constructor(
     eventEmitter: Emitter,
     mdCommands: EditorAllCommandMap,
-    wwCommands: EditorAllCommandMap
+    wwCommands: EditorAllCommandMap,
+    getEditorType: GetEditorType
   ) {
     this.eventEmitter = eventEmitter;
     this.mdCommands = mdCommands;
     this.wwCommands = wwCommands;
+    this.getEditorType = getEditorType;
     this.initEvent();
   }
 
   private initEvent() {
     this.eventEmitter.listen('command', ({ type, command }, payload) => {
-      this.exec(type, command, payload);
+      this.exec(type || this.getEditorType(), command, payload);
     });
   }
 

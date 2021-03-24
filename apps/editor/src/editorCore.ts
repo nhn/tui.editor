@@ -267,7 +267,8 @@ class ToastUIEditor {
     this.commandManager = new CommandManager(
       this.eventEmitter,
       this.mdEditor.commands,
-      this.wwEditor.commands
+      this.wwEditor.commands,
+      () => this.mode
     );
 
     if (this.options.usageStatistics) {
