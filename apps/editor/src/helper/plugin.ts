@@ -1,16 +1,17 @@
 import isArray from 'tui-code-snippet/type/isArray';
 import { Plugin, Selection } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
+import i18n from '../i18n/i18n';
 import { deepMergedCopy } from '@/utils/common';
 
 import { EditorPlugin } from '@t/editor';
 import { Emitter } from '@t/event';
 import { PluginInfoResult } from '@t/plugin';
 
-function execPlugin(plugin: EditorPlugin, eventEmitter: Emitter) {
+function execPlugin(plugin: EditorPlugin, eventEmitter: Emitter, usageStatistics: boolean) {
   const pmState = { Plugin, Selection };
   const pmView = { Decoration, DecorationSet };
-  const defaultOptions = { pmState, pmView };
+  const defaultOptions = { usageStatistics, pmState, pmView, i18n };
 
   if (isArray(plugin)) {
     const [pluginFn, options = {}] = plugin;
@@ -21,10 +22,14 @@ function execPlugin(plugin: EditorPlugin, eventEmitter: Emitter) {
   return plugin(eventEmitter, defaultOptions);
 }
 
-export function getPluginInfo(plugins: EditorPlugin[], eventEmitter: Emitter) {
+export function getPluginInfo(
+  plugins: EditorPlugin[],
+  eventEmitter: Emitter,
+  usageStatistics: boolean
+) {
   return (plugins || []).reduce<PluginInfoResult>(
     (acc, plugin) => {
-      const pluginInfoResult = execPlugin(plugin, eventEmitter);
+      const pluginInfoResult = execPlugin(plugin, eventEmitter, usageStatistics);
 
       if (!pluginInfoResult) {
         throw new Error('The return value of the executed plugin is empty.');
