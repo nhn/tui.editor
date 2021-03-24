@@ -26,8 +26,8 @@ export default class CommandManager {
   }
 
   private initEvent() {
-    this.eventEmitter.listen('command', ({ type, command }, payload) => {
-      this.exec(type || this.getEditorType(), command, payload);
+    this.eventEmitter.listen('command', ({ command }, payload) => {
+      this.exec(command, payload);
     });
   }
 
@@ -47,7 +47,9 @@ export default class CommandManager {
     }
   }
 
-  exec(type: EditorType, name: string, payload?: Record<string, any>) {
+  exec(name: string, payload?: Record<string, any>) {
+    const type = this.getEditorType();
+
     if (type === 'markdown') {
       this.mdCommands[name](payload);
     } else {

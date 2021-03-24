@@ -16,7 +16,7 @@ import {
   ViewerOptions,
   WidgetStyle,
 } from '@t/editor';
-import { EditorCommandFn } from '@t/spec';
+import { EditorCommand } from '@t/spec';
 import { PluginInfoResult } from '@t/plugin';
 
 import { sendHostName, sanitizeLinkAttribute, deepMergedCopy } from './utils/common';
@@ -284,8 +284,9 @@ class ToastUIEditor {
 
   private addInitEvent() {
     this.on('needChangeMode', this.changeMode.bind(this));
-    this.addCommand('markdown', 'toggleScrollSync', (payload) => {
+    this.addCommand('markdown', 'toggleScrollSync', (payload) => () => {
       this.eventEmitter.emit('toggleScrollSync', payload!.active);
+      return true;
     });
     addDefaultImageBlobHook(this.eventEmitter);
   }
@@ -325,12 +326,11 @@ class ToastUIEditor {
 
   /**
    * execute editor command
-   * @param {string} type - editor type
    * @param {string} name - command name
    * @param {object} [payload] - payload for command
    */
-  exec(type: EditorType, name: string, payload?: Record<string, any>) {
-    this.commandManager.exec(type, name, payload);
+  exec(name: string, payload?: Record<string, any>) {
+    this.commandManager.exec(name, payload);
   }
 
   /**
@@ -338,8 +338,14 @@ class ToastUIEditor {
    * @param {string} name - command name
    * @param {function} command - command handler
    */
-  addCommand(type: EditorType, name: string, command: EditorCommandFn) {
-    this.commandManager.addCommand(type, name, command);
+  addCommand(type: EditorType, name: string, command: EditorCommand) {
+    const commandHoc = (paylaod?: Record<string, any>) => {
+      const { view } = type === 'markdown' ? this.mdEditor : this.wwEditor;
+
+      command(paylaod)(view.state, view.dispatch);
+    };
+
+    this.commandManager.addCommand(type, name, commandHoc);
   }
 
   /**
