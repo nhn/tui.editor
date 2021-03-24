@@ -5,12 +5,9 @@ import {
   LIST_CLASS_NAME,
 } from '@/nodeViews/languageSelectBox';
 import { cls } from '@/utils/dom';
+import type { Emitter } from '@toast-ui/editor';
 
-interface Emitter {
-  emit: () => void;
-  listen: () => void;
-  removeEventHandler: () => void;
-}
+Element.prototype.scrollIntoView = jest.fn();
 
 describe('languageSelectBox', () => {
   let selectBox: LanguageSelectBox,
@@ -22,11 +19,13 @@ describe('languageSelectBox', () => {
   beforeEach(() => {
     eventEmitter = {
       emit: jest.fn(),
+      emitReduce: jest.fn(),
       listen: jest.fn(),
       removeEventHandler: jest.fn(),
+      addEventType: jest.fn(),
+      getEvents: jest.fn(),
     };
 
-    // @ts-ignore
     selectBox = new LanguageSelectBox(eventEmitter, ['js', 'css', 'ts']);
 
     wrapper = document.body.querySelector(`.${cls(WRAPPER_CLASS_NAME)}`)!;
@@ -59,6 +58,7 @@ describe('languageSelectBox', () => {
     selectBox.destroy();
 
     expect(document.body).toBeEmptyDOMElement();
+    expect(eventEmitter.removeEventHandler).toHaveBeenCalled();
   });
 
   it('setLanguage() should change input value to selected language', () => {
@@ -86,7 +86,7 @@ describe('languageSelectBox', () => {
     it('should show when input is focused', () => {
       input.focus();
 
-      expect(list).not.toHaveStyle('display: none');
+      expect(list).toHaveStyle('display: block');
     });
 
     it('should hide when input is focused out', () => {

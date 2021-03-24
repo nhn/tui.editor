@@ -1,17 +1,20 @@
-import { source, oneLineTrim } from 'common-tags';
+import { source } from 'common-tags';
 
-import { Editor } from '@toast-ui/editor';
+import Editor from '@toast-ui/editor';
 import codeSyntaxHighlightPlugin from '@/index';
 
 import Prism from 'prismjs';
-import 'prismjs/components/prism-aspnet.js';
+import 'prismjs/components/prism-yaml.js';
 
 describe('codeSyntaxHighlightPlugin', () => {
   let container: HTMLElement, mdPreview: HTMLElement, wwEditor: HTMLElement, editor: Editor;
 
   const initialValue = source`
-    \`\`\`javascript
-    const a = 100;
+    \`\`\`yaml
+    martin:
+      name: Martin D'vloper
+      job: Developer
+      skill: Elite
     \`\`\`
   `;
 
@@ -20,6 +23,10 @@ describe('codeSyntaxHighlightPlugin', () => {
       .querySelector('.tui-editor-contents')!
       .innerHTML.replace(/\sdata-nodeid="\d+"|\n/g, '')
       .trim();
+  }
+
+  function getWwEditorHTML() {
+    return wwEditor.firstElementChild!.innerHTML;
   }
 
   beforeEach(() => {
@@ -36,9 +43,6 @@ describe('codeSyntaxHighlightPlugin', () => {
     mdPreview = elements.mdPreview!;
     wwEditor = elements.wwEditor!;
 
-    container.append(mdPreview);
-    container.append(wwEditor);
-
     document.body.appendChild(container);
   });
 
@@ -48,30 +52,16 @@ describe('codeSyntaxHighlightPlugin', () => {
   });
 
   it('should render highlighted codeblock element in markdown preview', () => {
-    const expected = oneLineTrim`
-      <pre class="lang-js">
-        <code data-language="js">
-          <span class="token keyword">const</span> a <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">;</span>
-        </code>
-      </pre>
-    `;
+    const previewHTML = getPreviewHTML();
 
-    expect(getPreviewHTML()).toBe(expected);
+    expect(previewHTML).toMatchSnapshot();
   });
 
   it('should render highlighted codeblock element in wysiwyg', () => {
     editor.changeMode('wysiwyg');
 
-    const expected = oneLineTrim`
-      <div data-language="js" class="tui-editor-ww-code-block-highlight">
-        <pre class="lang-js language-js">
-          <code data-language="js" class="language-js">
-            <span class="token keyword">const</span> a <span class="token operator">=</span> <span class="token number">100</span><span class="token punctuation">;</span>
-          </code>
-        </pre>
-      </div>
-    `;
+    const wwEditorHTML = getWwEditorHTML();
 
-    expect(wwEditor).toBe(expected);
+    expect(wwEditorHTML).toMatchSnapshot();
   });
 });
