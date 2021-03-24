@@ -22,7 +22,16 @@
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
-        plugins: [colorPickerPlugin]
+        plugins: [colorPickerPlugin],
+        customHTMLRenderer: {
+          htmlInline: {
+            big(node, { entering }) {
+              return entering
+                ? { type: 'openTag', tagName: 'big', attributes: node.attrs }
+                : { type: 'closeTag', tagName: 'big' };
+            },
+          }
+        }
       });
       window.editor = editor;
     </script>
