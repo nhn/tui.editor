@@ -20,10 +20,6 @@ module.exports = {
       },
     },
   ],
-  // alias: {
-  //   '@': './src',
-  //   '@t': './types',
-  // },
   buildOptions: {
     clean: true,
     sourceMaps: false,

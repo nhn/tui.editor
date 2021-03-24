@@ -42,10 +42,6 @@ describe('editor', () => {
     mdPreview = elements.mdPreview!;
     wwEditor = elements.wwEditor!;
 
-    // container.append(mdEditor);
-    // container.append(mdPreview!);
-    // container.append(wwEditor!);
-
     document.body.appendChild(container);
   });
 

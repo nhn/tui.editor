@@ -22,16 +22,8 @@
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
-        plugins: [colorPickerPlugin],
-        customHTMLRenderer: {
-          htmlInline: {
-            big(node, { entering }) {
-              return entering
-                ? { type: 'openTag', tagName: 'big', attributes: node.attrs }
-                : { type: 'closeTag', tagName: 'big' };
-            },
-          }
-        }
+        initialValue: 'Select some text and choose a color from the toolbar.',
+        plugins: [colorPickerPlugin]
       });
       window.editor = editor;
     </script>
