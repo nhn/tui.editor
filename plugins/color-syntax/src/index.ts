@@ -4,9 +4,8 @@
  */
 import ColorPicker from 'tui-color-picker';
 
-import type { EditorState } from 'prosemirror-state';
-import type { MdNode, Context } from '@toast-ui/toastmark';
-import type { Emitter, Dispatch } from '@toast-ui/editor';
+import type { Context } from '@toast-ui/toastmark';
+import type { Emitter, PluginInfo, MdLikeNode } from '@toast-ui/editor';
 import { PluginOptions } from './types/index';
 
 import './css/plugin.css';
@@ -37,31 +36,31 @@ function createToolbarItemOption(colorPickerContainer: HTMLDivElement) {
 interface ColorPickerOption {
   container: HTMLDivElement;
   preset?: Array<string>;
+  usageStatistics: boolean;
 }
 
-interface Payload {
-  selectedColor: string;
-}
-
+// @TODO: add custom syntax for plugin
 /**
  * Color syntax plugin
- * @param {Editor|Viewer} editor - instance of Editor or Viewer
+ * @param {Object} emitter - event emitter for communicating with editor
  * @param {Object} options - options for plugin
  * @param {Array.<string>} [options.preset] - preset for color palette (ex: ['#181818', '#292929'])
  * @param {boolean} [options.useCustomSyntax=false] - whether use custom syntax or not
  */
-export default function colorSyntaxPlugin(emitter: Emitter, options: PluginOptions) {
-  const { preset } = options;
+export default function colorSyntaxPlugin(
+  emitter: Emitter,
+  options = {} as PluginOptions
+): PluginInfo {
+  const { preset, i18n, usageStatistics = true } = options;
   const container = document.createElement('div');
-  const colorPickerOption: ColorPickerOption = { container };
+  const colorPickerOption: ColorPickerOption = { container, usageStatistics };
 
   if (preset) {
     colorPickerOption.preset = preset;
   }
 
   const colorPicker = ColorPicker.create(colorPickerOption);
-  // 다국어
-  const button = createApplyButton(`OK`);
+  const button = createApplyButton(i18n.get('OK'));
 
   button.addEventListener('click', () => {
     const selectedColor = colorPicker.getColor();
@@ -77,36 +76,36 @@ export default function colorSyntaxPlugin(emitter: Emitter, options: PluginOptio
 
   return {
     markdownCommands: {
-      color: ({ selectedColor }: Payload) => (
-        { tr, selection, schema }: EditorState,
-        dispatch: Dispatch
-      ) => {
-        const slice = selection.content();
-        const textContent = slice.content.textBetween(0, slice.content.size, '\n');
-        const colored = `<span style="color: ${selectedColor}">${textContent}</span>`;
+      color: ({ selectedColor } = {}) => ({ tr, selection, schema }, dispatch) => {
+        if (selectedColor) {
+          const slice = selection.content();
+          const textContent = slice.content.textBetween(0, slice.content.size, '\n');
+          const colored = `<span style="color: ${selectedColor}">${textContent}</span>`;
 
-        tr.replaceSelectionWith(schema.text(colored));
+          tr.replaceSelectionWith(schema.text(colored));
 
-        dispatch(tr);
+          dispatch!(tr);
 
-        return true;
+          return true;
+        }
+        return false;
       },
     },
     wysiwygCommands: {
-      color: ({ selectedColor }: Payload) => (
-        { tr, selection, schema }: EditorState,
-        dispatch: Dispatch
-      ) => {
-        const slice = selection.content();
-        const textContent = slice.content.textBetween(0, slice.content.size, '\n');
-        const attrs = { htmlAttrs: { style: `color: ${selectedColor}` } };
-        const node = schema.nodes.span.create(attrs, schema.text(textContent));
+      color: ({ selectedColor } = {}) => ({ tr, selection, schema }, dispatch) => {
+        if (selectedColor) {
+          const slice = selection.content();
+          const textContent = slice.content.textBetween(0, slice.content.size, '\n');
+          const attrs = { htmlAttrs: { style: `color: ${selectedColor}` } };
+          const node = schema.nodes.span.create(attrs, schema.text(textContent));
 
-        tr.replaceSelectionWith(node);
+          tr.replaceSelectionWith(node);
 
-        dispatch(tr);
+          dispatch!(tr);
 
-        return true;
+          return true;
+        }
+        return false;
       },
     },
     toolbarItems: [
@@ -118,10 +117,10 @@ export default function colorSyntaxPlugin(emitter: Emitter, options: PluginOptio
     ],
     toHTMLRenderers: {
       htmlInline: {
-        span(node: MdNode, { entering }: Context) {
+        // @ts-expect-error
+        span(node: MdLikeNode, { entering }: Context) {
           return entering
-            ? // @ts-expect-error
-              { type: 'openTag', tagName: 'span', attributes: node.attrs }
+            ? { type: 'openTag', tagName: 'span', attributes: node.attrs }
             : { type: 'closeTag', tagName: 'span' };
         },
       },
