@@ -1,7 +1,7 @@
 import isArray from 'tui-code-snippet/type/isArray';
 import { Plugin, Selection } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
-import i18n from '../i18n/i18n';
+import i18n from '@/i18n/i18n';
 import { deepMergedCopy } from '@/utils/common';
 
 import { EditorPlugin } from '@t/editor';
@@ -27,7 +27,7 @@ export function getPluginInfo(
   eventEmitter: Emitter,
   usageStatistics: boolean
 ) {
-  return (plugins || []).reduce<PluginInfoResult>(
+  return (plugins ?? []).reduce<PluginInfoResult>(
     (acc, plugin) => {
       const pluginInfoResult = execPlugin(plugin, eventEmitter, usageStatistics);
 
