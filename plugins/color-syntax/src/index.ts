@@ -62,7 +62,7 @@ export default function colorSyntaxPlugin(
   button.addEventListener('click', () => {
     const selectedColor = colorPicker.getColor();
 
-    eventEmitter.emit('command', { command: 'color' }, { selectedColor });
+    eventEmitter.emit('command', 'color', { selectedColor });
     eventEmitter.emit('closePopup');
   });
 

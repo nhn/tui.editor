@@ -26,7 +26,7 @@ export default class CommandManager {
   }
 
   private initEvent() {
-    this.eventEmitter.listen('command', ({ command }, payload) => {
+    this.eventEmitter.listen('command', (command, payload) => {
       this.exec(command, payload);
     });
   }
