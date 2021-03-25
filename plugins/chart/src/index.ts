@@ -18,7 +18,7 @@
  * y.title: Month              => yAxis.title
  * $$
  */
-import type { Emitter, PluginInfo, MdNode } from '@toast-ui/editor';
+import type { PluginInfo, MdNode, PluginContext } from '@toast-ui/editor';
 import Chart, {
   BaseOptions,
   LineChart,
@@ -326,7 +326,7 @@ function generateId() {
 
 /**
  * Chart plugin
- * @param {Object} emitter - event emitter for communicating with editor
+ * @param {Object} context - plugin context for communicating with editor
  * @param {Object} options - chart options
  * @param {number} [options.minWidth=0] - minimum width
  * @param {number} [options.minHeight=0] - minimum height
@@ -335,7 +335,7 @@ function generateId() {
  * @param {number|string} [options.width='auto'] - default width
  * @param {number|string} [options.height='auto'] - default height
  */
-export default function chartPlugin(_: Emitter, options: PluginOptions): PluginInfo {
+export default function chartPlugin(_: PluginContext, options: PluginOptions): PluginInfo {
   options = extend(
     {
       usageStatistics: options.usageStatistics ?? true,

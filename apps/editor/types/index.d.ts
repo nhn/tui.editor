@@ -16,7 +16,8 @@ import {
   WidgetStyle,
   WidgetRuleMap,
   WidgetRule,
-  PluginDefaultOptions,
+  PluginContext,
+  I18n,
 } from './editor';
 
 export {
@@ -48,19 +49,12 @@ export {
   WidgetStyle,
   WidgetRuleMap,
   WidgetRule,
-  PluginDefaultOptions,
+  PluginContext,
+  I18n,
 };
 export { Dispatch } from './spec';
 export { PluginInfo, PluginNodeViews } from './plugin';
 export { MdLikeNode } from './markdown';
-export interface I18n {
-  setCode(code?: string): void;
-
-  setLanguage(codes: string | string[], data: Record<string, string>): void;
-
-  get(key: string, code?: string): string;
-}
-
 export { Editor, EditorCore };
 export default Editor;
 

@@ -1,7 +1,7 @@
 import ColorPicker from 'tui-color-picker';
 
 import type { Context } from '@toast-ui/toastmark';
-import type { Emitter, PluginInfo, MdLikeNode } from '@toast-ui/editor';
+import type { PluginContext, PluginInfo, MdLikeNode } from '@toast-ui/editor';
 import { PluginOptions } from './types/index';
 
 import './css/plugin.css';
@@ -38,16 +38,17 @@ interface ColorPickerOption {
 // @TODO: add custom syntax for plugin
 /**
  * Color syntax plugin
- * @param {Object} emitter - event emitter for communicating with editor
+ * @param {Object} context - plugin context for communicating with editor
  * @param {Object} options - options for plugin
  * @param {Array.<string>} [options.preset] - preset for color palette (ex: ['#181818', '#292929'])
  * @param {boolean} [options.useCustomSyntax=false] - whether use custom syntax or not
  */
 export default function colorSyntaxPlugin(
-  emitter: Emitter,
-  options = {} as PluginOptions
+  context: PluginContext,
+  options: PluginOptions = {}
 ): PluginInfo {
-  const { preset, i18n, usageStatistics = true } = options;
+  const { eventEmitter, i18n, usageStatistics = true } = context;
+  const { preset } = options;
   const container = document.createElement('div');
   const colorPickerOption: ColorPickerOption = { container, usageStatistics };
 
@@ -61,8 +62,8 @@ export default function colorSyntaxPlugin(
   button.addEventListener('click', () => {
     const selectedColor = colorPicker.getColor();
 
-    emitter.emit('command', { command: 'color' }, { selectedColor });
-    emitter.emit('closePopup');
+    eventEmitter.emit('command', { command: 'color' }, { selectedColor });
+    eventEmitter.emit('closePopup');
   });
 
   colorPicker.slider.toggle(true);

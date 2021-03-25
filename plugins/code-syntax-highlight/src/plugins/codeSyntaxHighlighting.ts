@@ -5,7 +5,8 @@ import isString from 'tui-code-snippet/type/isString';
 
 import { flatten } from '@/utils/common';
 
-import { PluginOptions } from '@t/index';
+import type { PluginContext } from '@toast-ui/editor';
+import { PrismJs } from '@t/index';
 
 interface ChildNodeInfo {
   node: ProsemirrorNode;
@@ -64,8 +65,8 @@ function parseTokens(
   }) as HighlightedNodeInfo[];
 }
 
-function getDecorations(doc: ProsemirrorNode, options: PluginOptions) {
-  const { highlighter: prism, pmView } = options;
+function getDecorations(doc: ProsemirrorNode, context: PluginContext, prism: PrismJs) {
+  const { pmView } = context;
   const decorations: Decoration[] = [];
   const codeBlocks = findCodeBlocks(doc);
 
@@ -97,18 +98,18 @@ function getDecorations(doc: ProsemirrorNode, options: PluginOptions) {
   return pmView.DecorationSet.create(doc, decorations);
 }
 
-export function codeSyntaxHighlighting(options: PluginOptions) {
-  return new options.pmState.Plugin({
+export function codeSyntaxHighlighting(context: PluginContext, prism: PrismJs) {
+  return new context.pmState.Plugin({
     state: {
       init(_, { doc }) {
-        return getDecorations(doc, options);
+        return getDecorations(doc, context, prism);
       },
       apply(tr, set) {
         if (!tr.docChanged) {
           return set.map(tr.mapping, tr.doc);
         }
 
-        return getDecorations(tr.doc, options);
+        return getDecorations(tr.doc, context, prism);
       },
     },
     props: {

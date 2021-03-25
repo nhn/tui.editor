@@ -1,4 +1,4 @@
-import type { Emitter, PluginInfo } from '@toast-ui/editor';
+import type { PluginContext, PluginInfo } from '@toast-ui/editor';
 
 export interface PluginOptions {
   usageStatistics?: boolean;
@@ -10,4 +10,4 @@ export interface PluginOptions {
   height: number | 'auto';
 }
 
-export default function chartPlugin(emitter: Emitter, options: PluginOptions): PluginInfo;
+export default function chartPlugin(context: PluginContext, options: PluginOptions): PluginInfo;
