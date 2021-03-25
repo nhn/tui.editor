@@ -1,18 +1,18 @@
 import { deepCopy, deepCopyArray, deepMergedCopy, includes } from '@/utils/common';
 
-it('deepCopy', () => {
+it('should copy the object deeply', () => {
   const obj = { foo: 1, bar: { baz: 1 } };
 
   expect(deepCopy(obj)).toEqual(obj);
 });
 
-it('deepCopyArray', () => {
+it('should copy the array deeply', () => {
   const arr = [1, 2, ['a', 'b', ['c']], 3, 4];
 
   expect(deepCopyArray(arr)).toEqual(arr);
 });
 
-it('deepMergedCopy', () => {
+it('should merge the objects and copy them deeply', () => {
   const obj1 = { a: 1, b: { c: 1, d: 'a', e: 'c', f: { g: 'd' } } };
   const obj2 = { a: 1, b: { c: 1, d: 'b', h: 'e' } };
 
@@ -22,6 +22,6 @@ it('deepMergedCopy', () => {
   });
 });
 
-it('includes', () => {
+it('should check whether the specific element is inlcuded in array', () => {
   expect(includes([1, 2, 3], 1)).toBe(true);
 });

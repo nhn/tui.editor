@@ -33,12 +33,16 @@ export function getTextWithoutTrailingNewline(text: string) {
 
 export function isCustomHTMLInlineNode(state: ToWwConvertorState, node: MdNode) {
   const html = node.literal!;
-  const matched = html.match(reHTMLTag)!;
-  const [, openTagName, , closeTagName] = matched;
-  const typeName = (openTagName || closeTagName).toLowerCase();
-  const nodeType = state.schema.nodes[typeName];
+  const matched = html.match(reHTMLTag);
 
-  return node.type === 'htmlInline' && nodeType?.spec.attrs!.htmlAttrs;
+  if (matched) {
+    const [, openTagName, , closeTagName] = matched;
+    const typeName = (openTagName || closeTagName).toLowerCase();
+    const nodeType = state.schema.nodes[typeName];
+
+    return node.type === 'htmlInline' && nodeType?.spec.attrs!.htmlAttrs;
+  }
+  return false;
 }
 
 export function isInlineNode({ type }: MdNode) {

@@ -34,6 +34,7 @@
 .tui-popup-color .tui-colorpicker-palette-hex {
   float: right;
 }
+
 .tui-editor-popup-body input[type='text'].tui-colorpicker-palette-hex {
   font-family: inherit;
   font-size: 12px;
