@@ -335,13 +335,11 @@ function generateId() {
  * @param {number|string} [options.width='auto'] - default width
  * @param {number|string} [options.height='auto'] - default height
  */
-export default function chartPlugin(_: PluginContext, options: PluginOptions): PluginInfo {
-  options = extend(
-    {
-      usageStatistics: options.usageStatistics ?? true,
-    },
-    options
-  );
+export default function chartPlugin(
+  { usageStatistics = true }: PluginContext,
+  options: PluginOptions
+): PluginInfo {
+  options = extend({ usageStatistics }, options);
 
   return {
     toHTMLRenderers: {
