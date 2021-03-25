@@ -27,7 +27,6 @@
     "@types/codemirror": "0.0.85",
     "@types/mdurl": "^1.0.2",
     "codemirror": "^5.51.0",
-    "common-tags": "^1.8.0",
     "entities": "^2.0.0",
     "mdurl": "^1.0.1"
   }
