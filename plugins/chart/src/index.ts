@@ -256,7 +256,6 @@ export function setDefaultOptions(
       editorChart: {},
       chart: {},
       exportMenu: {},
-      usageStatistics: pluginOptions.usageStatistics,
     },
     chartOptions
   );
@@ -286,7 +285,12 @@ function destroyChart() {
   });
 }
 
-function renderChart(id: string, text: string, pluginOptions: PluginOptions) {
+function renderChart(
+  id: string,
+  text: string,
+  usageStatistics: boolean,
+  pluginOptions: PluginOptions
+) {
   // should draw the chart after rendering container element
   const chartContainer = document.querySelector<HTMLElement>(`[data-chart-id=${id}]`)!;
 
@@ -310,6 +314,7 @@ function renderChart(id: string, text: string, pluginOptions: PluginOptions) {
         } else {
           const toastuiChart = chart[chartType];
 
+          chartOptions.usageStatistics = usageStatistics;
           // @ts-ignore
           chartMap[id] = toastuiChart({ el: chartContainer, data, options: chartOptions });
         }
@@ -339,15 +344,13 @@ export default function chartPlugin(
   { usageStatistics = true }: PluginContext,
   options: PluginOptions
 ): PluginInfo {
-  options = extend({ usageStatistics }, options);
-
   return {
     toHTMLRenderers: {
       chart(node: MdNode) {
         const id = generateId();
 
         setTimeout(() => {
-          renderChart(id, node.literal!, options);
+          renderChart(id, node.literal!, usageStatistics, options);
         });
         return [
           {
