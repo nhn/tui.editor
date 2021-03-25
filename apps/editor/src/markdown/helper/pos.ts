@@ -8,13 +8,9 @@ export function resolveSelectionPos(selection: Selection) {
   const { from, to } = selection;
 
   if (selection instanceof AllSelection) {
-    return resolvePos(from, to);
+    return [from + 1, to - 1];
   }
   return [from, to];
-}
-
-export function resolvePos(from: number, to: number) {
-  return [from + 1, to - 1];
 }
 
 export function getEditorToMdLine(
@@ -105,17 +101,16 @@ export function getMdToEditorPos(
   let from = 0;
   let to = 0;
 
-  for (let i = 0; i < endPos[0] - 1; i += 1) {
-    const len = lineTexts[i].length;
-    const child = doc.child(i);
-    const additionalPos = getWidgetNodePos(child, child.content.size);
+  const fragment = doc.content;
 
-    // should plus 2(end tag, start tag) to consider line breaking
-    if (i < startPos[0] - 1) {
-      from += len + 2 + additionalPos;
+  for (let i = 0, p = 0; i < endPos[0]; i += 1) {
+    const child = fragment.content[i];
+
+    if (i < startPos[0]) {
+      from = p;
     }
-
-    to += len + 2 + additionalPos;
+    to = p;
+    p += child.nodeSize;
   }
 
   const startNode = doc.child(startPos[0] - 1);
@@ -125,14 +120,6 @@ export function getMdToEditorPos(
   to += endPos[1] + getWidgetNodePos(endNode, endPos[1] - 1);
 
   return [from, Math.min(to, doc.content.size)];
-}
-
-export function getExtendedRangeOffset(from: number, to: number, doc: ProsemirrorNode) {
-  const startResolvedPos = doc.resolve(from);
-  const startOffset = startResolvedPos.start();
-  const endOffset = from === to ? startResolvedPos.end() : doc.resolve(to).end();
-
-  return [startOffset, endOffset];
 }
 
 export function getRangeInfo(selection: Selection) {
