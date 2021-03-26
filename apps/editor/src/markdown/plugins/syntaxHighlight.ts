@@ -58,8 +58,8 @@ function appendMarkTr(tr: Transaction, schema: Schema, marks: MarkInfo[]) {
   const startPosListPerLine = getStartPosListPerLine(doc, doc.childCount);
 
   marks.forEach(({ start, end, spec, lineBackground }) => {
-    const startIndex = start[0] - 1;
-    const endIndex = end[0] - 1;
+    const startIndex = Math.min(start[0], doc.childCount) - 1;
+    const endIndex = Math.min(end[0], doc.childCount) - 1;
     const startNode = doc.child(startIndex);
     const endNode = doc.child(endIndex);
 
@@ -71,13 +71,12 @@ function appendMarkTr(tr: Transaction, schema: Schema, marks: MarkInfo[]) {
     from += start[1] + getWidgetNodePos(startNode, start[1] - 1);
     to += end[1] + getWidgetNodePos(endNode, end[1] - 1);
 
-    if (lineBackground) {
-      const attrs = spec ? { codeStart: start, codeEnd: end, ...spec.attrs } : null;
-
-      // @ts-ignore
-      tr.setBlockType(from, to, paragraph, attrs);
-    } else if (spec) {
-      tr.addMark(from, to, schema.mark(spec.type!, spec.attrs));
+    if (spec) {
+      if (lineBackground) {
+        tr.setBlockType(from, to, paragraph, { codeStart: start, codeEnd: end, ...spec.attrs });
+      } else {
+        tr.addMark(from, to, schema.mark(spec.type!, spec.attrs));
+      }
     } else {
       tr.removeMark(from, to);
     }
