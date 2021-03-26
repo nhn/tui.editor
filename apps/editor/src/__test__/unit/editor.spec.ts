@@ -455,8 +455,8 @@ describe('editor', () => {
         // @ts-ignore
         const { eventEmitter } = editor;
 
-        expect(fooPlugin).toHaveBeenCalledWith(eventEmitter, expect.anything());
-        expect(barPlugin).toHaveBeenCalledWith(eventEmitter, expect.anything());
+        expect(fooPlugin).toHaveBeenCalledWith(expect.objectContaining({ eventEmitter }));
+        expect(barPlugin).toHaveBeenCalledWith(expect.objectContaining({ eventEmitter }));
       });
 
       it('should invoke plugin function with options of plugin', () => {
@@ -469,7 +469,12 @@ describe('editor', () => {
         });
 
         // @ts-ignore
-        expect(plugin).toHaveBeenCalledWith(editor.eventEmitter, expect.objectContaining(options));
+        const { eventEmitter } = editor;
+
+        expect(plugin).toHaveBeenCalledWith(
+          expect.objectContaining({ eventEmitter }),
+          expect.objectContaining(options)
+        );
       });
 
       it(`should add command to command manager when plugin return 'markdownCommands' value`, () => {

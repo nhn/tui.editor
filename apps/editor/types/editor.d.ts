@@ -100,13 +100,25 @@ export interface EditorPluginInfo {
   toolbarItems?: PluginToolbarItem[];
 }
 
-export interface PluginDefaultOptions {
+export interface I18n {
+  setCode(code?: string): void;
+
+  setLanguage(codes: string | string[], data: Record<string, string>): void;
+
+  get(key: string, code?: string): string;
+}
+
+export interface PluginContext {
+  eventEmitter: Emitter;
+  usageStatistics?: boolean;
+  i18n: I18n;
   pmState: { Plugin: typeof Plugin; Selection: typeof Selection };
   pmView: { Decoration: typeof Decoration; DecorationSet: typeof DecorationSet };
 }
+
 export type PluginFn = (
-  eventEmitter: Emitter,
-  options: PluginDefaultOptions & any
+  context: PluginContext,
+  options?: Record<string, any>
 ) => EditorPluginInfo | null;
 export type EditorPlugin = PluginFn | [PluginFn, Record<string, any>];
 

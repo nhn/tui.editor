@@ -11,15 +11,15 @@ import { PluginInfoResult } from '@t/plugin';
 function execPlugin(plugin: EditorPlugin, eventEmitter: Emitter, usageStatistics: boolean) {
   const pmState = { Plugin, Selection };
   const pmView = { Decoration, DecorationSet };
-  const defaultOptions = { usageStatistics, pmState, pmView, i18n };
+  const context = { eventEmitter, usageStatistics, pmState, pmView, i18n };
 
   if (isArray(plugin)) {
     const [pluginFn, options = {}] = plugin;
 
-    return pluginFn(eventEmitter, { ...defaultOptions, ...options });
+    return pluginFn(context, options);
   }
 
-  return plugin(eventEmitter, defaultOptions);
+  return plugin(context);
 }
 
 export function getPluginInfo(
