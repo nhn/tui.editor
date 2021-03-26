@@ -26,7 +26,7 @@ export function syntaxHighlight({ schema, toastMark }: MdContext) {
           const { nodes, removedNodeRange } = result;
 
           if (nodes.length) {
-            markInfo = markInfo.concat(getRemovingMark(newTr, nodes));
+            markInfo = markInfo.concat(getMarkForRemoving(newTr, nodes));
 
             for (const parent of nodes) {
               const walker = parent.walker();
@@ -36,7 +36,7 @@ export function syntaxHighlight({ schema, toastMark }: MdContext) {
                 const { node, entering } = event;
 
                 if (entering) {
-                  markInfo = markInfo.concat(getAddingMark(node, toastMark));
+                  markInfo = markInfo.concat(getMarkForAdding(node, toastMark));
                 }
                 event = walker.next();
               }
@@ -105,14 +105,14 @@ function appendMarkTr(tr: Transaction, schema: Schema, marks: MarkInfo[]) {
   });
 }
 
-function getRemovingMark({ doc }: Transaction, nodes: MdNode[]): MarkInfo[] {
+function getMarkForRemoving({ doc }: Transaction, nodes: MdNode[]) {
   const [start] = nodes[0].sourcepos!;
   const [, end] = last(nodes).sourcepos!;
   const startPos: MdPos = [start[0], start[1]];
   const endPos: MdPos = [end[0], end[1] + 1];
-  const marks = [];
+  const marks: MarkInfo[] = [];
 
-  const skipLines = [];
+  const skipLines: number[] = [];
 
   // remove code block, custom block background
   for (let i = start[0] - 1; i < end[0]; i += 1) {
@@ -131,7 +131,7 @@ function getRemovingMark({ doc }: Transaction, nodes: MdNode[]): MarkInfo[] {
   return marks;
 }
 
-function getAddingMark(node: MdNode, toastMark: ToastMark) {
+function getMarkForAdding(node: MdNode, toastMark: ToastMark) {
   const lineTexts = toastMark.getLineTexts();
   const startPos: MdPos = [getMdStartLine(node), getMdStartCh(node)];
   const endPos: MdPos = [getMdEndLine(node), getMdEndCh(node) + 1];
