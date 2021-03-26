@@ -4,6 +4,9 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+    },
     "importHelpers": false,
     "typeRoots": ["./types", "node_modules/@types", "../../node_modules/@types"],
     "lib": ["esnext", "dom", "dom.iterable"]

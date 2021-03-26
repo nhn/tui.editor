@@ -9,7 +9,7 @@ import { PluginOptions } from '@t/index';
 
 export function codeSyntaxHighlightPlugin(
   context: PluginContext,
-  options: PluginOptions
+  options?: PluginOptions
 ): PluginInfo {
   if (options) {
     const { eventEmitter } = context;
@@ -19,14 +19,14 @@ export function codeSyntaxHighlightPlugin(
     eventEmitter.addEventType('selectLanguage');
     eventEmitter.addEventType('finishLanguageEditing');
 
-    const { languages } = prism;
+    const { languages } = prism!;
     const registerdlanguages = Object.keys(languages).filter(
       (language) => !isFunction(languages[language])
     );
 
     return {
-      toHTMLRenderers: getHTMLRenderers(prism),
-      wysiwygPlugins: [() => codeSyntaxHighlighting(context, prism)],
+      toHTMLRenderers: getHTMLRenderers(prism!),
+      wysiwygPlugins: [() => codeSyntaxHighlighting(context, prism!)],
       wysiwygNodeViews: {
         codeBlock: createCodeSyntaxHighlightView(registerdlanguages),
       },

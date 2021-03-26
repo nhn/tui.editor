@@ -12,7 +12,7 @@ declare global {
 }
 
 export type PluginOptions = {
-  highlighter: PrismJs;
+  highlighter?: PrismJs;
 };
 
 export default function codeSyntaxHighlightPlugin(

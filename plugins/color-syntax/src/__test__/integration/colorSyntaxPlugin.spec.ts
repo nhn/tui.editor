@@ -4,8 +4,8 @@
  */
 import Editor from '@toast-ui/editor';
 import colorPicker from 'tui-color-picker';
-import colorSyntaxPlugin from '../index';
 import { oneLineTrim } from 'common-tags';
+import colorSyntaxPlugin from '@/index';
 
 function removeDataAttr(html: string) {
   return html
@@ -36,6 +36,7 @@ describe('colorSyntax', () => {
 
   // we need to wait squire input event process
   afterEach(() => {
+    editor.destroy();
     document.body.removeChild(container);
   });
 

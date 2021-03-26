@@ -12,7 +12,6 @@ module.exports = {
     port: 8081,
   },
   routes: [
-    { match: 'routes', src: '.*', dest: '/editor.html' },
     {
       src: '/img/.*',
       dest: (req, res) => {
