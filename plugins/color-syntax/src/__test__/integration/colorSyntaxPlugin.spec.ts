@@ -4,8 +4,8 @@
  */
 import Editor from '@toast-ui/editor';
 import colorPicker from 'tui-color-picker';
-import colorSyntaxPlugin from '../index';
 import { oneLineTrim } from 'common-tags';
+import colorSyntaxPlugin from '@/index';
 
 function removeDataAttr(html: string) {
   return html

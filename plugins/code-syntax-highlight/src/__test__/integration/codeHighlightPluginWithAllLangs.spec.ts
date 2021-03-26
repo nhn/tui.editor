@@ -1,7 +1,6 @@
 import { source } from 'common-tags';
 
 import Editor from '@toast-ui/editor';
-import Prism from 'prismjs';
 import codeSyntaxHighlightPlugin from '@/indexAll';
 
 describe('codeSyntaxHighlightPlugin', () => {
@@ -33,7 +32,7 @@ describe('codeSyntaxHighlightPlugin', () => {
       el: container,
       previewStyle: 'vertical',
       initialValue,
-      plugins: [[codeSyntaxHighlightPlugin, { highlighter: Prism }]],
+      plugins: [codeSyntaxHighlightPlugin],
     });
 
     const elements = editor.getEditorElements();
