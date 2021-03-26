@@ -118,7 +118,7 @@ export interface PluginContext {
 
 export type PluginFn = (
   context: PluginContext,
-  options?: Recored<string, any>
+  options?: Record<string, any>
 ) => EditorPluginInfo | null;
 export type EditorPlugin = PluginFn | [PluginFn, Record<string, any>];
 
