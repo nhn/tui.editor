@@ -1,8 +1,4 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-/**
- * @fileoverview configs file for bundling
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
 const path = require('path');
 const webpack = require('webpack');
 const pkg = require('./package.json');

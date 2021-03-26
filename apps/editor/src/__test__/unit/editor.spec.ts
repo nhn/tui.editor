@@ -469,9 +469,7 @@ describe('editor', () => {
         });
 
         // @ts-ignore
-        const { eventEmitter } = editor;
-
-        expect(plugin).toHaveBeenCalledWith(eventEmitter, expect.objectContaining(options));
+        expect(plugin).toHaveBeenCalledWith(editor.eventEmitter, expect.objectContaining(options));
       });
 
       it(`should add command to command manager when plugin return 'markdownCommands' value`, () => {

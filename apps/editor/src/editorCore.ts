@@ -1,7 +1,3 @@
-/**
- * @fileoverview Implements Editor
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
 import { DOMParser } from 'prosemirror-model';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import extend from 'tui-code-snippet/object/extend';

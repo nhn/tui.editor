@@ -1,10 +1,4 @@
 /**
- * @fileoverview Implements tsv, csv format chart plugin
- * consumes tab separated values and make data/options for tui-chart
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
-
-/**
  * @example
  * $$chart
  * \tcat1\tcat2                => tsv, csv format chart data

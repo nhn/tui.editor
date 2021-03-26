@@ -1,7 +1,3 @@
-/**
- * @fileoverview Implements color syntax plugin
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
 import ColorPicker from 'tui-color-picker';
 
 import type { Context } from '@toast-ui/toastmark';

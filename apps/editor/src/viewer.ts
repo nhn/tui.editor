@@ -1,7 +1,3 @@
-/**
- * @fileoverview Implements editor preivew
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
 import { ToastMark } from '@toast-ui/toastmark';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import extend from 'tui-code-snippet/object/extend';
