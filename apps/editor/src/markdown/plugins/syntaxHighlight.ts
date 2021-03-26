@@ -23,7 +23,7 @@ export function syntaxHighlight({ schema, toastMark }: MdContext) {
         const editResult: EditResult[] = tr.getMeta('editResult');
 
         editResult.forEach((result) => {
-          const { nodes } = result;
+          const { nodes, removedNodeRange } = result;
 
           if (nodes.length) {
             markInfo = markInfo.concat(getRemovingMark(newTr, nodes));
@@ -41,6 +41,13 @@ export function syntaxHighlight({ schema, toastMark }: MdContext) {
                 event = walker.next();
               }
             }
+          } else if (removedNodeRange) {
+            const startLine = Math.max(removedNodeRange.line[0], 1);
+
+            // remove code block, custom block background when there are no adding nodes
+            markInfo = markInfo.concat(
+              createBlockForRemovingBackground([startLine, 1], [startLine + 1, 1])
+            );
           }
         });
         appendMarkTr(newTr, schema, markInfo);
@@ -48,6 +55,21 @@ export function syntaxHighlight({ schema, toastMark }: MdContext) {
       return newTr.setMeta('widget', tr.getMeta('widget'));
     },
   });
+}
+
+function createBlockForRemovingBackground(start: MdPos, end: MdPos) {
+  return {
+    start,
+    end,
+    lineBackground: true,
+    spec: {
+      attrs: {
+        codeStart: null,
+        codeEnd: null,
+        className: null,
+      },
+    },
+  };
 }
 
 function appendMarkTr(tr: Transaction, schema: Schema, marks: MarkInfo[]) {
@@ -101,7 +123,7 @@ function getRemovingMark({ doc }: Transaction, nodes: MdNode[]): MarkInfo[] {
       skipLines.push(codeStart[0]);
       codeEnd[0] = Math.min(codeEnd[0], doc.childCount);
 
-      marks.push({ start: codeStart, end: codeEnd, lineBackground: true });
+      marks.push(createBlockForRemovingBackground(codeStart, codeEnd));
     }
   }
   marks.push({ start: startPos, end: endPos });
