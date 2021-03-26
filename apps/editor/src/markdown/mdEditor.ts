@@ -34,7 +34,7 @@ import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
 import { smartTask } from './plugins/smartTask';
 import { createNodesWithWidget, unwrapWidgetSyntax } from '@/widget/rules';
 import { Widget, widgetNodeView } from '@/widget/widgetNode';
-import { PluginProp, PluginCommandMap } from '@t/plugin';
+import { PluginProp } from '@t/plugin';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -44,7 +44,6 @@ interface MarkdownOptions {
   toastMark: ToastMark;
   useCommandShortcut?: boolean;
   mdPlugins?: PluginProp[];
-  mdCommands?: PluginCommandMap;
 }
 
 export default class MdEditor extends EditorBase {
@@ -57,7 +56,7 @@ export default class MdEditor extends EditorBase {
   constructor(eventEmitter: Emitter, options: MarkdownOptions) {
     super(eventEmitter);
 
-    const { toastMark, useCommandShortcut = true, mdPlugins = [], mdCommands = {} } = options;
+    const { toastMark, useCommandShortcut = true, mdPlugins = [] } = options;
 
     this.editorType = 'markdown';
     this.toastMark = toastMark;
@@ -67,7 +66,7 @@ export default class MdEditor extends EditorBase {
     this.context = this.createContext();
     this.keymaps = this.createKeymaps(useCommandShortcut);
     this.view = this.createView();
-    this.commands = this.createCommands(mdCommands);
+    this.commands = this.createCommands();
     this.specs.setContext({ ...this.context, view: this.view });
     this.createClipboard();
     this.eventEmitter.listen('changePreviewTabWrite', () => this.toggleActive(true));
@@ -189,8 +188,8 @@ export default class MdEditor extends EditorBase {
     });
   }
 
-  createCommands(commands?: PluginCommandMap) {
-    return this.specs.commands(this.view, commands);
+  createCommands() {
+    return this.specs.commands(this.view);
   }
 
   private updateMarkdown(tr: Transaction) {

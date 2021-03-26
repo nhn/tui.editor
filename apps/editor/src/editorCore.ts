@@ -16,8 +16,7 @@ import {
   ViewerOptions,
   WidgetStyle,
 } from '@t/editor';
-import { EditorCommand } from '@t/spec';
-import { PluginInfoResult } from '@t/plugin';
+import { PluginCommandMap, PluginInfoResult, CommandFn } from '@t/plugin';
 
 import { sendHostName, sanitizeLinkAttribute, deepMergedCopy } from './utils/common';
 
@@ -225,7 +224,6 @@ class ToastUIEditor {
       toastMark: this.toastMark,
       useCommandShortcut,
       mdPlugins,
-      mdCommands,
     });
 
     this.preview = new MarkdownPreview(this.eventEmitter, {
@@ -241,7 +239,6 @@ class ToastUIEditor {
       linkAttributes,
       wwPlugins,
       wwNodeViews,
-      wwCommands,
     });
 
     this.convertor = new Convertor(
@@ -278,17 +275,29 @@ class ToastUIEditor {
     this.getCurrentModeEditor().focus();
     this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
     this.addInitEvent();
+    this.addInitCommand(mdCommands, wwCommands);
 
     this.eventEmitter.emit('load', this);
   }
 
   private addInitEvent() {
     this.on('needChangeMode', this.changeMode.bind(this));
-    this.addCommand('markdown', 'toggleScrollSync', (payload) => () => {
+    addDefaultImageBlobHook(this.eventEmitter);
+  }
+
+  private addInitCommand(mdCommands: PluginCommandMap, wwCommands: PluginCommandMap) {
+    const addPluginCommands = (type: EditorType, commandMap: PluginCommandMap) => {
+      Object.keys(commandMap).forEach((name) => {
+        this.addCommand(type, name, commandMap[name]);
+      });
+    };
+
+    this.addCommand('markdown', 'toggleScrollSync', (payload) => {
       this.eventEmitter.emit('toggleScrollSync', payload!.active);
       return true;
     });
-    addDefaultImageBlobHook(this.eventEmitter);
+    addPluginCommands('markdown', mdCommands);
+    addPluginCommands('wysiwyg', wwCommands);
   }
 
   private getCurrentModeEditor() {
@@ -338,11 +347,11 @@ class ToastUIEditor {
    * @param {string} name - command name
    * @param {function} command - command handler
    */
-  addCommand(type: EditorType, name: string, command: EditorCommand) {
-    const commandHoc = (paylaod?: Record<string, any>) => {
+  addCommand(type: EditorType, name: string, command: CommandFn) {
+    const commandHoc = (paylaod: Record<string, any> = {}) => {
       const { view } = type === 'markdown' ? this.mdEditor : this.wwEditor;
 
-      command(paylaod)(view.state, view.dispatch);
+      command(paylaod, view.state, view.dispatch);
     };
 
     this.commandManager.addCommand(type, name, commandHoc);

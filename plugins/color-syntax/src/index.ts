@@ -73,7 +73,7 @@ export default function colorSyntaxPlugin(
 
   return {
     markdownCommands: {
-      color: ({ selectedColor } = {}) => ({ tr, selection, schema }, dispatch) => {
+      color: ({ selectedColor }, { tr, selection, schema }, dispatch) => {
         if (selectedColor) {
           const slice = selection.content();
           const textContent = slice.content.textBetween(0, slice.content.size, '\n');
@@ -89,7 +89,7 @@ export default function colorSyntaxPlugin(
       },
     },
     wysiwygCommands: {
-      color: ({ selectedColor } = {}) => ({ tr, selection, schema }, dispatch) => {
+      color: ({ selectedColor }, { tr, selection, schema }, dispatch) => {
         if (selectedColor) {
           const slice = selection.content();
           const textContent = slice.content.textBetween(0, slice.content.size, '\n');

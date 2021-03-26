@@ -3,10 +3,16 @@ import { EditorView, Decoration, DecorationSet } from 'prosemirror-view';
 import { EditorState, Plugin, Selection } from 'prosemirror-state';
 import { HTMLConvertorMap, MdPos, Sourcepos } from '@toast-ui/toastmark';
 import { Emitter, Handler } from './event';
-import { Context, EditorAllCommandMap, EditorCommandFn, EditorCommand, SpecManager } from './spec';
+import { Context, EditorAllCommandMap, EditorCommandFn, SpecManager } from './spec';
 import { ToMdConvertorMap } from './convertor';
 import { DefaultUI, ToolbarItemOptions } from './ui';
-import { PluginProp, NodeViewPropMap, PluginCommandMap, PluginToolbarItem } from './plugin';
+import {
+  PluginProp,
+  NodeViewPropMap,
+  PluginCommandMap,
+  PluginToolbarItem,
+  CommandFn,
+} from './plugin';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -164,9 +170,9 @@ export class EditorCore {
 
   changePreviewStyle(style: PreviewStyle): void;
 
-  exec(type: EditorType, name: string, payload?: Record<string, any>): void;
+  exec(name: string, payload?: Record<string, any>): void;
 
-  addCommand(type: EditorType, name: string, command: EditorCommand): void;
+  addCommand(type: EditorType, name: string, command: CommandFn): void;
 
   on(type: string, handler: Handler): void;
 

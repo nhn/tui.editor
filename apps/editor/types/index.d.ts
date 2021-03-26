@@ -52,7 +52,7 @@ export {
   PluginContext,
   I18n,
 };
-export { Dispatch } from './spec';
+export { Dispatch, CommandFn } from './spec';
 export { PluginInfo, PluginNodeViews } from './plugin';
 export { MdLikeNode } from './markdown';
 export { Editor, EditorCore };
