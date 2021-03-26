@@ -1,6 +1,6 @@
 import { AllSelection, Selection } from 'prosemirror-state';
 import { ProsemirrorNode } from 'prosemirror-model';
-import { Sourcepos, MdPos, ToastMark } from '@toast-ui/toastmark';
+import { Sourcepos, MdPos } from '@toast-ui/toastmark';
 import { isWidgetNode } from '@/widget/widgetNode';
 import { getTextByMdLine } from './query';
 
@@ -40,7 +40,7 @@ function getEndOffsetWithBlankLine(doc: ProsemirrorNode, to: number, lineRange: 
   return Math.min(doc.content.size, to + blankLineTagOffset);
 }
 
-function getWidgetNodePos(node: ProsemirrorNode, chPos: number, direction: 1 | -1 = 1) {
+export function getWidgetNodePos(node: ProsemirrorNode, chPos: number, direction: 1 | -1 = 1) {
   let additionalPos = 0;
 
   node.forEach((child, pos) => {
@@ -91,31 +91,31 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
   ];
 }
 
-export function getMdToEditorPos(
-  doc: ProsemirrorNode,
-  toastMark: ToastMark,
-  startPos: MdPos,
-  endPos: MdPos
-) {
-  const lineTexts = toastMark.getLineTexts();
-  let from = 0;
-  let to = 0;
+export function getStartPosListPerLine(doc: ProsemirrorNode, endIndex: number) {
+  const startPosListPerLine: number[] = [];
 
-  const fragment = doc.content;
+  for (let i = 0, pos = 0; i < endIndex; i += 1) {
+    const child = doc.child(i);
 
-  for (let i = 0, p = 0; i < endPos[0]; i += 1) {
-    const child = fragment.content[i];
-
-    if (i < startPos[0]) {
-      from = p;
-    }
-    to = p;
-    p += child.nodeSize;
+    startPosListPerLine[i] = pos;
+    pos += child.nodeSize;
   }
 
-  const startNode = doc.child(startPos[0] - 1);
-  const endNode = doc.child(endPos[0] - 1);
+  return startPosListPerLine;
+}
 
+export function getMdToEditorPos(doc: ProsemirrorNode, startPos: MdPos, endPos: MdPos) {
+  const startPosListPerLine = getStartPosListPerLine(doc, endPos[0]);
+  const startIndex = startPos[0] - 1;
+  const endIndex = endPos[0] - 1;
+  const startNode = doc.child(startIndex);
+  const endNode = doc.child(endIndex);
+
+  // calculate the position corresponding to the line
+  let from = startPosListPerLine[startIndex];
+  let to = startPosListPerLine[endIndex];
+
+  // calculate the position corresponding to the character offset of the line
   from += startPos[1] + getWidgetNodePos(startNode, startPos[1] - 1);
   to += endPos[1] + getWidgetNodePos(endNode, endPos[1] - 1);
 

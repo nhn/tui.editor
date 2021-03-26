@@ -4,24 +4,29 @@ import { Schema } from 'prosemirror-model';
 import { MdContext } from '@t/spec';
 import { getMdStartLine, getMdEndLine, getMdStartCh, getMdEndCh } from '@/utils/markdown';
 import { includes, last } from '@/utils/common';
-import { getMarkInfo } from './helper/markInfo';
-import { getMdToEditorPos } from '../helper/pos';
+import { getStartPosListPerLine, getWidgetNodePos } from '@/markdown/helper/pos';
+import { getMarkInfo, MarkInfo } from './helper/markInfo';
+
+interface CodeBlockPos {
+  codeStart: MdPos;
+  codeEnd: MdPos;
+}
 
 export function syntaxHighlight({ schema, toastMark }: MdContext) {
   return new Plugin({
     appendTransaction(transactions, _, newState) {
       const [tr] = transactions;
-
-      let newTr = newState.tr;
+      const newTr = newState.tr;
 
       if (tr.docChanged) {
+        let markInfo: MarkInfo[] = [];
         const editResult: EditResult[] = tr.getMeta('editResult');
 
         editResult.forEach((result) => {
           const { nodes } = result;
 
           if (nodes.length) {
-            newTr = removeMark(nodes, toastMark, newTr, schema);
+            markInfo = markInfo.concat(getRemovingMark(newTr, nodes));
 
             for (const parent of nodes) {
               const walker = parent.walker();
@@ -30,84 +35,86 @@ export function syntaxHighlight({ schema, toastMark }: MdContext) {
               while (event) {
                 const { node, entering } = event;
 
-                // eslint-disable-next-line max-depth
                 if (entering) {
-                  newTr = addMark(node, toastMark, newTr, schema);
+                  markInfo = markInfo.concat(getAddingMark(node, toastMark));
                 }
                 event = walker.next();
               }
             }
           }
         });
+        appendMarkTr(newTr, schema, markInfo);
       }
       return newTr.setMeta('widget', tr.getMeta('widget'));
     },
   });
 }
 
-function removeCodeBlockBackground(
-  newTr: Transaction,
-  toastMark: ToastMark,
-  start: MdPos,
-  end: MdPos,
-  schema: Schema
-) {
-  const skipLines: number[] = [];
+function appendMarkTr(tr: Transaction, schema: Schema, marks: MarkInfo[]) {
+  const { doc } = tr;
+  const { paragraph } = schema.nodes;
 
-  for (let i = start[0] - 1; i < end[0]; i += 1) {
-    const node = newTr.doc.content.child(i);
-    const { codeStart, codeEnd } = node.attrs;
+  // get start position per line for lazy calculation
+  const startPosListPerLine = getStartPosListPerLine(doc, doc.childCount);
 
-    if (codeStart && codeEnd && !includes(skipLines, codeStart[0])) {
-      skipLines.push(codeStart[0]);
-      codeEnd[0] = Math.min(codeEnd[0], newTr.doc.content.childCount);
-      const pos = getMdToEditorPos(newTr.doc, toastMark, codeStart, codeEnd);
+  marks.forEach(({ start, end, spec, lineBackground }) => {
+    const startIndex = start[0] - 1;
+    const endIndex = end[0] - 1;
+    const startNode = doc.child(startIndex);
+    const endNode = doc.child(endIndex);
 
-      newTr = newTr.setBlockType(pos[0], pos[1], schema.nodes.paragraph);
+    // calculate the position corresponding to the line
+    let from = startPosListPerLine[startIndex];
+    let to = startPosListPerLine[endIndex];
+
+    // calculate the position corresponding to the character offset of the line
+    from += start[1] + getWidgetNodePos(startNode, start[1] - 1);
+    to += end[1] + getWidgetNodePos(endNode, end[1] - 1);
+
+    if (lineBackground) {
+      const attrs = spec ? { codeStart: start, codeEnd: end, ...spec.attrs } : null;
+
+      // @ts-ignore
+      tr.setBlockType(from, to, paragraph, attrs);
+    } else if (spec) {
+      tr.addMark(from, to, schema.mark(spec.type!, spec.attrs));
+    } else {
+      tr.removeMark(from, to);
     }
-  }
-
-  return newTr;
+  });
 }
 
-function removeMark(nodes: MdNode[], toastMark: ToastMark, newTr: Transaction, schema: Schema) {
+function getRemovingMark({ doc }: Transaction, nodes: MdNode[]): MarkInfo[] {
   const [start] = nodes[0].sourcepos!;
   const [, end] = last(nodes).sourcepos!;
   const startPos: MdPos = [start[0], start[1]];
   const endPos: MdPos = [end[0], end[1] + 1];
-  const pos = getMdToEditorPos(newTr.doc, toastMark, startPos, endPos);
+  const marks = [];
 
-  newTr = removeCodeBlockBackground(newTr, toastMark, start, end, schema);
+  const skipLines = [];
 
-  return newTr.removeMark(pos[0], pos[1]);
+  // remove code block, custom block background
+  for (let i = start[0] - 1; i < end[0]; i += 1) {
+    const node = doc.child(i);
+    const { codeStart, codeEnd } = node.attrs as CodeBlockPos;
+
+    if (codeStart && codeEnd && !includes(skipLines, codeStart[0])) {
+      skipLines.push(codeStart[0]);
+      codeEnd[0] = Math.min(codeEnd[0], doc.childCount);
+
+      marks.push({ start: codeStart, end: codeEnd, lineBackground: true });
+    }
+  }
+  marks.push({ start: startPos, end: endPos });
+
+  return marks;
 }
 
-function addMark(node: MdNode, toastMark: ToastMark, newTr: Transaction, schema: Schema) {
+function getAddingMark(node: MdNode, toastMark: ToastMark) {
   const lineTexts = toastMark.getLineTexts();
   const startPos: MdPos = [getMdStartLine(node), getMdStartCh(node)];
   const endPos: MdPos = [getMdEndLine(node), getMdEndCh(node) + 1];
   const markInfo = getMarkInfo(node, startPos, endPos, lineTexts[endPos[0] - 1]);
 
-  if (markInfo) {
-    const { marks = [], lineBackground } = markInfo;
-
-    if (lineBackground) {
-      const { start, end, spec } = lineBackground;
-      const pos = getMdToEditorPos(newTr.doc, toastMark, start, end);
-
-      newTr = newTr.setBlockType(pos[0], pos[1], schema.nodes.paragraph, {
-        codeStart: start,
-        codeEnd: end,
-        ...spec.attrs,
-      });
-    }
-
-    marks.forEach(({ start, end, spec }) => {
-      const pos = getMdToEditorPos(newTr.doc, toastMark, start, end);
-      const { type, attrs } = spec;
-
-      newTr = newTr.addMark(pos[0], pos[1], schema.mark(type!, attrs));
-    });
-  }
-  return newTr;
+  return markInfo ?? [];
 }
