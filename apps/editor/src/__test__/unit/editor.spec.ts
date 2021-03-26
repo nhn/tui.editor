@@ -206,12 +206,13 @@ describe('editor', () => {
 
     it('addCommand()', () => {
       const spy = jest.fn();
-      const handler = jest.fn().mockImplementation(() => spy);
+      // @ts-ignore
+      const { state, dispatch } = editor.mdEditor.view;
 
-      editor.addCommand('markdown', 'custom', handler);
+      editor.addCommand('markdown', 'custom', spy);
       editor.exec('custom', { prop: 'prop' });
 
-      expect(handler).toHaveBeenCalledWith({ prop: 'prop' });
+      expect(spy).toHaveBeenCalledWith({ prop: 'prop' }, state, dispatch);
       expect(spy).toHaveBeenCalled();
     });
 
@@ -481,7 +482,10 @@ describe('editor', () => {
         const plugin = () => {
           return {
             markdownCommands: {
-              foo: () => spy,
+              foo: () => {
+                spy();
+                return true;
+              },
             },
           };
         };
@@ -500,7 +504,10 @@ describe('editor', () => {
         const plugin = () => {
           return {
             wysiwygCommands: {
-              foo: () => spy,
+              foo: () => {
+                spy();
+                return true;
+              },
             },
           };
         };
