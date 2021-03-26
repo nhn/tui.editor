@@ -52,8 +52,8 @@ export {
   PluginContext,
   I18n,
 };
-export { Dispatch, CommandFn } from './spec';
-export { PluginInfo, PluginNodeViews } from './plugin';
+export { Dispatch } from './spec';
+export { PluginInfo, PluginNodeViews, CommandFn } from './plugin';
 export { MdLikeNode } from './markdown';
 export { Editor, EditorCore };
 export default Editor;
