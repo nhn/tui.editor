@@ -1,8 +1,3 @@
-/**
- * @fileoverview Implements markdown preview
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
-// import on from 'tui-code-snippet/domEvent/on';
 import off from 'tui-code-snippet/domEvent/off';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';

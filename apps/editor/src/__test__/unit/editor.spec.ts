@@ -1,7 +1,8 @@
+import '@/i18n/en-us';
 import { oneLineTrim } from 'common-tags';
-import Editor from '@/editorCore';
-import Viewer from '@/Viewer';
 import i18n from '@/i18n/i18n';
+import Editor from '@/editor';
+import Viewer from '@/Viewer';
 
 describe('editor', () => {
   let container: HTMLElement,
@@ -40,10 +41,6 @@ describe('editor', () => {
     mdEditor = elements.mdEditor;
     mdPreview = elements.mdPreview!;
     wwEditor = elements.wwEditor!;
-
-    container.append(mdEditor);
-    container.append(mdPreview!);
-    container.append(wwEditor!);
 
     document.body.appendChild(container);
   });
@@ -200,23 +197,23 @@ describe('editor', () => {
       // @ts-ignore
       jest.spyOn(editor.commandManager, 'exec');
 
-      editor.exec('markdown', 'bold');
+      editor.exec('bold');
 
       // @ts-ignore
       // eslint-disable-next-line no-undefined
-      expect(editor.commandManager.exec).toHaveBeenCalledWith('markdown', 'bold', undefined);
+      expect(editor.commandManager.exec).toHaveBeenCalledWith('bold', undefined);
     });
 
     it('addCommand()', () => {
-      const handler = jest.fn();
-
+      const spy = jest.fn();
       // @ts-ignore
-      jest.spyOn(editor.commandManager, 'addCommand');
+      const { state, dispatch } = editor.mdEditor.view;
 
-      editor.addCommand('markdown', 'custom', handler);
+      editor.addCommand('markdown', 'custom', spy);
+      editor.exec('custom', { prop: 'prop' });
 
-      // @ts-ignore
-      expect(editor.commandManager.addCommand).toHaveBeenCalledWith('markdown', 'custom', handler);
+      expect(spy).toHaveBeenCalledWith({ prop: 'prop' }, state, dispatch);
+      expect(spy).toHaveBeenCalled();
     });
 
     describe('insertText()', () => {
@@ -456,9 +453,10 @@ describe('editor', () => {
         });
 
         // @ts-ignore
-        expect(fooPlugin).toHaveBeenCalledWith(editor.eventEmitter);
-        // @ts-ignore
-        expect(barPlugin).toHaveBeenCalledWith(editor.eventEmitter);
+        const { eventEmitter } = editor;
+
+        expect(fooPlugin).toHaveBeenCalledWith(expect.objectContaining({ eventEmitter }));
+        expect(barPlugin).toHaveBeenCalledWith(expect.objectContaining({ eventEmitter }));
       });
 
       it('should invoke plugin function with options of plugin', () => {
@@ -471,14 +469,23 @@ describe('editor', () => {
         });
 
         // @ts-ignore
-        expect(plugin).toHaveBeenCalledWith(editor.eventEmitter, options);
+        const { eventEmitter } = editor;
+
+        expect(plugin).toHaveBeenCalledWith(
+          expect.objectContaining({ eventEmitter }),
+          expect.objectContaining(options)
+        );
       });
 
       it(`should add command to command manager when plugin return 'markdownCommands' value`, () => {
+        const spy = jest.fn();
         const plugin = () => {
           return {
             markdownCommands: {
-              foo: () => () => true,
+              foo: () => {
+                spy();
+                return true;
+              },
             },
           };
         };
@@ -487,21 +494,20 @@ describe('editor', () => {
           el: container,
           plugins: [plugin],
         });
+        editor.exec('foo');
 
-        // @ts-ignore
-        jest.spyOn(editor.commandManager, 'exec');
-
-        editor.exec('markdown', 'foo');
-
-        // @ts-ignore
-        expect(editor.commandManager.exec).toHaveBeenCalled();
+        expect(spy).toHaveBeenCalled();
       });
 
       it(`should add command to command manager when plugin return 'wysiwygCommands' value`, () => {
+        const spy = jest.fn();
         const plugin = () => {
           return {
             wysiwygCommands: {
-              foo: () => () => true,
+              foo: () => {
+                spy();
+                return true;
+              },
             },
           };
         };
@@ -510,14 +516,32 @@ describe('editor', () => {
           el: container,
           plugins: [plugin],
         });
+        editor.changeMode('wysiwyg');
+        editor.exec('foo');
 
-        // @ts-ignore
-        jest.spyOn(editor.commandManager, 'exec');
+        expect(spy).toHaveBeenCalled();
+      });
 
-        editor.exec('wysiwyg', 'foo');
+      it(`should add toolbar item when plugin return 'toolbarItems' value`, () => {
+        const toolbarItem = {
+          name: 'color',
+          tooltip: 'Text color',
+          className: 'tui-editor-toolbar-icons color',
+        };
+        const plugin = () => {
+          return {
+            toolbarItems: [{ groupIndex: 1, itemIndex: 2, item: toolbarItem }],
+          };
+        };
 
-        // @ts-ignore
-        expect(editor.commandManager.exec).toHaveBeenCalled();
+        editor = new Editor({
+          el: container,
+          plugins: [plugin],
+        });
+
+        const toolbar = document.querySelector('.tui-editor-toolbar-icons.color');
+
+        expect(toolbar).toBeInTheDocument();
       });
     });
   });

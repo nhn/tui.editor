@@ -1,4 +1,4 @@
-import type { Emitter, PluginInfo, PluginDefaultOptions } from '@toast-ui/editor';
+import type { PluginContext, PluginInfo } from '@toast-ui/editor';
 import Prism from 'prismjs';
 
 type PrismJs = typeof Prism & {
@@ -12,10 +12,10 @@ declare global {
 }
 
 export type PluginOptions = {
-  highlighter: PrismJs;
-} & PluginDefaultOptions;
+  highlighter?: PrismJs;
+};
 
 export default function codeSyntaxHighlightPlugin(
-  emitter: Emitter,
+  context: PluginContext,
   options: PluginOptions
 ): PluginInfo;

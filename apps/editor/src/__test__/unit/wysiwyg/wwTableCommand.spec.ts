@@ -47,7 +47,7 @@ describe('wysiwyg table commands', () => {
 
     em = new EventEmitter();
     wwe = new WysiwygEditor(em, { toDOMAdaptor });
-    cmd = new CommandManager(em, {}, wwe.commands);
+    cmd = new CommandManager(em, {}, wwe.commands, () => 'wysiwyg');
   });
 
   afterEach(() => {
@@ -56,7 +56,7 @@ describe('wysiwyg table commands', () => {
 
   describe('addTable command', () => {
     it('should create one by one table', () => {
-      cmd.exec('wysiwyg', 'addTable');
+      cmd.exec('addTable');
 
       const expected = oneLineTrim`
         <table>
@@ -77,7 +77,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should create table with column and row count', () => {
-      cmd.exec('wysiwyg', 'addTable', { rowCount: 4, columnCount: 2 });
+      cmd.exec('addTable', { rowCount: 4, columnCount: 2 });
 
       const expected = oneLineTrim`
         <table>
@@ -108,7 +108,7 @@ describe('wysiwyg table commands', () => {
     });
 
     it('should create table with data', () => {
-      cmd.exec('wysiwyg', 'addTable', {
+      cmd.exec('addTable', {
         rowCount: 2,
         columnCount: 2,
         data: ['foo', 'bar', 'baz', 'qux'],
@@ -137,13 +137,13 @@ describe('wysiwyg table commands', () => {
 
   describe('removeTable command', () => {
     beforeEach(() => {
-      cmd.exec('wysiwyg', 'addTable');
+      cmd.exec('addTable');
     });
 
     it('should remove table when cursor is in table hedaer', () => {
       setCellSelection([0, 0], [0, 0], false);
 
-      cmd.exec('wysiwyg', 'removeTable');
+      cmd.exec('removeTable');
 
       expect(wwe.getHTML()).toBe('<p><br></p>');
     });
@@ -151,7 +151,7 @@ describe('wysiwyg table commands', () => {
     it('should remove table when cursor is in table body', () => {
       setCellSelection([1, 0], [1, 0], false);
 
-      cmd.exec('wysiwyg', 'removeTable');
+      cmd.exec('removeTable');
 
       expect(wwe.getHTML()).toBe('<p><br></p>');
     });
@@ -159,7 +159,7 @@ describe('wysiwyg table commands', () => {
     it('should remove table when selected cells', () => {
       setCellSelection([0, 0], [1, 0]);
 
-      cmd.exec('wysiwyg', 'removeTable');
+      cmd.exec('removeTable');
 
       expect(wwe.getHTML()).toBe('<p><br></p>');
     });
@@ -167,7 +167,7 @@ describe('wysiwyg table commands', () => {
 
   describe('addRowToDown command', () => {
     beforeEach(() => {
-      cmd.exec('wysiwyg', 'addTable', {
+      cmd.exec('addTable', {
         rowCount: 3,
         columnCount: 2,
         data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz'],
@@ -177,7 +177,7 @@ describe('wysiwyg table commands', () => {
     it('should add a row to next row of current cursor cell', () => {
       setCellSelection([1, 1], [1, 1], false); // select 'baz' cell
 
-      cmd.exec('wysiwyg', 'addRowToDown');
+      cmd.exec('addRowToDown');
 
       const expected = oneLineTrim`
         <table>
@@ -210,7 +210,7 @@ describe('wysiwyg table commands', () => {
     it('should add rows as selected row count after selection', () => {
       setCellSelection([0, 0], [1, 1]); // select from 'foo' to 'qux' cells
 
-      cmd.exec('wysiwyg', 'addRowToDown');
+      cmd.exec('addRowToDown');
 
       const expected = oneLineTrim`
         <table>
@@ -247,7 +247,7 @@ describe('wysiwyg table commands', () => {
     it('should not add a row when selection is only at table head', () => {
       setCellSelection([0, 0], [0, 1]); // select from 'foo' to 'bar' cells
 
-      cmd.exec('wysiwyg', 'addRowToDown');
+      cmd.exec('addRowToDown');
 
       const expected = oneLineTrim`
         <table>
@@ -276,7 +276,7 @@ describe('wysiwyg table commands', () => {
 
   describe('addRowToUp command', () => {
     beforeEach(() => {
-      cmd.exec('wysiwyg', 'addTable', {
+      cmd.exec('addTable', {
         rowCount: 3,
         columnCount: 2,
         data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz'],
@@ -286,7 +286,7 @@ describe('wysiwyg table commands', () => {
     it('should add a row to previous row of current cursor cell', () => {
       setCellSelection([1, 1], [1, 1], false); // select 'baz' cell
 
-      cmd.exec('wysiwyg', 'addRowToUp');
+      cmd.exec('addRowToUp');
 
       const expected = oneLineTrim`
         <table>
@@ -319,7 +319,7 @@ describe('wysiwyg table commands', () => {
     it('should add rows as selected row count before selection', () => {
       setCellSelection([1, 1], [2, 1]); // select from 'qux' to 'quuz' cells
 
-      cmd.exec('wysiwyg', 'addRowToUp');
+      cmd.exec('addRowToUp');
 
       const expected = oneLineTrim`
         <table>
@@ -356,7 +356,7 @@ describe('wysiwyg table commands', () => {
     it('should not add a row when selection include table head', () => {
       setCellSelection([0, 0], [1, 0]); // select from 'foo' to 'baz' cells
 
-      cmd.exec('wysiwyg', 'addRowToUp');
+      cmd.exec('addRowToUp');
 
       const expected = oneLineTrim`
         <table>
@@ -385,7 +385,7 @@ describe('wysiwyg table commands', () => {
 
   describe('removeRow command', () => {
     beforeEach(() => {
-      cmd.exec('wysiwyg', 'addTable', {
+      cmd.exec('addTable', {
         rowCount: 4,
         columnCount: 2,
         data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', ''],
@@ -395,7 +395,7 @@ describe('wysiwyg table commands', () => {
     it('should remove a row where current cursor cell is located', () => {
       setCellSelection([1, 1], [1, 1], false); // select from 'qux' cell
 
-      cmd.exec('wysiwyg', 'removeRow');
+      cmd.exec('removeRow');
 
       const expected = oneLineTrim`
         <table>
@@ -424,7 +424,7 @@ describe('wysiwyg table commands', () => {
     it('should remove columns as selected column count in selection', () => {
       setCellSelection([3, 1], [2, 1]); // select from last to 'quuz' cells
 
-      cmd.exec('wysiwyg', 'removeRow');
+      cmd.exec('removeRow');
 
       const expected = oneLineTrim`
         <table>
@@ -449,7 +449,7 @@ describe('wysiwyg table commands', () => {
     it('should not remove rows when selection include table head', () => {
       setCellSelection([0, 1], [2, 1]); // select from 'bar' to 'qux' cells
 
-      cmd.exec('wysiwyg', 'removeRow');
+      cmd.exec('removeRow');
 
       const expected = oneLineTrim`
         <table>
@@ -482,7 +482,7 @@ describe('wysiwyg table commands', () => {
     it('should not remove rows when all rows of table body are selected', () => {
       setCellSelection([1, 0], [3, 0]); // select from 'baz' to 'corge' cells
 
-      cmd.exec('wysiwyg', 'removeRow');
+      cmd.exec('removeRow');
 
       const expected = oneLineTrim`
         <table>
@@ -515,7 +515,7 @@ describe('wysiwyg table commands', () => {
 
   describe('addColumnToRight command', () => {
     beforeEach(() => {
-      cmd.exec('wysiwyg', 'addTable', {
+      cmd.exec('addTable', {
         rowCount: 3,
         columnCount: 3,
         data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', ''],
@@ -525,7 +525,7 @@ describe('wysiwyg table commands', () => {
     it('should add a column to next column of current cursor cell', () => {
       setCellSelection([1, 1], [1, 1], false); // select 'quux' cell
 
-      cmd.exec('wysiwyg', 'addColumnToRight');
+      cmd.exec('addColumnToRight');
 
       const expected = oneLineTrim`
         <table>
@@ -560,7 +560,7 @@ describe('wysiwyg table commands', () => {
     it('should add columns as selected column count to right of selection', () => {
       setCellSelection([0, 0], [1, 1]); // select from 'foo' to 'quux' cells
 
-      cmd.exec('wysiwyg', 'addColumnToRight');
+      cmd.exec('addColumnToRight');
 
       const expected = oneLineTrim`
         <table>
@@ -598,7 +598,7 @@ describe('wysiwyg table commands', () => {
 
   describe('addColumnToLeft command', () => {
     beforeEach(() => {
-      cmd.exec('wysiwyg', 'addTable', {
+      cmd.exec('addTable', {
         rowCount: 3,
         columnCount: 3,
         data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', ''],
@@ -608,7 +608,7 @@ describe('wysiwyg table commands', () => {
     it('should add a column to previous column of current cursor cell', () => {
       setCellSelection([1, 1], [1, 1], false); // select 'quux' cell
 
-      cmd.exec('wysiwyg', 'addColumnToLeft');
+      cmd.exec('addColumnToLeft');
 
       const expected = oneLineTrim`
         <table>
@@ -643,7 +643,7 @@ describe('wysiwyg table commands', () => {
     it('should add columns as selected column count to right of selection', () => {
       setCellSelection([0, 1], [2, 2]); // select from 'bar' to last cells
 
-      cmd.exec('wysiwyg', 'addColumnToLeft');
+      cmd.exec('addColumnToLeft');
 
       const expected = oneLineTrim`
         <table>
@@ -681,7 +681,7 @@ describe('wysiwyg table commands', () => {
 
   describe('removeColumn command', () => {
     beforeEach(() => {
-      cmd.exec('wysiwyg', 'addTable', {
+      cmd.exec('addTable', {
         rowCount: 3,
         columnCount: 3,
         data: ['foo', 'bar', 'baz', 'qux', 'quux', 'quuz', 'corge', 'grault', ''],
@@ -691,7 +691,7 @@ describe('wysiwyg table commands', () => {
     it('should remove a column where current cursor cell is located', () => {
       setCellSelection([1, 1], [1, 1], false); // select 'quux' cell
 
-      cmd.exec('wysiwyg', 'removeColumn');
+      cmd.exec('removeColumn');
 
       const expected = oneLineTrim`
         <table>
@@ -720,7 +720,7 @@ describe('wysiwyg table commands', () => {
     it('should remove columns as selected column count in selection', () => {
       setCellSelection([0, 1], [2, 2]); // select from 'bar' to last cells
 
-      cmd.exec('wysiwyg', 'removeColumn');
+      cmd.exec('removeColumn');
 
       const expected = oneLineTrim`
         <table>
@@ -746,7 +746,7 @@ describe('wysiwyg table commands', () => {
     it('should not remove columns when all columns are selected', () => {
       setCellSelection([0, 0], [1, 2]); // select from 'foo' to 'quuz' cells
 
-      cmd.exec('wysiwyg', 'removeRow');
+      cmd.exec('removeRow');
 
       const expected = oneLineTrim`
         <table>
@@ -778,7 +778,7 @@ describe('wysiwyg table commands', () => {
 
   describe('alignColumn command', () => {
     beforeEach(() => {
-      cmd.exec('wysiwyg', 'addTable', {
+      cmd.exec('addTable', {
         rowCount: 3,
         columnCount: 2,
         data: ['foo', 'bar', 'baz', 'qux', 'quux', ''],
@@ -788,7 +788,7 @@ describe('wysiwyg table commands', () => {
     it('should add center align attribute to columns by no option', () => {
       setCellSelection([1, 0], [1, 0], false); // select 'baz' cell
 
-      cmd.exec('wysiwyg', 'alignColumn');
+      cmd.exec('alignColumn');
 
       const expected = oneLineTrim`
         <table>
@@ -817,7 +817,7 @@ describe('wysiwyg table commands', () => {
     it('should change align attribute to columns by option', () => {
       setCellSelection([2, 1], [2, 1], false); // select last cell
 
-      cmd.exec('wysiwyg', 'alignColumn', { align: 'left' });
+      cmd.exec('alignColumn', { align: 'left' });
 
       let expected = oneLineTrim`
         <table>
@@ -842,7 +842,7 @@ describe('wysiwyg table commands', () => {
 
       expect(wwe.getHTML()).toBe(expected);
 
-      cmd.exec('wysiwyg', 'alignColumn', { align: 'right' });
+      cmd.exec('alignColumn', { align: 'right' });
 
       expected = oneLineTrim`
         <table>
@@ -871,7 +871,7 @@ describe('wysiwyg table commands', () => {
     it('should add align attribute to columns with cursor in table hedaer', () => {
       setCellSelection([0, 0], [0, 0], false); // select 'foo' cell
 
-      cmd.exec('wysiwyg', 'alignColumn', { align: 'left' });
+      cmd.exec('alignColumn', { align: 'left' });
 
       const expected = oneLineTrim`
         <table>
@@ -900,7 +900,7 @@ describe('wysiwyg table commands', () => {
     it('should add align attribute to selected columns in selection', () => {
       setCellSelection([1, 0], [1, 1]); // select from 'baz' to 'qux' cell
 
-      cmd.exec('wysiwyg', 'alignColumn', { align: 'left' });
+      cmd.exec('alignColumn', { align: 'left' });
 
       let expected = oneLineTrim`
         <table>
@@ -927,7 +927,7 @@ describe('wysiwyg table commands', () => {
 
       setCellSelection([0, 1], [0, 0]); // select from 'bar' to 'foo' cell
 
-      cmd.exec('wysiwyg', 'alignColumn', { align: 'right' });
+      cmd.exec('alignColumn', { align: 'right' });
 
       expected = oneLineTrim`
         <table>

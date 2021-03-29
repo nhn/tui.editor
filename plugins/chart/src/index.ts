@@ -1,10 +1,4 @@
 /**
- * @fileoverview Implements tsv, csv format chart plugin
- * consumes tab separated values and make data/options for tui-chart
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
-
-/**
  * @example
  * $$chart
  * \tcat1\tcat2                => tsv, csv format chart data
@@ -24,7 +18,7 @@
  * y.title: Month              => yAxis.title
  * $$
  */
-import type { Emitter, PluginInfo, MdNode } from '@toast-ui/editor';
+import type { PluginInfo, MdNode, PluginContext } from '@toast-ui/editor';
 import Chart, {
   BaseOptions,
   LineChart,
@@ -262,7 +256,6 @@ export function setDefaultOptions(
       editorChart: {},
       chart: {},
       exportMenu: {},
-      usageStatistics: pluginOptions.usageStatistics,
     },
     chartOptions
   );
@@ -292,7 +285,12 @@ function destroyChart() {
   });
 }
 
-function renderChart(id: string, text: string, pluginOptions: PluginOptions) {
+function renderChart(
+  id: string,
+  text: string,
+  usageStatistics: boolean,
+  pluginOptions: PluginOptions
+) {
   // should draw the chart after rendering container element
   const chartContainer = document.querySelector<HTMLElement>(`[data-chart-id=${id}]`)!;
 
@@ -316,6 +314,7 @@ function renderChart(id: string, text: string, pluginOptions: PluginOptions) {
         } else {
           const toastuiChart = chart[chartType];
 
+          chartOptions.usageStatistics = usageStatistics;
           // @ts-ignore
           chartMap[id] = toastuiChart({ el: chartContainer, data, options: chartOptions });
         }
@@ -332,7 +331,7 @@ function generateId() {
 
 /**
  * Chart plugin
- * @param {Object} emitter - event emitter for communicating with editor
+ * @param {Object} context - plugin context for communicating with editor
  * @param {Object} options - chart options
  * @param {number} [options.minWidth=0] - minimum width
  * @param {number} [options.minHeight=0] - minimum height
@@ -341,21 +340,17 @@ function generateId() {
  * @param {number|string} [options.width='auto'] - default width
  * @param {number|string} [options.height='auto'] - default height
  */
-export default function chartPlugin(_: Emitter, options: PluginOptions): PluginInfo {
-  options = extend(
-    {
-      usageStatistics: options.usageStatistics ?? true,
-    },
-    options
-  );
-
+export default function chartPlugin(
+  { usageStatistics = true }: PluginContext,
+  options: PluginOptions
+): PluginInfo {
   return {
     toHTMLRenderers: {
       chart(node: MdNode) {
         const id = generateId();
 
         setTimeout(() => {
-          renderChart(id, node.literal!, options);
+          renderChart(id, node.literal!, usageStatistics, options);
         });
         return [
           {

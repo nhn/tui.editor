@@ -1,7 +1,3 @@
-/**
- * @fileoverview Implements preview
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
 import css from 'tui-code-snippet/domUtil/css';
 import { Emitter } from '@t/event';
 import { cls, createElementWith, empty, findNodes } from './utils/dom';

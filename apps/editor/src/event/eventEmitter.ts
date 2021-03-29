@@ -1,7 +1,3 @@
-/**
- * @fileoverview Implements EventEmitter
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isFalsy from 'tui-code-snippet/type/isFalsy';
 import { Emitter, EventTypes, Handler } from '@t/event';
@@ -16,10 +12,6 @@ const eventTypeList: EventTypes[] = [
   'changePreviewStyle',
   'changePreviewTabPreview',
   'changePreviewTabWrite',
-  'openPopupCodeBlockLanguages',
-  'openPopupCodeBlockEditor',
-  'closePopupCodeBlockLanguages',
-  'closePopupCodeBlockEditor',
   'scroll',
   'contextmenu',
   'show',

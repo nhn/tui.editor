@@ -1,8 +1,4 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-/**
- * @fileoverview Configs for i18n bundle file
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
 const path = require('path');
 const webpack = require('webpack');
 const entry = require('webpack-glob-entry');

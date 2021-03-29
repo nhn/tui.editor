@@ -16,7 +16,8 @@ import {
   WidgetStyle,
   WidgetRuleMap,
   WidgetRule,
-  PluginDefaultOptions,
+  PluginContext,
+  I18n,
 } from './editor';
 
 export {
@@ -48,9 +49,12 @@ export {
   WidgetStyle,
   WidgetRuleMap,
   WidgetRule,
-  PluginDefaultOptions,
+  PluginContext,
+  I18n,
 };
-export { PluginInfo, PluginNodeViews } from './plugin';
+export { Dispatch } from './spec';
+export { PluginInfo, PluginNodeViews, CommandFn } from './plugin';
+export { MdLikeNode } from './markdown';
 export { Editor, EditorCore };
 export default Editor;
 

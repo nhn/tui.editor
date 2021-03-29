@@ -18,6 +18,7 @@ import {
   htmlToWwConvertors,
   getTextWithoutTrailingNewline,
   isInlineNode,
+  isCustomHTMLInlineNode,
 } from './htmlToWwConvertors';
 
 import { ToWwConvertorMap } from '@t/convertor';
@@ -235,11 +236,17 @@ export const toWwConvertors: ToWwConvertorMap = {
 
       state.openNode(cell, attrs);
 
-      if (node.firstChild && isInlineNode(node.firstChild)) {
+      if (
+        node.firstChild &&
+        (isInlineNode(node.firstChild) || isCustomHTMLInlineNode(state, node.firstChild))
+      ) {
         state.openNode(paragraph);
       }
     } else {
-      if (node.lastChild && isInlineNode(node.lastChild)) {
+      if (
+        node.lastChild &&
+        (isInlineNode(node.lastChild) || isCustomHTMLInlineNode(state, node.lastChild))
+      ) {
         state.closeNode();
       }
 

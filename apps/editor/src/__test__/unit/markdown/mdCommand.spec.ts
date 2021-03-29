@@ -10,7 +10,7 @@ let mde: MarkdownEditor, em: EventEmitter, cmd: CommandManager;
 beforeEach(() => {
   em = new EventEmitter();
   mde = new MarkdownEditor(em, { toastMark: new ToastMark() });
-  cmd = new CommandManager(em, mde.commands, {});
+  cmd = new CommandManager(em, mde.commands, {}, () => 'markdown');
 });
 
 afterEach(() => {
@@ -21,8 +21,8 @@ describe('bold command', () => {
   it('should add bold syntax', () => {
     mde.setMarkdown('bold');
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'bold');
+    cmd.exec('selectAll');
+    cmd.exec('bold');
 
     expect(getTextContent(mde)).toBe('**bold**');
   });
@@ -31,7 +31,7 @@ describe('bold command', () => {
     mde.setMarkdown('**bold**');
     mde.setSelection([1, 3], [1, 7]);
 
-    cmd.exec('markdown', 'bold');
+    cmd.exec('bold');
 
     expect(getTextContent(mde)).toBe('bold');
   });
@@ -40,7 +40,7 @@ describe('bold command', () => {
     mde.setMarkdown('****');
     mde.setSelection([1, 3], [1, 3]);
 
-    cmd.exec('markdown', 'bold');
+    cmd.exec('bold');
 
     expect(getTextContent(mde)).toBe('');
   });
@@ -50,8 +50,8 @@ describe('italic command', () => {
   it('should add italic syntax', () => {
     mde.setMarkdown('italic');
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'italic');
+    cmd.exec('selectAll');
+    cmd.exec('italic');
 
     expect(getTextContent(mde)).toBe('*italic*');
   });
@@ -60,7 +60,7 @@ describe('italic command', () => {
     mde.setMarkdown('*italic*');
     mde.setSelection([1, 2], [1, 8]);
 
-    cmd.exec('markdown', 'italic');
+    cmd.exec('italic');
 
     expect(getTextContent(mde)).toBe('italic');
   });
@@ -69,7 +69,7 @@ describe('italic command', () => {
     mde.setMarkdown('**');
     mde.setSelection([1, 2], [1, 2]);
 
-    cmd.exec('markdown', 'italic');
+    cmd.exec('italic');
 
     expect(getTextContent(mde)).toBe('');
   });
@@ -79,8 +79,8 @@ describe('strike command', () => {
   it('should add strike syntax', () => {
     mde.setMarkdown('strike');
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'strike');
+    cmd.exec('selectAll');
+    cmd.exec('strike');
 
     expect(getTextContent(mde)).toBe('~~strike~~');
   });
@@ -89,7 +89,7 @@ describe('strike command', () => {
     mde.setMarkdown('~~strike~~');
     mde.setSelection([1, 3], [1, 9]);
 
-    cmd.exec('markdown', 'strike');
+    cmd.exec('strike');
 
     expect(getTextContent(mde)).toBe('strike');
   });
@@ -98,7 +98,7 @@ describe('strike command', () => {
     mde.setMarkdown('~~~~');
     mde.setSelection([1, 3], [1, 3]);
 
-    cmd.exec('markdown', 'strike');
+    cmd.exec('strike');
 
     expect(getTextContent(mde)).toBe('');
   });
@@ -108,8 +108,8 @@ describe('code command', () => {
   it('should add code syntax', () => {
     mde.setMarkdown('code');
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'code');
+    cmd.exec('selectAll');
+    cmd.exec('code');
 
     expect(getTextContent(mde)).toBe('`code`');
   });
@@ -118,7 +118,7 @@ describe('code command', () => {
     mde.setMarkdown('`code`');
     mde.setSelection([1, 2], [1, 6]);
 
-    cmd.exec('markdown', 'code');
+    cmd.exec('code');
 
     expect(getTextContent(mde)).toBe('code');
   });
@@ -127,7 +127,7 @@ describe('code command', () => {
     mde.setMarkdown('``');
     mde.setSelection([1, 2], [1, 2]);
 
-    cmd.exec('markdown', 'code');
+    cmd.exec('code');
 
     expect(getTextContent(mde)).toBe('');
   });
@@ -137,14 +137,14 @@ describe('blockQuote command', () => {
   it('should add blockQuote syntax', () => {
     mde.setMarkdown('blockQuote');
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'blockQuote');
+    cmd.exec('selectAll');
+    cmd.exec('blockQuote');
 
     expect(getTextContent(mde)).toBe('> blockQuote');
   });
 
   it('should add blockQuote syntax on empty node', () => {
-    cmd.exec('markdown', 'blockQuote');
+    cmd.exec('blockQuote');
 
     expect(getTextContent(mde)).toBe('> ');
   });
@@ -152,8 +152,8 @@ describe('blockQuote command', () => {
   it('should remove blockQuote syntax', () => {
     mde.setMarkdown('> blockQuote');
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'blockQuote');
+    cmd.exec('selectAll');
+    cmd.exec('blockQuote');
 
     expect(getTextContent(mde)).toBe('blockQuote');
   });
@@ -161,8 +161,8 @@ describe('blockQuote command', () => {
   it('should add blockQuote syntax on multi line', () => {
     mde.setMarkdown('blockQuote\ntext');
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'blockQuote');
+    cmd.exec('selectAll');
+    cmd.exec('blockQuote');
 
     expect(getTextContent(mde)).toBe('> blockQuote\n> text');
   });
@@ -170,8 +170,8 @@ describe('blockQuote command', () => {
   it('should remove unnecessary space when adding the blockQuote syntax', () => {
     mde.setMarkdown('  blockQuote');
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'blockQuote');
+    cmd.exec('selectAll');
+    cmd.exec('blockQuote');
 
     expect(getTextContent(mde)).toBe('> blockQuote');
   });
@@ -179,8 +179,8 @@ describe('blockQuote command', () => {
   it('should remove unnecessary space when removing the blockQuote syntax', () => {
     mde.setMarkdown('>   blockQuote');
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'blockQuote');
+    cmd.exec('selectAll');
+    cmd.exec('blockQuote');
 
     expect(getTextContent(mde)).toBe('blockQuote');
   });
@@ -188,7 +188,7 @@ describe('blockQuote command', () => {
 
 describe('hr command', () => {
   it('should add thematicBreak(hr) syntax', () => {
-    cmd.exec('markdown', 'hr');
+    cmd.exec('hr');
 
     expect(getTextContent(mde)).toBe('\n***\n');
   });
@@ -197,7 +197,7 @@ describe('hr command', () => {
     mde.setMarkdown('paragraph');
 
     mde.setSelection([1, 2], [1, 4]);
-    cmd.exec('markdown', 'hr');
+    cmd.exec('hr');
 
     expect(getTextContent(mde)).toBe('p\n***\nagraph');
   });
@@ -205,13 +205,13 @@ describe('hr command', () => {
 
 describe('addImage command', () => {
   it('should add image syntax', () => {
-    cmd.exec('markdown', 'addImage', { altText: 'image', imageUrl: 'https://picsum.photos/200' });
+    cmd.exec('addImage', { altText: 'image', imageUrl: 'https://picsum.photos/200' });
 
     expect(getTextContent(mde)).toBe('![image](https://picsum.photos/200)');
   });
 
   it('should escape image altText', () => {
-    cmd.exec('markdown', 'addImage', {
+    cmd.exec('addImage', {
       altText: 'mytext ()[]<>',
       imageUrl: 'https://picsum.photos/200',
     });
@@ -220,7 +220,7 @@ describe('addImage command', () => {
   });
 
   it('should encode image url', () => {
-    cmd.exec('markdown', 'addImage', {
+    cmd.exec('addImage', {
       altText: 'image',
       imageUrl: 'myurl ()[]<>',
     });
@@ -231,13 +231,13 @@ describe('addImage command', () => {
 
 describe('addLink command', () => {
   it('should add link syntax', () => {
-    cmd.exec('markdown', 'addLink', { linkText: 'TOAST UI', linkUrl: 'https://ui.toast.com' });
+    cmd.exec('addLink', { linkText: 'TOAST UI', linkUrl: 'https://ui.toast.com' });
 
     expect(getTextContent(mde)).toBe('[TOAST UI](https://ui.toast.com)');
   });
 
   it('should escape link Text', () => {
-    cmd.exec('markdown', 'addLink', {
+    cmd.exec('addLink', {
       linkText: 'mytext ()[]<>',
       linkUrl: 'https://ui.toast.com',
     });
@@ -246,7 +246,7 @@ describe('addLink command', () => {
   });
 
   it('should encode link url', () => {
-    cmd.exec('markdown', 'addLink', {
+    cmd.exec('addLink', {
       linkText: 'TOAST UI',
       linkUrl: 'myurl ()[]<>',
     });
@@ -258,13 +258,13 @@ describe('addLink command', () => {
 describe('heading command', () => {
   it('should add heading syntax', () => {
     mde.setMarkdown('heading');
-    cmd.exec('markdown', 'heading', { level: 1 });
+    cmd.exec('heading', { level: 1 });
 
     expect(getTextContent(mde)).toBe('# heading');
   });
 
   it('should add heading syntax on empty node', () => {
-    cmd.exec('markdown', 'heading', { level: 1 });
+    cmd.exec('heading', { level: 1 });
 
     expect(getTextContent(mde)).toBe('# ');
   });
@@ -272,8 +272,8 @@ describe('heading command', () => {
   it('should maintain the heading syntax on same heading level', () => {
     mde.setMarkdown('## heading2');
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'heading', { level: 2 });
+    cmd.exec('selectAll');
+    cmd.exec('heading', { level: 2 });
 
     expect(getTextContent(mde)).toBe('## heading2');
   });
@@ -281,8 +281,8 @@ describe('heading command', () => {
   it('should change the heading syntax on different heading level', () => {
     mde.setMarkdown('## heading2');
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'heading', { level: 1 });
+    cmd.exec('selectAll');
+    cmd.exec('heading', { level: 1 });
 
     expect(getTextContent(mde)).toBe('# heading2');
   });
@@ -290,8 +290,8 @@ describe('heading command', () => {
   it('should add heading syntax on multi line', () => {
     mde.setMarkdown('heading1\n# heading2');
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'heading', { level: 2 });
+    cmd.exec('selectAll');
+    cmd.exec('heading', { level: 2 });
 
     expect(getTextContent(mde)).toBe('## heading1\n## heading2');
   });
@@ -305,7 +305,7 @@ describe('codeBlock command', () => {
       \`\`\`
     `;
 
-    cmd.exec('markdown', 'codeBlock');
+    cmd.exec('codeBlock');
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -319,8 +319,8 @@ describe('codeBlock command', () => {
 
     mde.setMarkdown(`console.log('codeBlock');`);
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'codeBlock');
+    cmd.exec('selectAll');
+    cmd.exec('codeBlock');
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -328,7 +328,7 @@ describe('codeBlock command', () => {
 
 describe('bulletList command', () => {
   it('should add bullet list syntax', () => {
-    cmd.exec('markdown', 'bulletList');
+    cmd.exec('bulletList');
 
     expect(getTextContent(mde)).toBe('* ');
   });
@@ -337,7 +337,7 @@ describe('bulletList command', () => {
     mde.setMarkdown('\n');
 
     mde.setSelection([2, 1], [2, 1]);
-    cmd.exec('markdown', 'bulletList');
+    cmd.exec('bulletList');
 
     expect(getTextContent(mde)).toBe('\n* ');
   });
@@ -354,8 +354,8 @@ describe('bulletList command', () => {
 
     mde.setMarkdown(input);
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'bulletList');
+    cmd.exec('selectAll');
+    cmd.exec('bulletList');
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -375,7 +375,7 @@ describe('bulletList command', () => {
     mde.setMarkdown(input);
 
     mde.setSelection([2, 1], [2, 1]);
-    cmd.exec('markdown', 'bulletList');
+    cmd.exec('bulletList');
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -398,8 +398,8 @@ describe('bulletList command', () => {
 
     mde.setMarkdown(input);
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'bulletList');
+    cmd.exec('selectAll');
+    cmd.exec('bulletList');
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -407,7 +407,7 @@ describe('bulletList command', () => {
 
 describe('orderedList command', () => {
   it('should add ordered list syntax', () => {
-    cmd.exec('markdown', 'orderedList');
+    cmd.exec('orderedList');
 
     expect(getTextContent(mde)).toBe('1. ');
   });
@@ -416,7 +416,7 @@ describe('orderedList command', () => {
     mde.setMarkdown('\n');
 
     mde.setSelection([2, 1], [2, 1]);
-    cmd.exec('markdown', 'orderedList');
+    cmd.exec('orderedList');
 
     expect(getTextContent(mde)).toBe('\n1. ');
   });
@@ -433,8 +433,8 @@ describe('orderedList command', () => {
 
     mde.setMarkdown(input);
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'orderedList');
+    cmd.exec('selectAll');
+    cmd.exec('orderedList');
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -454,7 +454,7 @@ describe('orderedList command', () => {
     mde.setMarkdown(input);
 
     mde.setSelection([2, 1], [2, 1]);
-    cmd.exec('markdown', 'orderedList');
+    cmd.exec('orderedList');
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -477,8 +477,8 @@ describe('orderedList command', () => {
 
     mde.setMarkdown(input);
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'orderedList');
+    cmd.exec('selectAll');
+    cmd.exec('orderedList');
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -486,7 +486,7 @@ describe('orderedList command', () => {
 
 describe('taskList command', () => {
   it('should add task list syntax', () => {
-    cmd.exec('markdown', 'taskList');
+    cmd.exec('taskList');
 
     expect(getTextContent(mde)).toBe('* [ ] ');
   });
@@ -503,8 +503,8 @@ describe('taskList command', () => {
 
     mde.setMarkdown(input);
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'taskList');
+    cmd.exec('selectAll');
+    cmd.exec('taskList');
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -523,8 +523,8 @@ describe('taskList command', () => {
 
     mde.setMarkdown(input);
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'taskList');
+    cmd.exec('selectAll');
+    cmd.exec('taskList');
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -543,8 +543,8 @@ describe('taskList command', () => {
 
     mde.setMarkdown(input);
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'taskList');
+    cmd.exec('selectAll');
+    cmd.exec('taskList');
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -563,8 +563,8 @@ describe('taskList command', () => {
 
     mde.setMarkdown(input);
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'taskList');
+    cmd.exec('selectAll');
+    cmd.exec('taskList');
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -583,8 +583,8 @@ describe('taskList command', () => {
 
     mde.setMarkdown(input);
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'taskList');
+    cmd.exec('selectAll');
+    cmd.exec('taskList');
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -599,7 +599,7 @@ describe('addTable command', () => {
       |  |  |
     `}`;
 
-    cmd.exec('markdown', 'addTable', { columnCount: 2, rowCount: 3 });
+    cmd.exec('addTable', { columnCount: 2, rowCount: 3 });
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -615,8 +615,8 @@ describe('addTable command', () => {
 
     mde.setMarkdown('text');
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'addTable', { columnCount: 2, rowCount: 3 });
+    cmd.exec('selectAll');
+    cmd.exec('addTable', { columnCount: 2, rowCount: 3 });
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -627,7 +627,7 @@ describe('indent command', () => {
     mde.setMarkdown('text');
     mde.setSelection([1, 3], [1, 3]);
 
-    cmd.exec('markdown', 'indent');
+    cmd.exec('indent');
 
     expect(getTextContent(mde)).toBe('text');
   });
@@ -649,7 +649,7 @@ describe('indent command', () => {
     mde.setMarkdown(input);
     mde.setSelection([2, 3], [3, 2]);
 
-    cmd.exec('markdown', 'indent');
+    cmd.exec('indent');
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -672,7 +672,7 @@ describe('indent command', () => {
       mde.setMarkdown(input);
       mde.setSelection([2, 1], [2, 1]);
 
-      cmd.exec('markdown', 'indent');
+      cmd.exec('indent');
 
       expect(getTextContent(mde)).toBe(result);
     });
@@ -694,7 +694,7 @@ describe('indent command', () => {
       mde.setMarkdown(input);
       mde.setSelection([2, 3], [3, 2]);
 
-      cmd.exec('markdown', 'indent');
+      cmd.exec('indent');
 
       expect(getTextContent(mde)).toBe(result);
     });
@@ -716,7 +716,7 @@ describe('indent command', () => {
       mde.setMarkdown(input);
       mde.setSelection([3, 2], [3, 3]);
 
-      cmd.exec('markdown', 'indent');
+      cmd.exec('indent');
 
       expect(getTextContent(mde)).toBe(result);
     });
@@ -728,7 +728,7 @@ describe('outdent command', () => {
     mde.setMarkdown('    text');
     mde.setSelection([1, 5], [1, 5]);
 
-    cmd.exec('markdown', 'outdent');
+    cmd.exec('outdent');
 
     expect(getTextContent(mde)).toBe('    text');
   });
@@ -750,7 +750,7 @@ describe('outdent command', () => {
     mde.setMarkdown(input);
     mde.setSelection([2, 3], [3, 2]);
 
-    cmd.exec('markdown', 'outdent');
+    cmd.exec('outdent');
 
     expect(getTextContent(mde)).toBe(result);
   });
@@ -773,7 +773,7 @@ describe('outdent command', () => {
       mde.setMarkdown(input);
       mde.setSelection([2, 1], [2, 1]);
 
-      cmd.exec('markdown', 'outdent');
+      cmd.exec('outdent');
 
       expect(getTextContent(mde)).toBe(result);
     });
@@ -795,7 +795,7 @@ describe('outdent command', () => {
       mde.setMarkdown(input);
       mde.setSelection([2, 3], [3, 2]);
 
-      cmd.exec('markdown', 'outdent');
+      cmd.exec('outdent');
 
       expect(getTextContent(mde)).toBe(result);
     });
@@ -817,7 +817,7 @@ describe('outdent command', () => {
       mde.setMarkdown(input);
       mde.setSelection([3, 2], [3, 3]);
 
-      cmd.exec('markdown', 'outdent');
+      cmd.exec('outdent');
 
       expect(getTextContent(mde)).toBe(result);
     });
@@ -833,7 +833,7 @@ describe('outdent command', () => {
       mde.setMarkdown(result);
       mde.setSelection([1, 2], [3, 3]);
 
-      cmd.exec('markdown', 'outdent');
+      cmd.exec('outdent');
 
       expect(getTextContent(mde)).toBe(result);
     });
@@ -844,20 +844,20 @@ describe('history command', () => {
   beforeEach(() => {
     mde.setMarkdown('italicBold');
 
-    cmd.exec('markdown', 'selectAll');
-    cmd.exec('markdown', 'bold');
-    cmd.exec('markdown', 'italic');
+    cmd.exec('selectAll');
+    cmd.exec('bold');
+    cmd.exec('italic');
   });
 
   it('undo go back to before previous action', () => {
-    cmd.exec('markdown', 'undo');
+    cmd.exec('undo');
 
     expect(getTextContent(mde)).toBe('**italicBold**');
   });
 
   it('redo cancel undo action', () => {
-    cmd.exec('markdown', 'undo');
-    cmd.exec('markdown', 'redo');
+    cmd.exec('undo');
+    cmd.exec('redo');
 
     expect(getTextContent(mde)).toBe('***italicBold***');
   });

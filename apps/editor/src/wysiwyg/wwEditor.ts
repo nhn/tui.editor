@@ -28,7 +28,7 @@ import { createNodesWithWidget } from '@/widget/rules';
 import { widgetNodeView } from '@/widget/widgetNode';
 import { cls } from '@/utils/dom';
 import { includes } from '@/utils/common';
-import { NodeViewPropMap, PluginProp, PluginCommandMap } from '@t/plugin';
+import { NodeViewPropMap, PluginProp } from '@t/plugin';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -41,7 +41,6 @@ interface WysiwygOptions {
   linkAttributes?: LinkAttributes | null;
   wwPlugins?: PluginProp[];
   wwNodeViews?: NodeViewPropMap;
-  wwCommands?: PluginCommandMap;
 }
 
 type PluginNodeVeiwFn = (node: ProsemirrorNode, view: EditorView, getPos: () => number) => NodeView;
@@ -69,7 +68,6 @@ export default class WysiwygEditor extends EditorBase {
       useCommandShortcut = true,
       wwPlugins = [],
       wwNodeViews = {},
-      wwCommands = {},
     } = options;
 
     this.editorType = 'wysiwyg';
@@ -82,7 +80,7 @@ export default class WysiwygEditor extends EditorBase {
     this.context = this.createContext();
     this.keymaps = this.createKeymaps(useCommandShortcut);
     this.view = this.createView();
-    this.commands = this.createCommands(wwCommands);
+    this.commands = this.createCommands();
     this.specs.setContext({ ...this.context, view: this.view });
     this.initEvent();
   }
@@ -192,8 +190,8 @@ export default class WysiwygEditor extends EditorBase {
     });
   }
 
-  createCommands(commands?: PluginCommandMap) {
-    return this.specs.commands(this.view, { ...getWwCommands(), ...commands });
+  createCommands() {
+    return this.specs.commands(this.view, getWwCommands());
   }
 
   getHTML() {

@@ -176,9 +176,9 @@ export class Toolbar extends Component<Props, State> {
   };
 
   private execCommand = (command: string, payload?: Record<string, any>) => {
-    const { eventEmitter, editorType } = this.props;
+    const { eventEmitter } = this.props;
 
-    eventEmitter.emit('command', { type: editorType, command }, payload);
+    eventEmitter.emit('command', command, payload);
     this.hidePopup();
   };
 

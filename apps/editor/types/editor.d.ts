@@ -6,7 +6,13 @@ import { Emitter, Handler } from './event';
 import { Context, EditorAllCommandMap, EditorCommandFn, SpecManager } from './spec';
 import { ToMdConvertorMap } from './convertor';
 import { DefaultUI, ToolbarItemOptions } from './ui';
-import { PluginProp, NodeViewPropMap, PluginCommandMap } from './plugin';
+import {
+  PluginProp,
+  NodeViewPropMap,
+  PluginCommandMap,
+  PluginToolbarItem,
+  CommandFn,
+} from './plugin';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -64,6 +70,7 @@ export interface ViewerOptions {
   referenceDefinition?: boolean;
   customHTMLSanitizer?: Sanitizer;
   frontMatter?: boolean;
+  usageStatistics?: boolean;
 }
 
 export class Viewer {
@@ -88,7 +95,7 @@ export class Viewer {
   setCodeBlockLanguages(languages?: string[]): void;
 }
 
-interface EditorPluginInfo {
+export interface EditorPluginInfo {
   toHTMLRenderers?: HTMLConvertorMap;
   toMarkdownRenderers?: ToMdConvertorMap;
   markdownPlugins?: PluginProp[];
@@ -96,15 +103,28 @@ interface EditorPluginInfo {
   wysiwygNodeViews?: NodeViewPropMap;
   markdownCommands?: PluginCommandMap;
   wysiwygCommands?: PluginCommandMap;
+  toolbarItems?: PluginToolbarItem[];
 }
 
-export interface PluginDefaultOptions {
+export interface I18n {
+  setCode(code?: string): void;
+
+  setLanguage(codes: string | string[], data: Record<string, string>): void;
+
+  get(key: string, code?: string): string;
+}
+
+export interface PluginContext {
+  eventEmitter: Emitter;
+  usageStatistics?: boolean;
+  i18n: I18n;
   pmState: { Plugin: typeof Plugin; Selection: typeof Selection };
   pmView: { Decoration: typeof Decoration; DecorationSet: typeof DecorationSet };
 }
+
 export type PluginFn = (
-  eventEmitter: Emitter,
-  options: PluginDefaultOptions & any
+  context: PluginContext,
+  options?: Record<string, any>
 ) => EditorPluginInfo | null;
 export type EditorPlugin = PluginFn | [PluginFn, Record<string, any>];
 
@@ -150,9 +170,9 @@ export class EditorCore {
 
   changePreviewStyle(style: PreviewStyle): void;
 
-  exec(type: EditorType, name: string, payload?: Record<string, any>): void;
+  exec(name: string, payload?: Record<string, any>): void;
 
-  addCommand(type: EditorType, name: string, command: EditorCommandFn): void;
+  addCommand(type: EditorType, name: string, command: CommandFn): void;
 
   on(type: string, handler: Handler): void;
 

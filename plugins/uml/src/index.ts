@@ -5,7 +5,7 @@
 import plantumlEncoder from 'plantuml-encoder';
 import { PluginOptions } from '../index';
 
-import type { Emitter, MdNode, PluginInfo } from '@toast-ui/editor';
+import type { MdNode, PluginContext, PluginInfo } from '@toast-ui/editor';
 import type { HTMLToken } from '@toast-ui/toastmark';
 
 const DEFAULT_RENDERER_URL = '//www.plantuml.com/plantuml/png/';
@@ -31,11 +31,11 @@ function createUMLTokens(text: string, rendererURL: string): HTMLToken[] {
 
 /**
  * UML plugin
- * @param {Object} emitter - event emitter for communicating with editor
+ * @param {Object} context - plugin context for communicating with editor
  * @param {Object} options - options for plugin
  * @param {string} [options.rendererURL] - url of plant uml renderer
  */
-export default function umlPlugin(_: Emitter, options: PluginOptions = {}): PluginInfo {
+export default function umlPlugin(_: PluginContext, options: PluginOptions = {}): PluginInfo {
   const { rendererURL = DEFAULT_RENDERER_URL } = options;
 
   return {

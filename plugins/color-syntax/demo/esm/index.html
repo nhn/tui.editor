@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>Editor</title>
+    <!-- Plugin -->
+    <link
+      rel="stylesheet"
+      href="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.css"
+    />
+  </head>
+  <body>
+    <div class="code-html">
+      <div id="editor"></div>
+    </div>
+    <!-- Editor -->
+    <script type="module">
+      import { Editor } from 'http://localhost:8080/dist/index.js';
+      import colorPickerPlugin from '/dist/index.js';
+
+      const editor = new Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: 'Select some text and choose a color from the toolbar.',
+        plugins: [colorPickerPlugin]
+      });
+      window.editor = editor;
+    </script>
+  </body>
+</html>

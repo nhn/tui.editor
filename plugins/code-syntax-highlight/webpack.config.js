@@ -1,8 +1,4 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-/**
- * @fileoverview Configs for plugin's bundle file
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
 const path = require('path');
 const webpack = require('webpack');
 const { name, version, author, license } = require('./package.json');
@@ -130,6 +126,8 @@ module.exports = (env) => {
     );
   } else {
     config.devServer = {
+      // https://github.com/webpack/webpack-dev-server/issues/2484
+      injectClient: false,
       inline: true,
       host: '0.0.0.0',
       port: 8081,

@@ -1,0 +1,81 @@
+
+.tui-popup-color {
+  padding: 0;
+}
+
+.tui-popup-color .tui-colorpicker-container,
+.tui-popup-color .tui-colorpicker-palette-container {
+  width: 144px;
+}
+
+.tui-popup-color .tui-colorpicker-container ul {
+  width: 144px;
+  margin-bottom: 8px;
+}
+
+.tui-popup-color .tui-colorpicker-container li {
+  padding: 0 1px 1px 0;
+}
+
+.tui-popup-color .tui-colorpicker-container li .tui-colorpicker-palette-button {
+  border: 0;
+  width: 17px;
+  height: 17px;
+}
+
+.tui-popup-color .tui-popup-body {
+  padding: 10px;
+}
+
+.tui-popup-color .tui-colorpicker-container .tui-colorpicker-palette-toggle-slider {
+  display: none;
+}
+
+.tui-popup-color .tui-colorpicker-palette-hex {
+  float: right;
+}
+
+.tui-editor-popup-body input[type='text'].tui-colorpicker-palette-hex {
+  font-family: inherit;
+  font-size: 12px;
+  margin-left: -1px;
+  height: 21px;
+  width: 90px;
+  padding: 3px 10px;
+  border: 1px solid #e1e1e1;
+}
+
+.tui-popup-color .tui-editor-ok-button {
+  height: 21px;
+  width: 35px;
+  background: #fff;
+  border: 1px solid #efefef;
+  top: 59px;
+  color: black;
+  position: absolute;
+  right: 15px;
+  padding: 0;
+  box-sizing: border-box;
+  
+}
+
+.tui-popup-color .tui-colorpicker-container div.tui-colorpicker-clearfix {
+  display: inline-block;
+}
+
+.tui-popup-color .tui-colorpicker-container .tui-colorpicker-palette-preview {
+  width: 19px;
+  height: 19px;
+}
+
+.tui-popup-color .tui-colorpicker-slider-container .tui-colorpicker-slider-right {
+  width: 22px;
+}
+
+.tui-popup-color .tui-colorpicker-slider-container .tui-colorpicker-huebar-handle {
+  display: none;
+}
+
+.tui-editor-toolbar-icons.color {
+  background-position: -172px -70px;
+}

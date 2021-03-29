@@ -1,7 +1,3 @@
-/**
- * @fileoverview Implements htmlSanitizer
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
 import toArray from 'tui-code-snippet/collection/toArray';
 import isString from 'tui-code-snippet/type/isString';
 

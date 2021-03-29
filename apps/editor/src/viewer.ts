@@ -1,7 +1,3 @@
-/**
- * @fileoverview Implements editor preivew
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
 import { ToastMark } from '@toast-ui/toastmark';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import extend from 'tui-code-snippet/object/extend';
@@ -67,6 +63,7 @@ class ToastUIEditorViewer {
         referenceDefinition: false,
         customHTMLSanitizer: null,
         frontMatter: false,
+        usageStatistics: true,
       },
       options
     );
@@ -75,7 +72,8 @@ class ToastUIEditorViewer {
     this.eventEmitter = new EventEmitter();
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
-    const { toHTMLRenderers } = getPluginInfo(this.options.plugins, this.eventEmitter) || {};
+    const { toHTMLRenderers } =
+      getPluginInfo(this.options.plugins, this.eventEmitter, this.options.usageStatistics) || {};
     const {
       customHTMLRenderer,
       extendedAutolinks,

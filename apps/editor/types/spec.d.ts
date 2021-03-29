@@ -22,8 +22,8 @@ export interface MdSpecContext extends SpecContext {
   toastMark: ToastMark;
 }
 
-type DefaultPayload = Record<string, any>;
-type Payload<T> = T extends infer P ? P : any;
+export type DefaultPayload = Record<string, any>;
+export type Payload<T> = T extends infer P ? P : any;
 
 export type Dispatch = (tr: Transaction) => void;
 export type EditorCommand<T = DefaultPayload> = (payload?: Payload<T>) => Command;

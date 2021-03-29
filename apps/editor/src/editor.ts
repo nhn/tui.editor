@@ -37,6 +37,12 @@ class Editor extends EditorCore {
       removeToolbarItem: layoutComp.removeToolbarItem.bind(layoutComp),
       destroy,
     };
+
+    this.pluginInfo.toolbarItems?.forEach((toolbarItem) => {
+      const { groupIndex, itemIndex, item } = toolbarItem;
+
+      this.defaultUI.insertToolbarItem({ groupIndex, itemIndex }, item);
+    });
   }
 
   static factory(options: (EditorOptions | ViewerOptions) & { viewer?: boolean }) {

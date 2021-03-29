@@ -1,7 +1,7 @@
 import Prism from 'prismjs';
-import type { Emitter, PluginInfo } from '@toast-ui/editor';
+import type { PluginContext, PluginInfo } from '@toast-ui/editor';
 import { codeSyntaxHighlightPlugin } from '@/plugin';
-import { PluginOptions } from '@t/index';
+import { PrismJs } from '@t/index';
 
 import '@/prismjs-langs';
 import '@/css/plugin.css';
@@ -14,9 +14,6 @@ if (typeof window !== undefined) {
   window.Prism.manual = true;
 }
 
-export default function plugin(eventEmitter: Emitter, options: PluginOptions): PluginInfo {
-  return codeSyntaxHighlightPlugin(eventEmitter, {
-    ...options,
-    ...{ highlighter: Prism },
-  } as PluginOptions);
+export default function plugin(context: PluginContext): PluginInfo {
+  return codeSyntaxHighlightPlugin(context, { highlighter: Prism as PrismJs });
 }

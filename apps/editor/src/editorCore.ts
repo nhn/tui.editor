@@ -1,7 +1,3 @@
-/**
- * @fileoverview Implements Editor
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
 import { DOMParser } from 'prosemirror-model';
 import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import extend from 'tui-code-snippet/object/extend';
@@ -20,9 +16,9 @@ import {
   ViewerOptions,
   WidgetStyle,
 } from '@t/editor';
-import { EditorCommandFn } from '@t/spec';
+import { PluginCommandMap, PluginInfoResult, CommandFn } from '@t/plugin';
 
-import { sendHostName, sanitizeLinkAttribute } from './utils/common';
+import { sendHostName, sanitizeLinkAttribute, deepMergedCopy } from './utils/common';
 
 import MarkdownEditor from './markdown/mdEditor';
 import MarkdownPreview from './markdown/mdPreview';
@@ -117,6 +113,8 @@ class ToastUIEditor {
 
   protected options: Required<EditorOptions>;
 
+  protected pluginInfo: PluginInfoResult;
+
   constructor(options: EditorOptions) {
     this.initialHtml = options.el.innerHTML;
     options.el.innerHTML = '';
@@ -173,6 +171,12 @@ class ToastUIEditor {
     setWidgetRules(widgetRules);
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
+
+    this.pluginInfo = getPluginInfo(
+      this.options.plugins,
+      this.eventEmitter,
+      this.options.usageStatistics
+    );
     const {
       toHTMLRenderers,
       toMarkdownRenderers,
@@ -181,10 +185,10 @@ class ToastUIEditor {
       wwNodeViews,
       mdCommands,
       wwCommands,
-    } = getPluginInfo(this.options.plugins, this.eventEmitter) || {};
+    } = this.pluginInfo;
     const rendererOptions = {
       linkAttributes,
-      customHTMLRenderer: { ...toHTMLRenderers, ...customHTMLRenderer },
+      customHTMLRenderer: deepMergedCopy(toHTMLRenderers, customHTMLRenderer),
       extendedAutolinks,
       referenceDefinition,
       frontMatter,
@@ -220,7 +224,6 @@ class ToastUIEditor {
       toastMark: this.toastMark,
       useCommandShortcut,
       mdPlugins,
-      mdCommands,
     });
 
     this.preview = new MarkdownPreview(this.eventEmitter, {
@@ -236,7 +239,6 @@ class ToastUIEditor {
       linkAttributes,
       wwPlugins,
       wwNodeViews,
-      wwCommands,
     });
 
     this.convertor = new Convertor(
@@ -262,7 +264,8 @@ class ToastUIEditor {
     this.commandManager = new CommandManager(
       this.eventEmitter,
       this.mdEditor.commands,
-      this.wwEditor.commands
+      this.wwEditor.commands,
+      () => this.mode
     );
 
     if (this.options.usageStatistics) {
@@ -272,16 +275,29 @@ class ToastUIEditor {
     this.getCurrentModeEditor().focus();
     this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
     this.addInitEvent();
+    this.addInitCommand(mdCommands, wwCommands);
 
     this.eventEmitter.emit('load', this);
   }
 
   private addInitEvent() {
     this.on('needChangeMode', this.changeMode.bind(this));
+    addDefaultImageBlobHook(this.eventEmitter);
+  }
+
+  private addInitCommand(mdCommands: PluginCommandMap, wwCommands: PluginCommandMap) {
+    const addPluginCommands = (type: EditorType, commandMap: PluginCommandMap) => {
+      Object.keys(commandMap).forEach((name) => {
+        this.addCommand(type, name, commandMap[name]);
+      });
+    };
+
     this.addCommand('markdown', 'toggleScrollSync', (payload) => {
       this.eventEmitter.emit('toggleScrollSync', payload!.active);
+      return true;
     });
-    addDefaultImageBlobHook(this.eventEmitter);
+    addPluginCommands('markdown', mdCommands);
+    addPluginCommands('wysiwyg', wwCommands);
   }
 
   private getCurrentModeEditor() {
@@ -319,12 +335,11 @@ class ToastUIEditor {
 
   /**
    * execute editor command
-   * @param {string} type - editor type
    * @param {string} name - command name
    * @param {object} [payload] - payload for command
    */
-  exec(type: EditorType, name: string, payload?: Record<string, any>) {
-    this.commandManager.exec(type, name, payload);
+  exec(name: string, payload?: Record<string, any>) {
+    this.commandManager.exec(name, payload);
   }
 
   /**
@@ -332,8 +347,14 @@ class ToastUIEditor {
    * @param {string} name - command name
    * @param {function} command - command handler
    */
-  addCommand(type: EditorType, name: string, command: EditorCommandFn) {
-    this.commandManager.addCommand(type, name, command);
+  addCommand(type: EditorType, name: string, command: CommandFn) {
+    const commandHoc = (paylaod: Record<string, any> = {}) => {
+      const { view } = type === 'markdown' ? this.mdEditor : this.wwEditor;
+
+      command(paylaod, view.state, view.dispatch);
+    };
+
+    this.commandManager.addCommand(type, name, commandHoc);
   }
 
   /**

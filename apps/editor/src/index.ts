@@ -1,7 +1,3 @@
-/**
- * @fileoverview entry point for editor
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
 import EditorCore from './editorCore';
 import Editor from './editor';
 
