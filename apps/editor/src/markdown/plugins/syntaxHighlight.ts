@@ -1,6 +1,6 @@
 import { MdNode, MdPos, EditResult, ToastMark } from '@toast-ui/toastmark';
 import { Plugin, Transaction } from 'prosemirror-state';
-import { Schema } from 'prosemirror-model';
+import { NodeType, ProsemirrorNode, Schema } from 'prosemirror-model';
 import { MdContext } from '@t/spec';
 import { getMdStartLine, getMdEndLine, getMdStartCh, getMdEndCh } from '@/utils/markdown';
 import { includes, last } from '@/utils/common';
@@ -11,6 +11,8 @@ interface CodeBlockPos {
   codeStart: MdPos;
   codeEnd: MdPos;
 }
+
+let removingBackgroundIndexMap: Record<number, boolean> = {};
 
 export function syntaxHighlight({ schema, toastMark }: MdContext) {
   return new Plugin({
@@ -42,12 +44,13 @@ export function syntaxHighlight({ schema, toastMark }: MdContext) {
               }
             }
           } else if (removedNodeRange) {
-            const startLine = Math.max(removedNodeRange.line[0], 1);
+            const startIndex = Math.max(removedNodeRange.line[0] - 1, 1);
+            const endIndex = Math.min(startIndex + 1, newTr.doc.childCount - 1);
 
-            // remove code block, custom block background when there are no adding nodes
-            markInfo = markInfo.concat(
-              createBlockForRemovingBackground([startLine, 1], [startLine + 1, 1])
-            );
+            // cache the index to remove code block, custom block background when there are no adding nodes
+            for (let i = startIndex; i <= endIndex; i += 1) {
+              removingBackgroundIndexMap[i] = true;
+            }
           }
         });
         appendMarkTr(newTr, schema, markInfo);
@@ -55,21 +58,6 @@ export function syntaxHighlight({ schema, toastMark }: MdContext) {
       return newTr.setMeta('widget', tr.getMeta('widget'));
     },
   });
-}
-
-function createBlockForRemovingBackground(start: MdPos, end: MdPos) {
-  return {
-    start,
-    end,
-    lineBackground: true,
-    spec: {
-      attrs: {
-        codeStart: null,
-        codeEnd: null,
-        className: null,
-      },
-    },
-  };
 }
 
 function appendMarkTr(tr: Transaction, schema: Schema, marks: MarkInfo[]) {
@@ -95,7 +83,11 @@ function appendMarkTr(tr: Transaction, schema: Schema, marks: MarkInfo[]) {
 
     if (spec) {
       if (lineBackground) {
-        tr.setBlockType(from, to, paragraph, { codeStart: start, codeEnd: end, ...spec.attrs });
+        // prevent to remove background of the node that need to have background
+        for (let i = startIndex; i <= endIndex; i += 1) {
+          delete removingBackgroundIndexMap[i];
+        }
+        tr.setBlockType(from, to, paragraph, spec.attrs);
       } else {
         tr.addMark(from, to, schema.mark(spec.type!, spec.attrs));
       }
@@ -103,6 +95,55 @@ function appendMarkTr(tr: Transaction, schema: Schema, marks: MarkInfo[]) {
       tr.removeMark(from, to);
     }
   });
+
+  removeBlockBackground(tr, startPosListPerLine, paragraph);
+}
+
+function removeBlockBackground(
+  tr: Transaction,
+  startPosListPerLine: number[],
+  paragraph: NodeType
+) {
+  Object.keys(removingBackgroundIndexMap).forEach((index) => {
+    const startIndex = Number(index);
+    // get the end position of the current line with the next node start position.
+    const endIndex = Math.min(Number(index) + 1, tr.doc.childCount - 1);
+
+    const from = startPosListPerLine[startIndex];
+    // subtract '1' for getting end position of the line
+    let to = startPosListPerLine[endIndex] - 1;
+
+    if (startIndex === endIndex) {
+      to += 2;
+    }
+
+    tr.setBlockType(from, to, paragraph);
+  });
+}
+
+function cacheIndexToRemoveBackground(doc: ProsemirrorNode, start: MdPos, end: MdPos) {
+  const skipLines: number[] = [];
+
+  removingBackgroundIndexMap = {};
+
+  for (let i = start[0] - 1; i < end[0]; i += 1) {
+    const node = doc.child(i);
+    const { codeStart, codeEnd } = node.attrs as CodeBlockPos;
+
+    if (codeStart && codeEnd && !includes(skipLines, codeStart[0])) {
+      skipLines.push(codeStart[0]);
+      codeEnd[0] = Math.min(codeEnd[0], doc.childCount);
+
+      // should subtract `1` to markdown line position
+      // because markdown parser has `1`(not zero) as the start number
+      const startIndex = codeStart[0] - 1;
+      const [endIndex] = end;
+
+      for (let index = startIndex; index < endIndex; index += 1) {
+        removingBackgroundIndexMap[index] = true;
+      }
+    }
+  }
 }
 
 function getMarkForRemoving({ doc }: Transaction, nodes: MdNode[]) {
@@ -112,20 +153,7 @@ function getMarkForRemoving({ doc }: Transaction, nodes: MdNode[]) {
   const endPos: MdPos = [end[0], end[1] + 1];
   const marks: MarkInfo[] = [];
 
-  const skipLines: number[] = [];
-
-  // remove code block, custom block background
-  for (let i = start[0] - 1; i < end[0]; i += 1) {
-    const node = doc.child(i);
-    const { codeStart, codeEnd } = node.attrs as CodeBlockPos;
-
-    if (codeStart && codeEnd && !includes(skipLines, codeStart[0])) {
-      skipLines.push(codeStart[0]);
-      codeEnd[0] = Math.min(codeEnd[0], doc.childCount);
-
-      marks.push(createBlockForRemovingBackground(codeStart, codeEnd));
-    }
-  }
+  cacheIndexToRemoveBackground(doc, start, end);
   marks.push({ start: startPos, end: endPos });
 
   return marks;
