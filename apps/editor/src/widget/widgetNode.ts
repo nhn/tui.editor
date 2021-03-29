@@ -1,5 +1,5 @@
 import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
-import SpecNode from '@/spec/Node';
+import SpecNode from '@/spec/node';
 import { widgetToDOM } from './rules';
 
 export function widgetNodeView(pmNode: ProsemirrorNode) {
