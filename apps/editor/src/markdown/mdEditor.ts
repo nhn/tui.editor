@@ -198,8 +198,12 @@ export default class MdEditor extends EditorBase {
         if (step.slice && !(step instanceof ReplaceAroundStep)) {
           const doc = tr.docs[index];
           const [from, to] = this.getResolvedRange(tr, step);
-          const changed = this.getChanged(step.slice);
           const [startPos, endPos] = getEditorToMdPos(doc, from, to);
+          let changed = this.getChanged(step.slice);
+
+          if (startPos[0] === endPos[0] && startPos[1] === endPos[1] && changed === '') {
+            changed = '\n';
+          }
           const editResult = this.toastMark.editMarkdown(startPos, endPos, changed);
 
           this.eventEmitter.emit('updatePreview', editResult);
