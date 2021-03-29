@@ -19,8 +19,21 @@ const pkgMap = {
   uml: '@toast-ui/editor-plugin-uml',
 };
 
+const pathMap = {
+  editor: 'apps/editor',
+  react: 'apps/react-editor',
+  vue: 'apps/vue-editor',
+  toastmark: 'libs/toastmark',
+  chart: 'plugins/chart',
+  color: 'plugins/color-syntax',
+  code: 'plugins/code-syntax-highlight',
+  table: 'plugins/table-merged-cell',
+  uml: 'plugins/uml',
+};
+
 let script;
 let pkg;
+let path;
 
 Object.keys(options).forEach((key) => {
   const value = options[key];
@@ -31,6 +44,7 @@ Object.keys(options).forEach((key) => {
 
   if (key === 'type') {
     pkg = pkgMap[value];
+    path = pathMap[value];
   }
 });
 
@@ -48,6 +62,12 @@ if (!pkg) {
   );
 }
 
-spawn('lerna', ['run', '--stream', '--scope', pkg, script], {
-  stdio: 'inherit',
-});
+if (script === 'test') {
+  spawn('jest', ['--watch', '--projects', path], {
+    stdio: 'inherit',
+  });
+} else {
+  spawn('lerna', ['run', '--stream', '--scope', pkg, script], {
+    stdio: 'inherit',
+  });
+}

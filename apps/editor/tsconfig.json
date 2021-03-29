@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.json",
-  "include": ["src/**/*.ts", "src/**/*.js", "types/**/*"],
+  "include": ["src/**/*.ts", "src/**/*.js", "types/**/*", "../../types/**/*"],
   "exclude": ["node_modules"],
   "compilerOptions": {
     "baseUrl": ".",
@@ -8,7 +8,6 @@
       "@/*": ["src/*"],
       "@t/*": ["types/*"]
     },
-    "typeRoots": ["./types", "node_modules/@types", "../../node_modules/@types"],
     "lib": ["esnext", "dom", "dom.iterable"]
   }
 }

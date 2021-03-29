@@ -48,9 +48,7 @@
   },
   "devDependencies": {
     "@toast-ui/release-notes": "^2.0.1",
-    "common-tags": "^1.8.0",
-    "cross-env": "^6.0.3",
-    "tui-code-snippet": "^2.3.1"
+    "cross-env": "^6.0.3"
   },
   "dependencies": {
     "htm": "^3.0.4",

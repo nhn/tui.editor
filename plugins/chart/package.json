@@ -39,14 +39,13 @@
     "build": "webpack build && npm run build:cdn"
   },
   "devDependencies": {
-    "jest-canvas-mock": "^2.3.1"
+    "buffer": "^6.0.3",
+    "jest-canvas-mock": "^2.3.1",
+    "os-browserify": "^0.3.0",
+    "stream-browserify": "^3.0.0"
   },
   "dependencies": {
-    "@toast-ui/chart": "^4.1.4",
-    "buffer": "^6.0.3",
-    "os-browserify": "^0.3.0",
-    "stream-browserify": "^3.0.0",
-    "tui-code-snippet": "^2.3.1"
+    "@toast-ui/chart": "^4.1.4"
   },
   "publishConfig": {
     "access": "public"
