@@ -41,7 +41,7 @@ function getContextMenuGroups(eventEmitter: Emitter, inTableHead: boolean) {
         return {
           label: i18n.get(action),
           onClick: () => {
-            eventEmitter.emit('command', { type: 'wysiwyg', command }, payload);
+            eventEmitter.emit('command', command, payload);
           },
           disabled: inTableHead && !!disableInThead,
         };

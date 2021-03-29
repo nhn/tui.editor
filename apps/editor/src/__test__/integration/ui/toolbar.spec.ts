@@ -144,7 +144,7 @@ describe('default toolbar', () => {
     dispatchClick('.bold');
 
     // eslint-disable-next-line no-undefined
-    expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'bold' }, undefined);
+    expect(spy).toHaveBeenCalledWith('bold', undefined);
   });
 
   it('should hide the popup when clicking X button on popup', () => {
@@ -176,17 +176,11 @@ describe('default toolbar', () => {
 
       dispatchClick('.scroll-sync');
 
-      expect(spy).toHaveBeenCalledWith(
-        { type: 'markdown', command: 'toggleScrollSync' },
-        { active: false }
-      );
+      expect(spy).toHaveBeenCalledWith('toggleScrollSync', { active: false });
 
       dispatchClick('.scroll-sync');
 
-      expect(spy).toHaveBeenCalledWith(
-        { type: 'markdown', command: 'toggleScrollSync' },
-        { active: true }
-      );
+      expect(spy).toHaveBeenCalledWith('toggleScrollSync', { active: true });
     });
   });
 
@@ -207,7 +201,7 @@ describe('default toolbar', () => {
       dispatchClick('.heading');
       dispatchClick('.tui-editor-popup-add-heading [data-level="2"]');
 
-      expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'heading' }, { level: 2 });
+      expect(spy).toHaveBeenCalledWith('heading', { level: 2 });
     });
   });
 
@@ -246,10 +240,10 @@ describe('default toolbar', () => {
 
       dispatchClick('.tui-editor-popup-add-link .tui-editor-ok-button');
 
-      expect(spy).toHaveBeenCalledWith(
-        { type: 'markdown', command: 'addLink' },
-        { linkText: 'toastui', linkUrl: 'https://ui.toast.com' }
-      );
+      expect(spy).toHaveBeenCalledWith('addLink', {
+        linkText: 'toastui',
+        linkUrl: 'https://ui.toast.com',
+      });
     });
 
     it('should add wrong class when url or text are not filled out', () => {
@@ -329,10 +323,7 @@ describe('default toolbar', () => {
 
       dispatchClick('.tui-editor-popup-add-image .tui-editor-ok-button');
 
-      expect(spy).toHaveBeenCalledWith(
-        { type: 'markdown', command: 'addImage' },
-        { altText: 'image', imageUrl: 'myImageUrl' }
-      );
+      expect(spy).toHaveBeenCalledWith('addImage', { altText: 'image', imageUrl: 'myImageUrl' });
     });
   });
 
@@ -355,10 +346,7 @@ describe('default toolbar', () => {
       dispatchMousemove('.tui-editor-table-selection', 100, 60);
       dispatchClick('.tui-editor-table-selection');
 
-      expect(spy).toHaveBeenCalledWith(
-        { type: 'markdown', command: 'addTable' },
-        { columnCount: 5, rowCount: 4 }
-      );
+      expect(spy).toHaveBeenCalledWith('addTable', { columnCount: 5, rowCount: 4 });
     });
   });
 });
@@ -376,11 +364,7 @@ describe('custom button toolbar', () => {
       <option value="6">6</option>
     `;
     body.addEventListener('change', (ev) => {
-      em.emit(
-        'command',
-        { type: 'markdown', command: 'heading' },
-        { level: Number((ev.target as HTMLSelectElement).value) }
-      );
+      em.emit('command', 'heading', { level: Number((ev.target as HTMLSelectElement).value) });
       em.emit('closePopup');
       (ev.target as HTMLSelectElement).value = '1';
     });
@@ -461,7 +445,7 @@ describe('custom button toolbar', () => {
     dispatchClick('.my-toolbar');
 
     // eslint-disable-next-line no-undefined
-    expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'bold' }, undefined);
+    expect(spy).toHaveBeenCalledWith('bold', undefined);
   });
 
   it('should show the popup when clicking button with popup option', () => {
@@ -482,7 +466,7 @@ describe('custom button toolbar', () => {
     dispatchClick('select');
     dispatchSelectChange('select', '3');
 
-    expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'heading' }, { level: 3 });
+    expect(spy).toHaveBeenCalledWith('heading', { level: 3 });
   });
 });
 
@@ -516,11 +500,7 @@ describe('custom toolbar element', () => {
       <option value="6">6</option>
     `;
     body.addEventListener('change', (ev) => {
-      em.emit(
-        'command',
-        { type: 'markdown', command: 'heading' },
-        { level: Number((ev.target as HTMLSelectElement).value) }
-      );
+      em.emit('command', 'heading', { level: Number((ev.target as HTMLSelectElement).value) });
       em.emit('closePopup');
       (ev.target as HTMLSelectElement).value = '1';
     });
@@ -601,7 +581,7 @@ describe('custom toolbar element', () => {
     dispatchClick('select');
     dispatchSelectChange('select', '3');
 
-    expect(spy).toHaveBeenCalledWith({ type: 'markdown', command: 'heading' }, { level: 3 });
+    expect(spy).toHaveBeenCalledWith('heading', { level: 3 });
   });
 });
 

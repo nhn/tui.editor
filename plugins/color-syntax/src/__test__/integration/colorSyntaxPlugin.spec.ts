@@ -88,8 +88,8 @@ describe('colorSyntax', () => {
 
     it('should convert markdown to wysiwyg properly', () => {
       editor.setMarkdown('text');
-      editor.exec('markdown', 'selectAll');
-      editor.exec('markdown', 'color', { selectedColor: '#f0f' });
+      editor.exec('selectAll');
+      editor.exec('color', { selectedColor: '#f0f' });
 
       editor.changeMode('wysiwyg');
 
@@ -98,8 +98,8 @@ describe('colorSyntax', () => {
 
     it('should convert wysiwyg to markdown properly', () => {
       editor.setMarkdown('text');
-      editor.exec('markdown', 'selectAll');
-      editor.exec('markdown', 'color', { selectedColor: '#f0f' });
+      editor.exec('selectAll');
+      editor.exec('color', { selectedColor: '#f0f' });
 
       editor.changeMode('wysiwyg');
       editor.changeMode('markdown');
@@ -108,7 +108,7 @@ describe('colorSyntax', () => {
     });
 
     it('should convert markdown to wysiwyg in table cell properly', () => {
-      editor.exec('markdown', 'addTable', {
+      editor.exec('addTable', {
         columnCount: 2,
         rowCount: 2,
       });
@@ -116,7 +116,7 @@ describe('colorSyntax', () => {
       editor.insertText('foo');
       editor.setSelection([1, 5], [1, 8]);
 
-      editor.exec('markdown', 'color', { selectedColor: '#f0f' });
+      editor.exec('color', { selectedColor: '#f0f' });
 
       editor.changeMode('wysiwyg');
 
@@ -143,13 +143,13 @@ describe('colorSyntax', () => {
     it('should convert wysiwyg to markdown in table cell properly', () => {
       editor.changeMode('wysiwyg');
 
-      editor.exec('wysiwyg', 'addTable', {
+      editor.exec('addTable', {
         rowCount: 2,
         columnCount: 2,
         data: ['foo', 'bar', 'baz', 'qux'],
       });
       editor.setSelection(4, 8);
-      editor.exec('wysiwyg', 'color', { selectedColor: '#f0f' });
+      editor.exec('color', { selectedColor: '#f0f' });
 
       editor.changeMode('markdown');
 
@@ -187,16 +187,16 @@ describe('colorSyntax', () => {
 
     it('add color in markdown', () => {
       editor.setMarkdown('text');
-      editor.exec('markdown', 'selectAll');
-      editor.exec('markdown', 'color', { selectedColor: '#f0f' });
+      editor.exec('selectAll');
+      editor.exec('color', { selectedColor: '#f0f' });
 
       assertMdPreviewHTML('<span style="color: #f0f">text</span>');
     });
 
     it(`don't add color if value isn't truthy in markdown`, () => {
       editor.setMarkdown('text');
-      editor.exec('markdown', 'selectAll');
-      editor.exec('markdown', 'color');
+      editor.exec('selectAll');
+      editor.exec('color');
 
       assertMdPreviewHTML('<p class="tui-editor-md-preview-highlight">text</p>');
     });
@@ -205,8 +205,8 @@ describe('colorSyntax', () => {
       editor.setMarkdown('text');
       editor.changeMode('wysiwyg');
 
-      editor.exec('wysiwyg', 'selectAll');
-      editor.exec('wysiwyg', 'color', { selectedColor: '#f0f' });
+      editor.exec('selectAll');
+      editor.exec('color', { selectedColor: '#f0f' });
 
       assertWwEditorHTML('<p><span style="color: #f0f">text</span><br></p>');
     });
@@ -215,8 +215,8 @@ describe('colorSyntax', () => {
       editor.setMarkdown('text');
       editor.changeMode('wysiwyg');
 
-      editor.exec('wysiwyg', 'selectAll');
-      editor.exec('wysiwyg', 'color');
+      editor.exec('selectAll');
+      editor.exec('color');
 
       assertWwEditorHTML('<p>text</p>');
     });
@@ -224,14 +224,14 @@ describe('colorSyntax', () => {
     it('add color in selected table cell in wysiwyg', () => {
       editor.changeMode('wysiwyg');
 
-      editor.exec('wysiwyg', 'addTable', {
+      editor.exec('addTable', {
         rowCount: 2,
         columnCount: 2,
         data: ['foo', 'bar', 'baz', 'qux'],
       });
       editor.setSelection(4, 8);
 
-      editor.exec('wysiwyg', 'color', { selectedColor: '#f0f' });
+      editor.exec('color', { selectedColor: '#f0f' });
 
       const expected = oneLineTrim`
         <table>

@@ -197,23 +197,23 @@ describe('editor', () => {
       // @ts-ignore
       jest.spyOn(editor.commandManager, 'exec');
 
-      editor.exec('markdown', 'bold');
+      editor.exec('bold');
 
       // @ts-ignore
       // eslint-disable-next-line no-undefined
-      expect(editor.commandManager.exec).toHaveBeenCalledWith('markdown', 'bold', undefined);
+      expect(editor.commandManager.exec).toHaveBeenCalledWith('bold', undefined);
     });
 
     it('addCommand()', () => {
-      const handler = jest.fn();
-
+      const spy = jest.fn();
       // @ts-ignore
-      jest.spyOn(editor.commandManager, 'addCommand');
+      const { state, dispatch } = editor.mdEditor.view;
 
-      editor.addCommand('markdown', 'custom', handler);
+      editor.addCommand('markdown', 'custom', spy);
+      editor.exec('custom', { prop: 'prop' });
 
-      // @ts-ignore
-      expect(editor.commandManager.addCommand).toHaveBeenCalledWith('markdown', 'custom', handler);
+      expect(spy).toHaveBeenCalledWith({ prop: 'prop' }, state, dispatch);
+      expect(spy).toHaveBeenCalled();
     });
 
     describe('insertText()', () => {
@@ -482,7 +482,10 @@ describe('editor', () => {
         const plugin = () => {
           return {
             markdownCommands: {
-              foo: () => spy,
+              foo: () => {
+                spy();
+                return true;
+              },
             },
           };
         };
@@ -491,7 +494,7 @@ describe('editor', () => {
           el: container,
           plugins: [plugin],
         });
-        editor.exec('markdown', 'foo');
+        editor.exec('foo');
 
         expect(spy).toHaveBeenCalled();
       });
@@ -501,7 +504,10 @@ describe('editor', () => {
         const plugin = () => {
           return {
             wysiwygCommands: {
-              foo: () => spy,
+              foo: () => {
+                spy();
+                return true;
+              },
             },
           };
         };
@@ -510,7 +516,8 @@ describe('editor', () => {
           el: container,
           plugins: [plugin],
         });
-        editor.exec('wysiwyg', 'foo');
+        editor.changeMode('wysiwyg');
+        editor.exec('foo');
 
         expect(spy).toHaveBeenCalled();
       });
