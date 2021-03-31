@@ -107,11 +107,10 @@ function image({ lastChild }: LinkMdNode, start: MdPos, end: MdPos) {
 
 function link({ lastChild, extendedAutolink }: LinkMdNode, start: MdPos, end: MdPos) {
   const lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 2; // 2: length of '[]'
-  const marks = extendedAutolink
+
+  return extendedAutolink
     ? [markInfo(start, end, LINK, { desc: true })]
     : markLink(start, end, start, lastChildCh);
-
-  return marks;
 }
 
 function code({ tickCount }: CodeMdNode, start: MdPos, end: MdPos) {

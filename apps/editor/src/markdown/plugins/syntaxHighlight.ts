@@ -134,8 +134,8 @@ function cacheIndexToRemoveBackground(doc: ProsemirrorNode, start: MdPos, end: M
       skipLines.push(codeStart[0]);
       codeEnd[0] = Math.min(codeEnd[0], doc.childCount);
 
-      // should subtract `1` to markdown line position
-      // because markdown parser has `1`(not zero) as the start number
+      // should subtract '1' to markdown line position
+      // because markdown parser has '1'(not zero) as the start number
       const startIndex = codeStart[0] - 1;
       const [endIndex] = end;
 
