@@ -198,7 +198,7 @@ describe('colorSyntax', () => {
       editor.exec('selectAll');
       editor.exec('color');
 
-      assertMdPreviewHTML('<p class="tui-editor-md-preview-highlight">text</p>');
+      assertMdPreviewHTML('<p class="toastui-editor-md-preview-highlight">text</p>');
     });
 
     it('add color in wysiwyg', () => {

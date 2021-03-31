@@ -21,7 +21,7 @@ table.ProseMirror-selectednode {
   outline: 1px solid lime;
 }
 
-.tui-editor-contents {
+.toastui-editor-contents {
   margin: 0;
   padding: 0;
   font-size: 13px;
@@ -29,45 +29,45 @@ table.ProseMirror-selectednode {
     'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
 }
 
-.tui-editor-contents *:not(table) {
+.toastui-editor-contents *:not(table) {
   line-height: 160%;
   box-sizing: content-box;
 }
 
-.tui-editor-contents i,
-.tui-editor-contents cite,
-.tui-editor-contents em,
-.tui-editor-contents var,
-.tui-editor-contents address,
-.tui-editor-contents dfn {
+.toastui-editor-contents i,
+.toastui-editor-contents cite,
+.toastui-editor-contents em,
+.toastui-editor-contents var,
+.toastui-editor-contents address,
+.toastui-editor-contents dfn {
   font-style: italic;
 }
 
-.tui-editor-contents strong {
+.toastui-editor-contents strong {
   font-weight: bold;
 }
 
-.tui-editor-contents p {
+.toastui-editor-contents p {
   margin: 10px 0;
   color: #222;
 }
 
-.tui-editor-contents > h1:first-of-type,
-.tui-editor-contents > div > div:first-of-type h1 {
+.toastui-editor-contents > h1:first-of-type,
+.toastui-editor-contents > div > div:first-of-type h1 {
   margin-top: 14px;
 }
 
-.tui-editor-contents h1,
-.tui-editor-contents h2,
-.tui-editor-contents h3,
-.tui-editor-contents h4,
-.tui-editor-contents h5,
-.tui-editor-contents h6 {
+.toastui-editor-contents h1,
+.toastui-editor-contents h2,
+.toastui-editor-contents h3,
+.toastui-editor-contents h4,
+.toastui-editor-contents h5,
+.toastui-editor-contents h6 {
   font-weight: bold;
   color: #222;
 }
 
-.tui-editor-contents h1 {
+.toastui-editor-contents h1 {
   font-size: 24px;
   line-height: 28px;
   border-bottom: 3px double #999;
@@ -75,7 +75,7 @@ table.ProseMirror-selectednode {
   padding-bottom: 7px;
 }
 
-.tui-editor-contents h2 {
+.toastui-editor-contents h2 {
   font-size: 22px;
   line-height: 23px;
   border-bottom: 1px solid #dbdbdb;
@@ -83,75 +83,75 @@ table.ProseMirror-selectednode {
   padding-bottom: 7px;
 }
 
-.tui-editor-contents h3 {
+.toastui-editor-contents h3 {
   font-size: 20px;
   margin: 18px 0 2px;
 }
 
-.tui-editor-contents h4 {
+.toastui-editor-contents h4 {
   font-size: 18px;
   margin: 10px 0 2px;
 }
 
-.tui-editor-contents h3,
-.tui-editor-contents h4 {
+.toastui-editor-contents h3,
+.toastui-editor-contents h4 {
   line-height: 18px;
 }
 
-.tui-editor-contents h5 {
+.toastui-editor-contents h5 {
   font-size: 16px;
 }
 
-.tui-editor-contents h6 {
+.toastui-editor-contents h6 {
   font-size: 14px;
 }
 
-.tui-editor-contents h5,
-.tui-editor-contents h6 {
+.toastui-editor-contents h5,
+.toastui-editor-contents h6 {
   line-height: 17px;
   margin: 9px 0 -4px;
 }
 
-.tui-editor-contents del {
+.toastui-editor-contents del {
   color: #999;
 }
 
-.tui-editor-contents blockquote {
+.toastui-editor-contents blockquote {
   margin: 14px 0;
   border-left: 4px solid #e5e5e5;
   padding: 0 16px;
   color: #999;
 }
 
-.tui-editor-contents blockquote p,
-.tui-editor-contents blockquote ul,
-.tui-editor-contents blockquote ol {
+.toastui-editor-contents blockquote p,
+.toastui-editor-contents blockquote ul,
+.toastui-editor-contents blockquote ol {
   color: #999;
 }
 
-.tui-editor-contents blockquote > :first-child {
+.toastui-editor-contents blockquote > :first-child {
   margin-top: 0;
 }
 
-.tui-editor-contents blockquote > :last-child {
+.toastui-editor-contents blockquote > :last-child {
   margin-bottom: 0;
 }
 
-.tui-editor-contents pre,
-.tui-editor-contents code {
+.toastui-editor-contents pre,
+.toastui-editor-contents code {
   font-family: Consolas, Courier, 'Apple SD 산돌고딕 Neo', -apple-system, 'Lucida Grande',
     'Apple SD Gothic Neo', '맑은 고딕', 'Malgun Gothic', 'Segoe UI', '돋움', dotum, sans-serif;
   border: 0;
   border-radius: 0;
 }
 
-.tui-editor-contents pre {
+.toastui-editor-contents pre {
   margin: 2px 0 8px;
   padding: 18px;
   background-color: #f4f7f8;
 }
 
-.tui-editor-contents code {
+.toastui-editor-contents code {
   color: #c1798b;
   background-color: #f9f2f4;
   padding: 2px 3px;
@@ -159,21 +159,21 @@ table.ProseMirror-selectednode {
   border-radius: 2px;
 }
 
-.tui-editor-contents pre code {
+.toastui-editor-contents pre code {
   padding: 0;
   color: inherit;
   white-space: pre-wrap;
   background-color: transparent;
 }
 
-.tui-editor-contents img {
+.toastui-editor-contents img {
   margin: 4px 0 10px;
   box-sizing: border-box;
   vertical-align: top;
   max-width: 100%;
 }
 
-.tui-editor-contents table {
+.toastui-editor-contents table {
   border: 1px solid rgba(0, 0, 0, 0.1);
   margin: 12px 0 14px;
   color: #222;
@@ -182,42 +182,42 @@ table.ProseMirror-selectednode {
   box-sizing: border-box;
 }
 
-.tui-editor-contents table th,
-.tui-editor-contents table td {
+.toastui-editor-contents table th,
+.toastui-editor-contents table td {
   border: 1px solid rgba(0, 0, 0, 0.1);
   padding: 5px 14px 5px 12px;
   height: 32px;
 }
 
-.tui-editor-contents table th {
+.toastui-editor-contents table th {
   background-color: #555;
   font-weight: 300;
   color: #fff;
   padding-top: 6px;
 }
 
-.tui-editor-contents th p {
+.toastui-editor-contents th p {
   margin: 0;
   color: #fff;
 }
 
-.tui-editor-contents td p {
+.toastui-editor-contents td p {
   margin: 0;
   padding: 0 2px;
 }
 
-.tui-editor-contents td.tui-editor-cell-selected {
+.toastui-editor-contents td.toastui-editor-cell-selected {
   background-color: #d8dfec;
 }
 
-.tui-editor-contents th.tui-editor-cell-selected {
+.toastui-editor-contents th.toastui-editor-cell-selected {
   background-color: #908f8f;
 }
 
-.tui-editor-contents ul,
-.tui-editor-contents menu,
-.tui-editor-contents ol,
-.tui-editor-contents dir {
+.toastui-editor-contents ul,
+.toastui-editor-contents menu,
+.toastui-editor-contents ol,
+.toastui-editor-contents dir {
   display: block;
   list-style-type: none;
   padding-left: 24px;
@@ -225,22 +225,22 @@ table.ProseMirror-selectednode {
   color: #222;
 }
 
-.tui-editor-contents ol {
+.toastui-editor-contents ol {
   list-style-type: none;
   counter-reset: li;
 }
 
-.tui-editor-contents ol > li {
+.toastui-editor-contents ol > li {
   counter-increment: li;
 }
 
-.tui-editor-contents ul > li::before,
-.tui-editor-contents ol > li::before {
+.toastui-editor-contents ul > li::before,
+.toastui-editor-contents ol > li::before {
   display: inline-block;
   position: absolute;
 }
 
-.tui-editor-contents ul > li::before {
+.toastui-editor-contents ul > li::before {
   content: '';
   margin-top: 6px;
   margin-left: -17px;
@@ -250,7 +250,7 @@ table.ProseMirror-selectednode {
   background-color: #ccc;
 }
 
-.tui-editor-contents ol > li::before {
+.toastui-editor-contents ol > li::before {
   content: '.' counter(li);
   margin-left: -28px;
   width: 24px;
@@ -259,43 +259,43 @@ table.ProseMirror-selectednode {
   color: #aaa;
 }
 
-.tui-editor-contents ul ul,
-.tui-editor-contents ul ol,
-.tui-editor-contents ol ol,
-.tui-editor-contents ol ul {
+.toastui-editor-contents ul ul,
+.toastui-editor-contents ul ol,
+.toastui-editor-contents ol ol,
+.toastui-editor-contents ol ul {
   margin-top: 0 !important;
   margin-bottom: 0 !important;
 }
 
-.tui-editor-contents ul li,
-.tui-editor-contents ol li {
+.toastui-editor-contents ul li,
+.toastui-editor-contents ol li {
   position: relative;
 }
 
-.tui-editor-contents ul p,
-.tui-editor-contents ol p {
+.toastui-editor-contents ul p,
+.toastui-editor-contents ol p {
   margin: 0;
 }
 
-.tui-editor-contents hr {
+.toastui-editor-contents hr {
   border-top: 1px solid #eee;
   margin: 16px 0;
 }
 
-.tui-editor-contents a {
+.toastui-editor-contents a {
   text-decoration: underline;
   color: #4b96e6;
 }
 
-.tui-editor-contents a:hover {
+.toastui-editor-contents a:hover {
   color: #1f70de;
 }
 
-.tui-editor-contents .image-link {
+.toastui-editor-contents .image-link {
   position: relative;
 }
 
-.tui-editor-contents .image-link::before {
+.toastui-editor-contents .image-link::before {
   content: '';
   position: absolute;
   margin: 0;
@@ -309,14 +309,14 @@ table.ProseMirror-selectednode {
   cursor: pointer;
 }
 
-.tui-editor-contents .task-list-item {
+.toastui-editor-contents .task-list-item {
   border: 0;
   list-style: none;
   padding-left: 24px;
   margin-left: -24px;
 }
 
-.tui-editor-contents .task-list-item::before {
+.toastui-editor-contents .task-list-item::before {
   background-repeat: no-repeat;
   background-size: 18px 18px;
   background-position: center;
@@ -333,37 +333,37 @@ table.ProseMirror-selectednode {
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAEqADAAQAAAABAAAAEgAAAACaqbJVAAAAQklEQVQ4EWM8c+bMfwYqABaQGcbGxhQZdfbsWQYmikxA0jxqEFJg4GCOhhGOgEESHg0jpMDAwRx8YQQuj0DlCaUAAEdBCPJ7TaEPAAAAAElFTkSuQmCC');
 }
 
-.tui-editor-contents .task-list-item.checked::before {
+.toastui-editor-contents .task-list-item.checked::before {
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAYAAABWzo5XAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAAAEqADAAQAAAABAAAAEgAAAACaqbJVAAAA1ElEQVQ4EWP0nvbsPwMVABMVzAAbMWoQIiT5OJgYvLS5EAJQFguGCB4BkCHt/kIM8kKsYFXbrn6DqyY6sJENefjuN8ORuz/ghoAYWA0COR2kEQbQDanc+I7h049/MGkwjVANFQYZkmXHD/YCyABiDAFpxQgjkJO9dbjA4QAKDxAAhQnIO9hcAlYAJDBcBHIySANII8gAYgwBGYZhEEgQZFjVJohhhFwCUg8CjPgyLT8nE8N/YJZGD1iIVlQSI4yQpT9+R40ZZDl0NlavoSsihj/4DAIAR+hZHUj727YAAAAASUVORK5CYII=');
 }
 
-.tui-editor-custom-block .tui-editor-custom-block-editor {
+.toastui-editor-custom-block .toastui-editor-custom-block-editor {
   background: #f9f7fd;
   color: #452d6b;
   border: solid 1px #dbd4ea;
 }
 
-.tui-editor-custom-block .tui-editor-custom-block-view {
+.toastui-editor-custom-block .toastui-editor-custom-block-view {
   position: relative;
   padding: 9px 13px 8px 12px;
 }
 
-.tui-editor-custom-block.ProseMirror-selectednode .tui-editor-custom-block-view {
+.toastui-editor-custom-block.ProseMirror-selectednode .toastui-editor-custom-block-view {
   border: solid 1px #dbd4ea;
 }
 
-.tui-editor-custom-block .tui-editor-custom-block-view .tool {
+.toastui-editor-custom-block .toastui-editor-custom-block-view .tool {
   position: absolute;
   right: 10px;
   top: 7px;
   display: none;
 }
 
-.tui-editor-custom-block.ProseMirror-selectednode .tui-editor-custom-block-view .tool {
+.toastui-editor-custom-block.ProseMirror-selectednode .toastui-editor-custom-block-view .tool {
   display: block;
 }
 
-.tui-editor-custom-block-view button {
+.toastui-editor-custom-block-view button {
   vertical-align: middle;
   width: 15px;
   height: 15px;
@@ -375,18 +375,18 @@ table.ProseMirror-selectednode {
   background-position: 5px 5px;
 }
 
-.tui-editor-custom-block-view .info {
+.toastui-editor-custom-block-view .info {
   font-size: 13px;
   font-weight: bold;
   color: #5200d0;
   vertical-align: middle;
 }
 
-.tui-editor-contents .tui-editor-ww-code-block {
+.toastui-editor-contents .toastui-editor-ww-code-block {
   position: relative;
 }
 
-.tui-editor-contents .tui-editor-ww-code-block:after {
+.toastui-editor-contents .toastui-editor-ww-code-block:after {
   content: attr(data-language);
   position: absolute;
   display: inline-block;
@@ -405,7 +405,7 @@ table.ProseMirror-selectednode {
   cursor: pointer;
 }
 
-.tui-editor-ww-code-block-language {
+.toastui-editor-ww-code-block-language {
   position: absolute;
   display: inline-block;
   width: 100px;
@@ -417,7 +417,7 @@ table.ProseMirror-selectednode {
   z-index: 100;
 }
 
-.tui-editor-ww-code-block-language input {
+.toastui-editor-ww-code-block-language input {
   box-sizing: border-box;
   margin: 0;
   padding: 0 10px;
@@ -428,30 +428,30 @@ table.ProseMirror-selectednode {
   outline: none;
 }
 
-.tui-editor-contents-placeholder::before {
+.toastui-editor-contents-placeholder::before {
   content: attr(data-placeholder);
   color: grey;
   line-height: 160%;
   position: absolute;
 }
 
-.tui-editor-md-preview .tui-editor-contents h1 {
+.toastui-editor-md-preview .toastui-editor-contents h1 {
   min-height: 28px;
 }
 
-.tui-editor-md-preview .tui-editor-contents h2 {
+.toastui-editor-md-preview .toastui-editor-contents h2 {
   min-height: 23px;
 }
 
-.tui-editor-md-preview .tui-editor-contents blockquote {
+.toastui-editor-md-preview .toastui-editor-contents blockquote {
   min-height: 20px;
 }
 
-.tui-editor-md-preview .tui-editor-contents li {
+.toastui-editor-md-preview .toastui-editor-contents li {
   min-height: 22px;
 }
 
-.tui-editor-pseudo-clipboard {
+.toastui-editor-pseudo-clipboard {
   position: fixed;
   opacity: 0;
   width: 0;
@@ -463,27 +463,27 @@ table.ProseMirror-selectednode {
 
 @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
   /* IE10+11 */
-  .tui-editor-ww-container .tui-editor-contents li {
+  .toastui-editor-ww-container .toastui-editor-contents li {
     vertical-align: middle;
   }
 
-  .tui-editor-ww-container .tui-editor-contents ul > li::before,
-  .tui-editor-ww-container .tui-editor-contents ol > li::before,
-  .tui-editor-ww-container .tui-editor-contents .task-list-item::before {
+  .toastui-editor-ww-container .toastui-editor-contents ul > li::before,
+  .toastui-editor-ww-container .toastui-editor-contents ol > li::before,
+  .toastui-editor-ww-container .toastui-editor-contents .task-list-item::before {
     position: static;
     vertical-align: middle;
   }
 
-  .tui-editor-ww-container .tui-editor-contents ul > li::before {
+  .toastui-editor-ww-container .toastui-editor-contents ul > li::before {
     margin-top: -3px;
     margin-right: 12px;
   }
 
-  .tui-editor-ww-container .tui-editor-contents ol > li::before {
+  .toastui-editor-ww-container .toastui-editor-contents ol > li::before {
     margin-right: 6px;
   }
 
-  .tui-editor-ww-container .tui-editor-contents .task-list-item {
+  .toastui-editor-ww-container .toastui-editor-contents .task-list-item {
     padding-left: 2px;
   }
 }

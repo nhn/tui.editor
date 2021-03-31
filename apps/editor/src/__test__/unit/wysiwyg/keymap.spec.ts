@@ -284,14 +284,14 @@ describe('keymap', () => {
         <table>
           <thead>
             <tr>
-              <th class="tui-editor-cell-selected"><p><br></p></th>
-              <th class="tui-editor-cell-selected"><p><br></p></th>
+              <th class="toastui-editor-cell-selected"><p><br></p></th>
+              <th class="toastui-editor-cell-selected"><p><br></p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="tui-editor-cell-selected"><p><br></p></td>
-              <td class="tui-editor-cell-selected"><p><br></p></td>
+              <td class="toastui-editor-cell-selected"><p><br></p></td>
+              <td class="toastui-editor-cell-selected"><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -386,7 +386,7 @@ describe('keymap', () => {
   describe('code block', () => {
     beforeEach(() => {
       html = oneLineTrim`
-        <div data-language="text" class="tui-editor-ww-code-block">
+        <div data-language="text" class="toastui-editor-ww-code-block">
           <pre>
             <code>foo\nbar\nbaz</code>
           </pre>
@@ -404,7 +404,7 @@ describe('keymap', () => {
 
         const expected = oneLineTrim`
           <p><br></p>
-          <div data-language="text" class="tui-editor-ww-code-block">
+          <div data-language="text" class="toastui-editor-ww-code-block">
             <pre>
               <code>foo\nbar\nbaz</code>
             </pre>
@@ -422,7 +422,7 @@ describe('keymap', () => {
         forceKeymapFn('codeBlock', 'moveCursor', ['down']);
 
         const expected = oneLineTrim`
-          <div data-language="text" class="tui-editor-ww-code-block">
+          <div data-language="text" class="toastui-editor-ww-code-block">
             <pre>
               <code>foo\nbar\nbaz</code>
             </pre>

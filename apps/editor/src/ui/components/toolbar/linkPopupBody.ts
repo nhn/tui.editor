@@ -75,15 +75,15 @@ export class LinkPopupBody extends Component<Props> {
   render() {
     return html`
       <div>
-        <label for="tuiLinkUrlInput">${i18n.get('URL')}</label>
+        <label for="toastuiLinkUrlInput">${i18n.get('URL')}</label>
         <input
-          id="tuiLinkUrlInput"
+          id="toastuiLinkUrlInput"
           type="text"
           ref=${(el: HTMLInputElement) => (this.refs.url = el)}
         />
-        <label for="tuiLinkTextInput">${i18n.get('Link text')}</label>
+        <label for="toastuiLinkTextInput">${i18n.get('Link text')}</label>
         <input
-          id="tuiLinkTextInput"
+          id="toastuiLinkTextInput"
           type="text"
           ref=${(el: HTMLInputElement) => (this.refs.text = el)}
         />

@@ -1,127 +1,127 @@
-.tui-editor-md-heading1 {
+.toastui-editor-md-heading1 {
   font-size: 24px;
 }
 
-.tui-editor-md-heading2 {
+.toastui-editor-md-heading2 {
   font-size: 22px;
 }
 
-.tui-editor-md-heading3 {
+.toastui-editor-md-heading3 {
   font-size: 20px;
 }
 
-.tui-editor-md-heading4 {
+.toastui-editor-md-heading4 {
   font-size: 18px;
 }
 
-.tui-editor-md-heading5 {
+.toastui-editor-md-heading5 {
   font-size: 16px;
 }
 
-.tui-editor-md-heading6 {
+.toastui-editor-md-heading6 {
   font-size: 14px;
 }
 
-.tui-editor-md-heading.tui-editor-md-delimiter.setext {
+.toastui-editor-md-heading.toastui-editor-md-delimiter.setext {
   line-height: 15px;
 }
 
-.tui-editor-md-strong,
-.tui-editor-md-heading,
-.tui-editor-md-list-item-style,
-.tui-editor-md-list-item .tui-editor-md-meta {
+.toastui-editor-md-strong,
+.toastui-editor-md-heading,
+.toastui-editor-md-list-item-style,
+.toastui-editor-md-list-item .toastui-editor-md-meta {
   font-weight: bold;
 }
 
-.tui-editor-md-emph {
+.toastui-editor-md-emph {
   font-style: italic;
 }
 
-.tui-editor-md-strike {
+.toastui-editor-md-strike {
   text-decoration: line-through;
 }
 
-.tui-editor-md-strike.tui-editor-md-delimiter {
+.toastui-editor-md-strike.toastui-editor-md-delimiter {
   text-decoration: none;
 }
 
-.tui-editor-md-delimiter,
-.tui-editor-md-thematic-break,
-.tui-editor-md-link,
-.tui-editor-md-table,
-.tui-editor-md-block-quote {
+.toastui-editor-md-delimiter,
+.toastui-editor-md-thematic-break,
+.toastui-editor-md-link,
+.toastui-editor-md-table,
+.toastui-editor-md-block-quote {
   color: #ccc;
 }
 
-.tui-editor-md-code.tui-editor-md-delimiter {
+.toastui-editor-md-code.toastui-editor-md-delimiter {
   color: #aaa;
 }
 
-.tui-editor-md-meta,
-.tui-editor-md-html,
-.tui-editor-md-link.tui-editor-md-link-url.tui-editor-md-marked-text {
+.toastui-editor-md-meta,
+.toastui-editor-md-html,
+.toastui-editor-md-link.toastui-editor-md-link-url.toastui-editor-md-marked-text {
   color: #999;
 }
 
-.tui-editor-md-block-quote .tui-editor-md-marked-text,
-.tui-editor-md-list-item.tui-editor-md-meta {
+.toastui-editor-md-block-quote .toastui-editor-md-marked-text,
+.toastui-editor-md-list-item.toastui-editor-md-meta {
   color: #555;
 }
 
-.tui-editor-md-table .tui-editor-md-table-cell {
+.toastui-editor-md-table .toastui-editor-md-table-cell {
   color: #222;
 }
 
-.tui-editor-md-link.tui-editor-md-link-desc.tui-editor-md-marked-text,
-.tui-editor-md-list-item-style.tui-editor-md-list-item-odd {
+.toastui-editor-md-link.toastui-editor-md-link-desc.toastui-editor-md-marked-text,
+.toastui-editor-md-list-item-style.toastui-editor-md-list-item-odd {
   color: #4b96e6;
 }
 
-.tui-editor-md-list-item-style.tui-editor-md-list-item-even {
+.toastui-editor-md-list-item-style.toastui-editor-md-list-item-even {
   color: #cb4848;
 }
 
-.tui-editor-md-code.tui-editor-md-marked-text {
+.toastui-editor-md-code.toastui-editor-md-marked-text {
   color: #c1798b;
 }
 
-.tui-editor-md-code {
+.toastui-editor-md-code {
   background-color: rgba(243, 229, 233, 0.5);
   padding: 2px 0;
   letter-spacing: -0.3px;
 }
 
-.tui-editor-md-code.tui-editor-md-start {
+.toastui-editor-md-code.toastui-editor-md-start {
   padding-left: 2px;
   border-top-left-radius: 2px;
   border-bottom-left-radius: 2px;
 }
 
-.tui-editor-md-code.tui-editor-md-end {
+.toastui-editor-md-code.toastui-editor-md-end {
   padding-right: 2px;
   border-top-right-radius: 2px;
   border-bottom-right-radius: 2px;
 }
 
-.tui-editor-md-code-block-line-background {
+.toastui-editor-md-code-block-line-background {
   background-color: #f5f7f8;
 }
 
-.tui-editor-md-code,
-.tui-editor-md-code-block {
+.toastui-editor-md-code,
+.toastui-editor-md-code-block {
   font-family: Consolas, Courier, 'Lucida Grande', '나눔바른고딕', 'Nanum Barun Gothic', '맑은고딕',
     'Malgun Gothic', sans-serif;
 }
 
-.tui-editor-md-custom-block {
+.toastui-editor-md-custom-block {
   color: #452d6b;
 }
-.tui-editor-md-custom-block-line-background {
+.toastui-editor-md-custom-block-line-background {
   background-color: #f9f7fd;
 }
-.tui-editor-md-custom-block .tui-editor-md-delimiter {
+.toastui-editor-md-custom-block .toastui-editor-md-delimiter {
   color: #b8b3c0;
 }
-.tui-editor-md-custom-block .tui-editor-md-meta {
+.toastui-editor-md-custom-block .toastui-editor-md-meta {
   color: #5200d0;
 }

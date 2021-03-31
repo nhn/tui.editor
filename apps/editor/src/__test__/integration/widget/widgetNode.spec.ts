@@ -10,7 +10,7 @@ describe('widgetNode', () => {
     editor: Editor;
 
   function getPreviewHTML() {
-    return trailingDataAttr(mdPreview.querySelector('.tui-editor-contents')!.innerHTML);
+    return trailingDataAttr(mdPreview.querySelector('.toastui-editor-contents')!.innerHTML);
   }
 
   beforeEach(() => {

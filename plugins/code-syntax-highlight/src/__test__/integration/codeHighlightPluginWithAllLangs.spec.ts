@@ -17,7 +17,7 @@ describe('codeSyntaxHighlightPlugin', () => {
 
   function getPreviewHTML() {
     return mdPreview
-      .querySelector('.tui-editor-contents')!
+      .querySelector('.toastui-editor-contents')!
       .innerHTML.replace(/\sdata-nodeid="\d+"|\n/g, '')
       .trim();
   }

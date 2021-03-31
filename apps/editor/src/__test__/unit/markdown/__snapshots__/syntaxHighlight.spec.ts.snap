@@ -1,0 +1,376 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`markdown editor syntax highlight atx heading 1`] = `
+<div>
+  <span class="toastui-editor-md-heading toastui-editor-md-heading1">
+    <span class="toastui-editor-md-delimiter">
+      #
+    </span>
+    heading
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight blockQuote basic 1`] = `
+<div>
+  <span class="toastui-editor-md-block-quote">
+    &gt;
+    <span class="toastui-editor-md-marked-text">
+      block quote
+    </span>
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight blockQuote with list 1`] = `
+<div>
+  <span class="toastui-editor-md-block-quote">
+    &gt;
+    <span class="toastui-editor-md-list-item toastui-editor-md-list-item-style toastui-editor-md-list-item-odd">
+      *
+    </span>
+    <span class="toastui-editor-md-delimiter toastui-editor-md-list-item">
+      [
+      <span class="toastui-editor-md-meta">
+      </span>
+      ]
+    </span>
+    <span class="toastui-editor-md-marked-text">
+      block quote
+    </span>
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight bulletList 1`] = `
+<div>
+  <span class="toastui-editor-md-list-item toastui-editor-md-list-item-style toastui-editor-md-list-item-odd">
+    *
+    <span class="toastui-editor-md-marked-text">
+    </span>
+  </span>
+  <span class="toastui-editor-md-marked-text">
+    bullet list
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight code block 1`] = `
+<div class="toastui-editor-md-code-block-line-background">
+  <span class="toastui-editor-md-code-block">
+    <span class="toastui-editor-md-delimiter">
+      \`\`\`
+    </span>
+    <span class="toastui-editor-md-meta">
+      js
+    </span>
+  </span>
+</div>
+<div class="toastui-editor-md-code-block-line-background">
+  <span class="toastui-editor-md-code-block">
+    console.log("editor")
+  </span>
+</div>
+<div class="toastui-editor-md-code-block-line-background">
+  <span class="toastui-editor-md-code-block">
+    <span class="toastui-editor-md-delimiter">
+      \`\`\`
+    </span>
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight code block within list 1`] = `
+<div>
+  <span class="toastui-editor-md-list-item toastui-editor-md-list-item-style toastui-editor-md-list-item-odd">
+    *
+    <span class="toastui-editor-md-marked-text">
+    </span>
+  </span>
+  <span class="toastui-editor-md-marked-text">
+    list
+  </span>
+</div>
+<div>
+  <span class="toastui-editor-md-code-block">
+    <span class="toastui-editor-md-marked-text">
+    </span>
+    <span class="toastui-editor-md-delimiter">
+      <span class="toastui-editor-md-marked-text">
+        \`\`\`
+      </span>
+    </span>
+    <span class="toastui-editor-md-marked-text">
+      <span class="toastui-editor-md-meta">
+        js
+      </span>
+    </span>
+  </span>
+</div>
+<div>
+  <span class="toastui-editor-md-code-block">
+    <span class="toastui-editor-md-marked-text">
+      console.log("editor")
+    </span>
+  </span>
+</div>
+<div>
+  <span class="toastui-editor-md-code-block">
+    <span class="toastui-editor-md-delimiter">
+      <span class="toastui-editor-md-marked-text">
+        \`\`\`
+      </span>
+    </span>
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight custom block 1`] = `
+<div class="toastui-editor-md-custom-block-line-background">
+  <span class="toastui-editor-md-custom-block">
+    <span class="toastui-editor-md-delimiter">
+      $$
+    </span>
+    <span class="toastui-editor-md-meta">
+      custom
+    </span>
+  </span>
+</div>
+<div class="toastui-editor-md-custom-block-line-background">
+  <span class="toastui-editor-md-custom-block">
+    my custom element
+  </span>
+</div>
+<div class="toastui-editor-md-custom-block-line-background">
+  <span class="toastui-editor-md-custom-block">
+    <span class="toastui-editor-md-delimiter">
+      $$
+    </span>
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight emph 1`] = `
+<div>
+  <span class="toastui-editor-md-delimiter">
+    *
+  </span>
+  <span class="toastui-editor-md-emph">
+    emph
+  </span>
+  <span class="toastui-editor-md-delimiter">
+    *
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight image 1`] = `
+<div>
+  <span class="toastui-editor-md-link">
+    <span class="toastui-editor-md-meta">
+      !
+    </span>
+    [
+  </span>
+  <span class="toastui-editor-md-link toastui-editor-md-link-desc toastui-editor-md-marked-text">
+    Logo
+  </span>
+  <span class="toastui-editor-md-link">
+    ](
+  </span>
+  <span class="toastui-editor-md-link toastui-editor-md-link-url toastui-editor-md-marked-text">
+    https://picsum.photos/200
+  </span>
+  <span class="toastui-editor-md-link">
+    )
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight inline code 1`] = `
+<div>
+  <span class="toastui-editor-md-code toastui-editor-md-delimiter toastui-editor-md-start">
+    \`
+  </span>
+  <span class="toastui-editor-md-code toastui-editor-md-marked-text">
+    inline code
+  </span>
+  <span class="toastui-editor-md-code toastui-editor-md-delimiter toastui-editor-md-end">
+    \`
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight link 1`] = `
+<div>
+  <span class="toastui-editor-md-link">
+    [
+  </span>
+  <span class="toastui-editor-md-link toastui-editor-md-link-desc toastui-editor-md-marked-text">
+    TOAST UI
+  </span>
+  <span class="toastui-editor-md-link">
+    ](
+  </span>
+  <span class="toastui-editor-md-link toastui-editor-md-link-url toastui-editor-md-marked-text">
+    https://ui.toast.com
+  </span>
+  <span class="toastui-editor-md-link">
+    )
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight orderedList 1`] = `
+<div>
+  <span class="toastui-editor-md-list-item toastui-editor-md-list-item-style toastui-editor-md-list-item-odd">
+    1.
+    <span class="toastui-editor-md-marked-text">
+    </span>
+  </span>
+  <span class="toastui-editor-md-marked-text">
+    ordered list
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight seText heading 1`] = `
+<div>
+  <span class="toastui-editor-md-heading toastui-editor-md-heading2">
+    heading
+  </span>
+</div>
+<div>
+  <span class="toastui-editor-md-heading toastui-editor-md-heading1 toastui-editor-md-delimiter toastui-editor-md-setext">
+    ---
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight strike 1`] = `
+<div>
+  <span class="toastui-editor-md-delimiter">
+    ~~
+  </span>
+  <span class="toastui-editor-md-strike">
+    strike
+  </span>
+  <span class="toastui-editor-md-delimiter">
+    ~~
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight strong 1`] = `
+<div>
+  <span class="toastui-editor-md-delimiter">
+    **
+  </span>
+  <span class="toastui-editor-md-strong">
+    strong
+  </span>
+  <span class="toastui-editor-md-delimiter">
+    **
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight table basic 1`] = `
+<div>
+  <span class="toastui-editor-md-table">
+    |
+    <span class="toastui-editor-md-table-cell">
+      col2
+    </span>
+    |
+    <span class="toastui-editor-md-table-cell">
+      col2
+    </span>
+  </span>
+</div>
+<div>
+  <span class="toastui-editor-md-table">
+    | --- | ---
+  </span>
+</div>
+<div>
+  <span class="toastui-editor-md-table">
+    |
+    <span class="toastui-editor-md-table-cell">
+      data1
+    </span>
+    |
+    <span class="toastui-editor-md-table-cell">
+      data2
+    </span>
+    |
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight table with mark 1`] = `
+<div>
+  <span class="toastui-editor-md-table">
+    |
+    <span class="toastui-editor-md-table-cell">
+      col2
+    </span>
+    |
+    <span class="toastui-editor-md-table-cell">
+      col2
+    </span>
+  </span>
+</div>
+<div>
+  <span class="toastui-editor-md-table">
+    | --- | ---
+  </span>
+</div>
+<div>
+  <span class="toastui-editor-md-table">
+    |
+    <span class="toastui-editor-md-table-cell">
+      data1
+    </span>
+    |
+    <span class="toastui-editor-md-table-cell">
+      <span class="toastui-editor-md-delimiter">
+        **
+      </span>
+      <span class="toastui-editor-md-strong">
+        data2
+      </span>
+      <span class="toastui-editor-md-delimiter">
+        **
+      </span>
+    </span>
+    |
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight tastkList 1`] = `
+<div>
+  <span class="toastui-editor-md-list-item toastui-editor-md-list-item-style toastui-editor-md-list-item-odd">
+    *
+  </span>
+  <span class="toastui-editor-md-delimiter toastui-editor-md-list-item">
+    [
+    <span class="toastui-editor-md-meta">
+      x
+    </span>
+    ]
+  </span>
+  <span class="toastui-editor-md-marked-text">
+    task list
+  </span>
+</div>
+`;
+
+exports[`markdown editor syntax highlight thematicBreak 1`] = `
+<div>
+  <span class="toastui-editor-md-thematic-break">
+    ---
+  </span>
+</div>
+`;

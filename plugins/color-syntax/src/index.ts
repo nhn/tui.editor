@@ -6,11 +6,13 @@ import { PluginOptions } from './types/index';
 
 import './css/plugin.css';
 
+const PREFIX = 'toastui-editor-';
+
 function createApplyButton(text: string) {
   const button = document.createElement('button');
 
   button.setAttribute('type', 'button');
-  button.className = 'tui-editor-ok-button';
+  button.className = 'toastui-editor-ok-button';
   button.textContent = text;
 
   return button;
@@ -20,9 +22,9 @@ function createToolbarItemOption(colorPickerContainer: HTMLDivElement) {
   return {
     name: 'color',
     tooltip: 'Text color',
-    className: 'tui-editor-toolbar-icons color',
+    className: `${PREFIX}toolbar-icons color`,
     popup: {
-      className: 'tui-popup-color',
+      className: `${PREFIX}popup-color`,
       body: colorPickerContainer,
       style: { width: 'auto' },
     },

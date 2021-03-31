@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`codeSyntaxHighlightPlugin should render highlighted codeblock element in markdown preview 1`] = `
+<pre class="lang-yaml toastui-editor-md-preview-highlight">
+  <code data-language="yaml">
+    <span class="token key atrule">
+      martin
+    </span>
+    <span class="token punctuation">
+      :
+    </span>
+    <span class="token key atrule">
+      name
+    </span>
+    <span class="token punctuation">
+      :
+    </span>
+    Martin D'vloper
+    <span class="token key atrule">
+      job
+    </span>
+    <span class="token punctuation">
+      :
+    </span>
+    Developer
+    <span class="token key atrule">
+      skill
+    </span>
+    <span class="token punctuation">
+      :
+    </span>
+    Elite
+  </code>
+</pre>
+`;
+
+exports[`codeSyntaxHighlightPlugin should render highlighted codeblock element in wysiwyg 1`] = `
+<div data-language="yaml"
+     class="toastui-editor-ww-code-block-highlighting"
+>
+  <pre class="lang-yaml language-yaml">
+    <code data-language="yaml"
+          class="language-yaml"
+    >
+      <span class="token key atrule">
+        martin
+      </span>
+      <span class="token punctuation">
+        :
+      </span>
+      <span class="token key atrule">
+        name
+      </span>
+      <span class="token punctuation">
+        :
+      </span>
+      Martin D'vloper
+      <span class="token key atrule">
+        job
+      </span>
+      <span class="token punctuation">
+        :
+      </span>
+      Developer
+      <span class="token key atrule">
+        skill
+      </span>
+      <span class="token punctuation">
+        :
+      </span>
+      Elite
+    </code>
+  </pre>
+</div>
+`;

@@ -167,7 +167,7 @@ describe('wysiwyg commands', () => {
       cmd.exec('codeBlock');
 
       expect(wwe.getHTML()).toBe(oneLineTrim`
-        <div data-language="text" class="tui-editor-ww-code-block">
+        <div data-language="text" class="toastui-editor-ww-code-block">
           <pre>
             <code><br></code>
           </pre>
@@ -182,7 +182,7 @@ describe('wysiwyg commands', () => {
       cmd.exec('codeBlock');
 
       expect(wwe.getHTML()).toBe(oneLineTrim`
-        <div data-language="text" class="tui-editor-ww-code-block">
+        <div data-language="text" class="toastui-editor-ww-code-block">
           <pre>
             <code>foo</code>
           </pre>

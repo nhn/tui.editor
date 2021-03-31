@@ -216,14 +216,14 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th class="tui-editor-cell-selected"><p>foo</p></th>
-              <th class="tui-editor-cell-selected"><p>bar</p></th>
+              <th class="toastui-editor-cell-selected"><p>foo</p></th>
+              <th class="toastui-editor-cell-selected"><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="tui-editor-cell-selected"><p>baz</p></td>
-              <td class="tui-editor-cell-selected"><p>qux</p></td>
+              <td class="toastui-editor-cell-selected"><p>baz</p></td>
+              <td class="toastui-editor-cell-selected"><p>qux</p></td>
             </tr>
             <tr>
               <td><p><br></p></td>
@@ -253,8 +253,8 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th class="tui-editor-cell-selected"><p>foo</p></th>
-              <th class="tui-editor-cell-selected"><p>bar</p></th>
+              <th class="toastui-editor-cell-selected"><p>foo</p></th>
+              <th class="toastui-editor-cell-selected"><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
@@ -340,11 +340,11 @@ describe('wysiwyg table commands', () => {
             </tr>
             <tr>
               <td><p>baz</p></td>
-              <td class="tui-editor-cell-selected"><p>qux</p></td>
+              <td class="toastui-editor-cell-selected"><p>qux</p></td>
             </tr>
             <tr>
               <td><p>quux</p></td>
-              <td class="tui-editor-cell-selected"><p>quuz</p></td>
+              <td class="toastui-editor-cell-selected"><p>quuz</p></td>
             </tr>
           </tbody>
         </table>
@@ -362,13 +362,13 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th class="tui-editor-cell-selected"><p>foo</p></th>
+              <th class="toastui-editor-cell-selected"><p>foo</p></th>
               <th><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="tui-editor-cell-selected"><p>baz</p></td>
+              <td class="toastui-editor-cell-selected"><p>baz</p></td>
               <td><p>qux</p></td>
             </tr>
             <tr>
@@ -456,17 +456,17 @@ describe('wysiwyg table commands', () => {
           <thead>
             <tr>
               <th><p>foo</p></th>
-              <th class="tui-editor-cell-selected"><p>bar</p></th>
+              <th class="toastui-editor-cell-selected"><p>bar</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><p>baz</p></td>
-              <td class="tui-editor-cell-selected"><p>qux</p></td>
+              <td class="toastui-editor-cell-selected"><p>qux</p></td>
             </tr>
             <tr>
               <td><p>quux</p></td>
-              <td class="tui-editor-cell-selected"><p>quuz</p></td>
+              <td class="toastui-editor-cell-selected"><p>quuz</p></td>
             </tr>
             <tr>
               <td><p>corge</p></td>
@@ -494,15 +494,15 @@ describe('wysiwyg table commands', () => {
           </thead>
           <tbody>
             <tr>
-              <td class="tui-editor-cell-selected"><p>baz</p></td>
+              <td class="toastui-editor-cell-selected"><p>baz</p></td>
               <td><p>qux</p></td>
             </tr>
             <tr>
-              <td class="tui-editor-cell-selected"><p>quux</p></td>
+              <td class="toastui-editor-cell-selected"><p>quux</p></td>
               <td><p>quuz</p></td>
             </tr>
             <tr>
-              <td class="tui-editor-cell-selected"><p>corge</p></td>
+              <td class="toastui-editor-cell-selected"><p>corge</p></td>
               <td><p><br></p></td>
             </tr>
           </tbody>
@@ -566,8 +566,8 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th class="tui-editor-cell-selected"><p>foo</p></th>
-              <th class="tui-editor-cell-selected"><p>bar</p></th>
+              <th class="toastui-editor-cell-selected"><p>foo</p></th>
+              <th class="toastui-editor-cell-selected"><p>bar</p></th>
               <th><p><br></p></th>
               <th><p><br></p></th>
               <th><p>baz</p></th>
@@ -575,8 +575,8 @@ describe('wysiwyg table commands', () => {
           </thead>
           <tbody>
             <tr>
-              <td class="tui-editor-cell-selected"><p>qux</p></td>
-              <td class="tui-editor-cell-selected"><p>quux</p></td>
+              <td class="toastui-editor-cell-selected"><p>qux</p></td>
+              <td class="toastui-editor-cell-selected"><p>quux</p></td>
               <td><p><br></p></td>
               <td><p><br></p></td>
               <td><p>quuz</p></td>
@@ -652,8 +652,8 @@ describe('wysiwyg table commands', () => {
               <th><p>foo</p></th>
               <th><p><br></p></th>
               <th><p><br></p></th>
-              <th class="tui-editor-cell-selected"><p>bar</p></th>
-              <th class="tui-editor-cell-selected"><p>baz</p></th>
+              <th class="toastui-editor-cell-selected"><p>bar</p></th>
+              <th class="toastui-editor-cell-selected"><p>baz</p></th>
             </tr>
           </thead>
           <tbody>
@@ -661,15 +661,15 @@ describe('wysiwyg table commands', () => {
               <td><p>qux</p></td>
               <td><p><br></p></td>
               <td><p><br></p></td>
-              <td class="tui-editor-cell-selected"><p>quux</p></td>
-              <td class="tui-editor-cell-selected"><p>quuz</p></td>
+              <td class="toastui-editor-cell-selected"><p>quux</p></td>
+              <td class="toastui-editor-cell-selected"><p>quuz</p></td>
             </tr>
             <tr>
               <td><p>corge</p></td>
               <td><p><br></p></td>
               <td><p><br></p></td>
-              <td class="tui-editor-cell-selected"><p>grault</p></td>
-              <td class="tui-editor-cell-selected"><p><br></p></td>
+              <td class="toastui-editor-cell-selected"><p>grault</p></td>
+              <td class="toastui-editor-cell-selected"><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -752,16 +752,16 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th class="tui-editor-cell-selected"><p>foo</p></th>
-              <th class="tui-editor-cell-selected"><p>bar</p></th>
-              <th class="tui-editor-cell-selected"><p>baz</p></th>
+              <th class="toastui-editor-cell-selected"><p>foo</p></th>
+              <th class="toastui-editor-cell-selected"><p>bar</p></th>
+              <th class="toastui-editor-cell-selected"><p>baz</p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="tui-editor-cell-selected"><p>qux</p></td>
-              <td class="tui-editor-cell-selected"><p>quux</p></td>
-              <td class="tui-editor-cell-selected"><p>quuz</p></td>
+              <td class="toastui-editor-cell-selected"><p>qux</p></td>
+              <td class="toastui-editor-cell-selected"><p>quux</p></td>
+              <td class="toastui-editor-cell-selected"><p>quuz</p></td>
             </tr>
             <tr>
               <td><p>corge</p></td>
@@ -912,8 +912,8 @@ describe('wysiwyg table commands', () => {
           </thead>
           <tbody>
             <tr>
-              <td align="left" class="tui-editor-cell-selected"><p>baz</p></td>
-              <td align="left" class="tui-editor-cell-selected"><p>qux</p></td>
+              <td align="left" class="toastui-editor-cell-selected"><p>baz</p></td>
+              <td align="left" class="toastui-editor-cell-selected"><p>qux</p></td>
             </tr>
             <tr>
               <td align="left"><p>quux</p></td>
@@ -933,8 +933,8 @@ describe('wysiwyg table commands', () => {
         <table>
           <thead>
             <tr>
-              <th align="right" class="tui-editor-cell-selected"><p>foo</p></th>
-              <th align="right" class="tui-editor-cell-selected"><p>bar</p></th>
+              <th align="right" class="toastui-editor-cell-selected"><p>foo</p></th>
+              <th align="right" class="toastui-editor-cell-selected"><p>bar</p></th>
             </tr>
           </thead>
           <tbody>

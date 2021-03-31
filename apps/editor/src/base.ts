@@ -46,7 +46,7 @@ export default abstract class EditorBase implements Base {
 
   constructor(eventEmitter: Emitter) {
     this.el = document.createElement('div');
-    this.el.className = 'tui-editor';
+    this.el.className = 'toastui-editor';
 
     this.eventEmitter = eventEmitter;
     this.placeholder = { text: '' };
