@@ -59,13 +59,13 @@ interface ExtendList {
   ordered: ExtendListFn;
 }
 
-export const reList = /([-*+] |[\d]+\. )/;
-export const reOrderedList = /([\d])+\.( \[[ xX]])? /;
+export const reList = /(^\s*)([-*+] |[\d]+\. )/;
+export const reOrderedList = /(^\s*)([\d])+\.( \[[ xX]])? /;
 export const reOrderedListGroup = /^(\s*)((\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(.*)/;
-export const reCanBeTaskList = /([-*+]|[\d]+\.)( \[[ xX]])? /;
+export const reCanBeTaskList = /(^\s*)([-*+]|[\d]+\.)( \[[ xX]])? /;
 const reBulletListGroup = /^(\s*)([-*+]+(\s(?:\[(?:x|\s)\]\s)?))(.*)/;
-const reTaskList = /([-*+] |[\d]+\. )(\[[ xX]] )/;
-const reBulletTaskList = /([-*+])( \[[ xX]]) /;
+const reTaskList = /(^\s*)([-*+] |[\d]+\. )(\[[ xX]] )/;
+const reBulletTaskList = /(^\s*)([-*+])( \[[ xX]]) /;
 
 export function getListType(text: string): ListType {
   return reOrderedList.test(text) ? 'ordered' : 'bullet';
@@ -124,9 +124,9 @@ function textToBullet(text: string) {
   const type = getListType(text);
 
   if (type === 'bullet' && reCanBeTaskList.test(text)) {
-    text = text.replace(reBulletTaskList, '$1 ');
+    text = text.replace(reBulletTaskList, '$1$2 ');
   } else if (type === 'ordered') {
-    text = text.replace(reOrderedList, '* ');
+    text = text.replace(reOrderedList, '$1* ');
   }
 
   return text;
@@ -139,13 +139,13 @@ function textToOrdered(text: string, ordinalNum: number) {
   const type = getListType(text);
 
   if (type === 'bullet' || (type === 'ordered' && reCanBeTaskList.test(text))) {
-    text = text.replace(reCanBeTaskList, `${ordinalNum}. `);
+    text = text.replace(reCanBeTaskList, `$1${ordinalNum}. `);
   } else if (type === 'ordered') {
     // eslint-disable-next-line prefer-destructuring
     const start = reOrderedListGroup.exec(text)![3];
 
     if (Number(start) !== ordinalNum) {
-      text = text.replace(reOrderedList, `${ordinalNum}. `);
+      text = text.replace(reOrderedList, `$1${ordinalNum}. `);
     }
   }
 
@@ -192,9 +192,9 @@ export const otherListToList: ListToList = {
     let text = getTextByMdLine(doc, line);
 
     if (mdNode.listData.task) {
-      text = text.replace(reTaskList, '$1');
+      text = text.replace(reTaskList, '$1$2');
     } else if (isListNode(mdNode)) {
-      text = text.replace(reList, '$1[ ] ');
+      text = text.replace(reList, '$1$2[ ] ');
     }
 
     return { changedResults: [{ text, line }] };

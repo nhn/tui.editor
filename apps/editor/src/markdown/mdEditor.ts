@@ -198,8 +198,12 @@ export default class MdEditor extends EditorBase {
         if (step.slice && !(step instanceof ReplaceAroundStep)) {
           const doc = tr.docs[index];
           const [from, to] = this.getResolvedRange(tr, step);
-          const changed = this.getChanged(step.slice);
           const [startPos, endPos] = getEditorToMdPos(doc, from, to);
+          let changed = this.getChanged(step.slice);
+
+          if (startPos[0] === endPos[0] && startPos[1] === endPos[1] && changed === '') {
+            changed = '\n';
+          }
           const editResult = this.toastMark.editMarkdown(startPos, endPos, changed);
 
           this.eventEmitter.emit('updatePreview', editResult);
@@ -234,7 +238,7 @@ export default class MdEditor extends EditorBase {
 
   setSelection(start: MdPos, end: MdPos) {
     const { tr } = this.view.state;
-    const [from, to] = getMdToEditorPos(tr.doc, this.toastMark, start, end);
+    const [from, to] = getMdToEditorPos(tr.doc, start, end);
 
     this.view.dispatch(tr.setSelection(createTextSelection(tr, from, to)));
   }
@@ -251,7 +255,7 @@ export default class MdEditor extends EditorBase {
     this.focus();
 
     if (start && end) {
-      const [from, to] = getMdToEditorPos(doc, this.toastMark, start, end);
+      const [from, to] = getMdToEditorPos(doc, start, end);
 
       newTr = tr.replaceRange(from, to, slice);
     } else {
@@ -265,7 +269,7 @@ export default class MdEditor extends EditorBase {
     const { tr, doc } = this.view.state;
 
     if (start && end) {
-      const [from, to] = getMdToEditorPos(doc, this.toastMark, start, end);
+      const [from, to] = getMdToEditorPos(doc, start, end);
 
       newTr = tr.deleteRange(from, to);
     } else {
@@ -279,7 +283,7 @@ export default class MdEditor extends EditorBase {
     let { from, to } = selection;
 
     if (start && end) {
-      const pos = getMdToEditorPos(doc, this.toastMark, start, end);
+      const pos = getMdToEditorPos(doc, start, end);
 
       from = pos[0];
       to = pos[1];
@@ -310,14 +314,14 @@ export default class MdEditor extends EditorBase {
 
   addWidget(node: Node, style: WidgetStyle, mdPos?: MdPos) {
     const { tr, doc, selection } = this.view.state;
-    const pos = mdPos ? getMdToEditorPos(doc, this.toastMark, mdPos, mdPos)[0] : selection.to;
+    const pos = mdPos ? getMdToEditorPos(doc, mdPos, mdPos)[0] : selection.to;
 
     this.view.dispatch(tr.setMeta('widget', { pos, node, style }));
   }
 
   replaceWithWidget(start: MdPos, end: MdPos, text: string) {
     const { tr, schema, doc } = this.view.state;
-    const pos = getMdToEditorPos(doc, this.toastMark, start, end);
+    const pos = getMdToEditorPos(doc, start, end);
     const nodes = createNodesWithWidget(text, schema);
 
     this.view.dispatch(tr.replaceWith(pos[0], pos[1], nodes));

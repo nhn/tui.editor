@@ -298,6 +298,19 @@ describe('extend list keymap', () => {
 
       expect(getTextContent(mde)).toBe(result);
     });
+
+    it('should not extend list when paragraph includes `* `', () => {
+      const input = source`
+        just paragraph* bullet
+      `;
+
+      mde.setMarkdown(input);
+      mde.setSelection([1, 9], [1, 9]);
+
+      forceKeymapFn('listItem', 'extendList');
+
+      expect(getTextContent(mde)).toBe(input);
+    });
   });
 
   describe('ordered list', () => {

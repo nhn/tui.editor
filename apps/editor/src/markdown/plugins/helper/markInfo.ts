@@ -50,10 +50,11 @@ type MarkType =
   | typeof HTML
   | typeof META;
 
-interface MarkInfo {
+export interface MarkInfo {
   start: MdPos;
   end: MdPos;
-  spec: { type?: MarkType; attrs?: Record<string, any> };
+  spec?: { type?: MarkType; attrs?: Record<string, any> };
+  lineBackground?: boolean;
 }
 
 function markInfo(start: MdPos, end: MdPos, type: MarkType, attrs?: Record<string, any>): MarkInfo {
@@ -69,7 +70,7 @@ function heading({ level, headingType }: HeadingMdNode, start: MdPos, end: MdPos
     marks.push(markInfo(setOffsetPos(end, 0), end, HEADING, { seText: true }));
   }
 
-  return { marks };
+  return marks;
 }
 
 function emphasisAndStrikethrough(
@@ -80,13 +81,11 @@ function emphasisAndStrikethrough(
   const startDelimPos = addOffsetPos(start, delimSize[type]);
   const endDelimPos = addOffsetPos(end, -delimSize[type]);
 
-  return {
-    marks: [
-      markInfo(startDelimPos, endDelimPos, type),
-      markInfo(start, startDelimPos, DELIM),
-      markInfo(endDelimPos, end, DELIM),
-    ],
-  };
+  return [
+    markInfo(startDelimPos, endDelimPos, type),
+    markInfo(start, startDelimPos, DELIM),
+    markInfo(endDelimPos, end, DELIM),
+  ];
 }
 
 function markLink(start: MdPos, end: MdPos, linkTextStart: MdPos, lastChildCh: number) {
@@ -103,32 +102,27 @@ function image({ lastChild }: LinkMdNode, start: MdPos, end: MdPos) {
   const lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 3; // 3: length of '![]'
   const linkTextEnd = addOffsetPos(start, 1);
 
-  return {
-    marks: [markInfo(start, linkTextEnd, META), ...markLink(start, end, linkTextEnd, lastChildCh)],
-  };
+  return [markInfo(start, linkTextEnd, META), ...markLink(start, end, linkTextEnd, lastChildCh)];
 }
 
 function link({ lastChild, extendedAutolink }: LinkMdNode, start: MdPos, end: MdPos) {
   const lastChildCh = lastChild ? getMdEndCh(lastChild) + 1 : 2; // 2: length of '[]'
-  const marks = extendedAutolink
+
+  return extendedAutolink
     ? [markInfo(start, end, LINK, { desc: true })]
     : markLink(start, end, start, lastChildCh);
-
-  return { marks };
 }
 
 function code({ tickCount }: CodeMdNode, start: MdPos, end: MdPos) {
   const openDelimEnd = addOffsetPos(start, tickCount);
   const closeDelimStart = addOffsetPos(end, -tickCount);
 
-  return {
-    marks: [
-      markInfo(start, end, CODE),
-      markInfo(start, openDelimEnd, CODE, { start: true }),
-      markInfo(openDelimEnd, closeDelimStart, CODE, { marked: true }),
-      markInfo(closeDelimStart, end, CODE, { end: true }),
-    ],
-  };
+  return [
+    markInfo(start, end, CODE),
+    markInfo(start, openDelimEnd, CODE, { start: true }),
+    markInfo(openDelimEnd, closeDelimStart, CODE, { marked: true }),
+    markInfo(closeDelimStart, end, CODE, { end: true }),
+  ];
 }
 
 function lineBackground(parent: MdNode, start: MdPos, end: MdPos, prefix: string) {
@@ -136,7 +130,8 @@ function lineBackground(parent: MdNode, start: MdPos, end: MdPos, prefix: string
     ? {
         start,
         end,
-        spec: { attrs: { className: `${prefix}-line-background` } },
+        spec: { attrs: { className: `${prefix}-line-background`, codeStart: start, codeEnd: end } },
+        lineBackground: true,
       }
     : null;
 }
@@ -167,10 +162,9 @@ function codeBlock(node: CodeBlockMdNode, start: MdPos, end: MdPos, endLine: str
     marks.push(markInfo(setOffsetPos(end, 1), end, DELIM));
   }
 
-  return {
-    marks,
-    lineBackground: lineBackground(parent!, start, end, 'code-block'),
-  };
+  const lineBackgroundMarkInfo = lineBackground(parent!, start, end, 'code-block');
+
+  return lineBackgroundMarkInfo ? marks.concat(lineBackgroundMarkInfo) : marks;
 }
 
 function customBlock(node: MdNode, start: MdPos, end: MdPos) {
@@ -188,10 +182,9 @@ function customBlock(node: MdNode, start: MdPos, end: MdPos) {
 
   marks.push(markInfo(setOffsetPos(end, 1), end, DELIM));
 
-  return {
-    marks,
-    lineBackground: lineBackground(parent!, start, end, 'custom-block'),
-  };
+  const lineBackgroundMarkInfo = lineBackground(parent!, start, end, 'custom-block');
+
+  return lineBackgroundMarkInfo ? marks.concat(lineBackgroundMarkInfo) : marks;
 }
 
 function markListItemChildren(node: MdNode, markType: MarkType) {
@@ -248,7 +241,7 @@ function blockQuote(node: MdNode, start: MdPos, end: MdPos) {
     marks = [...marks, ...childMarks];
   }
 
-  return { marks };
+  return marks;
 }
 
 function getSpecOfListItemStyle(node: MdNode): [MarkType, Record<string, any>] {
@@ -276,7 +269,7 @@ function item(node: ListItemMdNode, start: MdPos) {
     marks.push(markInfo(addOffsetPos(start, padding + 1), addOffsetPos(start, padding + 2), META));
   }
 
-  return { marks: marks.concat(markListItemChildren(node.firstChild!, TEXT)) };
+  return marks.concat(markListItemChildren(node.firstChild!, TEXT));
 }
 
 const markNodeFuncMap = {
@@ -302,37 +295,17 @@ const simpleMarkClassNameMap = {
 
 type MarkNodeFuncMapKey = keyof typeof markNodeFuncMap;
 type SimpleNodeFuncMapKey = keyof typeof simpleMarkClassNameMap;
-interface MarkNodeFuncMapResult {
-  marks: MarkInfo[];
-  lineBackground?: MarkInfo | null;
-}
 
-/**
- * Gets mark information to the markdown node.
- * @param {Object} node - node returned from ToastMark
- * @param {Array} start - start position
- * @param {Array} end - end position
- * @param {string} endLine - end line's data
- * @returns {?Object} mark information
- * @ignore
- */
 export function getMarkInfo(node: MdNode, start: MdPos, end: MdPos, endLine: string) {
   const { type } = node;
 
   if (isFunction(markNodeFuncMap[type as MarkNodeFuncMapKey])) {
-    return markNodeFuncMap[type as MarkNodeFuncMapKey](
-      // @ts-ignore
-      node,
-      start,
-      end,
-      endLine
-    ) as MarkNodeFuncMapResult;
+    // @ts-ignore
+    return markNodeFuncMap[type as MarkNodeFuncMapKey](node, start, end, endLine);
   }
 
   if (simpleMarkClassNameMap[type as SimpleNodeFuncMapKey]) {
-    return {
-      marks: [markInfo(start, end, simpleMarkClassNameMap[type as SimpleNodeFuncMapKey])],
-    };
+    return [markInfo(start, end, simpleMarkClassNameMap[type as SimpleNodeFuncMapKey])];
   }
 
   return null;
