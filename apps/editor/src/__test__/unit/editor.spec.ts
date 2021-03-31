@@ -13,7 +13,7 @@ describe('editor', () => {
 
   function getPreviewHTML() {
     return mdPreview
-      .querySelector('.tui-editor-contents')!
+      .querySelector('.toastui-editor-contents')!
       .innerHTML.replace(/\sdata-nodeid="\d+"|\n/g, '')
       .trim();
   }
@@ -90,7 +90,7 @@ describe('editor', () => {
       editor.setMarkdown('# heading');
 
       expect(mdEditor).toContainHTML(
-        '<div><span class="tui-editor-md-heading tui-editor-md-heading1"><span class="tui-editor-md-delimiter">#</span> heading</span></div>'
+        '<div><span class="toastui-editor-md-heading toastui-editor-md-heading1"><span class="toastui-editor-md-delimiter">#</span> heading</span></div>'
       );
       expect(getPreviewHTML()).toBe('<h1>heading</h1>');
     });
@@ -99,7 +99,7 @@ describe('editor', () => {
       editor.setHTML('<h1>heading</h1>');
 
       expect(mdEditor).toContainHTML(
-        '<div><span class="tui-editor-md-heading tui-editor-md-heading1"><span class="tui-editor-md-delimiter">#</span> heading</span></div>'
+        '<div><span class="toastui-editor-md-heading toastui-editor-md-heading1"><span class="toastui-editor-md-delimiter">#</span> heading</span></div>'
       );
       expect(getPreviewHTML()).toBe('<h1>heading</h1>');
     });
@@ -109,7 +109,7 @@ describe('editor', () => {
       editor.reset();
 
       expect(mdEditor).not.toContainHTML(
-        '<div><span class="tui-editor-md-heading tui-editor-md-heading1"><span class="tui-editor-md-delimiter">#</span> heading</span></div>'
+        '<div><span class="toastui-editor-md-heading toastui-editor-md-heading1"><span class="toastui-editor-md-delimiter">#</span> heading</span></div>'
       );
       expect(getPreviewHTML()).toBe('');
     });
@@ -526,7 +526,7 @@ describe('editor', () => {
         const toolbarItem = {
           name: 'color',
           tooltip: 'Text color',
-          className: 'tui-editor-toolbar-icons color',
+          className: 'toastui-editor-toolbar-icons color',
         };
         const plugin = () => {
           return {
@@ -539,7 +539,7 @@ describe('editor', () => {
           plugins: [plugin],
         });
 
-        const toolbar = document.querySelector('.tui-editor-toolbar-icons.color');
+        const toolbar = document.querySelector('.toastui-editor-toolbar-icons.color');
 
         expect(toolbar).toBeInTheDocument();
       });

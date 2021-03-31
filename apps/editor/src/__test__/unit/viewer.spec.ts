@@ -7,7 +7,7 @@ describe('Viewer', () => {
 
   function getViewerHTML() {
     return oneLineTrim`${trailingDataAttr(
-      container.querySelector('.tui-editor-contents')!.innerHTML
+      container.querySelector('.toastui-editor-contents')!.innerHTML
     )}`;
   }
 

@@ -84,25 +84,25 @@ export class ImagePopupBody extends Component<Props, State> {
       <div>
         <${Tabs} tabs=${this.tabs} activeTab=${activeTab} onClick=${this.toggleTab} />
         <div style="display:${activeTab === 'url' ? 'block' : 'none'}">
-          <label for="tuiImageUrlInput">${i18n.get('Image URL')}</label>
+          <label for="toastuiImageUrlInput">${i18n.get('Image URL')}</label>
           <input
-            id="tuiImageUrlInput"
+            id="toastuiImageUrlInput"
             type="text"
             ref=${(el: HTMLInputElement) => (this.refs.url = el)}
           />
         </div>
         <div style="display:${activeTab === 'file' ? 'block' : 'none'}">
-          <label for="tuiImageFileInput">${i18n.get('Select image file')}</label>
+          <label for="toastuiImageFileInput">${i18n.get('Select image file')}</label>
           <input
-            id="tuiImageFileInput"
+            id="toastuiImageFileInput"
             type="file"
             accept="image/*"
             ref=${(el: HTMLInputElement) => (this.refs.file = el)}
           />
         </div>
-        <label for="tuiAltTextInput">${i18n.get('Description')}</label>
+        <label for="toastuiAltTextInput">${i18n.get('Description')}</label>
         <input
-          id="tuiAltTextInput"
+          id="toastuiAltTextInput"
           type="text"
           ref=${(el: HTMLInputElement) => (this.refs.altText = el)}
         />

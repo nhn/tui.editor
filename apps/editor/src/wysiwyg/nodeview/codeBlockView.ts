@@ -17,8 +17,8 @@ type InputPos = {
   width: number;
 };
 
-const WRAPPER_CLASS_NAME = 'tui-editor-ww-code-block';
-const CODE_BLOCK_LANG_CLASS_NAME = 'tui-editor-ww-code-block-language';
+const WRAPPER_CLASS_NAME = 'toastui-editor-ww-code-block';
+const CODE_BLOCK_LANG_CLASS_NAME = 'toastui-editor-ww-code-block-language';
 
 export class CodeBlockView implements NodeView {
   dom: HTMLElement | null = null;

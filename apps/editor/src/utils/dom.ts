@@ -18,7 +18,7 @@ export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, off
   return offsetX >= left && offsetX <= left + width && offsetY >= top && offsetY <= top + height;
 }
 
-const CLS_PREFIX = 'tui-editor-';
+const CLS_PREFIX = 'toastui-editor-';
 
 export function cls(...names: string[]) {
   return names.map((className) => `${CLS_PREFIX}${className}`).join(' ');

@@ -1,37 +1,37 @@
 @charset "utf-8";
 /* height */
 .auto-height,
-.auto-height .tui-editor-defaultUI {
+.auto-height .toastui-editor-defaultUI {
   height: auto;
 }
 
-.auto-height .tui-editor-md-container {
+.auto-height .toastui-editor-md-container {
   position: relative;
 }
 
-:not(.auto-height) > .tui-editor-defaultUI,
-:not(.auto-height) > .tui-editor-defaultUI > .tui-editor-main {
+:not(.auto-height) > .toastui-editor-defaultUI,
+:not(.auto-height) > .toastui-editor-defaultUI > .toastui-editor-main {
   display: -ms-flexbox;
   display: flex;
   -ms-flex-direction: column;
   flex-direction: column;
 }
 
-:not(.auto-height) > .tui-editor-defaultUI > .tui-editor-main {
+:not(.auto-height) > .toastui-editor-defaultUI > .toastui-editor-main {
   -ms-flex: 1;
   flex: 1;
 }
 
-/* tui editor */
-.tui-editor-md-container::after,
-.tui-editor-defaultUI-toolbar::after {
+/* toastui editor */
+.toastui-editor-md-container::after,
+.toastui-editor-defaultUI-toolbar::after {
   content: '';
   display: block;
   height: 0;
   clear: both;
 }
 
-.tui-editor-md-container {
+.toastui-editor-md-container {
   position: absolute;
   line-height: 1;
   color: #222;
@@ -39,32 +39,32 @@
   height: inherit;
 }
 
-.tui-editor-main {
+.toastui-editor-main {
   min-height: 0px;
   position: relative;
   height: inherit;
   box-sizing: border-box;
 }
 
-.tui-editor-md-container {
+.toastui-editor-md-container {
   display: none;
   overflow: hidden;
   height: 100%;
 }
 
-.tui-editor-md-container .tui-editor {
+.toastui-editor-md-container .toastui-editor {
   line-height: 1.5;
   position: relative;
 }
 
-.tui-editor-md-container .tui-editor,
-.tui-editor-md-container .tui-editor-md-preview {
+.toastui-editor-md-container .toastui-editor,
+.toastui-editor-md-container .toastui-editor-md-preview {
   box-sizing: border-box;
   padding: 0;
   height: inherit;
 }
 
-.tui-editor-md-container .ProseMirror {
+.toastui-editor-md-container .ProseMirror {
   font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
     'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
   color: #222;
@@ -73,50 +73,50 @@
   height: calc(100% - 36px);
 }
 
-.tui-editor-md-container .tui-editor-md-preview {
+.toastui-editor-md-container .toastui-editor-md-preview {
   overflow: auto;
   padding: 0 25px;
   height: 100%;
 }
 
-.tui-editor-md-container .tui-editor-md-preview > p:first-child {
+.toastui-editor-md-container .toastui-editor-md-preview > p:first-child {
   margin-top: 0 !important;
 }
 
-.tui-editor-md-container .tui-editor-md-preview .tui-editor-contents {
+.toastui-editor-md-container .toastui-editor-md-preview .toastui-editor-contents {
   padding-top: 8px;
 }
 
-.tui-editor-main .tui-editor-md-tab-style > .tui-editor,
-.tui-editor-main .tui-editor-md-tab-style > .tui-editor-md-preview {
+.toastui-editor-main .toastui-editor-md-tab-style > .toastui-editor,
+.toastui-editor-main .toastui-editor-md-tab-style > .toastui-editor-md-preview {
   float: left;
   width: 100%;
   display: none;
 }
 
-.tui-editor-main .tui-editor-md-tab-style > .active {
+.toastui-editor-main .toastui-editor-md-tab-style > .active {
   display: block;
 }
 
-.tui-editor-main .tui-editor-md-vertical-style > .tui-editor-tab {
+.toastui-editor-main .toastui-editor-md-vertical-style > .toastui-editor-tab {
   display: none;
 }
 
-.tui-editor-main .tui-editor-md-tab-style > .tui-editor-tab {
+.toastui-editor-main .toastui-editor-md-tab-style > .toastui-editor-tab {
   display: block;
 }
 
-.tui-editor-main .tui-editor-md-vertical-style .tui-editor {
+.toastui-editor-main .toastui-editor-md-vertical-style .toastui-editor {
   float: left;
   width: 50%;
 }
 
-.tui-editor-main .tui-editor-md-vertical-style .tui-editor-md-preview {
+.toastui-editor-main .toastui-editor-md-vertical-style .toastui-editor-md-preview {
   float: left;
   width: 50%;
 }
 
-.tui-editor-main .tui-editor-md-splitter {
+.toastui-editor-main .toastui-editor-md-splitter {
   display: none;
   position: absolute;
   left: 50%;
@@ -126,11 +126,11 @@
   border-left: 1px solid #e5e5e5;
 }
 
-.tui-editor-main .tui-editor-md-vertical-style .tui-editor-md-splitter {
+.toastui-editor-main .toastui-editor-md-vertical-style .toastui-editor-md-splitter {
   display: block;
 }
 
-.tui-editor-ww-container {
+.toastui-editor-ww-container {
   display: none;
   overflow: hidden;
   z-index: 10;
@@ -138,11 +138,11 @@
   background-color: #fff;
 }
 
-.tui-editor-ww-container > .tui-editor {
+.toastui-editor-ww-container > .toastui-editor {
   height: inherit;
 }
 
-.tui-editor-ww-container .tui-editor-contents {
+.toastui-editor-ww-container .toastui-editor-contents {
   overflow: auto;
   box-sizing: border-box;
   margin: 0px;
@@ -150,31 +150,31 @@
   height: inherit;
 }
 
-.tui-editor-ww-container .tui-editor-contents p {
+.toastui-editor-ww-container .toastui-editor-contents p {
   margin: 0;
 }
 
-.tui-editor-md-mode .tui-editor-md-container {
+.toastui-editor-md-mode .toastui-editor-md-container {
   display: block;
   z-index: 100;
 }
 
-.tui-editor-ww-mode .tui-editor-ww-container {
+.toastui-editor-ww-mode .toastui-editor-ww-container {
   display: block;
   z-index: 100;
 }
 
-.tui-editor-main.hidden,
-.tui-editor-defaultUI.hidden {
+.toastui-editor-main.hidden,
+.toastui-editor-defaultUI.hidden {
   display: none;
 }
 
 /* default UI Styles */
-.tui-editor-defaultUI .ProseMirror {
+.toastui-editor-defaultUI .ProseMirror {
   padding: 18px 25px;
 }
 
-.tui-editor-defaultUI {
+.toastui-editor-defaultUI {
   position: relative;
   border: 1px solid #e5e5e5;
   height: 100%;
@@ -182,7 +182,7 @@
     'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
 }
 
-.tui-editor-defaultUI button {
+.toastui-editor-defaultUI button {
   color: #fff;
   padding: 0px 14px 0px 15px;
   height: 28px;
@@ -191,14 +191,14 @@
   cursor: pointer;
   outline: none;
 }
-.tui-editor-defaultUI .tui-editor-ok-button {
+.toastui-editor-defaultUI .toastui-editor-ok-button {
   background-color: #4b96e6;
 }
-.tui-editor-defaultUI .tui-editor-close-button {
+.toastui-editor-defaultUI .toastui-editor-close-button {
   background-color: #777;
 }
 
-.tui-editor-defaultUI-toolbar {
+.toastui-editor-defaultUI-toolbar {
   padding: 0 25px;
   height: 31px;
   background-color: #fff;
@@ -206,14 +206,14 @@
   overflow: hidden;
 }
 
-.tui-editor-toolbar {
+.toastui-editor-toolbar {
   height: 32px;
   box-sizing: border-box;
   border-bottom: 1px solid #e5e5e5;
   position: relative;
 }
 
-.tui-editor-toolbar-divider {
+.toastui-editor-toolbar-divider {
   float: left;
   display: inline-block;
   width: 1px;
@@ -222,7 +222,7 @@
   margin: 9px 6px;
 }
 
-.tui-editor-defaultUI-toolbar button {
+.toastui-editor-defaultUI-toolbar button {
   float: left;
   box-sizing: border-box;
   outline: none;
@@ -236,20 +236,20 @@
   border: 1px solid #fff;
 }
 
-.tui-editor-defaultUI-toolbar button:hover,
-.tui-editor-defaultUI-toolbar button:active,
-.tui-editor-defaultUI-toolbar button.active {
+.toastui-editor-defaultUI-toolbar button:hover,
+.toastui-editor-defaultUI-toolbar button:active,
+.toastui-editor-defaultUI-toolbar button.active {
   border: 1px solid #aaa;
   background-color: #fff;
 }
 
-.tui-editor-defaultUI-toolbar button.scroll-sync {
+.toastui-editor-defaultUI-toolbar button.scroll-sync {
   width: auto;
   color: #777777;
   border: 0;
 }
 
-.tui-editor-dropdown-toolbar {
+.toastui-editor-dropdown-toolbar {
   position: absolute;
   width: auto;
   height: 31px;
@@ -265,20 +265,20 @@
   height: 22px;
 }
 
-.tui-editor-defaultUI button.scroll-sync:after {
+.toastui-editor-defaultUI button.scroll-sync:after {
   content: 'Scroll off';
 }
 
-.tui-editor-defaultUI button.scroll-sync.active {
+.toastui-editor-defaultUI button.scroll-sync.active {
   color: #4b96e6;
   font-weight: bold;
 }
 
-.tui-editor-defaultUI button.scroll-sync.active:after {
+.toastui-editor-defaultUI button.scroll-sync.active:after {
   content: 'Scroll on';
 }
 
-.tui-editor-mode-switch {
+.toastui-editor-mode-switch {
   background-color: #f9f9f9;
   border-top: 1px solid #e5e5e5;
   font-size: 12px;
@@ -286,7 +286,7 @@
   height: 20px;
 }
 
-.tui-editor-mode-switch button {
+.toastui-editor-mode-switch button {
   width: 92px;
   height: inherit;
   background: #e5e5e5;
@@ -298,23 +298,23 @@
   border-right: 1px solid #ddd;
 }
 
-.tui-editor-mode-switch button.active {
+.toastui-editor-mode-switch button.active {
   background-color: #fff;
   color: #000;
 }
 
-.tui-editor-defaultUI .tui-editor-md-tab-container {
+.toastui-editor-defaultUI .toastui-editor-md-tab-container {
   float: left;
   height: 31px;
   background: #fff;
 }
 
-.tui-editor-md-tab-container .tui-editor-tab {
+.toastui-editor-md-tab-container .toastui-editor-tab {
   margin: 0 -7px 0 24px;
   background: #fff;
 }
 
-.tui-editor-defaultUI .tui-editor-tab button {
+.toastui-editor-defaultUI .toastui-editor-tab button {
   box-sizing: border-box;
   line-height: 100%;
   position: relative;
@@ -330,24 +330,24 @@
   outline: 0;
 }
 
-.tui-editor-md-tab-container .tui-editor-tab button:last-child {
+.toastui-editor-md-tab-container .toastui-editor-tab button:last-child {
   margin-left: -1px;
 }
 
-.tui-editor-md-tab-container .tui-editor-tab button.active,
-.tui-editor-md-tab-container .tui-editor-tab button:hover.active {
+.toastui-editor-md-tab-container .toastui-editor-tab button.active,
+.toastui-editor-md-tab-container .toastui-editor-tab button:hover.active {
   background-color: #fff;
   color: #333;
   border-bottom: 1px solid #fff;
   z-index: 2;
 }
 
-.tui-editor-md-tab-container .tui-editor-tab button:hover {
+.toastui-editor-md-tab-container .toastui-editor-tab button:hover {
   background-color: #fff;
   color: #333;
 }
 
-.tui-editor-popup {
+.toastui-editor-popup {
   width: 500px;
   margin-right: auto;
   border: 1px solid #cacaca;
@@ -356,7 +356,7 @@
   position: absolute;
 }
 
-.tui-editor-popup-header {
+.toastui-editor-popup-header {
   padding: 10px;
   height: auto;
   line-height: normal;
@@ -364,72 +364,72 @@
   border-bottom: 1px solid #cacaca;
 }
 
-.tui-editor-popup-header .tui-editor-button-container {
+.toastui-editor-popup-header .toastui-editor-button-container {
   float: right;
 }
 
-.tui-editor-popup-header button {
+.toastui-editor-popup-header button {
   padding: 0px;
   background-color: transparent;
   background-size: cover;
 }
 
-.tui-editor-popup-header .tui-editor-popup-close-button {
+.toastui-editor-popup-header .toastui-editor-popup-close-button {
   margin: 3px;
   width: 13px;
   height: 13px;
   background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSIxMHB4IiBoZWlnaHQ9IjEwcHgiIHZpZXdCb3g9IjAgMCAxMCAxMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4gICAgICAgIDx0aXRsZT5GMjc2Qzc4MC0zM0JBLTQ3MTItQTM3OC04RkQwQUNDOTFDRTk8L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggc2tldGNodG9vbC48L2Rlc2M+ICAgIDxkZWZzPjwvZGVmcz4gICAgPGcgaWQ9IlN5bWJvbHMiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPiAgICAgICAgPGcgaWQ9ImxuYi1mb2xkZXItZGVsIiBmaWxsLXJ1bGU9Im5vbnplcm8iIGZpbGw9IiM3Nzc3NzciPiAgICAgICAgICAgIDxwYXRoIGQ9Ik01LDMuNTg1Nzg2NDQgTDEuNzA3MTA2NzgsMC4yOTI4OTMyMTkgTDAuMjkyODkzMjE5LDEuNzA3MTA2NzggTDMuNTg1Nzg2NDQsNSBMMC4yOTI4OTMyMTksOC4yOTI4OTMyMiBMMS43MDcxMDY3OCw5LjcwNzEwNjc4IEw1LDYuNDE0MjEzNTYgTDguMjkyODkzMjIsOS43MDcxMDY3OCBMOS43MDcxMDY3OCw4LjI5Mjg5MzIyIEw2LjQxNDIxMzU2LDUgTDkuNzA3MTA2NzgsMS43MDcxMDY3OCBMOC4yOTI4OTMyMiwwLjI5Mjg5MzIxOSBMNSwzLjU4NTc4NjQ0IFoiIGlkPSJDb21iaW5lZC1TaGFwZSI+PC9wYXRoPiAgICAgICAgPC9nPiAgICA8L2c+PC9zdmc+);
 }
 
-.tui-editor-popup-header .tui-editor-popup-title {
+.toastui-editor-popup-header .toastui-editor-popup-title {
   font-size: 13px;
   font-weight: bold;
   color: #333;
   vertical-align: bottom;
 }
 
-.tui-editor-popup-body {
+.toastui-editor-popup-body {
   padding: 15px;
   font-size: 12px;
 }
 
-.tui-editor-popup-body label {
+.toastui-editor-popup-body label {
   font-weight: bold;
   color: #666;
   display: block;
   margin: 10px 0 5px;
 }
 
-.tui-editor-popup-body .tui-editor-button-container {
+.toastui-editor-popup-body .toastui-editor-button-container {
   margin-top: 15px;
 }
 
-.tui-editor-popup-body input[type='text'],
-.tui-editor-popup-body input[type='file'] {
+.toastui-editor-popup-body input[type='text'],
+.toastui-editor-popup-body input[type='file'] {
   padding: 4px 10px;
   border: 1px solid #bfbfbf;
   box-sizing: border-box;
   width: 100%;
 }
 
-.tui-editor-popup-body input[type='text'].disabled {
+.toastui-editor-popup-body input[type='text'].disabled {
   border-color: #e5e5e5;
   background-color: #eee;
   color: #e5e5e5;
 }
 
-.tui-editor-popup-body input.wrong {
+.toastui-editor-popup-body input.wrong {
   border-color: #ff0000;
 }
 
-.tui-editor-popup-add-image .tui-editor-tab {
+.toastui-editor-popup-add-image .toastui-editor-tab {
   display: block;
   background: none;
   border-bottom: 1px solid #ebebeb;
   margin-bottom: 8px;
 }
 
-.tui-editor-popup-add-image .tui-editor-tab button {
+.toastui-editor-popup-add-image .toastui-editor-tab button {
   border: 1px solid #ccc;
   background: #eee;
   min-width: 100px;
@@ -438,27 +438,27 @@
   border-radius: 3px 3px 0px 0px;
 }
 
-.tui-editor-popup-add-image .tui-editor-tab button.active {
+.toastui-editor-popup-add-image .toastui-editor-tab button.active {
   background: #fff;
 }
 
-.tui-editor-popup-add-table {
+.toastui-editor-popup-add-table {
   width: auto;
 }
 
-.tui-editor-popup-add-table .tui-editor-table-selection {
+.toastui-editor-popup-add-table .toastui-editor-table-selection {
   position: relative;
 }
 
-.tui-editor-popup-add-table .tui-editor-table-body {
+.toastui-editor-popup-add-table .toastui-editor-table-body {
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAARCAYAAAAougcOAAAC7mlDQ1BJQ0MgUHJvZmlsZQAAeAGFVM9rE0EU/jZuqdAiCFprDrJ4kCJJWatoRdQ2/RFiawzbH7ZFkGQzSdZuNuvuJrWliOTi0SreRe2hB/+AHnrwZC9KhVpFKN6rKGKhFy3xzW5MtqXqwM5+8943731vdt8ADXLSNPWABOQNx1KiEWlsfEJq/IgAjqIJQTQlVdvsTiQGQYNz+Xvn2HoPgVtWw3v7d7J3rZrStpoHhP1A4Eea2Sqw7xdxClkSAog836Epx3QI3+PY8uyPOU55eMG1Dys9xFkifEA1Lc5/TbhTzSXTQINIOJT1cVI+nNeLlNcdB2luZsbIEL1PkKa7zO6rYqGcTvYOkL2d9H5Os94+wiHCCxmtP0a4jZ71jNU/4mHhpObEhj0cGDX0+GAVtxqp+DXCFF8QTSeiVHHZLg3xmK79VvJKgnCQOMpkYYBzWkhP10xu+LqHBX0m1xOv4ndWUeF5jxNn3tTd70XaAq8wDh0MGgyaDUhQEEUEYZiwUECGPBoxNLJyPyOrBhuTezJ1JGq7dGJEsUF7Ntw9t1Gk3Tz+KCJxlEO1CJL8Qf4qr8lP5Xn5y1yw2Fb3lK2bmrry4DvF5Zm5Gh7X08jjc01efJXUdpNXR5aseXq8muwaP+xXlzHmgjWPxHOw+/EtX5XMlymMFMXjVfPqS4R1WjE3359sfzs94i7PLrXWc62JizdWm5dn/WpI++6qvJPmVflPXvXx/GfNxGPiKTEmdornIYmXxS7xkthLqwviYG3HCJ2VhinSbZH6JNVgYJq89S9dP1t4vUZ/DPVRlBnM0lSJ93/CKmQ0nbkOb/qP28f8F+T3iuefKAIvbODImbptU3HvEKFlpW5zrgIXv9F98LZua6N+OPwEWDyrFq1SNZ8gvAEcdod6HugpmNOWls05Uocsn5O66cpiUsxQ20NSUtcl12VLFrOZVWLpdtiZ0x1uHKE5QvfEp0plk/qv8RGw/bBS+fmsUtl+ThrWgZf6b8C8/UXAeIuJAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAOklEQVQ4EWO8e/fuPwYGBkYgphlgAZmspKREMwtABjPR1HSo4aOWkBTKo8E1GlwkhQBJikdT1wgNLgAMSwQgckFvTgAAAABJRU5ErkJggg==');
 }
 
-.tui-editor-popup-add-table .tui-editor-table-header {
+.toastui-editor-popup-add-table .toastui-editor-table-header {
   background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAARCAYAAAAougcOAAAC7mlDQ1BJQ0MgUHJvZmlsZQAAeAGFVM9rE0EU/jZuqdAiCFprDrJ4kCJJWatoRdQ2/RFiawzbH7ZFkGQzSdZuNuvuJrWliOTi0SreRe2hB/+AHnrwZC9KhVpFKN6rKGKhFy3xzW5MtqXqwM5+8943731vdt8ADXLSNPWABOQNx1KiEWlsfEJq/IgAjqIJQTQlVdvsTiQGQYNz+Xvn2HoPgVtWw3v7d7J3rZrStpoHhP1A4Eea2Sqw7xdxClkSAog836Epx3QI3+PY8uyPOU55eMG1Dys9xFkifEA1Lc5/TbhTzSXTQINIOJT1cVI+nNeLlNcdB2luZsbIEL1PkKa7zO6rYqGcTvYOkL2d9H5Os94+wiHCCxmtP0a4jZ71jNU/4mHhpObEhj0cGDX0+GAVtxqp+DXCFF8QTSeiVHHZLg3xmK79VvJKgnCQOMpkYYBzWkhP10xu+LqHBX0m1xOv4ndWUeF5jxNn3tTd70XaAq8wDh0MGgyaDUhQEEUEYZiwUECGPBoxNLJyPyOrBhuTezJ1JGq7dGJEsUF7Ntw9t1Gk3Tz+KCJxlEO1CJL8Qf4qr8lP5Xn5y1yw2Fb3lK2bmrry4DvF5Zm5Gh7X08jjc01efJXUdpNXR5aseXq8muwaP+xXlzHmgjWPxHOw+/EtX5XMlymMFMXjVfPqS4R1WjE3359sfzs94i7PLrXWc62JizdWm5dn/WpI++6qvJPmVflPXvXx/GfNxGPiKTEmdornIYmXxS7xkthLqwviYG3HCJ2VhinSbZH6JNVgYJq89S9dP1t4vUZ/DPVRlBnM0lSJ93/CKmQ0nbkOb/qP28f8F+T3iuefKAIvbODImbptU3HvEKFlpW5zrgIXv9F98LZua6N+OPwEWDyrFq1SNZ8gvAEcdod6HugpmNOWls05Uocsn5O66cpiUsxQ20NSUtcl12VLFrOZVWLpdtiZ0x1uHKE5QvfEp0plk/qv8RGw/bBS+fmsUtl+ThrWgZf6b8C8/UXAeIuJAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAOklEQVQ4EWO8e/fuPwYGBkYgphlgAZksLCxMMwtABjPR1HSo4aOWkBTKo8E1GlwkhQBJikdT1wgNLgDxKwPzTeWPdAAAAABJRU5ErkJggg==');
 }
 
-.tui-editor-popup-add-table .tui-editor-table-selection-layer {
+.toastui-editor-popup-add-table .toastui-editor-table-selection-layer {
   position: absolute;
   top: 0;
   left: 0;
@@ -467,12 +467,12 @@
   z-index: 999;
 }
 
-.tui-editor-popup-add-table .tui-editor-table-description {
+.toastui-editor-popup-add-table .toastui-editor-table-description {
   margin: 10px 0 0 0;
   text-align: center;
 }
 
-.tui-editor-context-menu {
+.toastui-editor-context-menu {
   position: absolute;
   width: auto;
   min-width: 120px;
@@ -481,7 +481,7 @@
   z-index: 100;
 }
 
-.tui-editor-context-menu button {
+.toastui-editor-context-menu button {
   display: block;
   width: 100%;
   background-color: #fff;
@@ -494,79 +494,79 @@
   color: #777;
 }
 
-.tui-editor-context-menu button:not(:disabled):hover {
+.toastui-editor-context-menu button:not(:disabled):hover {
   background-color: #f4f4f4;
 }
 
-.tui-editor-context-menu button:disabled {
+.toastui-editor-context-menu button:disabled {
   color: #ccc;
 }
 
-.tui-editor-context-menu hr {
+.toastui-editor-context-menu hr {
   margin: 0;
   background-color: #cacaca;
   border-style: none;
   height: 1px;
 }
 
-.tui-editor-popup-add-heading {
+.toastui-editor-popup-add-heading {
   width: auto;
 }
 
-.tui-editor-popup-add-heading .tui-editor-popup-body {
+.toastui-editor-popup-add-heading .toastui-editor-popup-body {
   padding: 0;
 }
 
-.tui-editor-popup-add-heading h1,
-.tui-editor-popup-add-heading h2,
-.tui-editor-popup-add-heading h3,
-.tui-editor-popup-add-heading h4,
-.tui-editor-popup-add-heading h5,
-.tui-editor-popup-add-heading h6,
-.tui-editor-popup-add-heading ul,
-.tui-editor-popup-add-heading p {
+.toastui-editor-popup-add-heading h1,
+.toastui-editor-popup-add-heading h2,
+.toastui-editor-popup-add-heading h3,
+.toastui-editor-popup-add-heading h4,
+.toastui-editor-popup-add-heading h5,
+.toastui-editor-popup-add-heading h6,
+.toastui-editor-popup-add-heading ul,
+.toastui-editor-popup-add-heading p {
   padding: 0;
   margin: 0;
 }
 
-.tui-editor-popup-add-heading ul {
+.toastui-editor-popup-add-heading ul {
   list-style: none;
 }
 
-.tui-editor-popup-add-heading ul li {
+.toastui-editor-popup-add-heading ul li {
   padding: 2px 10px;
   cursor: pointer;
 }
 
-.tui-editor-popup-add-heading ul li:hover {
+.toastui-editor-popup-add-heading ul li:hover {
   background-color: #eee;
 }
 
-.tui-editor-popup-add-heading h1 {
+.toastui-editor-popup-add-heading h1 {
   font-size: 24px;
 }
 
-.tui-editor-popup-add-heading h2 {
+.toastui-editor-popup-add-heading h2 {
   font-size: 22px;
 }
 
-.tui-editor-popup-add-heading h3 {
+.toastui-editor-popup-add-heading h3 {
   font-size: 20px;
 }
 
-.tui-editor-popup-add-heading h4 {
+.toastui-editor-popup-add-heading h4 {
   font-size: 18px;
 }
 
-.tui-editor-popup-add-heading h5 {
+.toastui-editor-popup-add-heading h5 {
   font-size: 16px;
 }
 
-.tui-editor-popup-add-heading h6 {
+.toastui-editor-popup-add-heading h6 {
   font-size: 14px;
 }
 
-.tui-editor-tooltip {
+.toastui-editor-tooltip {
   position: absolute;
   background-color: #222;
   z-index: 999;
@@ -576,7 +576,7 @@
   font-size: 10px;
 }
 
-.tui-editor-tooltip .arrow {
+.toastui-editor-tooltip .arrow {
   content: '';
   display: inline-block;
   width: 10px;
@@ -593,7 +593,7 @@
   z-index: -1;
 }
 
-.tui-editor-toolbar-icons {
+.toastui-editor-toolbar-icons {
   background: url('../img/toastui-editor.png');
   background-size: 218px 188px;
   display: inline-block;
@@ -605,156 +605,156 @@
   only screen and (min-device-pixel-ratio: 2),
   only screen and (min-resolution: 192dpi),
   only screen and (min-resolution: 2dppx) {
-  .tui-editor-toolbar-icons {
+  .toastui-editor-toolbar-icons {
     background: url('../img/toastui-editor-2x.png');
     background-size: 218px 188px;
     display: inline-block;
   }
 }
 
-.tui-editor-toolbar-icons.heading {
+.toastui-editor-toolbar-icons.heading {
   background-position: -172px -48px;
 }
 
-.tui-editor-toolbar-icons.heading:disabled {
+.toastui-editor-toolbar-icons.heading:disabled {
   background-position: -193px -48px;
 }
 
-.tui-editor-toolbar-icons.bold {
+.toastui-editor-toolbar-icons.bold {
   background-position: -4px -4px;
 }
 
-.tui-editor-toolbar-icons.bold:disabled {
+.toastui-editor-toolbar-icons.bold:disabled {
   background-position: -25px -4px;
 }
 
-.tui-editor-toolbar-icons.italic {
+.toastui-editor-toolbar-icons.italic {
   background-position: -4px -48px;
 }
 
-.tui-editor-toolbar-icons.italic:disabled {
+.toastui-editor-toolbar-icons.italic:disabled {
   background-position: -25px -48px;
 }
 
-.tui-editor-toolbar-icons.strike {
+.toastui-editor-toolbar-icons.strike {
   background-position: -4px -26px;
 }
 
-.tui-editor-toolbar-icons.strike:disabled {
+.toastui-editor-toolbar-icons.strike:disabled {
   background-position: -25px -26px;
 }
 
-.tui-editor-toolbar-icons.hrline {
+.toastui-editor-toolbar-icons.hrline {
   background-position: -46px -92px;
 }
 
-.tui-editor-toolbar-icons.hrline:disabled {
+.toastui-editor-toolbar-icons.hrline:disabled {
   background-position: -67px -92px;
 }
 
-.tui-editor-toolbar-icons.quote {
+.toastui-editor-toolbar-icons.quote {
   background-position: -4px -114px;
 }
 
-.tui-editor-toolbar-icons.quote:disabled {
+.toastui-editor-toolbar-icons.quote:disabled {
   background-position: -25px -114px;
 }
 
-.tui-editor-toolbar-icons.bullet-list {
+.toastui-editor-toolbar-icons.bullet-list {
   background-position: -46px -4px;
 }
 
-.tui-editor-toolbar-icons.bullet-list:disabled {
+.toastui-editor-toolbar-icons.bullet-list:disabled {
   background-position: -67px -4px;
 }
 
-.tui-editor-toolbar-icons.ordered-list {
+.toastui-editor-toolbar-icons.ordered-list {
   background-position: -46px -26px;
 }
 
-.tui-editor-toolbar-icons.ordered-list:disabled {
+.toastui-editor-toolbar-icons.ordered-list:disabled {
   background-position: -67px -26px;
 }
 
-.tui-editor-toolbar-icons.task-list {
+.toastui-editor-toolbar-icons.task-list {
   background-position: -130px -48px;
 }
 
-.tui-editor-toolbar-icons.task-list:disabled {
+.toastui-editor-toolbar-icons.task-list:disabled {
   background-position: -151px -48px;
 }
 
-.tui-editor-toolbar-icons.indent {
+.toastui-editor-toolbar-icons.indent {
   background-position: -46px -48px;
 }
 
-.tui-editor-toolbar-icons.indent:disabled {
+.toastui-editor-toolbar-icons.indent:disabled {
   background-position: -67px -48px;
 }
 
-.tui-editor-toolbar-icons.outdent {
+.toastui-editor-toolbar-icons.outdent {
   background-position: -46px -70px;
 }
 
-.tui-editor-toolbar-icons.outdent:disabled {
+.toastui-editor-toolbar-icons.outdent:disabled {
   background-position: -67px -70px;
 }
 
-.tui-editor-toolbar-icons.table {
+.toastui-editor-toolbar-icons.table {
   background-position: -88px -92px;
 }
 
-.tui-editor-toolbar-icons.table:disabled {
+.toastui-editor-toolbar-icons.table:disabled {
   background-position: -109px -92px;
 }
 
-.tui-editor-toolbar-icons.image {
+.toastui-editor-toolbar-icons.image {
   background-position: -130px -4px;
 }
 
-.tui-editor-toolbar-icons.image:disabled {
+.toastui-editor-toolbar-icons.image:disabled {
   background-position: -151px -4px;
 }
 
-.tui-editor-toolbar-icons.link {
+.toastui-editor-toolbar-icons.link {
   background-position: -130px -26px;
 }
 
-.tui-editor-toolbar-icons.link:disabled {
+.toastui-editor-toolbar-icons.link:disabled {
   background-position: -151px -26px;
 }
 
-.tui-editor-toolbar-icons.code {
+.toastui-editor-toolbar-icons.code {
   background-position: -130px -92px;
 }
 
-.tui-editor-toolbar-icons.code:disabled {
+.toastui-editor-toolbar-icons.code:disabled {
   background-position: -151px -92px;
 }
 
-.tui-editor-toolbar-icons.codeblock {
+.toastui-editor-toolbar-icons.codeblock {
   background-position: -130px -70px;
 }
 
-.tui-editor-toolbar-icons.codeblock:disabled {
+.toastui-editor-toolbar-icons.codeblock:disabled {
   background-position: -151px -70px;
 }
 
-.tui-editor-toolbar-icons.more {
+.toastui-editor-toolbar-icons.more {
   background-position: -172px -92px;
 }
 
-.tui-editor-toolbar-icons.more:disabled {
+.toastui-editor-toolbar-icons.more:disabled {
   background-position: -193px -92px;
 }
 
 @media only screen and (max-width: 480px) {
-  .tui-editor-popup {
+  .toastui-editor-popup {
     max-width: 300px;
     margin-left: -150px;
   }
 
-  .tui-editor-dropdown-toolbar {
+  .toastui-editor-dropdown-toolbar {
     max-width: none;
   }
 }

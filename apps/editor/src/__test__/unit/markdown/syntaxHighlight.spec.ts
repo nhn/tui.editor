@@ -80,8 +80,8 @@ describe('markdown editor syntax highlight', () => {
   describe('table', () => {
     it('basic', () => {
       const input = source`
-          | col2 | col2 
-          | --- | --- 
+          | col2 | col2
+          | --- | ---
           | data1 | data2 |
         `;
 
@@ -94,8 +94,8 @@ describe('markdown editor syntax highlight', () => {
 
     it('with mark', () => {
       const input = source`
-          | col2 | col2 
-          | --- | --- 
+          | col2 | col2
+          | --- | ---
           | data1 | **data2** |
         `;
 
