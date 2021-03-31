@@ -59,8 +59,8 @@ interface ExtendList {
   ordered: ExtendListFn;
 }
 
-export const reList = /([-*+] |[\d]+\. )/;
-export const reOrderedList = /([\d])+\.( \[[ xX]])? /;
+export const reList = /^([-*+] |[\d]+\. )/;
+export const reOrderedList = /^([\d])+\.( \[[ xX]])? /;
 export const reOrderedListGroup = /^(\s*)((\d+)([.)]\s(?:\[(?:x|\s)\]\s)?))(.*)/;
 export const reCanBeTaskList = /([-*+]|[\d]+\.)( \[[ xX]])? /;
 const reBulletListGroup = /^(\s*)([-*+]+(\s(?:\[(?:x|\s)\]\s)?))(.*)/;
