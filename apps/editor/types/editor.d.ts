@@ -12,6 +12,7 @@ import {
   PluginCommandMap,
   PluginToolbarItem,
   CommandFn,
+  PluginInfo,
 } from './plugin';
 
 export type PreviewStyle = 'tab' | 'vertical';
@@ -95,17 +96,6 @@ export class Viewer {
   setCodeBlockLanguages(languages?: string[]): void;
 }
 
-export interface EditorPluginInfo {
-  toHTMLRenderers?: HTMLConvertorMap;
-  toMarkdownRenderers?: ToMdConvertorMap;
-  markdownPlugins?: PluginProp[];
-  wysiwygPlugins?: PluginProp[];
-  wysiwygNodeViews?: NodeViewPropMap;
-  markdownCommands?: PluginCommandMap;
-  wysiwygCommands?: PluginCommandMap;
-  toolbarItems?: PluginToolbarItem[];
-}
-
 export interface I18n {
   setCode(code?: string): void;
 
@@ -122,10 +112,7 @@ export interface PluginContext {
   pmView: { Decoration: typeof Decoration; DecorationSet: typeof DecorationSet };
 }
 
-export type PluginFn = (
-  context: PluginContext,
-  options?: Record<string, any>
-) => EditorPluginInfo | null;
+export type PluginFn = (context: PluginContext, options?: Record<string, any>) => PluginInfo | null;
 export type EditorPlugin = PluginFn | [PluginFn, Record<string, any>];
 
 export interface EditorOptions {

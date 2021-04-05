@@ -36,6 +36,7 @@ export function getPluginInfo(
       }
 
       const {
+        markdownParsers,
         toHTMLRenderers,
         toMarkdownRenderers,
         markdownPlugins,
@@ -78,6 +79,10 @@ export function getPluginInfo(
         acc.toolbarItems = acc.toolbarItems!.concat(toolbarItems);
       }
 
+      if (markdownParsers) {
+        acc.markdownParsers = { ...acc.markdownParsers, ...markdownParsers };
+      }
+
       return acc;
     },
     {
@@ -89,6 +94,7 @@ export function getPluginInfo(
       mdCommands: {},
       wwCommands: {},
       toolbarItems: [],
+      markdownParsers: {},
     }
   );
 }
