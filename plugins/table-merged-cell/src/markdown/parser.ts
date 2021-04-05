@@ -73,6 +73,8 @@ export const markdownParsers: CustomParserMap = {
       [colspan, content] = getSpanInfo(content, '@cols', '@rows');
       [rowspan, content] = getSpanInfo(content, '@rows', '@cols');
 
+      node.stringContent = content;
+
       if (prev) {
         node.startIdx = prev.endIdx + 1;
         node.endIdx = node.startIdx;
