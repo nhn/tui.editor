@@ -1,7 +1,3 @@
-/**
- * @fileoverview Test color syntax plugin
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
- */
 import Editor from '@toast-ui/editor';
 import colorPicker from 'tui-color-picker';
 import { oneLineTrim } from 'common-tags';
@@ -34,7 +30,6 @@ describe('colorSyntax', () => {
     document.body.appendChild(container);
   });
 
-  // we need to wait squire input event process
   afterEach(() => {
     editor.destroy();
     document.body.removeChild(container);
