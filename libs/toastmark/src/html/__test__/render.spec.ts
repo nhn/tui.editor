@@ -1,3 +1,4 @@
+import { source } from 'common-tags';
 import { OpenTagToken } from '@t/renderer';
 import { Parser } from '../../commonmark/blocks';
 import { Renderer } from '../renderer';
@@ -103,5 +104,31 @@ describe('convertors options', () => {
     const html = renderer.render(parser.parse('Hello World'));
 
     expect(html).toBe('<p class="my-class">Hello World</p>\n');
+  });
+});
+
+describe('gfm convertors', () => {
+  it('should apply custom renderer without changing node type to lower case', () => {
+    const spy = jest.fn();
+
+    const renderer = new Renderer({
+      gfm: true,
+      convertors: {
+        tableCell(_, { origin }) {
+          spy();
+          return origin!();
+        },
+      },
+    });
+    const input = source`
+      | a |  |  |
+      | - | - | - |
+      |  | b |  |
+      |  |  | c |
+    `;
+
+    renderer.render(parser.parse(input));
+
+    expect(spy).toHaveBeenCalled();
   });
 });
