@@ -4,7 +4,7 @@ import { Node, BlockNode, isHeading, LinkNode, createNode, text, CustomInlineNod
 import { repeat, normalizeURI, unescapeString, ESCAPABLE, ENTITY } from './common';
 import { reHtmlTag } from './rawHtml';
 import fromCodePoint from './from-code-point';
-import { decodeHTML } from 'entities/lib/decode';
+import { decodeHTML } from 'entities';
 import NodeWalker from './nodeWalker';
 import { convertExtAutoLinks } from './gfm/autoLinks';
 import { last, normalizeReference } from '../helper';
