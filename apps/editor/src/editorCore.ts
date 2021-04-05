@@ -185,6 +185,7 @@ class ToastUIEditor {
       wwNodeViews,
       mdCommands,
       wwCommands,
+      markdownParsers,
     } = this.pluginInfo;
     const rendererOptions = {
       linkAttributes,
@@ -218,6 +219,7 @@ class ToastUIEditor {
       referenceDefinition,
       disallowDeepHeading: true,
       frontMatter,
+      customParser: markdownParsers,
     });
 
     this.mdEditor = new MarkdownEditor(this.eventEmitter, {
