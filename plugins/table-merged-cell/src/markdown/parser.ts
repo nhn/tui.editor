@@ -20,9 +20,10 @@ function extendTableCellIndexWithRowspanMap(
   rowspan: number
 ) {
   const prevRow = parent.prev;
-  const columnLen = parent.parent.parent.columns.length;
 
   if (prevRow) {
+    const columnLen = parent.parent.parent.columns.length;
+
     // increment the index when prev row has the rowspan count.
     for (let i = node.startIdx; i < columnLen; i += 1) {
       const prevRowspanCount = prevRow.rowspanMap[i];
@@ -39,7 +40,9 @@ function extendTableCellIndexWithRowspanMap(
   }
 
   if (rowspan > 1) {
-    for (let i = node.startIdx; i <= node.endIdx; i += 1) {
+    const { startIdx, endIdx } = node;
+
+    for (let i = startIdx; i <= endIdx; i += 1) {
       parent.rowspanMap[i] = rowspan;
     }
   }
@@ -89,7 +92,7 @@ export const markdownParsers: CustomParserMap = {
 
       extendTableCellIndexWithRowspanMap(node, parent, rowspan);
 
-      const tablePart = parent!.parent!;
+      const tablePart = parent.parent;
 
       if (tablePart.type === 'tableBody' && node.endIdx >= tablePart.parent.columns.length) {
         node.ignored = true;
