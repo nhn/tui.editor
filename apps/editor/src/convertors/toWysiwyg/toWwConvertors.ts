@@ -224,33 +224,43 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
-  tableCell(state, node, { entering }) {
-    if (entering) {
-      const { tableHeadCell, tableBodyCell, paragraph } = state.schema.nodes;
-      const tablePart = (node as TableCellMdNode).parent!.parent!;
-      const cell = tablePart.type === 'tableHead' ? tableHeadCell : tableBodyCell;
+  // @ts-ignore
+  tableCell(state, node: TableCellMdNode, { entering }) {
+    if (!node.ignored) {
+      const hasParaNode = (childNode: MdNode | null) =>
+        childNode && (isInlineNode(childNode) || isCustomHTMLInlineNode(state, childNode));
 
-      const table = tablePart.parent as TableMdNode;
-      const columnInfo = table.columns[(node as TableCellMdNode).startIdx];
-      const attrs = columnInfo.align ? { align: columnInfo.align } : null;
+      if (entering) {
+        const { tableHeadCell, tableBodyCell, paragraph } = state.schema.nodes;
+        const tablePart = node.parent!.parent!;
+        const cell = tablePart.type === 'tableHead' ? tableHeadCell : tableBodyCell;
 
-      state.openNode(cell, attrs);
+        const table = tablePart.parent as TableMdNode;
+        const columnInfo = table.columns[node.startIdx];
+        const attrs: Record<string, string | number> = {};
 
-      if (
-        node.firstChild &&
-        (isInlineNode(node.firstChild) || isCustomHTMLInlineNode(state, node.firstChild))
-      ) {
-        state.openNode(paragraph);
-      }
-    } else {
-      if (
-        node.lastChild &&
-        (isInlineNode(node.lastChild) || isCustomHTMLInlineNode(state, node.lastChild))
-      ) {
+        if (columnInfo.align) {
+          attrs.align = columnInfo.align;
+        }
+        if (node.colspan) {
+          attrs.colspan = Number(node.colspan);
+        }
+        if (node.rowspan) {
+          attrs.rowspan = Number(node.rowspan);
+        }
+
+        state.openNode(cell, attrs);
+
+        if (hasParaNode(node.firstChild)) {
+          state.openNode(paragraph);
+        }
+      } else {
+        if (hasParaNode(node.lastChild)) {
+          state.closeNode();
+        }
+
         state.closeNode();
       }
-
-      state.closeNode();
     }
   },
 
