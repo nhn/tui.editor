@@ -1,5 +1,5 @@
 import type { CustomParserMap } from '@toast-ui/toastmark';
-import { MergedTableCell, MergedTableRow, SpanInfo, SpanType } from '@t/markdown';
+import { MergedTableRowMdNode, MergedTableCellMdNode, SpanInfo, SpanType } from '@t/markdown';
 
 function getSpanInfo(content: string, type: SpanType, oppositeType: SpanType): SpanInfo {
   const reSpan = new RegExp(`^((?:${oppositeType}=[0-9]+:)?)${type}=([0-9]+):(.*)`);
@@ -15,8 +15,8 @@ function getSpanInfo(content: string, type: SpanType, oppositeType: SpanType): S
 }
 
 function extendTableCellIndexWithRowspanMap(
-  node: MergedTableCell,
-  parent: MergedTableRow,
+  node: MergedTableCellMdNode,
+  parent: MergedTableRowMdNode,
   rowspan: number
 ) {
   const prevRow = parent.prev;
@@ -50,7 +50,7 @@ function extendTableCellIndexWithRowspanMap(
 
 export const markdownParsers: CustomParserMap = {
   // @ts-expect-error
-  tableRow(node: MergedTableRow, { entering }) {
+  tableRow(node: MergedTableRowMdNode, { entering }) {
     if (entering) {
       node.rowspanMap = {};
 
@@ -66,7 +66,7 @@ export const markdownParsers: CustomParserMap = {
     }
   },
   // @ts-expect-error
-  tableCell(node: MergedTableCell, { entering }) {
+  tableCell(node: MergedTableCellMdNode, { entering }) {
     const { parent, prev, stringContent } = node;
 
     if (entering) {
