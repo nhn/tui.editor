@@ -27,11 +27,7 @@ export class TableBody extends NodeSchema {
               return false;
             }
 
-            return {
-              rows: rows.length,
-              columns,
-              ...(rawHTML && { rawHTML }),
-            };
+            return { ...(rawHTML && { rawHTML }) };
           },
         },
       ],
