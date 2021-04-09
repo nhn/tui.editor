@@ -8,7 +8,7 @@ import { getWwCommands } from '@/commands/wwCommands';
 import { createParagraph, createTextSelection } from '@/helper/manipulation';
 import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
 
-import { tableSelection } from './plugins/tableSelection';
+import { tableSelection } from './plugins/selection/tableSelection';
 import { tableContextMenu } from './plugins/tableContextMenu';
 import { task } from './plugins/task';
 import { toolbarState } from './plugins/toolbarState';

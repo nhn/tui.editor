@@ -5,41 +5,38 @@ import { Mappable } from 'prosemirror-transform';
 import {
   getSelectionInfo,
   getTableCellsInfo,
-  CellInfo,
+  RowInfo,
   SelectionInfo,
 } from '@/wysiwyg/helper/table';
 
 function getSelectionRanges(
   doc: Node,
-  cellsPos: CellInfo[][],
-  { startRowIndex, startColumnIndex, rowCount, columnCount }: SelectionInfo
+  cellsInfo: RowInfo[],
+  { startRowIdx, startColIdx, endRowIdx, endColIdx }: SelectionInfo
 ) {
   const ranges = [];
 
-  for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
-    for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
-      const rowIdx = rowIndex + startRowIndex;
-      const columnIdx = columnIndex + startColumnIndex;
-      const { offset, nodeSize } = cellsPos[rowIdx][columnIdx];
+  for (let rowIdx = startRowIdx; rowIdx <= endRowIdx; rowIdx += 1) {
+    for (let colIdx = startColIdx; colIdx <= endColIdx; colIdx += 1) {
+      const { offset, nodeSize } = cellsInfo[rowIdx][colIdx];
 
       ranges.push(new SelectionRange(doc.resolve(offset + 1), doc.resolve(offset + nodeSize - 1)));
     }
   }
-
   return ranges;
 }
 
 export default class CellSelection extends Selection {
-  public startCell: ResolvedPos;
+  startCell: ResolvedPos;
 
-  public endCell: ResolvedPos;
+  endCell: ResolvedPos;
 
   constructor(startCellPos: ResolvedPos, endCellPos = startCellPos) {
     const doc = startCellPos.node(0);
 
-    const cellsPos = getTableCellsInfo(startCellPos);
-    const selectionInfo = getSelectionInfo(startCellPos, endCellPos);
-    const ranges = getSelectionRanges(doc, cellsPos, selectionInfo);
+    const cellsInfo = getTableCellsInfo(startCellPos);
+    const selectionInfo = getSelectionInfo(cellsInfo, startCellPos, endCellPos);
+    const ranges = getSelectionRanges(doc, cellsInfo, selectionInfo);
 
     super(ranges[0].$from, ranges[0].$to, ranges);
 
@@ -91,17 +88,17 @@ export default class CellSelection extends Selection {
     const tableOffset = this.startCell.start(-2);
     const row = table.child(1).firstChild!;
 
-    const cellsPos = getTableCellsInfo(this.startCell);
-    const selectionInfo = getSelectionInfo(this.startCell, this.endCell);
-    const { startRowIndex, startColumnIndex, rowCount, columnCount } = selectionInfo;
+    const cellsInfo = getTableCellsInfo(this.startCell);
+    const selectionInfo = getSelectionInfo(cellsInfo, this.startCell, this.endCell);
+    const { startRowIdx, startColIdx, endRowIdx, endColIdx } = selectionInfo;
 
     const rows = [];
 
-    for (let rowIndex = 0; rowIndex < rowCount; rowIndex += 1) {
+    for (let rowIdx = startRowIdx; rowIdx <= endRowIdx; rowIdx += 1) {
       const cells = [];
 
-      for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
-        const { offset } = cellsPos[rowIndex + startRowIndex][columnIndex + startColumnIndex];
+      for (let colIdx = startColIdx; colIdx <= endColIdx; colIdx += 1) {
+        const { offset } = cellsInfo[rowIdx][colIdx];
         const cell = table.nodeAt(offset - tableOffset);
 
         if (cell) {
