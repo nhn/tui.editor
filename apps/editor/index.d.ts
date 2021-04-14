@@ -150,7 +150,7 @@ declare namespace toastui {
     context: Context
   ) => HTMLToken | HTMLToken[] | null;
 
-  type CustomHTMLRendererMap = Partial<Record<NodeType, CustomHTMLRenderer>>;
+  export type CustomHTMLRendererMap = Partial<Record<NodeType, CustomHTMLRenderer>>;
   // Toastmark custom renderer type end
   interface SelectionRange {
     from: {
@@ -259,7 +259,7 @@ declare namespace toastui {
     customConvertor?: ConvertorClass;
     placeholder?: string;
     linkAttribute?: LinkAttribute;
-    customHTMLRenderer?: CustomHTMLRenderer;
+    customHTMLRenderer?: CustomHTMLRendererMap;
     referenceDefinition?: boolean;
     customHTMLSanitizer?: CustomHTMLSanitizer;
     previewHighlight?: boolean;
