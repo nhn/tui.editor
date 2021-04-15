@@ -19,6 +19,7 @@ const attribute = `(?:\\s+${attrName}(?:\\s*=\\s*${attrValue})?)*\\s*`;
 const openingTag = `(\\\\<|<)([A-Za-z][A-Za-z0-9\\-]*${attribute})(\\/?>)`;
 const HTML_TAG_RX = new RegExp(openingTag, 'g');
 const FRONT_MATTER_RX = /^\s?\\-\\-\\-([\s\S]+?)\\-\\-\\-/;
+const NBSP_RX = /&nbsp;/g;
 
 /**
  * Class Convertor
@@ -180,7 +181,7 @@ class Convertor {
       result[index] = line;
     });
 
-    return result.join('\n');
+    return result.join('\n').replace(NBSP_RX, ' ');
   }
 
   _removeNewlinesBeforeAfterAndBlockElement(markdown) {
