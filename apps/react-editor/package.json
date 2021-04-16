@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/react-editor",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "description": "TOAST UI Editor for React",
   "main": "dist/toastui-react-editor.js",
   "files": [
