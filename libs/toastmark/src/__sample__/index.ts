@@ -57,12 +57,13 @@ cm.on('change', (editor, changeObj) => {
       if (startEl) {
         startEl.insertAdjacentHTML('beforebegin', newHtml);
         let el: Element = startEl;
-        while (el !== endEl) {
+        while (el && el !== endEl) {
           const nextEl: Element | null = el.nextElementSibling;
           el.remove();
           el = nextEl!;
         }
-        el.remove();
+        // eslint-disable-next-line no-unused-expressions
+        el?.remove();
       }
     }
 

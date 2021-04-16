@@ -753,4 +753,13 @@ describe('WysiwygEditor', () => {
   it('getSanitizer()', () => {
     expect(wwe.getSanitizer()).toEqual(sanitizer);
   });
+
+  it('should render details block without default sanitizer', () => {
+    const html = '<details><summary>2021</summary>test</details>';
+    const result = '<details><summary>2021</summary>test<br /></details><br />';
+
+    wwe.setValue(html);
+
+    expect(wwe.getValue()).toEqual(result);
+  });
 });

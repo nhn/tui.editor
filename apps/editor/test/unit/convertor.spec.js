@@ -744,3 +744,22 @@ describe('Convertor', () => {
     });
   });
 });
+
+describe('Convertor without default sanitizer', () => {
+  let convertor, em;
+
+  beforeEach(() => {
+    em = new EventManager();
+    convertor = new Convertor(em);
+    convertor.initHtmlSanitizer(html => html);
+  });
+
+  it('should convert details block without default sanitizer', () => {
+    const markdown = '<details><summary>2021</summary>test</details>';
+    const html =
+      '<details data-tomark-pass=""><summary data-tomark-pass="">2021</summary>test</details>\n';
+
+    expect(convertor.toHTML(markdown)).toBe(html);
+    expect(convertor.toMarkdown(html)).toBe(markdown);
+  });
+});

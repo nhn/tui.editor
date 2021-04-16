@@ -30,6 +30,7 @@ import KeyMapper from './keyMapper';
 import WwTextObject from './wwTextObject';
 import ComponentManager from './componentManager';
 import CodeBlockGadget from './ui/codeBlockGadget';
+import htmlSanitizer from './htmlSanitizer';
 
 const keyMapper = KeyMapper.getSharedInstance();
 
@@ -83,7 +84,8 @@ class WysiwygEditor {
       leafNodeNames: {
         HR: false
       },
-      allowedBlocks: this._sanitizer ? [] : ['details', 'summary']
+      allowedBlocks:
+        this._sanitizer && this._sanitizer === htmlSanitizer ? [] : ['details', 'summary']
     });
     this.editor.blockCommandShortcuts();
 
