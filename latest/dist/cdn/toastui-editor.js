@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 2.5.1 | Wed Dec 23 2020
+ * @version 2.5.2 | Fri Apr 16 2021
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -1741,7 +1741,7 @@ Command.TYPE = {
 var common = __webpack_require__(12);
 
 // EXTERNAL MODULE: ./src/js/utils/map.js
-var map = __webpack_require__(23);
+var map = __webpack_require__(24);
 
 // CONCATENATED MODULE: ./src/js/commandManager.js
 /**
@@ -3210,121 +3210,6 @@ var n;if(Object.defineProperty(t,"__esModule",{value:!0}),String.fromCodePoint)n
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var tui_code_snippet_array_inArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(14);
-/* harmony import */ var tui_code_snippet_array_inArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_array_inArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var tui_code_snippet_collection_forEachArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(21);
-/* harmony import */ var tui_code_snippet_collection_forEachArray__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_collection_forEachArray__WEBPACK_IMPORTED_MODULE_1__);
-
-
-/**
- * @class
- * @ignore
- * @classdesc ES6 Map
- */
-
-var Map = /*#__PURE__*/function () {
-  function Map() {
-    this._keys = [];
-    this._values = [];
-  }
-
-  var _proto = Map.prototype;
-
-  _proto._getKeyIndex = function _getKeyIndex(key) {
-    return tui_code_snippet_array_inArray__WEBPACK_IMPORTED_MODULE_0___default()(key, this._keys);
-  };
-
-  _proto.get = function get(key) {
-    return this._values[this._getKeyIndex(key)];
-  };
-
-  _proto.set = function set(key, value) {
-    var keyIndex = this._getKeyIndex(key);
-
-    if (keyIndex > -1) {
-      this._values[keyIndex] = value;
-    } else {
-      this._keys.push(key);
-
-      this._values.push(value);
-    }
-  };
-
-  _proto.has = function has(key) {
-    return this._getKeyIndex(key) > -1;
-  };
-
-  _proto.delete = function _delete(key) {
-    var keyIndex = this._getKeyIndex(key);
-
-    if (keyIndex > -1) {
-      this._keys.splice(keyIndex, 1);
-
-      this._values.splice(keyIndex, 1);
-    }
-  };
-
-  _proto.forEach = function forEach(callback, thisArg) {
-    var _this = this;
-
-    if (thisArg === void 0) {
-      thisArg = this;
-    }
-
-    tui_code_snippet_collection_forEachArray__WEBPACK_IMPORTED_MODULE_1___default()(this._values, function (value, index) {
-      if (value && _this._keys[index]) {
-        callback.call(thisArg, value, _this._keys[index], _this);
-      }
-    });
-  };
-
-  return Map;
-}();
-
-/* harmony default export */ __webpack_exports__["a"] = (Map);
-
-/***/ }),
-/* 24 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return setOffsetHeight; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return setOffsetTop; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return getOffsetHeight; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return getOffsetTop; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return removeOffsetInfoByNode; });
-/* harmony import */ var tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0__);
-
-var offsetInfoMap = {};
-function setOffsetHeight(id, height) {
-  offsetInfoMap[id] = offsetInfoMap[id] || {};
-  offsetInfoMap[id].height = height;
-}
-function setOffsetTop(id, offsetTop) {
-  offsetInfoMap[id] = offsetInfoMap[id] || {};
-  offsetInfoMap[id].offsetTop = offsetTop;
-}
-function getOffsetHeight(id) {
-  return offsetInfoMap[id] && offsetInfoMap[id].height;
-}
-function getOffsetTop(id) {
-  return offsetInfoMap[id] && offsetInfoMap[id].offsetTop;
-}
-function removeOffsetInfoByNode(node) {
-  if (node) {
-    delete offsetInfoMap[node.getAttribute('data-nodeid')];
-    tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0___default()(node.children).forEach(function (child) {
-      removeOffsetInfoByNode(child);
-    });
-  }
-}
-
-/***/ }),
-/* 25 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 /* harmony import */ var tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
 /* harmony import */ var tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var tui_code_snippet_type_isString__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(9);
@@ -3433,6 +3318,121 @@ function leaveOnlyWhitelistAttribute(html) {
 }
 
 /* harmony default export */ __webpack_exports__["a"] = (htmlSanitizer);
+
+/***/ }),
+/* 24 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var tui_code_snippet_array_inArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(14);
+/* harmony import */ var tui_code_snippet_array_inArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_array_inArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var tui_code_snippet_collection_forEachArray__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(21);
+/* harmony import */ var tui_code_snippet_collection_forEachArray__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_collection_forEachArray__WEBPACK_IMPORTED_MODULE_1__);
+
+
+/**
+ * @class
+ * @ignore
+ * @classdesc ES6 Map
+ */
+
+var Map = /*#__PURE__*/function () {
+  function Map() {
+    this._keys = [];
+    this._values = [];
+  }
+
+  var _proto = Map.prototype;
+
+  _proto._getKeyIndex = function _getKeyIndex(key) {
+    return tui_code_snippet_array_inArray__WEBPACK_IMPORTED_MODULE_0___default()(key, this._keys);
+  };
+
+  _proto.get = function get(key) {
+    return this._values[this._getKeyIndex(key)];
+  };
+
+  _proto.set = function set(key, value) {
+    var keyIndex = this._getKeyIndex(key);
+
+    if (keyIndex > -1) {
+      this._values[keyIndex] = value;
+    } else {
+      this._keys.push(key);
+
+      this._values.push(value);
+    }
+  };
+
+  _proto.has = function has(key) {
+    return this._getKeyIndex(key) > -1;
+  };
+
+  _proto.delete = function _delete(key) {
+    var keyIndex = this._getKeyIndex(key);
+
+    if (keyIndex > -1) {
+      this._keys.splice(keyIndex, 1);
+
+      this._values.splice(keyIndex, 1);
+    }
+  };
+
+  _proto.forEach = function forEach(callback, thisArg) {
+    var _this = this;
+
+    if (thisArg === void 0) {
+      thisArg = this;
+    }
+
+    tui_code_snippet_collection_forEachArray__WEBPACK_IMPORTED_MODULE_1___default()(this._values, function (value, index) {
+      if (value && _this._keys[index]) {
+        callback.call(thisArg, value, _this._keys[index], _this);
+      }
+    });
+  };
+
+  return Map;
+}();
+
+/* harmony default export */ __webpack_exports__["a"] = (Map);
+
+/***/ }),
+/* 25 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return setOffsetHeight; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return setOffsetTop; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return getOffsetHeight; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return getOffsetTop; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return removeOffsetInfoByNode; });
+/* harmony import */ var tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0__);
+
+var offsetInfoMap = {};
+function setOffsetHeight(id, height) {
+  offsetInfoMap[id] = offsetInfoMap[id] || {};
+  offsetInfoMap[id].height = height;
+}
+function setOffsetTop(id, offsetTop) {
+  offsetInfoMap[id] = offsetInfoMap[id] || {};
+  offsetInfoMap[id].offsetTop = offsetTop;
+}
+function getOffsetHeight(id) {
+  return offsetInfoMap[id] && offsetInfoMap[id].height;
+}
+function getOffsetTop(id) {
+  return offsetInfoMap[id] && offsetInfoMap[id].offsetTop;
+}
+function removeOffsetInfoByNode(node) {
+  if (node) {
+    delete offsetInfoMap[node.getAttribute('data-nodeid')];
+    tui_code_snippet_collection_toArray__WEBPACK_IMPORTED_MODULE_0___default()(node.children).forEach(function (child) {
+      removeOffsetInfoByNode(child);
+    });
+  }
+}
 
 /***/ }),
 /* 26 */
@@ -3875,7 +3875,7 @@ function getPluginInfo(plugins) {
 
 /*!
  * to-mark
- * @version 1.0.1 | Wed Dec 23 2020
+ * @version 1.0.1 | Tue Apr 13 2021
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(true)
@@ -5227,7 +5227,7 @@ module.exports = isNumber;
 /* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(0);
 /* harmony import */ var _htmlRenderConvertors__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(29);
 /* harmony import */ var _scroll_helper__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(18);
-/* harmony import */ var _scroll_cache_offsetInfo__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(24);
+/* harmony import */ var _scroll_cache_offsetInfo__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(25);
 /* harmony import */ var _utils_markdown__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(2);
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
@@ -5424,17 +5424,19 @@ var MarkdownPreview = /*#__PURE__*/function (_Preview) {
       var endEl = this._getElementByNodeId(endNodeId);
 
       if (startEl) {
+        var _el;
+
         startEl.insertAdjacentHTML('beforebegin', newHtml);
         var el = startEl;
 
-        while (el !== endEl) {
+        while (el && el !== endEl) {
           var nextEl = el.nextElementSibling;
           el.parentNode.removeChild(el);
           Object(_scroll_cache_offsetInfo__WEBPACK_IMPORTED_MODULE_9__[/* removeOffsetInfoByNode */ "c"])(el);
           el = nextEl;
         }
 
-        if (el.parentNode) {
+        if ((_el = el) == null ? void 0 : _el.parentNode) {
           _utils_dom__WEBPACK_IMPORTED_MODULE_6__[/* default */ "a"].remove(el);
           Object(_scroll_cache_offsetInfo__WEBPACK_IMPORTED_MODULE_9__[/* removeOffsetInfoByNode */ "c"])(el);
         }
@@ -5485,7 +5487,7 @@ var MarkdownPreview = /*#__PURE__*/function (_Preview) {
 /* harmony import */ var tui_code_snippet_type_isFalsy__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_type_isFalsy__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var tui_code_snippet_enum_enum__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(45);
 /* harmony import */ var tui_code_snippet_enum_enum__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(tui_code_snippet_enum_enum__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _utils_map__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(23);
+/* harmony import */ var _utils_map__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(24);
 /**
  * @fileoverview Implements EventManager
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
@@ -5734,6 +5736,7 @@ var attribute = "(?:\\s+" + attrName + "(?:\\s*=\\s*" + attrValue + ")?)*\\s*";
 var openingTag = "(\\\\<|<)([A-Za-z][A-Za-z0-9\\-]*" + attribute + ")(\\/?>)";
 var HTML_TAG_RX = new RegExp(openingTag, 'g');
 var FRONT_MATTER_RX = /^\s?\\-\\-\\-([\s\S]+?)\\-\\-\\-/;
+var NBSP_RX = /&nbsp;/g;
 /**
  * Class Convertor
  * @param {EventManager} em - EventManager instance
@@ -5892,7 +5895,7 @@ var Convertor = /*#__PURE__*/function () {
 
       result[index] = line;
     });
-    return result.join('\n');
+    return result.join('\n').replace(NBSP_RX, ' ');
   };
 
   _proto._removeNewlinesBeforeAfterAndBlockElement = function _removeNewlinesBeforeAfterAndBlockElement(markdown) {
@@ -6579,7 +6582,7 @@ module.exports = Enum;
 /* harmony import */ var _codeBlockManager__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(30);
 /* harmony import */ var _pluginHelper__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(31);
 /* harmony import */ var _utils_common__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(12);
-/* harmony import */ var _htmlSanitizer__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(25);
+/* harmony import */ var _htmlSanitizer__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(23);
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 /**
@@ -8682,7 +8685,7 @@ var addClass_default = /*#__PURE__*/__webpack_require__.n(addClass);
 var removeClass = __webpack_require__(6);
 var removeClass_default = /*#__PURE__*/__webpack_require__.n(removeClass);
 
-// EXTERNAL MODULE: /Users/tigger/Desktop/project/tui.editor/libs/toastmark/dist/toastmark.js
+// EXTERNAL MODULE: /Users/nhnent/Documents/tui.editor_legacy/libs/toastmark/dist/toastmark.js
 var toastmark = __webpack_require__(22);
 
 // EXTERNAL MODULE: ./src/js/htmlRenderConvertors.js
@@ -11559,7 +11562,7 @@ var matches = __webpack_require__(13);
 var matches_default = /*#__PURE__*/__webpack_require__.n(matches);
 
 // EXTERNAL MODULE: ./src/js/htmlSanitizer.js
-var htmlSanitizer = __webpack_require__(25);
+var htmlSanitizer = __webpack_require__(23);
 
 // CONCATENATED MODULE: ./src/js/wwPasteContentHelper.js
 /**
@@ -16937,7 +16940,7 @@ function sanitizeHtmlCode(code) {
 }
 
 /* harmony default export */ var wwCodeBlockManager = (wwCodeBlockManager_WwCodeBlockManager);
-// EXTERNAL MODULE: /Users/tigger/Desktop/project/tui.editor/libs/squire/build/squire.js
+// EXTERNAL MODULE: /Users/nhnent/Documents/tui.editor_legacy/libs/squire/build/squire.js
 var build_squire = __webpack_require__(55);
 var squire_default = /*#__PURE__*/__webpack_require__.n(build_squire);
 
@@ -17792,6 +17795,7 @@ var codeBlockGadget_CodeBlockGadget = /*#__PURE__*/function (_BlockOverlay) {
 
 
 
+
 var wysiwygEditor_keyMapper = keyMapper.getSharedInstance();
 var FIND_EMPTY_LINE = /<([a-z]+|h\d)>(<br>|<br \/>)<\/\1>/gi;
 var FIND_UNNECESSARY_BR = /(?:<br>|<br \/>)<\/(.+?)>/gi;
@@ -17849,7 +17853,7 @@ var wysiwygEditor_WysiwygEditor = /*#__PURE__*/function () {
       leafNodeNames: {
         HR: false
       },
-      allowedBlocks: this._sanitizer ? [] : ['details', 'summary']
+      allowedBlocks: this._sanitizer && this._sanitizer === htmlSanitizer["a" /* default */] ? [] : ['details', 'summary']
     });
     this.editor.blockCommandShortcuts();
     this._clipboardManager = new wwClipboardManager(this);
@@ -19483,7 +19487,7 @@ var convertor = __webpack_require__(37);
 var viewer = __webpack_require__(46);
 
 // EXTERNAL MODULE: ./src/js/utils/map.js
-var map = __webpack_require__(23);
+var map = __webpack_require__(24);
 
 // CONCATENATED MODULE: ./src/js/i18n.js
 /**
@@ -24458,7 +24462,7 @@ var defaultUI_DefaultUI = /*#__PURE__*/function () {
 // EXTERNAL MODULE: ./src/js/codeBlockManager.js
 var codeBlockManager = __webpack_require__(30);
 
-// EXTERNAL MODULE: /Users/tigger/Desktop/project/tui.editor/libs/to-mark/dist/to-mark.js
+// EXTERNAL MODULE: /Users/nhnent/Documents/tui.editor_legacy/libs/to-mark/dist/to-mark.js
 var to_mark = __webpack_require__(32);
 var to_mark_default = /*#__PURE__*/__webpack_require__.n(to_mark);
 
@@ -27984,7 +27988,7 @@ function animate(sourceScrollTop, targetScrollTop, callbackObjForSync) {
 var helper = __webpack_require__(18);
 
 // EXTERNAL MODULE: ./src/js/scroll/cache/offsetInfo.js
-var offsetInfo = __webpack_require__(24);
+var offsetInfo = __webpack_require__(25);
 
 // CONCATENATED MODULE: ./src/js/scroll/editorScroll.js
 
