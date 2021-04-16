@@ -173,7 +173,7 @@ class MarkdownPreview extends Preview {
           removeOffsetInfoByNode(el);
           el = nextEl;
         }
-        if (el && el.parentNode) {
+        if (el?.parentNode) {
           domUtils.remove(el);
           removeOffsetInfoByNode(el);
         }

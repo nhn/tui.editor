@@ -62,9 +62,8 @@ cm.on('change', (editor, changeObj) => {
           el.remove();
           el = nextEl!;
         }
-        if (el) {
-          el.remove();
-        }
+        // eslint-disable-next-line no-unused-expressions
+        el?.remove();
       }
     }
 
