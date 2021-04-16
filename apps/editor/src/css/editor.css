@@ -123,7 +123,7 @@
   top: 0;
   height: 100%;
   width: 1px;
-  border-left: 1px solid #e5e5e5;
+  border-left: 1px solid #ebedf2;
 }
 
 .toastui-editor-main .toastui-editor-md-vertical-style .toastui-editor-md-splitter {
@@ -176,15 +176,15 @@
 
 .toastui-editor-defaultUI {
   position: relative;
-  border: 1px solid #e5e5e5;
+  border: 1px solid #dadde6;
   height: 100%;
   font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
     'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
+  border-radius: 4px;
 }
 
 .toastui-editor-defaultUI button {
   color: #fff;
-  padding: 0px 14px 0px 15px;
   height: 28px;
   font-size: 12px;
   border: none;
@@ -192,22 +192,34 @@
   outline: none;
 }
 .toastui-editor-defaultUI .toastui-editor-ok-button {
-  background-color: #4b96e6;
+  font-size: 13px;
+  width: 63px;
+  height: 32px;
+  background-color: #00a9ff;
+  border-radius: 2px;
 }
+
 .toastui-editor-defaultUI .toastui-editor-close-button {
-  background-color: #777;
+  font-size: 13px;
+  width: 63px;
+  height: 32px;
+  background-color: #f7f9fc;
+  border-radius: 2px;
+  border: 1px solid #dadde6;
+  color: #555555;
+  margin-right: 5px;
 }
 
 .toastui-editor-defaultUI-toolbar {
   padding: 0 25px;
-  height: 31px;
-  background-color: #fff;
-  border: 0;
+  height: 49px;
+  background-color: #f7f9fc;
+  border-bottom: 1px solid #ebedf2;
   overflow: hidden;
 }
 
 .toastui-editor-toolbar {
-  height: 32px;
+  height: 50px;
   box-sizing: border-box;
   border-bottom: 1px solid #e5e5e5;
   position: relative;
@@ -217,9 +229,9 @@
   float: left;
   display: inline-block;
   width: 1px;
-  height: 14px;
-  background-color: #ddd;
-  margin: 9px 6px;
+  height: 18px;
+  background-color: #e1e3e9;
+  margin: 16px 12px;
 }
 
 .toastui-editor-defaultUI-toolbar button {
@@ -227,20 +239,21 @@
   box-sizing: border-box;
   outline: none;
   cursor: pointer;
-  background-color: #fff;
-  width: 22px;
-  height: 22px;
-  padding: 3px;
-  border-radius: 0;
-  margin: 5px 3px;
-  border: 1px solid #fff;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 3px;
+  margin: 13px 10px;
 }
 
 .toastui-editor-defaultUI-toolbar button:hover,
 .toastui-editor-defaultUI-toolbar button:active,
 .toastui-editor-defaultUI-toolbar button.active {
-  border: 1px solid #aaa;
+  border: 1px solid #e4e7ee;
   background-color: #fff;
+  /* width: 32px;
+  height: 32px;
+  padding: 4px; */
 }
 
 .toastui-editor-defaultUI-toolbar button.scroll-sync {
@@ -279,28 +292,33 @@
 }
 
 .toastui-editor-mode-switch {
-  background-color: #f9f9f9;
-  border-top: 1px solid #e5e5e5;
+  background-color: #fff;
+  border-top: 1px solid #dadde6;
   font-size: 12px;
   text-align: right;
-  height: 20px;
+  height: 28px;
+  padding-right: 10px;
 }
 
 .toastui-editor-mode-switch button {
-  width: 92px;
-  height: inherit;
-  background: #e5e5e5;
+  width: 96px;
+  height: 24px;
+  background: #f7f9fc;
   outline: 0;
-  color: #a0aabf;
+  color: #969aa5;
+  margin-top: -1px;
+  margin-right: -1px;
   cursor: pointer;
-  border: 0;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
+  border: 1px solid #dadde6;
+  border-radius: 0 0 4px 4px;
+  border-collapse: collapse;
+  font-weight: 600;
 }
 
 .toastui-editor-mode-switch button.active {
+  border-top: 1px solid #fff;
   background-color: #fff;
-  color: #000;
+  color: #555555;
 }
 
 .toastui-editor-defaultUI .toastui-editor-md-tab-container {
@@ -350,10 +368,12 @@
 .toastui-editor-popup {
   width: 500px;
   margin-right: auto;
-  border: 1px solid #cacaca;
-  background: white;
+  background: #fff;
   z-index: 9999;
   position: absolute;
+  border-radius: 2px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+  border: solid 1px #dadde6;
 }
 
 .toastui-editor-popup-header {
@@ -394,22 +414,26 @@
 }
 
 .toastui-editor-popup-body label {
-  font-weight: bold;
-  color: #666;
+  font-weight: 600;
+  color: #555555;
   display: block;
-  margin: 10px 0 5px;
+  margin: 20px 0 5px;
 }
 
 .toastui-editor-popup-body .toastui-editor-button-container {
-  margin-top: 15px;
+  text-align: right;
+  margin-top: 20px;
 }
 
 .toastui-editor-popup-body input[type='text'],
 .toastui-editor-popup-body input[type='file'] {
-  padding: 4px 10px;
-  border: 1px solid #bfbfbf;
-  box-sizing: border-box;
-  width: 100%;
+  width: calc(100% - 24px);
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 2px;
+  border: solid 1px #e1e3e9;
+  outline-color: #00a9ff;
+  color: #333333;
 }
 
 .toastui-editor-popup-body input[type='text'].disabled {
@@ -420,6 +444,15 @@
 
 .toastui-editor-popup-body input.wrong {
   border-color: #ff0000;
+}
+
+.toastui-editor-popup-add-link {
+  width: 400px;
+  height: 220px;
+}
+
+.toastui-editor-popup-add-link .toastui-editor-popup-body {
+  padding: 0 20px 20px 20px;
 }
 
 .toastui-editor-popup-add-image .toastui-editor-tab {
@@ -451,25 +484,26 @@
 }
 
 .toastui-editor-popup-add-table .toastui-editor-table-body {
-  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAARCAYAAAAougcOAAAC7mlDQ1BJQ0MgUHJvZmlsZQAAeAGFVM9rE0EU/jZuqdAiCFprDrJ4kCJJWatoRdQ2/RFiawzbH7ZFkGQzSdZuNuvuJrWliOTi0SreRe2hB/+AHnrwZC9KhVpFKN6rKGKhFy3xzW5MtqXqwM5+8943731vdt8ADXLSNPWABOQNx1KiEWlsfEJq/IgAjqIJQTQlVdvsTiQGQYNz+Xvn2HoPgVtWw3v7d7J3rZrStpoHhP1A4Eea2Sqw7xdxClkSAog836Epx3QI3+PY8uyPOU55eMG1Dys9xFkifEA1Lc5/TbhTzSXTQINIOJT1cVI+nNeLlNcdB2luZsbIEL1PkKa7zO6rYqGcTvYOkL2d9H5Os94+wiHCCxmtP0a4jZ71jNU/4mHhpObEhj0cGDX0+GAVtxqp+DXCFF8QTSeiVHHZLg3xmK79VvJKgnCQOMpkYYBzWkhP10xu+LqHBX0m1xOv4ndWUeF5jxNn3tTd70XaAq8wDh0MGgyaDUhQEEUEYZiwUECGPBoxNLJyPyOrBhuTezJ1JGq7dGJEsUF7Ntw9t1Gk3Tz+KCJxlEO1CJL8Qf4qr8lP5Xn5y1yw2Fb3lK2bmrry4DvF5Zm5Gh7X08jjc01efJXUdpNXR5aseXq8muwaP+xXlzHmgjWPxHOw+/EtX5XMlymMFMXjVfPqS4R1WjE3359sfzs94i7PLrXWc62JizdWm5dn/WpI++6qvJPmVflPXvXx/GfNxGPiKTEmdornIYmXxS7xkthLqwviYG3HCJ2VhinSbZH6JNVgYJq89S9dP1t4vUZ/DPVRlBnM0lSJ93/CKmQ0nbkOb/qP28f8F+T3iuefKAIvbODImbptU3HvEKFlpW5zrgIXv9F98LZua6N+OPwEWDyrFq1SNZ8gvAEcdod6HugpmNOWls05Uocsn5O66cpiUsxQ20NSUtcl12VLFrOZVWLpdtiZ0x1uHKE5QvfEp0plk/qv8RGw/bBS+fmsUtl+ThrWgZf6b8C8/UXAeIuJAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAOklEQVQ4EWO8e/fuPwYGBkYgphlgAZmspKREMwtABjPR1HSo4aOWkBTKo8E1GlwkhQBJikdT1wgNLgAMSwQgckFvTgAAAABJRU5ErkJggg==');
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACxGlDQ1BJQ0MgUHJvZmlsZQAAOI2NlEtr1FAUx/8ZUypYhEKtZRAJClKlLWkVUUTtTF+MreMwfWiLIDOZOzOxmUxMMn1RXHTj0uoXELULF36ALly4shulQq1uirhxUUUpFrqRMp6bZCYZ6utCkt89j/85N7m5QN2RlGFoIQko6LaZHIhKN8YnpPrPENEIATJOphTLiCQSQ6BRedaOnfcUSWOtnWvt9f91HMgwSwGE/cTFjKUUiGeA0A/FMG1A5HrHp22D8yJxk0kNEi9xzrm8zDnt8msnZiTZQ/yJ+KCST2WIt4jb0gF7LsBuD85oGmA6M1VF4u8iYRazqsYC7f7D/Z+joJUq9RrpamD66DA9T9C67zKrz2NhIZPqHSTuIP6SYb19fA3Ez7Jqf4y4la6NrNk/6rJwSrVjIy6HxnQtPuRxi56OX/M0RcOOJiv61tRwX8V+O3UlQRwmTk4WB3lMM+V2z+VHrrssaHP5nrjH78xSktc9RjFLhubsC+ot9Arj0MCgQqe7DglJDCCKdhgwUUSWPCpFqGRlToxJbGHyt5EaEgGWyL9JOZtOzh2UKJtnjSEax0JbVUGSP8jf5HX5sbwkf10Ml1p9z4J5S1VW72+RLq9c0fW8Xk+uvkJ1I+TVkCNrobomK9BpoLusvhj2lXgNdi++E1glC1RqR9pRmnQqTTk+i+6RQLU/vT2KXZl/0eLXWheXb641rMzXvKvinlWx6qpq535cMJ+JR8VOMSaeE89DEi+L3eIlsZdmF8ShasYoqaiYdpQspChLxyx5jZpv5sbCZjM23/A9RWPWVHN5W4rQacGkmK50tEldclcnwM8e97fYTjpnitC86tvsq8DF78C+t75togQ8t4DDZ3xbK+3hQ4+A5bNKyZzy/jNBeANY2dNd7qyBOqr7WC5v096vfwjsPiiXfz4pl3efkv4G8FL7BWVC9hG/y/uGAAAACXBIWXMAAAsTAAALEwEAmpwYAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAAAVklEQVQ4Ee2QsQ3AQAgDDYIdPvvPxSiBpPmIGr4LbnDjEzoyM39DOBRRVaxrwW8HUZ8rzAwVBeTMi7wxEbFr637AFiWNB5hkFOs4LIpLs3GYZBTrDx0+bH0NJdnka2sAAAAASUVORK5CYII=');
 }
 
 .toastui-editor-popup-add-table .toastui-editor-table-header {
-  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAARCAYAAAAougcOAAAC7mlDQ1BJQ0MgUHJvZmlsZQAAeAGFVM9rE0EU/jZuqdAiCFprDrJ4kCJJWatoRdQ2/RFiawzbH7ZFkGQzSdZuNuvuJrWliOTi0SreRe2hB/+AHnrwZC9KhVpFKN6rKGKhFy3xzW5MtqXqwM5+8943731vdt8ADXLSNPWABOQNx1KiEWlsfEJq/IgAjqIJQTQlVdvsTiQGQYNz+Xvn2HoPgVtWw3v7d7J3rZrStpoHhP1A4Eea2Sqw7xdxClkSAog836Epx3QI3+PY8uyPOU55eMG1Dys9xFkifEA1Lc5/TbhTzSXTQINIOJT1cVI+nNeLlNcdB2luZsbIEL1PkKa7zO6rYqGcTvYOkL2d9H5Os94+wiHCCxmtP0a4jZ71jNU/4mHhpObEhj0cGDX0+GAVtxqp+DXCFF8QTSeiVHHZLg3xmK79VvJKgnCQOMpkYYBzWkhP10xu+LqHBX0m1xOv4ndWUeF5jxNn3tTd70XaAq8wDh0MGgyaDUhQEEUEYZiwUECGPBoxNLJyPyOrBhuTezJ1JGq7dGJEsUF7Ntw9t1Gk3Tz+KCJxlEO1CJL8Qf4qr8lP5Xn5y1yw2Fb3lK2bmrry4DvF5Zm5Gh7X08jjc01efJXUdpNXR5aseXq8muwaP+xXlzHmgjWPxHOw+/EtX5XMlymMFMXjVfPqS4R1WjE3359sfzs94i7PLrXWc62JizdWm5dn/WpI++6qvJPmVflPXvXx/GfNxGPiKTEmdornIYmXxS7xkthLqwviYG3HCJ2VhinSbZH6JNVgYJq89S9dP1t4vUZ/DPVRlBnM0lSJ93/CKmQ0nbkOb/qP28f8F+T3iuefKAIvbODImbptU3HvEKFlpW5zrgIXv9F98LZua6N+OPwEWDyrFq1SNZ8gvAEcdod6HugpmNOWls05Uocsn5O66cpiUsxQ20NSUtcl12VLFrOZVWLpdtiZ0x1uHKE5QvfEp0plk/qv8RGw/bBS+fmsUtl+ThrWgZf6b8C8/UXAeIuJAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAOklEQVQ4EWO8e/fuPwYGBkYgphlgAZksLCxMMwtABjPR1HSo4aOWkBTKo8E1GlwkhQBJikdT1wgNLgDxKwPzTeWPdAAAAABJRU5ErkJggg==');
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACxGlDQ1BJQ0MgUHJvZmlsZQAAOI2NlEtr1FAUx/8ZUypYhEKttYgEBSnSlpkqoojamb4YW8chfWiLIDOZOzOxmUxMMn1RXHTj0uoXELULF36ALly4shulQq1uirhxUUUpFrqRMp6bZCYZ6utCkt89j/85N7m5QN3RlGFoIQko6LYpD8SkG+MTUv1niGiEgAiOpBTLiCaTQ6BRedaOnfcUSWOtg2vt9f91HMgwSwGE/cTFjKUUiGeA0A/FMG1A5Honpm2D8yJxk0kNEi9xzrm8zDnt8msnZkTuIf5EfFDJpzLEW8Tt6YA9F2C3B2c0DTCdmaoi8XeRNItZVWOBdv/h/s9R0EqVeo10NTB9dJieJ2ndd5nV57GwkEn1DhJ3En/JsN4+vgbiZ1m1P07cRtdG1uwfdVk4pdrxEZdDY7qWGPK4RU8nrnmaomHH5Iq+NTXcV7HfTl1JErcSy5PFQR7TTLndc/mR6y4L2ly+J+HxO7Mk87rHKWbJ0Jx9Qb2FXmEcGhhU6HTXIUHGAGLogAETRWTJo1KESlbmxJjEFiZ/G6khGWCJ/JuUs+nk3EGJsnnWGGIJLLRXFaTwh/C38Hr4cXgp/HWxtdTmexbMW6qyen+LdHnliq7n9Xpy9RWqGyWvhhxZC9U1WYFOA91l9cVWX4nXYPcSO4FVskClDqQdpUmn0pTjs+geDVT709uj2JX5Fy1+rXVx+eZaw8p8zbsq7lkVq66qdu7HBfOZeEyMiHHxnHgeknhZ7BYvib00uyAOVTNGSUXFtKNkIUVZOmbJa9R8MzcWNpux+YbvKRqzpprL21KUTgsmxXWls13qCndFAH72uL/FtuycKULzqm+zrwIXvwP73vq2iRLw3AIOn/FtbbSHDz0Cls8qJXPK+88E4Q1gZU93ubMG6qjuY7m8TXu//iGw+6Bc/vmkXN59SvobwEvtFxqt9gIlY/NIAAAACXBIWXMAAAsTAAALEwEAmpwYAAABWWlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNS40LjAiPgogICA8cmRmOlJERiB4bWxuczpyZGY9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiPgogICAgICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgICAgICAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyI+CiAgICAgICAgIDx0aWZmOk9yaWVudGF0aW9uPjE8L3RpZmY6T3JpZW50YXRpb24+CiAgICAgIDwvcmRmOkRlc2NyaXB0aW9uPgogICA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgpMwidZAAAAV0lEQVQ4Ee2SMQ4AQQRFv0Xp/qdzFXYU02xplZCovPy8IHePzCQMlTAzzAwHOoIUIoKqIiJAp2tQ7OaWinXTZZFu0OZ+CjhZC/xvcx2uw4aBfZuGtM/JC3xIIe/jKJ+YAAAAAElFTkSuQmCC');
 }
 
 .toastui-editor-popup-add-table .toastui-editor-table-selection-layer {
   position: absolute;
   top: 0;
   left: 0;
-  background: #80d2ff;
-  opacity: 0.3;
+  border: solid 1px rgba(0, 169, 255, 0.4);
+  background: rgba(0, 169, 255, 0.1);
   z-index: 999;
 }
 
 .toastui-editor-popup-add-table .toastui-editor-table-description {
-  margin: 10px 0 0 0;
+  margin: 5px 0 0 0;
   text-align: center;
+  color: #333333
 }
 
 .toastui-editor-context-menu {
@@ -530,16 +564,17 @@
 }
 
 .toastui-editor-popup-add-heading ul {
+  padding: 5px 0;
   list-style: none;
 }
 
 .toastui-editor-popup-add-heading ul li {
-  padding: 2px 10px;
+  padding: 4px 12px;
   cursor: pointer;
 }
 
 .toastui-editor-popup-add-heading ul li:hover {
-  background-color: #eee;
+  background-color: #dff4ff;
 }
 
 .toastui-editor-popup-add-heading h1 {
@@ -568,12 +603,12 @@
 
 .toastui-editor-tooltip {
   position: absolute;
-  background-color: #222;
+  background-color: #444444;
   z-index: 999;
-  opacity: 0.8;
-  color: #fff;
-  padding: 2px 5px;
-  font-size: 10px;
+  color: #dadde6;
+  padding: 4px 7px;
+  font-size: 12px;
+  border-radius: 3px;
 }
 
 .toastui-editor-tooltip .arrow {
@@ -581,7 +616,7 @@
   display: inline-block;
   width: 10px;
   height: 10px;
-  background-color: #222;
+  background-color: #444444;
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
@@ -606,14 +641,14 @@
   only screen and (min-resolution: 192dpi),
   only screen and (min-resolution: 2dppx) {
   .toastui-editor-toolbar-icons {
-    background: url('../img/toastui-editor-2x.png');
-    background-size: 218px 188px;
+    background: url('../img/toastui-editor-2x.png') no-repeat;
+    background-size: 466px 146px;
     display: inline-block;
   }
 }
 
 .toastui-editor-toolbar-icons.heading {
-  background-position: -172px -48px;
+  background-position: 0px 0px;
 }
 
 .toastui-editor-toolbar-icons.heading:disabled {
@@ -621,7 +656,7 @@
 }
 
 .toastui-editor-toolbar-icons.bold {
-  background-position: -4px -4px;
+  background-position: -26px 0px;
 }
 
 .toastui-editor-toolbar-icons.bold:disabled {
@@ -629,7 +664,7 @@
 }
 
 .toastui-editor-toolbar-icons.italic {
-  background-position: -4px -48px;
+  background-position: -52px 0px;
 }
 
 .toastui-editor-toolbar-icons.italic:disabled {
@@ -637,7 +672,7 @@
 }
 
 .toastui-editor-toolbar-icons.strike {
-  background-position: -4px -26px;
+  background-position: -78px 0px;
 }
 
 .toastui-editor-toolbar-icons.strike:disabled {
@@ -645,7 +680,7 @@
 }
 
 .toastui-editor-toolbar-icons.hrline {
-  background-position: -46px -92px;
+  background-position: -104px -1px;
 }
 
 .toastui-editor-toolbar-icons.hrline:disabled {
@@ -653,7 +688,7 @@
 }
 
 .toastui-editor-toolbar-icons.quote {
-  background-position: -4px -114px;
+  background-position: -130px 0px;
 }
 
 .toastui-editor-toolbar-icons.quote:disabled {
@@ -661,7 +696,7 @@
 }
 
 .toastui-editor-toolbar-icons.bullet-list {
-  background-position: -46px -4px;
+  background-position: -156px 0px;
 }
 
 .toastui-editor-toolbar-icons.bullet-list:disabled {
@@ -669,7 +704,7 @@
 }
 
 .toastui-editor-toolbar-icons.ordered-list {
-  background-position: -46px -26px;
+  background-position: -183px 0px;
 }
 
 .toastui-editor-toolbar-icons.ordered-list:disabled {
@@ -677,7 +712,7 @@
 }
 
 .toastui-editor-toolbar-icons.task-list {
-  background-position: -130px -48px;
+  background-position: -208px 0px;
 }
 
 .toastui-editor-toolbar-icons.task-list:disabled {
@@ -685,7 +720,7 @@
 }
 
 .toastui-editor-toolbar-icons.indent {
-  background-position: -46px -48px;
+  background-position: -234px 0px;
 }
 
 .toastui-editor-toolbar-icons.indent:disabled {
@@ -693,7 +728,7 @@
 }
 
 .toastui-editor-toolbar-icons.outdent {
-  background-position: -46px -70px;
+  background-position: -260px 0px;
 }
 
 .toastui-editor-toolbar-icons.outdent:disabled {
@@ -701,7 +736,7 @@
 }
 
 .toastui-editor-toolbar-icons.table {
-  background-position: -88px -92px;
+  background-position: -286px 0px;
 }
 
 .toastui-editor-toolbar-icons.table:disabled {
@@ -709,7 +744,7 @@
 }
 
 .toastui-editor-toolbar-icons.image {
-  background-position: -130px -4px;
+  background-position: -312px 0px;
 }
 
 .toastui-editor-toolbar-icons.image:disabled {
@@ -717,7 +752,7 @@
 }
 
 .toastui-editor-toolbar-icons.link {
-  background-position: -130px -26px;
+  background-position: -338px 0px;
 }
 
 .toastui-editor-toolbar-icons.link:disabled {
@@ -725,7 +760,8 @@
 }
 
 .toastui-editor-toolbar-icons.code {
-  background-position: -130px -92px;
+  width: 30px;
+  background-position: -362px 0px;
 }
 
 .toastui-editor-toolbar-icons.code:disabled {
@@ -733,7 +769,7 @@
 }
 
 .toastui-editor-toolbar-icons.codeblock {
-  background-position: -130px -70px;
+  background-position: -390px 0px;
 }
 
 .toastui-editor-toolbar-icons.codeblock:disabled {

@@ -217,7 +217,6 @@ export function createPopupInfo(type: string, payload: Payload): PopupInfo | und
       return {
         render: (props) => html`<${LinkPopupBody} ...${props} />`,
         className: cls('popup-add-link'),
-        headerText: i18n.get('Insert link'),
         fromEl: el,
         pos,
         initialValues,
@@ -226,7 +225,6 @@ export function createPopupInfo(type: string, payload: Payload): PopupInfo | und
       return {
         render: (props) => html`<${ImagePopupBody} ...${props} />`,
         className: cls('popup-add-image'),
-        headerText: i18n.get('Insert image'),
         fromEl: el,
         pos,
       };

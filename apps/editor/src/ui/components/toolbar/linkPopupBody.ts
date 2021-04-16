@@ -88,11 +88,11 @@ export class LinkPopupBody extends Component<Props> {
           ref=${(el: HTMLInputElement) => (this.refs.text = el)}
         />
         <div class="${cls('button-container')}">
-          <button type="button" class="${cls('ok-button')}" onClick=${this.execCommand}>
-            ${i18n.get('OK')}
-          </button>
           <button type="button" class="${cls('close-button')}" onClick=${this.props.hidePopup}>
             ${i18n.get('Cancel')}
+          </button>
+          <button type="button" class="${cls('ok-button')}" onClick=${this.execCommand}>
+            ${i18n.get('OK')}
           </button>
         </div>
       </div>

@@ -17,9 +17,9 @@ interface Props {
 
 type State = Range;
 
-const CELL_WIDTH = 25;
-const CELL_HEIGHT = 17;
-const MIN_ROW_INDEX = 7;
+const CELL_WIDTH = 20;
+const CELL_HEIGHT = 20;
+const MIN_ROW_INDEX = 5;
 const MAX_ROW_INDEX = 14;
 const MIN_COL_INDEX = 5;
 const MAX_COL_INDEX = 9;
@@ -88,7 +88,13 @@ export class TablePopupBody extends Component<Props, State> {
   }
 
   private getSelectionAreaBound() {
-    return this.getBoundByRange(this.state.colIdx, this.state.rowIdx);
+    const { width, height } = this.getBoundByRange(this.state.colIdx, this.state.rowIdx);
+
+    if (width === BORDER_WIDTH && height === BORDER_WIDTH) {
+      return { display: 'none' };
+    }
+
+    return { width: width - 2, height: height - 2 };
   }
 
   private getSelectionRangeByOffset(x: number, y: number) {
