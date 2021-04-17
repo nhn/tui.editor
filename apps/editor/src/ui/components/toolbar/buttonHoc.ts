@@ -35,20 +35,19 @@ export function connectHOC(WrappedComponent: ComponentClass) {
       return { left: offsetLeft, top: el.offsetHeight + offsetTop };
     }
 
-    private showTooltip = (el: HTMLElement, active = false) => {
-      const { activeTooltip, tooltip } = this.props.item as ToolbarButtonInfo;
+    private showTooltip = (el: HTMLElement) => {
+      const { tooltip } = this.props.item as ToolbarButtonInfo;
 
-      if (!this.props.disabled) {
+      if (!this.props.disabled && tooltip) {
         const rect = el.getBoundingClientRect();
         let left: string | number = rect.left + window.pageXOffset;
         let top: string | number = rect.top + window.pageYOffset + el.offsetHeight;
 
         left = `${left}px`;
         top = `${top + TOOLTIP_TOP_INDENT}px`;
-        const tooltipText = active ? activeTooltip || tooltip : tooltip;
 
         css(this.props.tooltipEl, { display: 'block', left, top });
-        this.props.tooltipEl.querySelector<HTMLElement>('.text')!.textContent = tooltipText;
+        this.props.tooltipEl.querySelector<HTMLElement>('.text')!.textContent = tooltip;
       }
     };
 

@@ -36,6 +36,10 @@ class CustomToolbarItemComp extends Component<Props> {
     if (setItemWidth) {
       setItemWidth(item.name, getOuterWidth(this.refs.el));
     }
+
+    if (item.onMounted) {
+      item.onMounted(this.props.execCommand);
+    }
   }
 
   private showTooltip = () => {
@@ -55,9 +59,12 @@ class CustomToolbarItemComp extends Component<Props> {
   };
 
   render() {
+    const style = { display: this.props.item.hidden ? 'none' : 'inline-block' };
+
     return html`
       <div
         ref=${(el: HTMLElement) => (this.refs.el = el)}
+        style=${style}
         class="tui-toolbar-item-wrapper"
         onClick=${this.showPopup}
         onMouseover=${this.showTooltip}

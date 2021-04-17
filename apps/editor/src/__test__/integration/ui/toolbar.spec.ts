@@ -160,13 +160,13 @@ describe('default toolbar', () => {
 
   describe('scroll sync button', () => {
     it('should toggle state when clicking scroll sync button', () => {
-      const scrollSyncBtn = getElement('.scroll-sync');
+      const scrollSyncSwitch = getElement('.scroll-sync input');
 
-      expect(scrollSyncBtn).toHaveClass('active');
+      expect(scrollSyncSwitch).toHaveProperty('checked', true);
 
       dispatchClick('.scroll-sync');
 
-      expect(scrollSyncBtn).not.toHaveClass('active');
+      expect(scrollSyncSwitch).toHaveProperty('checked', false);
     });
 
     it('should trigger command event with state', () => {
@@ -350,7 +350,7 @@ describe('default toolbar', () => {
       dispatchMousemove('.toastui-editor-table-selection', 100, 60);
       dispatchClick('.toastui-editor-table-selection');
 
-      expect(spy).toHaveBeenCalledWith('addTable', { columnCount: 5, rowCount: 4 });
+      expect(spy).toHaveBeenCalledWith('addTable', { columnCount: 6, rowCount: 4 });
     });
   });
 });

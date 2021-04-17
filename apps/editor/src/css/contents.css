@@ -12,13 +12,12 @@
   outline: none;
 }
 
-/* @TODO change color */
 table.ProseMirror-selectednode {
-  outline: 1px solid lime;
+  outline: 2px solid #00a9ff;;
 }
 
 .html-block.ProseMirror-selectednode {
-  outline: 1px solid lime;
+  outline: 2px solid #00a9ff;;
 }
 
 .toastui-editor-contents {
