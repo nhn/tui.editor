@@ -98,11 +98,11 @@
   display: block;
 }
 
-.toastui-editor-main .toastui-editor-md-vertical-style > .toastui-editor-tab {
+.toastui-editor-main .toastui-editor-md-vertical-style > .toastui-editor-tabs {
   display: none;
 }
 
-.toastui-editor-main .toastui-editor-md-tab-style > .toastui-editor-tab {
+.toastui-editor-main .toastui-editor-md-tab-style > .toastui-editor-tabs {
   display: block;
 }
 
@@ -154,11 +154,7 @@
   margin: 0;
 }
 
-.toastui-editor-md-mode .toastui-editor-md-container {
-  display: block;
-  z-index: 100;
-}
-
+.toastui-editor-md-mode .toastui-editor-md-container,
 .toastui-editor-ww-mode .toastui-editor-ww-container {
   display: block;
   z-index: 100;
@@ -184,21 +180,20 @@
 }
 
 .toastui-editor-defaultUI button {
-  color: #555555;
+  color: #333333;
   height: 28px;
-  font-size: 12px;
-  border: none;
+  font-size: 13px;
   cursor: pointer;
-  outline: none;
+  border: none;
+  border-radius: 2px;
 }
 
 .toastui-editor-defaultUI .toastui-editor-ok-button {
-  font-size: 13px;
   width: 63px;
   height: 32px;
   background-color: #00a9ff;
-  border-radius: 2px;
   color: #fff;
+  outline-color: #009bf2;
 }
 
 .toastui-editor-defaultUI .toastui-editor-ok-button:hover {
@@ -206,25 +201,106 @@
 }
 
 .toastui-editor-defaultUI .toastui-editor-close-button {
-  font-size: 13px;
   width: 63px;
   height: 32px;
-  border-radius: 2px;
   background-color: #f7f9fc;
   border: 1px solid #dadde6;
   margin-right: 5px;
+  outline-color: #cbcfdb;
 }
 
 .toastui-editor-defaultUI .toastui-editor-close-button:hover {
-  border: solid 1px #cbcfdb;
+  border-color: #cbcfdb;
 }
 
+/* mode switch tab */
+.toastui-editor-mode-switch {
+  background-color: #fff;
+  border-top: 1px solid #dadde6;
+  font-size: 12px;
+  text-align: right;
+  height: 28px;
+  padding-right: 10px;
+  border-radius: 0 0 4px 4px;
+}
+
+.toastui-editor-mode-switch .tab-item {
+  display: inline-block;
+  width: 96px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  background: #f7f9fc;
+  color: #969aa5;
+  margin-top: -1px;
+  margin-right: -1px;
+  cursor: pointer;
+  border: 1px solid #dadde6;
+  border-radius: 0 0 4px 4px;
+  font-weight: 500;
+  box-sizing: border-box;
+}
+
+.toastui-editor-mode-switch .tab-item.active {
+  border-top: 1px solid #fff;
+  background-color: #fff;
+  color: #555555;
+}
+
+/* markdown tab */
+.toastui-editor-defaultUI .toastui-editor-md-tab-container {
+  float: left;
+  height: 31px;
+  background: #fff;
+}
+
+.toastui-editor-md-tab-container .toastui-editor-tabs {
+  margin: 0 -7px 0 24px;
+  background: #fff;
+}
+
+/* @TODO: change default tab style for new design */
+.toastui-editor-defaultUI .toastui-editor-tabs button {
+  box-sizing: border-box;
+  line-height: 100%;
+  position: relative;
+  cursor: pointer;
+  z-index: 1;
+  font-size: 13px;
+  background-color: #f9f9f9;
+  border: solid 1px #e5e5e5;
+  border-top: 0;
+  padding: 0 9px;
+  color: #777;
+  border-radius: 0;
+  outline: 0;
+}
+
+.toastui-editor-md-tab-container .toastui-editor-tabs button:last-child {
+  margin-left: -1px;
+}
+
+.toastui-editor-md-tab-container .toastui-editor-tabs button.active,
+.toastui-editor-md-tab-container .toastui-editor-tabs button:hover.active {
+  background-color: #fff;
+  color: #333;
+  border-bottom: 1px solid #fff;
+  z-index: 2;
+}
+
+.toastui-editor-md-tab-container .toastui-editor-tabs button:hover {
+  background-color: #fff;
+  color: #333;
+}
+
+/* toolbar */
 .toastui-editor-defaultUI-toolbar {
   padding: 0 25px;
   height: 45px;
   background-color: #f7f9fc;
   border-bottom: 1px solid #ebedf2;
   overflow: hidden;
+  border-radius: 4px;
 }
 
 .toastui-editor-toolbar {
@@ -246,7 +322,6 @@
 .toastui-editor-defaultUI-toolbar button {
   float: left;
   box-sizing: border-box;
-  outline: none;
   cursor: pointer;
   width: 32px;
   height: 32px;
@@ -268,33 +343,31 @@
   position: relative;
   width: 70px;
   height: 10px;
-  border: none;
   text-align: center;
   line-height: 10px;
   color: #81858f;
+  cursor: pointer;
 }
 
-.toastui-editor-defaultUI-toolbar .scroll-sync:before {
+.toastui-editor-defaultUI-toolbar .scroll-sync::before {
   content: 'Scroll';
   position: absolute;
   left: 0;
   font-size: 14px;
-  font-weight: 600;
 }
 
-.toastui-editor-defaultUI-toolbar .scroll-sync.active:before {
+.toastui-editor-defaultUI-toolbar .scroll-sync.active::before {
   color: #00a9ff;
 }
 
-.scroll-sync input { 
+.toastui-editor-defaultUI-toolbar .scroll-sync input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.slider {
+.toastui-editor-defaultUI-toolbar .switch {
   position: absolute;
-  cursor: pointer;
   top: 0;
   left: 45px;
   right: 0;
@@ -305,11 +378,11 @@
   border-radius: 50px;
 }
 
-input:checked + .slider {
+.toastui-editor-defaultUI-toolbar input:checked + .switch {
   background-color: #acddfa;
 }
 
-.slider:before {
+.toastui-editor-defaultUI-toolbar .switch::before {
   position: absolute;
   content: '';
   height: 14px;
@@ -322,7 +395,7 @@ input:checked + .slider {
   border-radius: 50%;
 }
 
-input:checked + .slider:before {
+.toastui-editor-defaultUI-toolbar input:checked + .switch::before {
   background-color: #00a9ff;
   -webkit-transform: translateX(12px);
   -moz-transform: translateX(12px);
@@ -349,95 +422,9 @@ input:checked + .slider:before {
   line-height: 32px;
 }
 
-.toastui-editor-defaultUI button.scroll-sync:after {
-  content: 'Scroll off';
-}
-
-.toastui-editor-defaultUI button.scroll-sync.active {
-  color: #4b96e6;
-  font-weight: bold;
-}
-
-.toastui-editor-defaultUI button.scroll-sync.active:after {
-  content: 'Scroll on';
-}
-
-.toastui-editor-mode-switch {
-  background-color: #fff;
-  border-top: 1px solid #dadde6;
-  font-size: 12px;
-  text-align: right;
-  height: 28px;
-  padding-right: 10px;
-}
-
-.toastui-editor-mode-switch button {
-  width: 96px;
-  height: 24px;
-  background: #f7f9fc;
-  outline: 0;
-  color: #969aa5;
-  margin-top: -1px;
-  margin-right: -1px;
-  cursor: pointer;
-  border: 1px solid #dadde6;
-  border-radius: 0 0 4px 4px;
-  border-collapse: collapse;
-  font-weight: 600;
-}
-
-.toastui-editor-mode-switch button.active {
-  border-top: 1px solid #fff;
-  background-color: #fff;
-  color: #555555;
-}
-
-.toastui-editor-defaultUI .toastui-editor-md-tab-container {
-  float: left;
-  height: 31px;
-  background: #fff;
-}
-
-.toastui-editor-md-tab-container .toastui-editor-tab {
-  margin: 0 -7px 0 24px;
-  background: #fff;
-}
-
-.toastui-editor-defaultUI .toastui-editor-tab button {
-  box-sizing: border-box;
-  line-height: 100%;
-  position: relative;
-  cursor: pointer;
-  z-index: 1;
-  font-size: 13px;
-  background-color: #f9f9f9;
-  border: solid 1px #e5e5e5;
-  border-top: 0;
-  padding: 0 9px;
-  color: #777;
-  border-radius: 0;
-  outline: 0;
-}
-
-.toastui-editor-md-tab-container .toastui-editor-tab button:last-child {
-  margin-left: -1px;
-}
-
-.toastui-editor-md-tab-container .toastui-editor-tab button.active,
-.toastui-editor-md-tab-container .toastui-editor-tab button:hover.active {
-  background-color: #fff;
-  color: #333;
-  border-bottom: 1px solid #fff;
-  z-index: 2;
-}
-
-.toastui-editor-md-tab-container .toastui-editor-tab button:hover {
-  background-color: #fff;
-  color: #333;
-}
-
+/* toolbar popup */
 .toastui-editor-popup {
-  width: 500px;
+  width: 400px;
   margin-right: auto;
   background: #fff;
   z-index: 9999;
@@ -445,38 +432,6 @@ input:checked + .slider:before {
   border-radius: 2px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
   border: solid 1px #dadde6;
-}
-
-.toastui-editor-popup-header {
-  padding: 10px;
-  height: auto;
-  line-height: normal;
-  position: relative;
-  border-bottom: 1px solid #cacaca;
-}
-
-.toastui-editor-popup-header .toastui-editor-button-container {
-  float: right;
-}
-
-.toastui-editor-popup-header button {
-  padding: 0px;
-  background-color: transparent;
-  background-size: cover;
-}
-
-.toastui-editor-popup-header .toastui-editor-popup-close-button {
-  margin: 3px;
-  width: 13px;
-  height: 13px;
-  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIHdpZHRoPSIxMHB4IiBoZWlnaHQ9IjEwcHgiIHZpZXdCb3g9IjAgMCAxMCAxMCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj4gICAgICAgIDx0aXRsZT5GMjc2Qzc4MC0zM0JBLTQ3MTItQTM3OC04RkQwQUNDOTFDRTk8L3RpdGxlPiAgICA8ZGVzYz5DcmVhdGVkIHdpdGggc2tldGNodG9vbC48L2Rlc2M+ICAgIDxkZWZzPjwvZGVmcz4gICAgPGcgaWQ9IlN5bWJvbHMiIHN0cm9rZT0ibm9uZSIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPiAgICAgICAgPGcgaWQ9ImxuYi1mb2xkZXItZGVsIiBmaWxsLXJ1bGU9Im5vbnplcm8iIGZpbGw9IiM3Nzc3NzciPiAgICAgICAgICAgIDxwYXRoIGQ9Ik01LDMuNTg1Nzg2NDQgTDEuNzA3MTA2NzgsMC4yOTI4OTMyMTkgTDAuMjkyODkzMjE5LDEuNzA3MTA2NzggTDMuNTg1Nzg2NDQsNSBMMC4yOTI4OTMyMTksOC4yOTI4OTMyMiBMMS43MDcxMDY3OCw5LjcwNzEwNjc4IEw1LDYuNDE0MjEzNTYgTDguMjkyODkzMjIsOS43MDcxMDY3OCBMOS43MDcxMDY3OCw4LjI5Mjg5MzIyIEw2LjQxNDIxMzU2LDUgTDkuNzA3MTA2NzgsMS43MDcxMDY3OCBMOC4yOTI4OTMyMiwwLjI5Mjg5MzIxOSBMNSwzLjU4NTc4NjQ0IFoiIGlkPSJDb21iaW5lZC1TaGFwZSI+PC9wYXRoPiAgICAgICAgPC9nPiAgICA8L2c+PC9zdmc+);
-}
-
-.toastui-editor-popup-header .toastui-editor-popup-title {
-  font-size: 13px;
-  font-weight: bold;
-  color: #333;
-  vertical-align: bottom;
 }
 
 .toastui-editor-popup-body {
@@ -497,13 +452,19 @@ input:checked + .slider:before {
 }
 
 .toastui-editor-popup-body input[type='text'] {
-  width: calc(100% - 24px);
+  width: calc(100% - 26px);
   height: 30px;
   padding: 0 12px;
   border-radius: 2px;
   border: solid 1px #e1e3e9;
   outline-color: #00a9ff;
   color: #333333;
+}
+
+.toastui-editor-popup-body input[type='text'].disabled {
+  background-color: #f7f9fc;
+  border-color: #e1e3e9;
+  color: #969aa5;
 }
 
 .toastui-editor-popup-body input[type='file'] {
@@ -516,19 +477,8 @@ input:checked + .slider:before {
   left: 0;
 }
 
-.toastui-editor-popup-body input[type='text'].disabled {
-  border-color: #e5e5e5;
-  background-color: #eee;
-  color: #e5e5e5;
-}
-
 .toastui-editor-popup-body input.wrong {
   border-color: #fa2828;
-}
-
-.toastui-editor-popup-add-link,
-.toastui-editor-popup-add-image {
-  width: 400px;
 }
 
 .toastui-editor-popup-add-link .toastui-editor-popup-body,
@@ -536,42 +486,40 @@ input:checked + .slider:before {
   padding: 0 20px 20px 20px;
 }
 
-.toastui-editor-popup-add-image .toastui-editor-tab {
-  display: block;
-  background: none;
-  margin: 5px 0 10px;
+.toastui-editor-popup-add-image .toastui-editor-tabs {
+  margin: 5px 0s 10px;
 }
 
-.toastui-editor-popup-add-image .toastui-editor-tab button {
-  background: #fff;
-  min-width: 60px;
+.toastui-editor-popup-add-image .toastui-editor-tabs .tab-item {
+  display: inline-block;
+  width: 60px;
   height: 40px;
-  margin-left: -1px;
-  border: none;
+  line-height: 40px;
   border-bottom: 1px solid #dadde6;
   color: #333333;
-  font-weight: 600;
   font-size: 13px;
-  padding: 11px 17px;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
-.toastui-editor-popup-add-image .toastui-editor-tab button:hover {
-  border-bottom: 1px solid #cbcfdb;;
+.toastui-editor-popup-add-image .toastui-editor-tabs .tab-item:hover {
+  border-bottom: 1px solid #cbcfdb;
 }
 
-
-.toastui-editor-popup-add-image .toastui-editor-tab button.active {
+.toastui-editor-popup-add-image .toastui-editor-tabs .tab-item.active {
   color: #00a9ff;
   border-bottom: 2px solid #00a9ff;
 }
 
 .toastui-editor-popup-add-image .toastui-editor-file-name {
-  width: 71%;
+  width: 62%;
   display: inline-block;
-  height: 30px;
   border-radius: 2px;
   border: 1px solid #e1e3e9;
   color: #dadde6;
+  height: 30px;
   line-height: 30px;
   padding: 0 12px;
   cursor: pointer;
@@ -582,18 +530,17 @@ input:checked + .slider:before {
 }
 
 .toastui-editor-popup-add-image .toastui-editor-file-select-button {
-  width: calc(29% - 31px);
+  width: 29%;
   margin-left: 5px;
   height: 32px;
   border-radius: 2px;
   border: solid 1px #e1e3e9;
   background-color: #f7f9fc;
-  color: #333333;
-  font-size: 13px;
+  vertical-align: bottom;
 }
 
 .toastui-editor-popup-add-image .toastui-editor-file-select-button:hover {
-  border: solid 1px #cbcfdb;
+  border-color: #cbcfdb;
 }
 
 .toastui-editor-popup-add-table {
@@ -630,7 +577,7 @@ input:checked + .slider:before {
   position: absolute;
   top: 0;
   left: 0;
-  border: solid 1px rgba(0, 169, 255, 0.4);
+  border: 1px solid #00a9ff;
   background: rgba(0, 169, 255, 0.1);
   z-index: 999;
 }
@@ -639,47 +586,6 @@ input:checked + .slider:before {
   margin: 5px 0 0 0;
   text-align: center;
   color: #333333
-}
-
-.toastui-editor-context-menu {
-  position: absolute;
-  width: auto;
-  min-width: 197px;
-  color: #333333;
-  border-radius: 2px;
-  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
-  border: solid 1px #dadde6;
-  z-index: 100;
-  padding: 5px 0;
-  background-color: #fff;
-}
-
-.toastui-editor-context-menu button {
-  display: block;
-  width: 100%;
-  font-size: 13px;
-  background-color: #fff;
-  border: none;
-  outline: 0;
-  padding: 0px 10px 0px 10px;
-  line-height: 32px;
-  height: 32px;
-  text-align: left;
-}
-
-.toastui-editor-context-menu button:not(:disabled):hover {
-  background-color: #dff4ff;
-}
-
-.toastui-editor-context-menu button:disabled {
-  color: #c9ccd5;
-}
-
-.toastui-editor-context-menu hr {
-  background-color: #ebedf2;
-  border-style: none;
-  height: 1px;
-  margin: 5px 0;
 }
 
 .toastui-editor-popup-add-heading {
@@ -740,6 +646,102 @@ input:checked + .slider:before {
   font-size: 14px;
 }
 
+/* table context menu */
+.toastui-editor-context-menu {
+  position: absolute;
+  width: auto;
+  min-width: 197px;
+  color: #333333;
+  border-radius: 2px;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+  border: solid 1px #dadde6;
+  z-index: 100;
+  padding: 5px 0;
+  background-color: #fff;
+}
+
+.toastui-editor-context-menu .menu-group {
+  list-style: none;
+  border-bottom: 1px solid #ebedf2;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+}
+
+.toastui-editor-context-menu .menu-group:last-child {
+  border-bottom: none;
+}
+
+.toastui-editor-context-menu .menu-item {
+  height: 32px;
+  line-height: 32px;
+  padding: 0 14px;
+  cursor: pointer;
+}
+
+.toastui-editor-context-menu span::before {
+  background: url('../img/toastui-editor.png') no-repeat;
+  background-size: 466px 146px;
+  content: '';
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+.toastui-editor-context-menu .add-row-up::before {
+  background-position: 3px -104px;
+}
+
+.toastui-editor-context-menu .add-row-down::before {
+  background-position: -19px -104px;
+}
+
+.toastui-editor-context-menu .remove-row::before {
+  background-position: -41px -104px;
+}
+
+.toastui-editor-context-menu .add-column-left::before {
+  background-position: -63px -104px;
+}
+
+.toastui-editor-context-menu .add-column-right::before {
+  background-position: -85px -104px;
+}
+
+.toastui-editor-context-menu .remove-column::before {
+  background-position: -111px -104px;
+}
+
+.toastui-editor-context-menu .align-column-left::before {
+  background-position: -129px -104px;
+}
+
+.toastui-editor-context-menu .align-column-center::before {
+  background-position: -151px -104px;
+}
+
+.toastui-editor-context-menu .align-column-right::before {
+  background-position: -173px -104px;
+}
+
+.toastui-editor-context-menu .remove-table::before {
+  background-position: -197px -104px;
+}
+
+.toastui-editor-context-menu .disabled span::before {
+  opacity: 0.3;
+}
+
+.toastui-editor-context-menu li:not(.disabled):hover {
+  background-color: #dff4ff;
+}
+
+.toastui-editor-context-menu li.disabled {
+  color: #c9ccd5;
+}
+
 .toastui-editor-tooltip {
   position: absolute;
   background-color: #444444;
@@ -770,9 +772,8 @@ input:checked + .slider:before {
 }
 
 .toastui-editor-toolbar-icons {
-  background: url('../img/toastui-editor.png');
-  background-size: 218px 188px;
-  display: inline-block;
+  background: url('../img/toastui-editor.png') no-repeat;
+  background-size: 466px 146px;
 }
 
 @media only screen and (-webkit-min-device-pixel-ratio: 2),
@@ -784,161 +785,83 @@ input:checked + .slider:before {
   .toastui-editor-toolbar-icons {
     background: url('../img/toastui-editor-2x.png') no-repeat;
     background-size: 466px 146px;
-    display: inline-block;
   }
+  .toastui-editor-context-menu span::before {
+    background: url('../img/toastui-editor-2x.png') no-repeat;
+    background-size: 466px 146px;
+  }
+}
+
+.toastui-editor-toolbar-icons:disabled {
+  opacity: 0.3;
 }
 
 .toastui-editor-toolbar-icons.heading {
   background-position: 3px 3px;
 }
 
-.toastui-editor-toolbar-icons.heading:disabled {
-  background-position: 3px 3px;
-  opacity: 0.3;
-}
-
 .toastui-editor-toolbar-icons.bold {
   background-position: -23px 3px;
-}
-
-.toastui-editor-toolbar-icons.bold:disabled {
-  background-position: -23px 3px;
-  opacity: 0.3;
 }
 
 .toastui-editor-toolbar-icons.italic {
   background-position: -49px 3px;
 }
 
-.toastui-editor-toolbar-icons.italic:disabled {
-  background-position: -49px 3px;
-  opacity: 0.3;
-}
-
 .toastui-editor-toolbar-icons.strike {
   background-position: -75px 3px;
-}
-
-.toastui-editor-toolbar-icons.strike:disabled {
-  background-position: -75px 3px;
-  opacity: 0.3;
 }
 
 .toastui-editor-toolbar-icons.hrline {
   background-position: -101px 4px;
 }
 
-.toastui-editor-toolbar-icons.hrline:disabled {
-  background-position: -101px 4px;
-  opacity: 0.3;
-}
-
 .toastui-editor-toolbar-icons.quote {
   background-position: -127px 4px;
-}
-
-.toastui-editor-toolbar-icons.quote:disabled {
-  background-position: -127px 4px;
-  opacity: 0.3;
 }
 
 .toastui-editor-toolbar-icons.bullet-list {
   background-position: -153px 3px;
 }
 
-.toastui-editor-toolbar-icons.bullet-list:disabled {
-  background-position: -153px 3px;
-  opacity: 0.3;
-}
-
 .toastui-editor-toolbar-icons.ordered-list {
   background-position: -179px 3px;
-}
-
-.toastui-editor-toolbar-icons.ordered-list:disabled {
-  background-position: -179px 3px;
-  opacity: 0.3;
 }
 
 .toastui-editor-toolbar-icons.task-list {
   background-position: -205px 3px;
 }
 
-.toastui-editor-toolbar-icons.task-list:disabled {
-  background-position: -205px 3px;
-  opacity: 0.3;
-}
-
 .toastui-editor-toolbar-icons.indent {
   background-position: -231px 3px;
-}
-
-.toastui-editor-toolbar-icons.indent:disabled {
-  background-position: -231px 3px;
-  opacity: 0.3;
 }
 
 .toastui-editor-toolbar-icons.outdent {
   background-position: -257px 3px;
 }
 
-.toastui-editor-toolbar-icons.outdent:disabled {
-  background-position: -257px 3px;
-  opacity: 0.3;
-}
-
 .toastui-editor-toolbar-icons.table {
   background-position: -283px 3px;
-}
-
-.toastui-editor-toolbar-icons.table:disabled {
-  background-position: -283px 3px;
-  opacity: 0.3;
 }
 
 .toastui-editor-toolbar-icons.image {
   background-position: -309px 3px;
 }
 
-.toastui-editor-toolbar-icons.image:disabled {
-  background-position: -309px 3px;
-  opacity: 0.3;
-}
-
 .toastui-editor-toolbar-icons.link {
   background-position: -334px 3px;
-}
-
-.toastui-editor-toolbar-icons.link:disabled {
-  background-position: -334px 3px;
-  opacity: 0.3;
 }
 
 .toastui-editor-toolbar-icons.code {
   background-position: -361px 3px;
 }
 
-.toastui-editor-toolbar-icons.code:disabled {
-  background-position: -361px 3px;
-  opacity: 0.3;
-}
-
 .toastui-editor-toolbar-icons.codeblock {
   background-position: -388px 3px;
 }
 
-.toastui-editor-toolbar-icons.codeblock:disabled {
-  background-position: -388px 3px;
-  opacity: 0.3;
-}
-
 .toastui-editor-toolbar-icons.more {
   background-position: -412px 4px;
-}
-
-.toastui-editor-toolbar-icons.more:disabled {
-  background-position: -412px 4px;
-  opacity: 0.3;
 }
 
 @media only screen and (max-width: 480px) {
