@@ -30,11 +30,11 @@ function getWwEditor() {
 }
 
 function getMdSwitch() {
-  return getElements('.toastui-editor-mode-switch button')![0];
+  return getElements('.toastui-editor-mode-switch .tab-item')![0];
 }
 
 function getWwSwitch() {
-  return getElements('.toastui-editor-mode-switch button')![1];
+  return getElements('.toastui-editor-mode-switch .tab-item')![1];
 }
 
 function clickMdSwitch() {
@@ -46,11 +46,11 @@ function clickWwSwitch() {
 }
 
 function getMdWriteTab() {
-  return getElement('.toastui-editor-md-tab-container button')!;
+  return getElement('.toastui-editor-md-tab-container .tab-item')!;
 }
 
 function getMdPreviewTab() {
-  return document.querySelectorAll<HTMLElement>('.toastui-editor-md-tab-container button')[1];
+  return document.querySelectorAll<HTMLElement>('.toastui-editor-md-tab-container .tab-item')[1];
 }
 
 function getScrollSyncWrapper() {
