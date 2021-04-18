@@ -113,10 +113,10 @@ export class ImagePopupBody extends Component<Props, State> {
             onClick=${this.showFileSelectBox}
             onSelectstart=${this.preventSelectStart}
           >
-            ${file ? file.name : '선택된 파일 없음'}
+            ${file ? file.name : i18n.get('No file')}
           </span>
           <button class="${cls('file-select-button')}" onClick=${this.showFileSelectBox}>
-            파일 선택
+            ${i18n.get('Choose a file')}
           </button>
           <input
             id="toastuiImageFileInput"
