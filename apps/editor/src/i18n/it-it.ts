@@ -29,6 +29,8 @@ Editor.setLanguage(['it', 'it-IT'], {
   Heading: 'Intestazione',
   'Image URL': 'URL immagine',
   'Select image file': 'Seleziona file immagine',
+  'Choose a file': 'Scegli un file',
+  'No file': 'Nessun file',
   Description: 'Descrizione',
   OK: 'OK',
   More: 'Più',

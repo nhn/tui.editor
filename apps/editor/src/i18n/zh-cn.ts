@@ -29,6 +29,8 @@ Editor.setLanguage('zh-CN', {
   Heading: '标题',
   'Image URL': '图片网址',
   'Select image file': '选择图片文件',
+  'Choose a file': '选择一个文件',
+  'No file': '没有文件',
   Description: '说明',
   OK: '确认',
   More: '更多',

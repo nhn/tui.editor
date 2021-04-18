@@ -29,6 +29,8 @@ Editor.setLanguage(['nb', 'nb-NO'], {
   Heading: 'Overskrift',
   'Image URL': 'BildeURL',
   'Select image file': 'Velg bildefil',
+  'Choose a file': 'Velg en fil',
+  'No file': 'Ingen fil',
   Description: 'Beskrivelse',
   OK: 'OK',
   More: 'Mer',

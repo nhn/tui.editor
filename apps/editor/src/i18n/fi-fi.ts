@@ -29,6 +29,8 @@ Editor.setLanguage(['fi', 'fi-FI'], {
   Heading: 'Otsikko',
   'Image URL': 'Kuvan URL',
   'Select image file': 'Valitse kuvatiedosto',
+  'Choose a file': 'Valitse tiedosto',
+  'No file': 'Ei tiedosto',
   Description: 'Kuvaus',
   OK: 'OK',
   More: 'Lisää',

@@ -29,6 +29,8 @@ Editor.setLanguage(['tr', 'tr-TR'], {
   Heading: 'Başlık',
   'Image URL': 'İmaj URL',
   'Select image file': 'İmaj dosyası seç',
+  'Choose a file': 'Bir dosya seçin',
+  'No file': 'Dosya yok',
   Description: 'Açıklama',
   OK: 'Onay',
   More: 'Daha Fazla',

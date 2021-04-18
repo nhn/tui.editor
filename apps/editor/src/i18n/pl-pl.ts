@@ -29,6 +29,8 @@ Editor.setLanguage(['pl', 'pl-PL'], {
   Heading: 'Nagłówek',
   'Image URL': 'Adres URL obrazu',
   'Select image file': 'Wybierz plik obrazu',
+  'Choose a file': 'Wybierz plik',
+  'No file': 'Brak plik',
   Description: 'Opis',
   OK: 'OK',
   More: 'Więcej',

@@ -29,6 +29,8 @@ Editor.setLanguage(['uk', 'uk-UA'], {
   Heading: 'Заголовок',
   'Image URL': 'URL зображення',
   'Select image file': 'Вибрати файл зображення',
+  'Choose a file': 'Виберіть файл',
+  'No file': 'Немає файлу',
   Description: 'Опис',
   OK: 'OK',
   More: 'ще',

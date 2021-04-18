@@ -29,6 +29,8 @@ Editor.setLanguage(['nl', 'nl-NL'], {
   Heading: 'Kop',
   'Image URL': 'Afbeelding URL',
   'Select image file': 'Selecteer een afbeelding',
+  'Choose a file': 'Kies een bestand',
+  'No file': 'Geen bestand',
   Description: 'Omschrijving',
   OK: 'OK',
   More: 'Meer',

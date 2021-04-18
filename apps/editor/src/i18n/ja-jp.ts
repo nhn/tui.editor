@@ -29,6 +29,8 @@ Editor.setLanguage(['ja', 'ja-JP'], {
   Heading: '見出し',
   'Image URL': 'イメージURL',
   'Select image file': '画像ファイル選択',
+  'Choose a file': 'ファイルの選択',
+  'No file': 'ファイルがない',
   Description: 'ディスクリプション ',
   OK: 'はい',
   More: 'もっと',
