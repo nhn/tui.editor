@@ -30,12 +30,12 @@ export function createToolbarItemInfo(type: string | ToolbarItemOptions): Toolba
 function createScrollSyncToolbarItem(): ToolbarItemInfo {
   const label = document.createElement('label');
   const checkbox = document.createElement('input');
-  const slider = document.createElement('span');
+  const toggleSwitch = document.createElement('span');
 
   label.className = 'scroll-sync active';
   checkbox.type = 'checkbox';
   checkbox.checked = true;
-  slider.className = 'slider';
+  toggleSwitch.className = 'switch';
 
   const onMounted = (execCommand: ExecCommand) =>
     checkbox.addEventListener('change', (ev: Event) => {
@@ -50,7 +50,7 @@ function createScrollSyncToolbarItem(): ToolbarItemInfo {
     });
 
   label.appendChild(checkbox);
-  label.appendChild(slider);
+  label.appendChild(toggleSwitch);
 
   return {
     name: 'scrollSync',

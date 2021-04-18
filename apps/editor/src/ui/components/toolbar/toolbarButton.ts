@@ -35,12 +35,12 @@ interface State {
   active: boolean;
 }
 
-const DEFAULT_WIDTH = 50;
+const DEFAULT_WIDTH = 80;
 
 export class ToolbarButtonComp extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { active: !!props.item.active };
+    this.state = { active: false };
     this.addEvent();
   }
 
@@ -60,7 +60,6 @@ export class ToolbarButtonComp extends Component<Props, State> {
 
   updated(prevProps: Props) {
     if (prevProps.item.name !== this.props.item.name) {
-      this.setState({ active: !!this.props.item.active });
       this.setItemWidth();
     }
   }
