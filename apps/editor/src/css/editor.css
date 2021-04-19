@@ -679,6 +679,10 @@
   cursor: pointer;
 }
 
+.toastui-editor-context-menu span {
+  display: inline-block;
+}
+
 .toastui-editor-context-menu span::before {
   background: url('../img/toastui-editor.png') no-repeat;
   background-size: 466px 146px;
