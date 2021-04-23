@@ -12,7 +12,6 @@ function createApplyButton(text: string) {
   const button = document.createElement('button');
 
   button.setAttribute('type', 'button');
-  button.className = 'toastui-editor-ok-button';
   button.textContent = text;
 
   return button;

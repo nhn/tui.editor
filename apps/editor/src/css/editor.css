@@ -250,47 +250,42 @@
 /* markdown tab */
 .toastui-editor-defaultUI .toastui-editor-md-tab-container {
   float: left;
-  height: 31px;
-  background: #fff;
+  height: 45px;
+  font-size: 13px;
+  background: #f7f9fc;
+  border-top-left-radius: 4px;
 }
 
 .toastui-editor-md-tab-container .toastui-editor-tabs {
-  margin: 0 -7px 0 24px;
-  background: #fff;
+  margin-left: 15px;
+  height: 100%;
 }
 
-/* @TODO: change default tab style for new design */
-.toastui-editor-defaultUI .toastui-editor-tabs button {
-  box-sizing: border-box;
-  line-height: 100%;
-  position: relative;
+.toastui-editor-md-tab-container .tab-item {
+  display: inline-block;
+  width: 70px;
+  height: 33px;
+  line-height: 33px;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  background: #eaedf1;
+  color: #969aa5;
   cursor: pointer;
-  z-index: 1;
-  font-size: 13px;
-  background-color: #f9f9f9;
-  border: 1px solid #e5e5e5;
-  border-top: 0;
-  padding: 0 9px;
-  color: #777;
-  border-radius: 0;
-  outline: 0;
+  border: 1px solid #dadde6;
+  border-radius: 4px 4px 0 0;
+  box-sizing: border-box;
+  margin-top: 13px;
 }
 
-.toastui-editor-md-tab-container .toastui-editor-tabs button:last-child {
-  margin-left: -1px;
-}
-
-.toastui-editor-md-tab-container .toastui-editor-tabs button.active,
-.toastui-editor-md-tab-container .toastui-editor-tabs button:hover.active {
-  background-color: #fff;
-  color: #333;
+.toastui-editor-md-tab-container .tab-item.active {
   border-bottom: 1px solid #fff;
-  z-index: 2;
+  background-color: #fff;
+  color: #555;
 }
 
-.toastui-editor-md-tab-container .toastui-editor-tabs button:hover {
-  background-color: #fff;
-  color: #333;
+.toastui-editor-md-tab-container .tab-item:last-child {
+  margin-left: -1px;
 }
 
 /* toolbar */
