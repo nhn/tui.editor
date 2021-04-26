@@ -1,4 +1,5 @@
 import { Node as ProsemirrorNode, ResolvedPos } from 'prosemirror-model';
+import { includes } from '@/utils/common';
 
 type NodeAttrs = Record<string, any>;
 
@@ -75,12 +76,14 @@ export function createParsedCellDOM(tag: string) {
   return {
     tag,
     getAttrs(dom: Node | string) {
-      return ['rawHTML', 'colspan', 'rowspan'].reduce<NodeAttrs>((acc, attrName) => {
+      return ['rawHTML', 'colspan', 'rowspan', 'extended'].reduce<NodeAttrs>((acc, attrName) => {
         const attrNameInDOM = attrName === 'rawHTML' ? 'data-raw-html' : attrName;
         const attrValue = (dom as HTMLElement).getAttribute(attrNameInDOM);
 
         if (attrValue) {
-          acc[attrName] = attrName === 'rawHTML' ? attrValue : Number(attrValue);
+          acc[attrName] = includes(['rawHTML', 'extended'], attrName)
+            ? attrValue
+            : Number(attrValue);
         }
         return acc;
       }, {});

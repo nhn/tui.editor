@@ -17,6 +17,7 @@ export class TableBodyCell extends NodeSchema {
         rawHTML: { default: null },
         colspan: { default: null },
         rowspan: { default: null },
+        extended: { default: null },
       },
       isolating: true,
       parseDOM: [createParsedCellDOM('td')],

@@ -1,18 +1,15 @@
 import { ProsemirrorNode, ResolvedPos, Schema } from 'prosemirror-model';
 import { Selection, Transaction, NodeSelection } from 'prosemirror-state';
 
-import { createParagraph, createTextSelection, addParagraph } from '@/helper/manipulation';
+import { addParagraph } from '@/helper/manipulation';
 
-import { CellInfo } from '@/wysiwyg/helper/table';
+import { RowInfo } from '@/wysiwyg/helper/table';
 
 export type CursorDirection = 'left' | 'right' | 'up' | 'down';
 
 export type CellPosition = [rowIndex: number, columnIndex: number];
 
-type CellOffsetFn = (
-  [rowIndex, columnIndex]: CellPosition,
-  cellsInfo: CellInfo[][]
-) => number | null;
+type CellOffsetFn = ([rowIndex, columnIndex]: CellPosition, cellsInfo: RowInfo[]) => number | null;
 
 type CellOffsetFnMap = {
   [key in CursorDirection]: CellOffsetFn;
@@ -134,7 +131,7 @@ export function canMoveBetweenCells(
 
 export function canBeOutOfTable(
   direction: CursorDirection,
-  cellsInfo: CellInfo[][],
+  cellsInfo: RowInfo[],
   rowIndex: number
 ) {
   const inFirstRow = direction === 'up' && rowIndex === 0;
@@ -143,7 +140,7 @@ export function canBeOutOfTable(
   return inFirstRow || inLastRow;
 }
 
-export function addParagraphBeforeTable(tr: Transaction, cellsInfo: CellInfo[][], schema: Schema) {
+export function addParagraphBeforeTable(tr: Transaction, cellsInfo: RowInfo[], schema: Schema) {
   // 3 is position value of <table><thead><tr>
   const tableStartPos = tr.doc.resolve(cellsInfo[0][0].offset - 3);
 
@@ -154,7 +151,7 @@ export function addParagraphBeforeTable(tr: Transaction, cellsInfo: CellInfo[][]
   return tr.setSelection(Selection.near(tableStartPos, -1));
 }
 
-export function addParagraphAfterTable(tr: Transaction, cellsInfo: CellInfo[][], schema: Schema) {
+export function addParagraphAfterTable(tr: Transaction, cellsInfo: RowInfo[], schema: Schema) {
   const rowCount = cellsInfo.length;
   const columnCount = cellsInfo[0].length;
   const lastCell = cellsInfo[rowCount - 1][columnCount - 1];
@@ -169,7 +166,7 @@ export function addParagraphAfterTable(tr: Transaction, cellsInfo: CellInfo[][],
   return tr.setSelection(Selection.near(tableEndPos, 1));
 }
 
-export function getRightCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: CellInfo[][]) {
+export function getRightCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: RowInfo[]) {
   const allRowCount = cellsInfo.length;
   const allColumnCount = cellsInfo[0].length;
 
@@ -192,7 +189,7 @@ export function getRightCellOffset([rowIndex, columnIndex]: CellPosition, cellsI
   return null;
 }
 
-export function getLeftCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: CellInfo[][]) {
+export function getLeftCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: RowInfo[]) {
   const allColumnCount = cellsInfo[0].length;
 
   const firstCellInRow = columnIndex === 0;
@@ -214,7 +211,7 @@ export function getLeftCellOffset([rowIndex, columnIndex]: CellPosition, cellsIn
   return null;
 }
 
-export function getUpCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: CellInfo[][]) {
+export function getUpCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: RowInfo[]) {
   if (rowIndex > 0) {
     const { offset, nodeSize } = cellsInfo[rowIndex - 1][columnIndex];
 
@@ -224,7 +221,7 @@ export function getUpCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo
   return null;
 }
 
-export function getDownCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: CellInfo[][]) {
+export function getDownCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: RowInfo[]) {
   const allRowCount = cellsInfo.length;
 
   if (rowIndex < allRowCount - 1) {
@@ -240,7 +237,7 @@ export function moveToCell(
   direction: CursorDirection,
   tr: Transaction,
   cellIndex: CellPosition,
-  cellsInfo: CellInfo[][]
+  cellsInfo: RowInfo[]
 ) {
   const cellOffsetFn = cellOffsetFnMap[direction];
   const offset = cellOffsetFn(cellIndex, cellsInfo);
@@ -256,7 +253,7 @@ export function moveToCell(
 
 export function canSelectTableNode(
   direction: CursorDirection,
-  cellsInfo: CellInfo[][],
+  cellsInfo: RowInfo[],
   [rowIndex, columnIndex]: CellPosition,
   from: ResolvedPos,
   paraDepth: number

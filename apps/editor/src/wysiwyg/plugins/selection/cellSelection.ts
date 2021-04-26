@@ -96,16 +96,27 @@ export default class CellSelection extends Selection {
 
     for (let rowIdx = startRowIdx; rowIdx <= endRowIdx; rowIdx += 1) {
       const cells = [];
+      const rowInfo = cellsInfo[rowIdx];
 
       for (let colIdx = startColIdx; colIdx <= endColIdx; colIdx += 1) {
         const { offset } = cellsInfo[rowIdx][colIdx];
         const cell = table.nodeAt(offset - tableOffset);
+        const { rowspanMap, colspanMap } = rowInfo;
+        const colspan = colspanMap[colIdx];
+        const rowspan = rowspanMap[colIdx];
 
         if (cell) {
-          cells.push(cell.copy(cell.content));
+          // mark the extended cell for pasting
+          if (
+            (colspan && colIdx !== colspan.startSpanIdx) ||
+            (rowspan && rowIdx !== rowspan.startSpanIdx)
+          ) {
+            cells.push(cell.type.create({ extended: true }));
+          } else {
+            cells.push(cell.copy(cell.content));
+          }
         }
       }
-
       rows.push(row.copy(Fragment.from(cells)));
     }
 

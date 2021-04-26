@@ -19,6 +19,7 @@ import {
   getPrevRowOffset,
   getNextColumnOffsets,
   getPrevColumnOffsets,
+  getRowAndColumnCount,
 } from '@/wysiwyg/helper/table';
 import {
   CursorDirection,
@@ -121,9 +122,9 @@ export class Table extends NodeSchema {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const selectionInfo = getSelectionInfo(anchor, head);
         const cellsInfo = getTableCellsInfo(anchor);
-        const { columnCount } = selectionInfo;
+        const selectionInfo = getSelectionInfo(cellsInfo, anchor, head);
+        const { columnCount } = getRowAndColumnCount(selectionInfo);
         const allRowCount = cellsInfo.length;
 
         for (let rowIndex = 0; rowIndex < allRowCount; rowIndex += 1) {
@@ -153,9 +154,9 @@ export class Table extends NodeSchema {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const selectionInfo = getSelectionInfo(anchor, head);
         const cellsInfo = getTableCellsInfo(anchor);
-        const { startColumnIndex, columnCount } = selectionInfo;
+        const selectionInfo = getSelectionInfo(cellsInfo, anchor, head);
+        const { columnCount } = getRowAndColumnCount(selectionInfo);
         const allColumnCount = cellsInfo[0].length;
 
         const selectedAllColumn = columnCount === allColumnCount;
@@ -169,7 +170,7 @@ export class Table extends NodeSchema {
 
         for (let i = 0; i < allRowCount; i += 1) {
           for (let j = 0; j < columnCount; j += 1) {
-            const { offset, nodeSize } = cellsInfo[i][j + startColumnIndex];
+            const { offset, nodeSize } = cellsInfo[i][j + selectionInfo.startColIdx];
 
             const from = tr.mapping.slice(mapOffset).map(offset);
             const to = from + nodeSize;
@@ -193,9 +194,9 @@ export class Table extends NodeSchema {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const selectionInfo = getSelectionInfo(anchor, head);
         const cellsInfo = getTableCellsInfo(anchor);
-        const { rowCount } = selectionInfo;
+        const selectionInfo = getSelectionInfo(cellsInfo, anchor, head);
+        const { rowCount } = getRowAndColumnCount(selectionInfo);
         const allColumnCount = cellsInfo[0].length;
         const from =
           direction === 1
@@ -221,21 +222,22 @@ export class Table extends NodeSchema {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const selectionInfo = getSelectionInfo(anchor, head);
         const cellsInfo = getTableCellsInfo(anchor);
-        const { startRowIndex, rowCount } = selectionInfo;
+        const selectionInfo = getSelectionInfo(cellsInfo, anchor, head);
+        const { rowCount } = getRowAndColumnCount(selectionInfo);
+        const { startRowIdx } = selectionInfo;
         const allRowCount = cellsInfo.length;
 
-        const selectedThead = startRowIndex === 0;
+        const selectedThead = startRowIdx === 0;
         const selectedAllTbodyRow = rowCount === allRowCount - 1;
 
         if (selectedThead || selectedAllTbodyRow) {
           return false;
         }
 
-        const from = cellsInfo[startRowIndex][0].offset - 1;
+        const from = cellsInfo[startRowIdx][0].offset - 1;
 
-        const rowIdx = startRowIndex + rowCount - 1;
+        const rowIdx = startRowIdx + rowCount - 1;
         const colIdx = cellsInfo[0].length - 1;
         const { offset, nodeSize } = cellsInfo[rowIdx][colIdx];
         const to = offset + nodeSize + 1;
@@ -256,14 +258,14 @@ export class Table extends NodeSchema {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const selectionInfo = getSelectionInfo(anchor, head);
         const cellsInfo = getTableCellsInfo(anchor);
-        const { startColumnIndex, columnCount } = selectionInfo;
+        const selectionInfo = getSelectionInfo(cellsInfo, anchor, head);
+        const { columnCount } = getRowAndColumnCount(selectionInfo);
         const allRowCount = cellsInfo.length;
 
         for (let i = 0; i < allRowCount; i += 1) {
           for (let j = 0; j < columnCount; j += 1) {
-            const { offset } = cellsInfo[i][j + startColumnIndex];
+            const { offset } = cellsInfo[i][j + selectionInfo.startColIdx];
 
             tr.setNodeMarkup(offset, null, { align });
           }
@@ -360,15 +362,16 @@ export class Table extends NodeSchema {
       const textSelection = selection instanceof TextSelection;
 
       if (anchor && head && !textSelection) {
-        const selectionInfo = getSelectionInfo(anchor, head);
         const cellsInfo = getTableCellsInfo(anchor);
-        const { startColumnIndex, columnCount } = selectionInfo;
+        const selectionInfo = getSelectionInfo(cellsInfo, anchor, head);
+        const { startColIdx } = selectionInfo;
+        const { columnCount } = getRowAndColumnCount(selectionInfo);
 
         const tableRowCount = cellsInfo.length;
 
         for (let rowIndex = 0; rowIndex < tableRowCount; rowIndex += 1) {
-          const startCellOffset = cellsInfo[rowIndex][startColumnIndex];
-          const endCellOffset = cellsInfo[rowIndex][startColumnIndex + columnCount - 1];
+          const startCellOffset = cellsInfo[rowIndex][startColIdx];
+          const endCellOffset = cellsInfo[rowIndex][startColIdx + columnCount - 1];
           const cells = createDummyCells(columnCount, rowIndex, schema);
 
           tr.replace(
