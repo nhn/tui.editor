@@ -18,6 +18,8 @@ import {
   copyTableHeadRow,
   copyTableBodyRow,
 } from '@/wysiwyg/clipboard/paste';
+import CellSelection from '../plugins/selection/cellSelection';
+import { last } from '@/utils/common';
 
 interface TargetTableInfo {
   cellsInfo: RowInfo[];
@@ -253,7 +255,7 @@ function positionAt(
     if (i + 1 === rowIdx) {
       let index = colIdx;
 
-      // Skip past cells from previous rows (via rowspan)
+      // Skip pasting cells from previous rows (via rowspan)
       while (index < columnCount && cellsInfo[i + 1][index].offset < rowStart) index += 1;
 
       return index === columnCount ? rowEnd - 1 : cellsInfo[i + 1][index].offset;
@@ -331,10 +333,34 @@ export function pasteToTable(view: EditorView, slice: Slice) {
 
     view.dispatch!(tr);
 
+    setSelection(view, cellsOffsets, cellsInfo[0][0].offset);
+
     return true;
   }
 
   return false;
+}
+
+function setSelection(view: EditorView, cellsOffsets: ReplacedCellsOffsets[], startPos: number) {
+  const { tr, doc } = view.state;
+  // get changed cell info
+  const cellsInfo = getTableCellsInfo(doc.resolve(startPos));
+
+  // eslint-disable-next-line prefer-destructuring
+  const { rowIdx: startRowIdx, startColIdx } = cellsOffsets[0];
+  const { rowIdx: endRowIdx, endColIdx } = last(cellsOffsets);
+
+  const startOffset = cellsInfo[startRowIdx][startColIdx].offset;
+  const endOffset = cellsInfo[endRowIdx][endColIdx].offset;
+
+  const from = doc.resolve(startOffset);
+  const to = doc.resolve(endOffset);
+
+  const cellSelection = new CellSelection(from, to);
+
+  tr.setSelection(cellSelection);
+
+  view.dispatch!(tr);
 }
 
 // function extend() {
