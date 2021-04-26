@@ -16,6 +16,7 @@ export class TableHeadCell extends NodeSchema {
         className: { default: null },
         rawHTML: { default: null },
         colspan: { default: null },
+        extended: { default: null },
       },
       isolating: true,
       parseDOM: [createParsedCellDOM('th')],

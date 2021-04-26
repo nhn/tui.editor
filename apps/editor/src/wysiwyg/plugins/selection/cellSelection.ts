@@ -87,12 +87,14 @@ export default class CellSelection extends Selection {
     const table = this.startCell.node(-2);
     const tableOffset = this.startCell.start(-2);
     const row = table.child(1).firstChild!;
+    const tableHead = table.child(0).type.create()!;
+    const tableBody = table.child(1).type.create()!;
 
     const cellsInfo = getTableCellsInfo(this.startCell);
     const selectionInfo = getSelectionInfo(cellsInfo, this.startCell, this.endCell);
     const { startRowIdx, startColIdx, endRowIdx, endColIdx } = selectionInfo;
 
-    const rows = [];
+    let isTableHeadCell = false;
 
     for (let rowIdx = startRowIdx; rowIdx <= endRowIdx; rowIdx += 1) {
       const cells = [];
@@ -105,7 +107,9 @@ export default class CellSelection extends Selection {
         const colspan = colspanMap[colIdx];
         const rowspan = rowspanMap[colIdx];
 
+        // @TODO: mark the extended cell when pasting the table for external data
         if (cell) {
+          isTableHeadCell = cell.type.name === 'tableHeadCell';
           // mark the extended cell for pasting
           if (
             (colspan && colIdx !== colspan.startSpanIdx) ||
@@ -117,9 +121,14 @@ export default class CellSelection extends Selection {
           }
         }
       }
-      rows.push(row.copy(Fragment.from(cells)));
-    }
 
-    return new Slice(Fragment.from(rows), 1, 1);
+      const copiedRow = row.copy(Fragment.from(cells));
+      const targetNode = isTableHeadCell ? tableHead : tableBody;
+
+      targetNode.content = targetNode.content.append(Fragment.from(copiedRow));
+    }
+    const copiedTable = Fragment.from(tableHead.childCount ? [tableHead, tableBody] : [tableBody]);
+
+    return new Slice(copiedTable, 1, 1);
   }
 }
