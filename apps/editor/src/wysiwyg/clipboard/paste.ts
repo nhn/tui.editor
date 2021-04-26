@@ -97,21 +97,20 @@ function creatTableBodyDummyRow(columnCount: number, schema: Schema) {
 }
 
 export function createRowsFromPastingTable(tableContent: Fragment) {
-  let tableBody = tableContent.firstChild!.content;
-
   const tableHeadRows: Node[] = [];
-
-  if (tableContent.firstChild!.type.name === 'tableHead') {
-    const tableHead = tableContent.firstChild!.content;
-
-    tableHead.forEach((row) => tableHeadRows.push(row));
-
-    tableBody = tableContent.lastChild!.content;
-  }
-
   const tableBodyRows: Node[] = [];
 
-  tableBody.forEach((row) => tableBodyRows.push(row));
+  if (tableContent.firstChild!.type.name === 'tableHead') {
+    const tableHead = tableContent.firstChild!;
+
+    tableHead.forEach((row) => tableHeadRows.push(row));
+  }
+
+  if (tableContent.lastChild!.type.name === 'tableBody') {
+    const tableBody = tableContent.lastChild!;
+
+    tableBody.forEach((row) => tableBodyRows.push(row));
+  }
 
   return [...tableHeadRows, ...tableBodyRows];
 }
@@ -146,12 +145,13 @@ function createTableFromPastingTable(rows: Node[], schema: Schema, startFromBody
   const [tableHeadRow] = rows;
   const tableBodyRows = rows.slice(1);
 
-  const table = schema.nodes.table.create(null, [
-    createTableHead(tableHeadRow, columnCount, schema),
-    createTableBody(tableBodyRows, columnCount, schema),
-  ]);
+  const nodes = [createTableHead(tableHeadRow, columnCount, schema)];
 
-  return table;
+  if (tableBodyRows.length) {
+    nodes.push(createTableBody(tableBodyRows, columnCount, schema));
+  }
+
+  return schema.nodes.table.create(null, nodes);
 }
 
 export function changePastedSlice(slice: Slice, schema: Schema) {

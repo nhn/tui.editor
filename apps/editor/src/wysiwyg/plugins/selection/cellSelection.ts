@@ -26,6 +26,18 @@ function getSelectionRanges(
   return ranges;
 }
 
+function createTableFragment(tableHead: Node, tableBody: Node) {
+  const fragment: Node[] = [];
+
+  if (tableHead.childCount) {
+    fragment.push(tableHead);
+  }
+  if (tableBody.childCount) {
+    fragment.push(tableBody);
+  }
+  return Fragment.from(fragment);
+}
+
 export default class CellSelection extends Selection {
   startCell: ResolvedPos;
 
@@ -127,8 +139,6 @@ export default class CellSelection extends Selection {
 
       targetNode.content = targetNode.content.append(Fragment.from(copiedRow));
     }
-    const copiedTable = Fragment.from(tableHead.childCount ? [tableHead, tableBody] : [tableBody]);
-
-    return new Slice(copiedTable, 1, 1);
+    return new Slice(createTableFragment(tableHead, tableBody), 1, 1);
   }
 }

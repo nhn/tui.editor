@@ -39,7 +39,6 @@ interface PastingRangeInfo {
 interface ReplacedCellsOffsets {
   startCellOffset: number;
   endCellOffset: number;
-  nextCellOffset: number;
   rowIdx: number;
   startColIdx: number;
   endColIdx: number;
@@ -135,7 +134,7 @@ function getPastingRangeInfo(
 }
 
 function addReplacedOffsets(
-  { tableColumnCount, cellsInfo }: TargetTableInfo,
+  { cellsInfo }: TargetTableInfo,
   {
     startRowIdx,
     startColIdx,
@@ -149,7 +148,6 @@ function addReplacedOffsets(
   for (let rowIdx = startRowIdx; rowIdx <= endRowIdx - addedRowCount; rowIdx += 1) {
     const start = cellsInfo[rowIdx][startColIdx];
     const end = cellsInfo[rowIdx][endColIdx - addedColumnCount];
-    const rowEnd = cellsInfo[rowIdx][tableColumnCount - 1];
 
     cellsOffsets.push({
       rowIdx,
@@ -157,7 +155,6 @@ function addReplacedOffsets(
       endColIdx: endColIdx - addedColumnCount,
       startCellOffset: start.offset,
       endCellOffset: end.offset + end.nodeSize,
-      nextCellOffset: rowEnd.offset + rowEnd.nodeSize + TR_NODES_SIZE,
       extendedStart: start.extended,
       extendedEnd: end.extended,
     });
@@ -190,13 +187,11 @@ function expandColumns(
     if (rowIdx >= startRowIdx && rowIdx <= endRowIdx - addedRowCount) {
       const startCellOffset = tr.mapping.map(cellsInfo[rowIdx][startColIdx].offset);
       const endCellOffset = insertOffset + getDummyCellSize(addedColumnCount);
-      const nextCellOffset = endCellOffset + TR_NODES_SIZE;
 
       cellsOffsets[index] = {
         rowIdx,
         startCellOffset,
         endCellOffset,
-        nextCellOffset,
         startColIdx,
         endColIdx,
       };
@@ -215,16 +210,16 @@ function expandRows(
   const endCell = cellsOffsets[cellsOffsets.length - 1];
   const resolvedPos = tr.doc.resolve(endCell.startCellOffset);
   const table = resolvedPos.node(resolvedPos.depth - 2);
-  const tableEnd = resolvedPos.before(resolvedPos.depth - 2) + table.nodeSize - 2;
+  const tableEndPos = resolvedPos.before(resolvedPos.depth - 2) + table.nodeSize - 2;
 
   const rows = createTableBodyRows(addedRowCount, tableColumnCount + addedColumnCount, schema);
-  let startOffset = tableEnd;
+  let startOffset = tableEndPos;
 
   tr.insert(tr.mapping.slice(tr.mapping.maps.length).map(startOffset), rows);
 
   for (let rowIndex = 0; rowIndex < addedRowCount; rowIndex += 1) {
-    const startCellOffset = startOffset + 1 + getDummyCellSize(startColIdx);
-    const endCellOffset = startOffset + 1 + getDummyCellSize(endColIdx + 1);
+    const startCellOffset = startOffset + getDummyCellSize(startColIdx) + 1;
+    const endCellOffset = startOffset + getDummyCellSize(endColIdx + 1) + 1;
     const nextCellOffset =
       startOffset + getDummyCellSize(tableColumnCount + addedColumnCount) + TR_NODES_SIZE;
 
@@ -234,14 +229,13 @@ function expandRows(
       endColIdx,
       startCellOffset,
       endCellOffset,
-      nextCellOffset,
     });
     startOffset = nextCellOffset;
   }
 }
 
 function positionAt(
-  headOrBody: ProsemirrorNode,
+  table: ProsemirrorNode[],
   cellsInfo: RowInfo[],
   tableStart: number,
   rowIdx: number,
@@ -250,18 +244,32 @@ function positionAt(
   const columnCount = cellsInfo[0].length;
 
   for (let i = 0, rowStart = tableStart; ; i += 1) {
-    const rowEnd = rowStart + headOrBody.child(i).nodeSize;
+    const rowEnd = rowStart + table[i].nodeSize;
 
-    if (i + 1 === rowIdx) {
+    if (i === rowIdx) {
       let index = colIdx;
 
       // Skip pasting cells from previous rows (via rowspan)
-      while (index < columnCount && cellsInfo[i + 1][index].offset < rowStart) index += 1;
+      while (index < columnCount && cellsInfo[i][index].offset < rowStart) index += 1;
 
-      return index === columnCount ? rowEnd - 1 : cellsInfo[i + 1][index].offset;
+      return index === columnCount ? rowEnd : cellsInfo[i][index].offset;
     }
     rowStart = rowEnd;
   }
+}
+
+function getTableRowsAndStartPos(startPos: number, doc: ProsemirrorNode) {
+  const rows: ProsemirrorNode[] = [];
+  const tableStart = startPos - TR_NODES_SIZE;
+  const resolvedPos = doc.resolve(tableStart);
+  const table = resolvedPos.node();
+
+  table.forEach((headOrBody) => {
+    headOrBody.forEach((row) => {
+      rows.push(row);
+    });
+  });
+  return { tableStart, rows };
 }
 
 function replaceCells(
@@ -271,9 +279,7 @@ function replaceCells(
   cellsInfo: RowInfo[]
 ) {
   const mapFrom = tr.mapping.maps.length;
-
-  let tableStart = 0;
-  let headOrBody: ProsemirrorNode;
+  const { tableStart, rows } = getTableRowsAndStartPos(cellsInfo[0][0].offset, tr.doc);
 
   cellsOffsets.forEach((offsets, index) => {
     const { extendedStart, extendedEnd, rowIdx, startColIdx, endColIdx } = offsets;
@@ -282,18 +288,11 @@ function replaceCells(
     const endCellOffset = mapping.map(offsets.endCellOffset);
     const cells = new Slice(pastingRows[index], 0, 0);
 
-    if (!headOrBody) {
-      const resolvedPos = tr.doc.resolve(startCellOffset);
-
-      headOrBody = resolvedPos.node(resolvedPos.depth - 1);
-      tableStart = resolvedPos.before(resolvedPos.depth - 1);
-    }
-
     const from = extendedStart
-      ? mapping.map(positionAt(headOrBody, cellsInfo, tableStart, rowIdx, startColIdx))
+      ? mapping.map(positionAt(rows, cellsInfo, tableStart, rowIdx, startColIdx))
       : startCellOffset;
     const to = extendedEnd
-      ? mapping.map(positionAt(headOrBody, cellsInfo, tableStart, rowIdx, endColIdx))
+      ? mapping.map(positionAt(rows, cellsInfo, tableStart, rowIdx, endColIdx))
       : endCellOffset;
 
     tr.replace(from, to, cells);
