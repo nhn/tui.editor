@@ -20,6 +20,7 @@ interface Props {
 
 interface State {
   activeTab: TabType;
+  file: File | null;
 }
 
 export class ImagePopupBody extends Component<Props, State> {
@@ -27,9 +28,7 @@ export class ImagePopupBody extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = {
-      activeTab: 'file',
-    };
+    this.state = { activeTab: 'file', file: null };
     this.tabs = [
       { name: 'file', text: 'File' },
       { name: 'url', text: 'URL' },
@@ -40,7 +39,7 @@ export class ImagePopupBody extends Component<Props, State> {
     (this.refs.url as HTMLInputElement).value = '';
     (this.refs.altText as HTMLInputElement).value = '';
     (this.refs.file as HTMLInputElement).value = '';
-    this.setState({ activeTab });
+    this.setState({ activeTab, file: null });
   };
 
   private execCommand = () => {
@@ -71,6 +70,22 @@ export class ImagePopupBody extends Component<Props, State> {
     }
   };
 
+  private showFileSelectBox = () => {
+    this.refs.file.click();
+  };
+
+  private changeFile = (ev: Event) => {
+    const { files } = ev.target as HTMLInputElement;
+
+    if (files?.length) {
+      this.setState({ file: files[0] });
+    }
+  };
+
+  private preventSelectStart(ev: Event) {
+    ev.preventDefault();
+  }
+
   updated() {
     if (!this.props.show) {
       this.initialize();
@@ -78,7 +93,7 @@ export class ImagePopupBody extends Component<Props, State> {
   }
 
   render() {
-    const { activeTab } = this.state;
+    const { activeTab, file } = this.state;
 
     return html`
       <div>
@@ -91,12 +106,23 @@ export class ImagePopupBody extends Component<Props, State> {
             ref=${(el: HTMLInputElement) => (this.refs.url = el)}
           />
         </div>
-        <div style="display:${activeTab === 'file' ? 'block' : 'none'}">
+        <div style="display:${activeTab === 'file' ? 'block' : 'none'};position: relative;">
           <label for="toastuiImageFileInput">${i18n.get('Select image file')}</label>
+          <span
+            class="${cls('file-name')}${file ? ' has-file' : ''}"
+            onClick=${this.showFileSelectBox}
+            onSelectstart=${this.preventSelectStart}
+          >
+            ${file ? file.name : i18n.get('No file')}
+          </span>
+          <button class="${cls('file-select-button')}" onClick=${this.showFileSelectBox}>
+            ${i18n.get('Choose a file')}
+          </button>
           <input
             id="toastuiImageFileInput"
             type="file"
             accept="image/*"
+            onChange=${this.changeFile}
             ref=${(el: HTMLInputElement) => (this.refs.file = el)}
           />
         </div>
@@ -107,11 +133,11 @@ export class ImagePopupBody extends Component<Props, State> {
           ref=${(el: HTMLInputElement) => (this.refs.altText = el)}
         />
         <div class="${cls('button-container')}">
-          <button type="button" class="${cls('ok-button')}" onClick=${this.execCommand}>
-            ${i18n.get('OK')}
-          </button>
           <button type="button" class="${cls('close-button')}" onClick=${this.props.hidePopup}>
             ${i18n.get('Cancel')}
+          </button>
+          <button type="button" class="${cls('ok-button')}" onClick=${this.execCommand}>
+            ${i18n.get('OK')}
           </button>
         </div>
       </div>

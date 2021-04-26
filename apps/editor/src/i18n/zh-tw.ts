@@ -29,6 +29,8 @@ Editor.setLanguage('zh-TW', {
   Heading: '標題',
   'Image URL': '圖片網址',
   'Select image file': '選擇圖片檔案',
+  'Choose a file': '選擇一個文件',
+  'No file': '沒有文件',
   Description: '描述',
   OK: '確認',
   More: '更多',

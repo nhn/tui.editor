@@ -29,6 +29,8 @@ Editor.setLanguage(['sv', 'sv-SE'], {
   Heading: 'Överskrift',
   'Image URL': 'Bildadress',
   'Select image file': 'Välj en bildfil',
+  'Choose a file': 'Välj en fil',
+  'No file': 'Ingen fil',
   Description: 'Beskrivning',
   OK: 'OK',
   More: 'Mer',

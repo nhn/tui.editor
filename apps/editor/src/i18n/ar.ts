@@ -29,6 +29,8 @@ Editor.setLanguage('ar', {
   Heading: 'عنوان',
   'Image URL': 'رابط الصورة',
   'Select image file': 'حدد ملف الصورة',
+  'Choose a file': 'اختيار الملف',
+  'No file': 'لا ملف',
   Description: 'وصف',
   OK: 'موافقة',
   More: 'أكثر',

@@ -46,8 +46,8 @@ interface ItemWidthMap {
   [key: string]: number;
 }
 
-const DROPDOWN_WIDTH = 100;
-const DEFAULT_WIDTH = 50;
+const DROPDOWN_WIDTH = 120;
+const DEFAULT_WIDTH = 80;
 
 export class Toolbar extends Component<Props, State> {
   private tabs: TabInfo[];

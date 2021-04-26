@@ -29,6 +29,8 @@ Editor.setLanguage(['fr', 'fr-FR'], {
   Heading: 'En-tête',
   'Image URL': "URL de l'image",
   'Select image file': 'Sélectionnez un fichier image',
+  'Choose a file': 'Choisissez un fichier',
+  'No file': 'Pas de fichier',
   Description: 'Description',
   OK: 'OK',
   More: 'de plus',

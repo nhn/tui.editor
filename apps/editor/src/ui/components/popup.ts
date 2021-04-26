@@ -36,7 +36,7 @@ export class Popup extends Component<Props> {
 
   render() {
     const { info, show, hidePopup, eventEmitter, execCommand } = this.props;
-    const { className = '', style, headerText, render, pos, initialValues = {} } = info || {};
+    const { className = '', style, render, pos, initialValues = {} } = info || {};
     const popupStyle: PopupStyle = { display: show ? 'block' : 'none', ...style };
 
     if (pos) {
@@ -46,16 +46,6 @@ export class Popup extends Component<Props> {
 
     return html`
       <div class="${cls('popup')} ${className}" style=${popupStyle}>
-        <div class="${cls('popup-header')}" style="display: ${headerText ? 'block' : 'none'}">
-          <span class="${cls('popup-title')}">${headerText}</span>
-          <div class="${cls('button-container')}">
-            <button
-              type="button"
-              class="${cls('popup-close-button')}"
-              onClick=${hidePopup}
-            ></button>
-          </div>
-        </div>
         <div class="${cls('popup-body')}">
           ${render && render({ eventEmitter, show, hidePopup, execCommand, initialValues })}
         </div>

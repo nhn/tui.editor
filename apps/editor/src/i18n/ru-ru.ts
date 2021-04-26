@@ -29,6 +29,8 @@ Editor.setLanguage(['ru', 'ru-RU'], {
   Heading: 'Заголовок',
   'Image URL': 'URL изображения',
   'Select image file': 'Выбрать файл изображения',
+  'Choose a file': 'Выберите файл',
+  'No file': 'Нет файла',
   Description: 'Описание',
   OK: 'Хорошо',
   More: 'еще',

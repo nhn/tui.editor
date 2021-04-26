@@ -1,13 +1,12 @@
 export interface PopupOptions {
   body: HTMLElement;
-  headerText?: string;
   className?: string;
   style?: Record<string, any>;
 }
 
 export interface ToolbarButtonOptions {
   name: string;
-  tooltip: string;
+  tooltip?: string;
   className?: string;
   command?: string;
   text?: string;
@@ -17,17 +16,16 @@ export interface ToolbarButtonOptions {
 
 export interface ToolbarCustomOptions {
   name: string;
-  tooltip: string;
+  tooltip?: string;
   el?: HTMLElement;
   popup?: PopupOptions;
+  hidden?: boolean;
+  onMounted?: (execCommand: ExecCommand) => void;
 }
 
 export type ToolbarButtonInfo = {
-  activeTooltip?: string;
   state?: ToolbarStateKeys;
   hidden?: boolean;
-  active?: boolean;
-  toggle?: boolean;
 } & ToolbarButtonOptions;
 
 export interface Component<T = {}, R = {}> {
@@ -95,7 +93,6 @@ export type TooltipStyle = {
 } & Partial<Pos>;
 
 export interface PopupInfo {
-  headerText?: string;
   className?: string;
   style?: Record<string, any>;
   fromEl: HTMLElement;

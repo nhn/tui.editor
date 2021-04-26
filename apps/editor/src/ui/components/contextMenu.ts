@@ -48,29 +48,31 @@ export class ContextMenu extends Component<Props, State> {
     const { pos, menuGroups } = this.state;
 
     return pos
-      ? menuGroups.reduce((acc, group, index) => {
+      ? menuGroups.reduce((acc, group) => {
+          const menuItem: VNode[] = [];
+
           group.forEach(({ label, className = false, disabled, onClick }) => {
             const handleClick = () => {
-              onClick!();
-              this.setState({ pos: null });
+              if (!disabled) {
+                onClick!();
+                this.setState({ pos: null });
+              }
             };
 
-            acc.push(
+            menuItem.push(
               html`
-                <button
-                  type="button"
-                  class=${className}
-                  disabled=${disabled}
-                  onClick=${handleClick}
-                >
-                  ${label}
-                </button>
-              ` as VNode
+                <li onClick=${handleClick} class="menu-item${disabled ? ' disabled' : ''}">
+                  <span class="${className}">${label}</span>
+                </li>
+              `
             );
           });
-          if (index < menuGroups.length - 1) {
-            acc.push(html`<hr />` as VNode);
-          }
+
+          acc.push(
+            html`<ul class="menu-group">
+              ${menuItem}
+            </ul>`
+          );
           return acc;
         }, [] as VNode[])
       : [];

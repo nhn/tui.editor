@@ -30,11 +30,11 @@ function getWwEditor() {
 }
 
 function getMdSwitch() {
-  return getElements('.toastui-editor-mode-switch button')![0];
+  return getElements('.toastui-editor-mode-switch .tab-item')![0];
 }
 
 function getWwSwitch() {
-  return getElements('.toastui-editor-mode-switch button')![1];
+  return getElements('.toastui-editor-mode-switch .tab-item')![1];
 }
 
 function clickMdSwitch() {
@@ -46,15 +46,15 @@ function clickWwSwitch() {
 }
 
 function getMdWriteTab() {
-  return getElement('.toastui-editor-md-tab-container button')!;
+  return getElement('.toastui-editor-md-tab-container .tab-item')!;
 }
 
 function getMdPreviewTab() {
-  return document.querySelectorAll<HTMLElement>('.toastui-editor-md-tab-container button')[1];
+  return document.querySelectorAll<HTMLElement>('.toastui-editor-md-tab-container .tab-item')[1];
 }
 
-function getScrollSyncBtn() {
-  return getElement('.scroll-sync')!;
+function getScrollSyncWrapper() {
+  return getElement('.scroll-sync')!.parentElement;
 }
 
 function clickMdWriteTab() {
@@ -166,36 +166,36 @@ describe('layout component', () => {
     });
 
     it('should hide scrollSync when previewStyle is tab regardless of changing editor mode', () => {
-      const scrollSyncBtn = getScrollSyncBtn();
+      const scrollSyncWrapper = getScrollSyncWrapper();
 
-      expect(scrollSyncBtn).toHaveStyle({ display: 'none' });
+      expect(scrollSyncWrapper).toHaveStyle({ display: 'none' });
 
       em.emit('changeMode', 'wysiwyg');
 
-      expect(scrollSyncBtn).toHaveStyle({ display: 'none' });
+      expect(scrollSyncWrapper).toHaveStyle({ display: 'none' });
     });
 
     it('should show scrollSync when previewStyle is vertical on only markdown mode', () => {
       em.emit('changePreviewStyle', 'vertical');
-      const scrollSyncBtn = getScrollSyncBtn();
+      const scrollSyncWrapper = getScrollSyncWrapper();
 
-      expect(scrollSyncBtn).toHaveStyle({ display: 'inline-block' });
+      expect(scrollSyncWrapper).toHaveStyle({ display: 'inline-block' });
 
       em.emit('changeMode', 'wysiwyg');
 
-      expect(scrollSyncBtn).toHaveStyle({ display: 'none' });
+      expect(scrollSyncWrapper).toHaveStyle({ display: 'none' });
     });
 
     it('should show scrollSync when previewStyle is changed on only markdown mode', () => {
       em.emit('changeMode', 'wysiwyg');
       em.emit('changePreviewStyle', 'vertical');
-      const scrollSyncBtn = getScrollSyncBtn();
+      const scrollSyncWrapper = getScrollSyncWrapper();
 
-      expect(scrollSyncBtn).toHaveStyle({ display: 'none' });
+      expect(scrollSyncWrapper).toHaveStyle({ display: 'none' });
 
       em.emit('changeMode', 'markdown');
 
-      expect(scrollSyncBtn).toHaveStyle({ display: 'inline-block' });
+      expect(scrollSyncWrapper).toHaveStyle({ display: 'inline-block' });
     });
   });
 
@@ -247,14 +247,16 @@ describe('layout component', () => {
     });
 
     it('should enable/disable the toolbar items by clicking markdown tab', () => {
+      const scrollSyncWrapper = getScrollSyncWrapper();
+
       clickMdPreviewTab();
 
-      expect(getScrollSyncBtn()).toBeDisabled();
+      expect(scrollSyncWrapper).toHaveStyle({ display: 'none' });
       expect(getElement('.toastui-editor-toolbar-icons')).toBeDisabled();
 
       clickMdWriteTab();
 
-      expect(getScrollSyncBtn()).not.toBeDisabled();
+      expect(scrollSyncWrapper).toHaveStyle({ display: 'none' });
       expect(getElement('.toastui-editor-toolbar-icons')).not.toBeDisabled();
     });
 

@@ -29,6 +29,8 @@ Editor.setLanguage(['hr', 'hr-HR'], {
   Heading: 'Naslov',
   'Image URL': 'URL slike',
   'Select image file': 'Odaberi slikovnu datoteku',
+  'Choose a file': 'Odaberite datoteka',
+  'No file': 'Nema datoteka',
   Description: 'Opis',
   OK: 'OK',
   More: 'Više',

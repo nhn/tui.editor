@@ -29,6 +29,8 @@ Editor.setLanguage(['ko', 'ko-KR'], {
   Heading: '제목',
   'Image URL': '이미지 주소',
   'Select image file': '이미지 파일을 선택하세요.',
+  'Choose a file': '파일 선택',
+  'No file': '선택된 파일 없음',
   Description: '설명',
   OK: '확인',
   More: '더 보기',

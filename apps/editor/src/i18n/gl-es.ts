@@ -30,6 +30,8 @@ Editor.setLanguage(['gl', 'gl-ES'], {
   Heading: 'Encabezado',
   'Image URL': 'URL da imaxe',
   'Select image file': 'Seleccionar arquivo da imaxe',
+  'Choose a file': 'Escoge un archivo',
+  'No file': 'Ningún archivo',
   Description: 'Descrición',
   OK: 'Aceptar',
   More: 'Máis',

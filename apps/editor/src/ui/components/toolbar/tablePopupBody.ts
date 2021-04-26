@@ -17,15 +17,14 @@ interface Props {
 
 type State = Range;
 
-const CELL_WIDTH = 25;
-const CELL_HEIGHT = 17;
-const MIN_ROW_INDEX = 7;
+const CELL_WIDTH = 20;
+const CELL_HEIGHT = 20;
+const MIN_ROW_INDEX = 5;
 const MAX_ROW_INDEX = 14;
 const MIN_COL_INDEX = 5;
 const MAX_COL_INDEX = 9;
 const MIN_ROW_SELECTION_INDEX = 1;
 const MIN_COL_SELECTION_INDEX = 1;
-const HEADER_ROW_COUNT = 1;
 const BORDER_WIDTH = 1;
 
 export class TablePopupBody extends Component<Props, State> {
@@ -60,8 +59,8 @@ export class TablePopupBody extends Component<Props, State> {
 
   private getBoundByRange(colIdx: number, rowIdx: number) {
     return {
-      width: (colIdx + 1) * CELL_WIDTH + BORDER_WIDTH,
-      height: (rowIdx + 1) * CELL_HEIGHT + BORDER_WIDTH,
+      width: (colIdx + 1) * CELL_WIDTH,
+      height: (rowIdx + 1) * CELL_HEIGHT,
     };
   }
 
@@ -72,7 +71,7 @@ export class TablePopupBody extends Component<Props, State> {
     };
   }
 
-  private getTableBodyAreaBound() {
+  private getTableRange() {
     const { colIdx: orgColIdx, rowIdx: orgRowIdx } = this.state;
     let colIdx = Math.max(orgColIdx, MIN_COL_INDEX);
     let rowIdx = Math.max(orgRowIdx, MIN_ROW_INDEX);
@@ -84,11 +83,17 @@ export class TablePopupBody extends Component<Props, State> {
       rowIdx += 1;
     }
 
-    return this.getBoundByRange(colIdx, rowIdx - HEADER_ROW_COUNT);
+    return { colIdx: colIdx + 1, rowIdx: rowIdx + 1 };
   }
 
   private getSelectionAreaBound() {
-    return this.getBoundByRange(this.state.colIdx, this.state.rowIdx);
+    const { width, height } = this.getBoundByRange(this.state.colIdx, this.state.rowIdx);
+
+    if (!width && !height) {
+      return { display: 'none' };
+    }
+
+    return { width: width - BORDER_WIDTH, height: height - BORDER_WIDTH };
   }
 
   private getSelectionRangeByOffset(x: number, y: number) {
@@ -115,12 +120,26 @@ export class TablePopupBody extends Component<Props, State> {
     }
   }
 
+  private createTableArea(tableRange: Range) {
+    const { colIdx, rowIdx } = tableRange;
+    const rows = [];
+
+    for (let i = 0; i < rowIdx; i += 1) {
+      const cells = [];
+
+      for (let j = 0; j < colIdx; j += 1) {
+        const cellClassNames = `${cls('table-cell')}${i > 0 ? '' : ' header'}`;
+
+        cells.push(html`<div class="${cellClassNames}"></div>`);
+      }
+      rows.push(html`<div class="${cls('table-row')}">${cells}</div>`);
+    }
+
+    return html`<div class="${cls('table')}">${rows}</div>`;
+  }
+
   render() {
-    const tableBodyAreaBound = this.getTableBodyAreaBound();
-    const headerAreaBound = {
-      width: tableBodyAreaBound.width,
-      height: CELL_HEIGHT,
-    };
+    const tableRange = this.getTableRange();
     const selectionAreaBound = this.getSelectionAreaBound();
 
     return html`
@@ -131,8 +150,7 @@ export class TablePopupBody extends Component<Props, State> {
           onMousemove=${this.extendSelectionRange}
           onClick=${this.execCommand}
         >
-          <div class="${cls('table-header')}" style=${headerAreaBound}></div>
-          <div class="${cls('table-body')}" style=${tableBodyAreaBound}></div>
+          ${this.createTableArea(tableRange)}
           <div class="${cls('table-selection-layer')}" style=${selectionAreaBound}></div>
         </div>
         <p class="${cls('table-description')}">${this.getDescription()}</p>

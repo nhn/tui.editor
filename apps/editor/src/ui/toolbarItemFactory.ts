@@ -1,4 +1,6 @@
 import isString from 'tui-code-snippet/type/isString';
+import addClass from 'tui-code-snippet/domUtil/addClass';
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import {
   PopupInfo,
   PopupOptions,
@@ -9,6 +11,8 @@ import {
   ToolbarItemInfo,
   ToolbarItemOptions,
   PopupInitialValues,
+  ToolbarCustomOptions,
+  ExecCommand,
 } from '@t/ui';
 import i18n from '@/i18n/i18n';
 import { cls } from '@/utils/dom';
@@ -23,8 +27,40 @@ export function createToolbarItemInfo(type: string | ToolbarItemOptions): Toolba
   return isString(type) ? createDefaultToolbarItemInfo(type) : type;
 }
 
+function createScrollSyncToolbarItem(): ToolbarItemInfo {
+  const label = document.createElement('label');
+  const checkbox = document.createElement('input');
+  const toggleSwitch = document.createElement('span');
+
+  label.className = 'scroll-sync active';
+  checkbox.type = 'checkbox';
+  checkbox.checked = true;
+  toggleSwitch.className = 'switch';
+
+  const onMounted = (execCommand: ExecCommand) =>
+    checkbox.addEventListener('change', (ev: Event) => {
+      const { checked } = ev.target as HTMLInputElement;
+
+      if (checked) {
+        addClass(label, 'active');
+      } else {
+        removeClass(label, 'active');
+      }
+      execCommand('toggleScrollSync', { active: checked });
+    });
+
+  label.appendChild(checkbox);
+  label.appendChild(toggleSwitch);
+
+  return {
+    name: 'scrollSync',
+    el: label,
+    onMounted,
+  };
+}
+
 function createDefaultToolbarItemInfo(type: string) {
-  let info!: ToolbarButtonInfo;
+  let info!: ToolbarButtonInfo | ToolbarCustomOptions;
 
   switch (type) {
     case 'heading':
@@ -165,15 +201,7 @@ function createDefaultToolbarItemInfo(type: string) {
       };
       break;
     case 'scrollSync':
-      info = {
-        name: 'scrollSync',
-        className: 'scroll-sync',
-        tooltip: i18n.get('Auto scroll disabled'),
-        activeTooltip: i18n.get('Auto scroll enabled'),
-        active: true,
-        toggle: true,
-        command: 'toggleScrollSync',
-      };
+      info = createScrollSyncToolbarItem();
       break;
     case 'more':
       info = {
@@ -188,7 +216,7 @@ function createDefaultToolbarItemInfo(type: string) {
   }
 
   if (info.name !== 'scrollSync') {
-    info.className += ` ${cls('toolbar-icons')}`;
+    (info as ToolbarButtonInfo).className += ` ${cls('toolbar-icons')}`;
   }
 
   return info;
@@ -202,7 +230,7 @@ interface Payload {
 }
 
 // eslint-disable-next-line consistent-return
-export function createPopupInfo(type: string, payload: Payload): PopupInfo | undefined {
+export function createPopupInfo(type: string, payload: Payload): PopupInfo | null {
   const { el, pos, popup, initialValues } = payload;
 
   switch (type) {
@@ -217,7 +245,6 @@ export function createPopupInfo(type: string, payload: Payload): PopupInfo | und
       return {
         render: (props) => html`<${LinkPopupBody} ...${props} />`,
         className: cls('popup-add-link'),
-        headerText: i18n.get('Insert link'),
         fromEl: el,
         pos,
         initialValues,
@@ -226,7 +253,6 @@ export function createPopupInfo(type: string, payload: Payload): PopupInfo | und
       return {
         render: (props) => html`<${ImagePopupBody} ...${props} />`,
         className: cls('popup-add-image'),
-        headerText: i18n.get('Insert image'),
         fromEl: el,
         pos,
       };
@@ -238,6 +264,9 @@ export function createPopupInfo(type: string, payload: Payload): PopupInfo | und
         pos,
       };
     case 'customPopupBody':
+      if (!popup) {
+        return null;
+      }
       return {
         render: (props) => html`<${CustomPopupBody} ...${props} body=${popup!.body} />`,
         fromEl: el,
@@ -245,7 +274,7 @@ export function createPopupInfo(type: string, payload: Payload): PopupInfo | und
         ...popup!,
       };
     default:
-    // do nothing
+      return null;
   }
 }
 

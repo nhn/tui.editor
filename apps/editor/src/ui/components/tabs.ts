@@ -17,16 +17,15 @@ export class Tabs extends Component<Props> {
 
   render() {
     return html`
-      <div class="${cls('tab')}">
+      <div class="${cls('tabs')}">
         ${this.props.tabs.map(
           ({ name, text }) => html`
-            <button
-              type="button"
-              class="${this.props.activeTab === name ? 'active' : ''}"
+            <div
+              class="tab-item${this.props.activeTab === name ? ' active' : ''}"
               onClick=${(ev: MouseEvent) => this.toggleTab(ev, name)}
             >
               ${i18n.get(text)}
-            </button>
+            </div>
           `
         )}
       </div>

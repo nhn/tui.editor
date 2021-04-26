@@ -35,12 +35,12 @@ interface State {
   active: boolean;
 }
 
-const DEFAULT_WIDTH = 50;
+const DEFAULT_WIDTH = 80;
 
 export class ToolbarButtonComp extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { active: !!props.item.active };
+    this.state = { active: false };
     this.addEvent();
   }
 
@@ -60,7 +60,6 @@ export class ToolbarButtonComp extends Component<Props, State> {
 
   updated(prevProps: Props) {
     if (prevProps.item.name !== this.props.item.name) {
-      this.setState({ active: !!this.props.item.active });
       this.setItemWidth();
     }
   }
@@ -80,20 +79,10 @@ export class ToolbarButtonComp extends Component<Props, State> {
 
   private execCommand = () => {
     const { item, execCommand, setPopupInfo, getBound } = this.props;
-    const { command, name, toggle, popup } = item;
-    let newState;
+    const { command, name, popup } = item;
 
-    if (toggle) {
-      const active = !this.state.active;
-
-      // modifying props is anti-pattern, but it is more efficient for the performance and code readability
-      item.active = active;
-      newState = { active };
-      this.setState(newState);
-      this.showTooltip();
-    }
     if (command) {
-      execCommand(command, newState);
+      execCommand(command);
     } else {
       const popupName = popup ? 'customPopupBody' : name;
       const info = createPopupInfo(popupName, {

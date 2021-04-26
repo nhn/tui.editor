@@ -29,6 +29,8 @@ Editor.setLanguage(['cs', 'cs-CZ'], {
   Heading: 'Nadpis',
   'Image URL': 'URL obrázku',
   'Select image file': 'Vybrat obrázek',
+  'Choose a file': 'Vyberte soubor',
+  'No file': 'Žádný soubor',
   Description: 'Popis',
   OK: 'OK',
   More: 'Více',
