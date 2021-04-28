@@ -25,7 +25,6 @@ describe('markdown merged table plugin', () => {
     editor = new Editor({
       el: container,
       previewStyle: 'vertical',
-      // @ts-ignore
       plugins: [mergedTableCellPlugin],
     });
   });
