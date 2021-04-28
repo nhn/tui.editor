@@ -11,14 +11,6 @@ export interface CellInfo {
   nodeSize: number;
   extended?: boolean;
 }
-
-export type Ranges = [
-  startRowIdx: number,
-  startColIdx: number,
-  endRowIdx: number,
-  endColIdx: number
-];
-
 export interface SelectionInfo {
   startRowIdx: number;
   startColIdx: number;
@@ -313,37 +305,44 @@ function getCellIndex(cellPos: ResolvedPos, cellsInfo: RowInfo[]) {
   return [0, 0];
 }
 
-export function getExtendedRanges(ranges: Ranges, cellsInfo: RowInfo[]): SelectionInfo {
-  let [startRowIdx, startColIdx, endRowIdx, endColIdx] = ranges;
+export function getExtendedRanges(
+  selectionInfo: SelectionInfo,
+  cellsInfo: RowInfo[]
+): SelectionInfo {
+  let { startRowIdx, startColIdx, endRowIdx, endColIdx } = selectionInfo;
 
   for (let rowIdx = endRowIdx; rowIdx >= startRowIdx; rowIdx -= 1) {
-    const { rowspanMap, colspanMap } = cellsInfo[rowIdx];
+    if (cellsInfo[rowIdx]) {
+      const { rowspanMap, colspanMap } = cellsInfo[rowIdx];
 
-    for (let colIdx = endColIdx; colIdx >= startColIdx; colIdx -= 1) {
-      const rowspanInfo = rowspanMap[colIdx];
-      const colspanInfo = colspanMap[colIdx];
+      for (let colIdx = endColIdx; colIdx >= startColIdx; colIdx -= 1) {
+        const rowspanInfo = rowspanMap[colIdx];
+        const colspanInfo = colspanMap[colIdx];
 
-      if (rowspanInfo) {
-        startRowIdx = Math.min(startRowIdx, rowspanInfo.startSpanIdx);
-      }
-      if (colspanInfo) {
-        startColIdx = Math.min(startColIdx, colspanInfo.startSpanIdx);
+        if (rowspanInfo) {
+          startRowIdx = Math.min(startRowIdx, rowspanInfo.startSpanIdx);
+        }
+        if (colspanInfo) {
+          startColIdx = Math.min(startColIdx, colspanInfo.startSpanIdx);
+        }
       }
     }
   }
 
   for (let rowIdx = startRowIdx; rowIdx <= endRowIdx; rowIdx += 1) {
-    const { rowspanMap, colspanMap } = cellsInfo[rowIdx];
+    if (cellsInfo[rowIdx]) {
+      const { rowspanMap, colspanMap } = cellsInfo[rowIdx];
 
-    for (let colIdx = startColIdx; colIdx <= endColIdx; colIdx += 1) {
-      const rowspanInfo = rowspanMap[colIdx];
-      const colspanInfo = colspanMap[colIdx];
+      for (let colIdx = startColIdx; colIdx <= endColIdx; colIdx += 1) {
+        const rowspanInfo = rowspanMap[colIdx];
+        const colspanInfo = colspanMap[colIdx];
 
-      if (rowspanInfo) {
-        endRowIdx = Math.max(endRowIdx, rowIdx + rowspanInfo.count - 1);
-      }
-      if (colspanInfo) {
-        endColIdx = Math.max(endColIdx, colIdx + colspanInfo.count - 1);
+        if (rowspanInfo) {
+          endRowIdx = Math.max(endRowIdx, rowIdx + rowspanInfo.count - 1);
+        }
+        if (colspanInfo) {
+          endColIdx = Math.max(endColIdx, colIdx + colspanInfo.count - 1);
+        }
       }
     }
   }
@@ -368,9 +367,9 @@ export function getSelectionInfo(
   [startRowIdx, endRowIdx] = getSortedNumPair(startRowIdx, endRowIdx);
   [startColIdx, endColIdx] = getSortedNumPair(startColIdx, endColIdx);
 
-  const ranges: Ranges = [startRowIdx, startColIdx, endRowIdx, endColIdx];
+  const selectionInfo: SelectionInfo = { startRowIdx, startColIdx, endRowIdx, endColIdx };
 
-  return getExtendedRanges(ranges, cellsInfo);
+  return getExtendedRanges(selectionInfo, cellsInfo);
 }
 
 export function getTableContentFromSlice(slice: Slice) {

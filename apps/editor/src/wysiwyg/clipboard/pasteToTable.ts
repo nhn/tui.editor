@@ -11,6 +11,8 @@ import {
   createDummyCells,
   createTableBodyRows,
   getTableContentFromSlice,
+  getExtendedRanges,
+  getRowAndColumnCount,
 } from '@/wysiwyg/helper/table';
 
 import {
@@ -101,7 +103,7 @@ function getPastingRangeInfo(
   { tableRowCount, tableColumnCount }: TargetTableInfo,
   { startRowIdx, startColIdx }: SelectionInfo,
   pastingCells: Fragment[]
-) {
+): PastingRangeInfo {
   const pastingRowCount = pastingCells.length;
   let pastingColumnCount = 0;
 
@@ -319,24 +321,25 @@ export function pasteToTable(view: EditorView, slice: Slice) {
 
     const cellsOffsets: ReplacedCellsOffsets[] = [];
 
-    addReplacedOffsets(targetTableInfo, pastingInfo, cellsOffsets);
+    // @TODO: unmerge the span and paste the cell
+    if (canMerge(cellsInfo, pastingInfo)) {
+      addReplacedOffsets(targetTableInfo, pastingInfo, cellsOffsets);
 
-    if (pastingInfo.addedColumnCount) {
-      expandColumns(tr, schema, targetTableInfo, pastingInfo, cellsOffsets);
+      if (pastingInfo.addedColumnCount) {
+        expandColumns(tr, schema, targetTableInfo, pastingInfo, cellsOffsets);
+      }
+
+      if (pastingInfo.addedRowCount) {
+        expandRows(tr, schema, targetTableInfo, pastingInfo, cellsOffsets);
+      }
+      replaceCells(tr, pastingCells, cellsOffsets, cellsInfo);
+
+      view.dispatch!(tr);
+
+      setSelection(view, cellsOffsets, cellsInfo[0][0].offset);
     }
-
-    if (pastingInfo.addedRowCount) {
-      expandRows(tr, schema, targetTableInfo, pastingInfo, cellsOffsets);
-    }
-    replaceCells(tr, pastingCells, cellsOffsets, cellsInfo);
-
-    view.dispatch!(tr);
-
-    setSelection(view, cellsOffsets, cellsInfo[0][0].offset);
-
     return true;
   }
-
   return false;
 }
 
@@ -355,64 +358,16 @@ function setSelection(view: EditorView, cellsOffsets: ReplacedCellsOffsets[], st
   const from = doc.resolve(startOffset);
   const to = doc.resolve(endOffset);
 
-  const cellSelection = new CellSelection(from, to);
-
-  tr.setSelection(cellSelection);
-
-  view.dispatch!(tr);
+  view.dispatch!(tr.setSelection(new CellSelection(from, to)));
 }
 
-// function extend() {
-//   const ranges = [
-//     pastingInfo.startRowIdx,
-//     pastingInfo.startColIdx,
-//     pastingInfo.endRowIdx,
-//     pastingInfo.endColIdx,
-//   ];
+function canMerge(cellsInfo: RowInfo[], pastingInfo: PastingRangeInfo) {
+  const ranges = getExtendedRanges(pastingInfo, cellsInfo);
 
-//   if (cellsInfo.length > pastingInfo.endRowIdx) {
-//     const extendedRange = getExtendedRanges(ranges, cellsInfo);
-//     const rowCount = extendedRange.endRowIdx - extendedRange.startRowIdx + 1;
-//     const colCount = extendedRange.endColIdx - extendedRange.startColIdx + 1;
+  const { rowCount, columnCount } = getRowAndColumnCount(ranges);
+  const { rowCount: pastingRowCount, columnCount: pastingColumnCount } = getRowAndColumnCount(
+    pastingInfo
+  );
 
-//     if (rowCount > pastingCells.length) {
-//       const len = pastingCells.length;
-
-//       for (let i = 0; i < rowCount - len; i += 1) {
-//         const rows = createTableBodyRows(1, 1, schema);
-
-//         pastingCells.push(Fragment.from(rows[0].content));
-//       }
-//     }
-
-//     // 요기 다 정리하고 여기 어디서 스팬 빼주기
-//     for (let i = 0; i < rowCount; i += 1) {
-//       let totalColCnt = pastingCells[i].childCount;
-
-//       if (totalColCnt > 0) {
-//         pastingCells[i].forEach((n) => {
-//           if (n.attrs.colspan) {
-//             totalColCnt += n.attrs.colspan - 1;
-//           }
-//         });
-//         if (colCount > totalColCnt) {
-//           const cells = createDummyCells(
-//             colCount - pastingCells[i].childCount,
-//             pastingInfo.startRowIdx + i,
-//             schema
-//           );
-
-//           pastingCells[i] = pastingCells[i].append(Fragment.from(cells));
-//         }
-//       }
-//     }
-
-//     if (pastingInfo.endRowIdx - pastingInfo.startRowIdx + 1 < rowCount) {
-//       pastingInfo.endRowIdx += rowCount - (pastingInfo.endRowIdx - pastingInfo.startRowIdx + 1);
-//     }
-
-//     if (pastingInfo.endColIdx - pastingInfo.startColIdx + 1 < colCount) {
-//       pastingInfo.endColIdx += colCount - (pastingInfo.endColIdx - pastingInfo.startColIdx + 1);
-//     }
-//   }
-// }
+  return rowCount === pastingRowCount && columnCount === pastingColumnCount;
+}
