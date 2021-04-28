@@ -226,7 +226,7 @@ function expandRows(
       startOffset + getDummyCellSize(tableColumnCount + addedColumnCount) + TR_NODES_SIZE;
 
     cellsOffsets.push({
-      rowIdx: rowIndex + cellsInfo[0].length + 1,
+      rowIdx: rowIndex + cellsInfo.length,
       startColIdx,
       endColIdx,
       startCellOffset,
