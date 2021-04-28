@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
-import { TextSelection } from 'prosemirror-state';
+import { TextSelection, Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 
 import NodeSchema from '@/spec/node';
@@ -14,12 +14,12 @@ import {
   getResolvedSelection,
   getSelectionInfo,
   getTableCellsInfo,
-  getCellIndexInfo,
   getNextRowOffset,
   getPrevRowOffset,
   getNextColumnOffsets,
   getPrevColumnOffsets,
   getRowAndColumnCount,
+  getCellIndex,
 } from '@/wysiwyg/helper/table';
 import {
   CursorDirection,
@@ -282,13 +282,21 @@ export class Table extends NodeSchema {
 
   private moveToCell(direction: CursorDirection): Command {
     return (state, dispatch) => {
-      const { selection, tr } = state;
+      const { selection, tr, schema } = state;
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
         const cellsInfo = getTableCellsInfo(anchor);
-        const cellIndex = getCellIndexInfo(anchor);
-        const newTr = moveToCell(direction, tr, cellIndex, cellsInfo);
+        const cellIndex = getCellIndex(anchor, cellsInfo);
+        let newTr: Transaction | null;
+
+        if (canBeOutOfTable(direction, cellsInfo, cellIndex)) {
+          // When there is no content before or after the table,
+          // an empty line('paragraph') is created by pressing the arrow keys.
+          newTr = addParagraphAfterTable(tr, cellsInfo, schema);
+        } else {
+          newTr = moveToCell(direction, tr, cellIndex, cellsInfo);
+        }
 
         if (newTr) {
           dispatch!(newTr);
@@ -322,8 +330,8 @@ export class Table extends NodeSchema {
 
         if (para && canMoveBetweenCells(direction, [cellDepth, para.depth], $from, doc)) {
           const { anchor } = getResolvedSelection(selection);
-          const cellIndex = getCellIndexInfo(anchor);
           const cellsInfo = getTableCellsInfo(anchor);
+          const cellIndex = getCellIndex(anchor, cellsInfo);
 
           let newTr;
 
@@ -331,12 +339,12 @@ export class Table extends NodeSchema {
             // When the cursor position is at the end of the cell,
             // the table is selected when the left / right arrow keys are pressed.
             newTr = selectNode(tr, $from, cellDepth);
-          } else if (canBeOutOfTable(direction, cellsInfo, cellIndex[0])) {
+          } else if (canBeOutOfTable(direction, cellsInfo, cellIndex)) {
             // When there is no content before or after the table,
             // an empty line('paragraph') is created by pressing the arrow keys.
             if (direction === 'up') {
               newTr = addParagraphBeforeTable(tr, cellsInfo, schema);
-            } else if (direction === 'down') {
+            } else if (direction === 'down' || direction === 'right') {
               newTr = addParagraphAfterTable(tr, cellsInfo, schema);
             }
           } else {

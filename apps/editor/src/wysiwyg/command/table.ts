@@ -3,13 +3,13 @@ import { Selection, Transaction, NodeSelection } from 'prosemirror-state';
 
 import { addParagraph } from '@/helper/manipulation';
 
-import { RowInfo } from '@/wysiwyg/helper/table';
+import { getLastCell, RowInfo } from '@/wysiwyg/helper/table';
 
 export type CursorDirection = 'left' | 'right' | 'up' | 'down';
 
-export type CellPosition = [rowIndex: number, columnIndex: number];
+export type CellPosition = [rowIdx: number, colIdx: number];
 
-type CellOffsetFn = ([rowIndex, columnIndex]: CellPosition, cellsInfo: RowInfo[]) => number | null;
+type CellOffsetFn = ([rowIdx, colIdx]: CellPosition, cellsInfo: RowInfo[]) => number | null;
 
 type CellOffsetFnMap = {
   [key in CursorDirection]: CellOffsetFn;
@@ -132,10 +132,13 @@ export function canMoveBetweenCells(
 export function canBeOutOfTable(
   direction: CursorDirection,
   cellsInfo: RowInfo[],
-  rowIndex: number
+  [rowIdx, colIdx]: CellPosition
 ) {
-  const inFirstRow = direction === 'up' && rowIndex === 0;
-  const inLastRow = direction === 'down' && rowIndex === cellsInfo.length - 1;
+  const rowspan = cellsInfo[rowIdx].rowspanMap[colIdx];
+  const inFirstRow = direction === 'up' && rowIdx === 0;
+  const inLastRow =
+    (direction === 'down' || direction === 'right') &&
+    (rowspan ? rowIdx + rowspan.count - 1 : rowIdx) === cellsInfo.length - 1;
 
   return inFirstRow || inLastRow;
 }
@@ -152,10 +155,7 @@ export function addParagraphBeforeTable(tr: Transaction, cellsInfo: RowInfo[], s
 }
 
 export function addParagraphAfterTable(tr: Transaction, cellsInfo: RowInfo[], schema: Schema) {
-  const rowCount = cellsInfo.length;
-  const columnCount = cellsInfo[0].length;
-  const lastCell = cellsInfo[rowCount - 1][columnCount - 1];
-
+  const lastCell = getLastCell(cellsInfo);
   // 3 is position value of </tr></tbody></table>
   const tableEndPos = tr.doc.resolve(lastCell.offset + lastCell.nodeSize + 3);
 
@@ -166,44 +166,48 @@ export function addParagraphAfterTable(tr: Transaction, cellsInfo: RowInfo[], sc
   return tr.setSelection(Selection.near(tableEndPos, 1));
 }
 
-export function getRightCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: RowInfo[]) {
+export function getRightCellOffset([rowIdx, colIdx]: CellPosition, cellsInfo: RowInfo[]) {
   const allRowCount = cellsInfo.length;
   const allColumnCount = cellsInfo[0].length;
 
-  const lastCellInRow = columnIndex === allColumnCount - 1;
-  const lastCellInTable = rowIndex === allRowCount - 1 && lastCellInRow;
+  const lastCellInRow = colIdx === allColumnCount - 1;
+  const lastCellInTable = rowIdx === allRowCount - 1 && lastCellInRow;
 
   if (!lastCellInTable) {
-    columnIndex += 1;
+    let nextColIdx = colIdx + 1;
+    const colspan = cellsInfo[rowIdx].colspanMap[colIdx];
 
-    if (lastCellInRow) {
-      rowIndex += 1;
-      columnIndex = 0;
+    if (colspan) {
+      nextColIdx += colspan.count - 1;
     }
 
-    const { offset, nodeSize } = cellsInfo[rowIndex][columnIndex];
+    if (lastCellInRow || nextColIdx === allColumnCount) {
+      rowIdx += 1;
+      nextColIdx = 0;
+    }
+    const { offset } = cellsInfo[rowIdx][nextColIdx];
 
-    return offset + nodeSize - 2;
+    return offset + 2;
   }
 
   return null;
 }
 
-export function getLeftCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: RowInfo[]) {
+export function getLeftCellOffset([rowIdx, colIdx]: CellPosition, cellsInfo: RowInfo[]) {
   const allColumnCount = cellsInfo[0].length;
 
-  const firstCellInRow = columnIndex === 0;
-  const firstCellInTable = rowIndex === 0 && firstCellInRow;
+  const firstCellInRow = colIdx === 0;
+  const firstCellInTable = rowIdx === 0 && firstCellInRow;
 
   if (!firstCellInTable) {
-    columnIndex -= 1;
+    colIdx -= 1;
 
     if (firstCellInRow) {
-      rowIndex -= 1;
-      columnIndex = allColumnCount - 1;
+      rowIdx -= 1;
+      colIdx = allColumnCount - 1;
     }
 
-    const { offset, nodeSize } = cellsInfo[rowIndex][columnIndex];
+    const { offset, nodeSize } = cellsInfo[rowIdx][colIdx];
 
     return offset + nodeSize - 2;
   }
@@ -211,9 +215,9 @@ export function getLeftCellOffset([rowIndex, columnIndex]: CellPosition, cellsIn
   return null;
 }
 
-export function getUpCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: RowInfo[]) {
-  if (rowIndex > 0) {
-    const { offset, nodeSize } = cellsInfo[rowIndex - 1][columnIndex];
+export function getUpCellOffset([rowIdx, colIdx]: CellPosition, cellsInfo: RowInfo[]) {
+  if (rowIdx > 0) {
+    const { offset, nodeSize } = cellsInfo[rowIdx - 1][colIdx];
 
     return offset + nodeSize - 2;
   }
@@ -221,11 +225,17 @@ export function getUpCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo
   return null;
 }
 
-export function getDownCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: RowInfo[]) {
+export function getDownCellOffset([rowIdx, colIdx]: CellPosition, cellsInfo: RowInfo[]) {
   const allRowCount = cellsInfo.length;
 
-  if (rowIndex < allRowCount - 1) {
-    const { offset } = cellsInfo[rowIndex + 1][columnIndex];
+  if (rowIdx < allRowCount - 1) {
+    let nextRowIdx = rowIdx + 1;
+    const rowspan = cellsInfo[rowIdx].rowspanMap[colIdx];
+
+    if (rowspan) {
+      nextRowIdx += rowspan.count - 1;
+    }
+    const { offset } = cellsInfo[nextRowIdx][colIdx];
 
     return offset + 2;
   }
@@ -254,17 +264,17 @@ export function moveToCell(
 export function canSelectTableNode(
   direction: CursorDirection,
   cellsInfo: RowInfo[],
-  [rowIndex, columnIndex]: CellPosition,
+  [rowIdx, colIdx]: CellPosition,
   from: ResolvedPos,
   paraDepth: number
 ) {
   const curOffset = from.pos;
 
-  const endRowIndex = direction === 'left' ? 0 : cellsInfo.length - 1;
-  const endColIndex = direction === 'left' ? 0 : cellsInfo[0].length - 1;
+  const endRowIdx = direction === 'left' ? 0 : cellsInfo.length - 1;
+  const endColIdx = direction === 'left' ? 0 : cellsInfo[0].length - 1;
   const endCursorPos = direction === 'left' ? from.start(paraDepth) : from.end(paraDepth);
 
-  const endCell = rowIndex === endRowIndex && columnIndex === endColIndex;
+  const endCell = rowIdx === endRowIdx && colIdx === endColIdx;
   const endCursor = curOffset === endCursorPos;
 
   return endCell && endCursor;

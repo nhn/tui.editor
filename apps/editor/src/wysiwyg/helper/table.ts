@@ -275,24 +275,10 @@ export function getTableCellsInfo(cellPos: ResolvedPos) {
   return [];
 }
 
-export function getCellIndexInfo(cellPos: ResolvedPos): [rowIdx: number, colIdx: number] {
-  const { pos, parentOffset } = cellPos;
-
-  let rowIdx = cellPos
-    .node(0)
-    .resolve(pos - parentOffset - 1)
-    .index();
-
-  if (cellPos.nodeAfter && cellPos.nodeAfter.type.name !== 'tableHeadCell') {
-    rowIdx += 1;
-  }
-
-  const colIdx = cellPos.index();
-
-  return [rowIdx, colIdx];
-}
-
-function getCellIndex(cellPos: ResolvedPos, cellsInfo: RowInfo[]) {
+export function getCellIndex(
+  cellPos: ResolvedPos,
+  cellsInfo: RowInfo[]
+): [rowIdx: number, colIdx: number] {
   for (let rowIdx = 0; rowIdx < cellsInfo.length; rowIdx += 1) {
     const rowInfo = cellsInfo[rowIdx];
 
@@ -303,6 +289,22 @@ function getCellIndex(cellPos: ResolvedPos, cellsInfo: RowInfo[]) {
     }
   }
   return [0, 0];
+}
+
+export function getLastCell(cellsInfo: RowInfo[]) {
+  const rowCount = cellsInfo.length;
+  const columnCount = cellsInfo[0].length;
+  // eslint-disable-next-line prefer-destructuring
+  let lastCell = cellsInfo[0][0];
+
+  for (let i = 0; i < rowCount; i += 1) {
+    for (let j = 0; j < columnCount; j += 1) {
+      if (lastCell.offset < cellsInfo[i][j].offset) {
+        lastCell = cellsInfo[i][j];
+      }
+    }
+  }
+  return lastCell;
 }
 
 export function getExtendedRanges(
