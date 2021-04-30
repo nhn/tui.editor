@@ -224,9 +224,8 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
-  // @ts-ignore
-  tableCell(state, node: TableCellMdNode, { entering }) {
-    if (!node.ignored) {
+  tableCell(state, node, { entering }) {
+    if (!(node as TableCellMdNode).ignored) {
       const hasParaNode = (childNode: MdNode | null) =>
         childNode && (isInlineNode(childNode) || isCustomHTMLInlineNode(state, childNode));
 
@@ -236,17 +235,18 @@ export const toWwConvertors: ToWwConvertorMap = {
         const cell = tablePart.type === 'tableHead' ? tableHeadCell : tableBodyCell;
 
         const table = tablePart.parent as TableMdNode;
-        const columnInfo = table.columns[node.startIdx];
+        const { align } = table.columns[(node as TableCellMdNode).startIdx];
         const attrs: Record<string, string | number> = {};
+        const { colspan, rowspan } = node as TableCellMdNode;
 
-        if (columnInfo.align) {
-          attrs.align = columnInfo.align;
+        if (align) {
+          attrs.align = align;
         }
-        if (node.colspan) {
-          attrs.colspan = Number(node.colspan);
+        if (colspan) {
+          attrs.colspan = Number(colspan);
         }
-        if (node.rowspan) {
-          attrs.rowspan = Number(node.rowspan);
+        if (rowspan) {
+          attrs.rowspan = Number(rowspan);
         }
 
         state.openNode(cell, attrs);

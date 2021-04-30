@@ -279,10 +279,13 @@ export function getCellIndex(
   cellPos: ResolvedPos,
   cellsInfo: RowInfo[]
 ): [rowIdx: number, colIdx: number] {
-  for (let rowIdx = 0; rowIdx < cellsInfo.length; rowIdx += 1) {
-    const rowInfo = cellsInfo[rowIdx];
+  const rowCount = cellsInfo.length;
 
-    for (let colIdx = 0; colIdx < rowInfo.length; colIdx += 1) {
+  for (let rowIdx = 0; rowIdx < rowCount; rowIdx += 1) {
+    const rowInfo = cellsInfo[rowIdx];
+    const columnCount = rowInfo.length;
+
+    for (let colIdx = 0; colIdx < columnCount; colIdx += 1) {
       if (rowInfo[colIdx].offset + 1 > cellPos.pos) {
         return [rowIdx, colIdx];
       }

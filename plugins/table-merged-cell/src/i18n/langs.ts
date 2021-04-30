@@ -4,7 +4,7 @@ export function addLangs(i18n: I18n) {
   i18n.setLanguage(['ko', 'ko-KR'], {
     'Merge cells': '셀 병합',
     'Unmerge cells': '셀 병합해제',
-    'Cannot change part of merged cell': '병합 된 셀의 일부를 변경할 수 없습니다.',
+    'Cannot change part of merged cell': '병합된 셀의 일부를 변경할 수 없습니다.',
     'Cannot paste row merged cells into the table header':
       '테이블 헤더에는 행 병합된 셀을 붙여넣을 수 없습니다.',
   });

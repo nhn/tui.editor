@@ -252,7 +252,9 @@ function positionAt(
       let index = colIdx;
 
       // Skip pasting cells from previous rows (via rowspan)
-      while (index < columnCount && cellsInfo[i][index].offset < rowStart) index += 1;
+      while (index < columnCount && cellsInfo[i][index].offset < rowStart) {
+        index += 1;
+      }
 
       return index === columnCount ? rowEnd : cellsInfo[i][index].offset;
     }

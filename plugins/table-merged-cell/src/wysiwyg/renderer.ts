@@ -2,6 +2,7 @@ import type { Node as ProsemirrorNode } from 'prosemirror-model';
 import type { ToMdConvertorMap } from '@toast-ui/editor';
 
 type ColumnAlign = 'left' | 'right' | 'center';
+const DELIM_LENGH = 3;
 
 function repeat(text: string, count: number) {
   let result = '';
@@ -30,7 +31,7 @@ function createTableHeadDelim(textContent: string, columnAlign: ColumnAlign) {
     textLen -= 2;
   }
 
-  return `${leftDelim}${repeat('-', Math.max(textLen, 3))}${rightDelim}`;
+  return `${leftDelim}${repeat('-', Math.max(textLen, DELIM_LENGH))}${rightDelim}`;
 }
 
 function createDelim(node: ProsemirrorNode) {
@@ -44,9 +45,7 @@ function createDelim(node: ProsemirrorNode) {
     spanInfo = `@cols=${colspan}:${spanInfo}`;
   }
 
-  const delim = `| ${spanInfo}`;
-
-  return { delim };
+  return { delim: `| ${spanInfo}` };
 }
 
 export const toMarkdownRenderers: ToMdConvertorMap = {
