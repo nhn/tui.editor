@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceStep } from 'prosemirror-transform';
-import { TextSelection } from 'prosemirror-state';
+import { TextSelection, Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 
 import NodeSchema from '@/spec/node';
@@ -14,11 +14,12 @@ import {
   getResolvedSelection,
   getSelectionInfo,
   getTableCellsInfo,
-  getCellIndexInfo,
   getNextRowOffset,
   getPrevRowOffset,
   getNextColumnOffsets,
   getPrevColumnOffsets,
+  getRowAndColumnCount,
+  getCellIndex,
 } from '@/wysiwyg/helper/table';
 import {
   CursorDirection,
@@ -121,9 +122,9 @@ export class Table extends NodeSchema {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const selectionInfo = getSelectionInfo(anchor, head);
         const cellsInfo = getTableCellsInfo(anchor);
-        const { columnCount } = selectionInfo;
+        const selectionInfo = getSelectionInfo(cellsInfo, anchor, head);
+        const { columnCount } = getRowAndColumnCount(selectionInfo);
         const allRowCount = cellsInfo.length;
 
         for (let rowIndex = 0; rowIndex < allRowCount; rowIndex += 1) {
@@ -153,9 +154,9 @@ export class Table extends NodeSchema {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const selectionInfo = getSelectionInfo(anchor, head);
         const cellsInfo = getTableCellsInfo(anchor);
-        const { startColumnIndex, columnCount } = selectionInfo;
+        const selectionInfo = getSelectionInfo(cellsInfo, anchor, head);
+        const { columnCount } = getRowAndColumnCount(selectionInfo);
         const allColumnCount = cellsInfo[0].length;
 
         const selectedAllColumn = columnCount === allColumnCount;
@@ -169,7 +170,7 @@ export class Table extends NodeSchema {
 
         for (let i = 0; i < allRowCount; i += 1) {
           for (let j = 0; j < columnCount; j += 1) {
-            const { offset, nodeSize } = cellsInfo[i][j + startColumnIndex];
+            const { offset, nodeSize } = cellsInfo[i][j + selectionInfo.startColIdx];
 
             const from = tr.mapping.slice(mapOffset).map(offset);
             const to = from + nodeSize;
@@ -193,9 +194,9 @@ export class Table extends NodeSchema {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const selectionInfo = getSelectionInfo(anchor, head);
         const cellsInfo = getTableCellsInfo(anchor);
-        const { rowCount } = selectionInfo;
+        const selectionInfo = getSelectionInfo(cellsInfo, anchor, head);
+        const { rowCount } = getRowAndColumnCount(selectionInfo);
         const allColumnCount = cellsInfo[0].length;
         const from =
           direction === 1
@@ -221,21 +222,22 @@ export class Table extends NodeSchema {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const selectionInfo = getSelectionInfo(anchor, head);
         const cellsInfo = getTableCellsInfo(anchor);
-        const { startRowIndex, rowCount } = selectionInfo;
+        const selectionInfo = getSelectionInfo(cellsInfo, anchor, head);
+        const { rowCount } = getRowAndColumnCount(selectionInfo);
+        const { startRowIdx } = selectionInfo;
         const allRowCount = cellsInfo.length;
 
-        const selectedThead = startRowIndex === 0;
+        const selectedThead = startRowIdx === 0;
         const selectedAllTbodyRow = rowCount === allRowCount - 1;
 
         if (selectedThead || selectedAllTbodyRow) {
           return false;
         }
 
-        const from = cellsInfo[startRowIndex][0].offset - 1;
+        const from = cellsInfo[startRowIdx][0].offset - 1;
 
-        const rowIdx = startRowIndex + rowCount - 1;
+        const rowIdx = startRowIdx + rowCount - 1;
         const colIdx = cellsInfo[0].length - 1;
         const { offset, nodeSize } = cellsInfo[rowIdx][colIdx];
         const to = offset + nodeSize + 1;
@@ -256,14 +258,14 @@ export class Table extends NodeSchema {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const selectionInfo = getSelectionInfo(anchor, head);
         const cellsInfo = getTableCellsInfo(anchor);
-        const { startColumnIndex, columnCount } = selectionInfo;
+        const selectionInfo = getSelectionInfo(cellsInfo, anchor, head);
+        const { columnCount } = getRowAndColumnCount(selectionInfo);
         const allRowCount = cellsInfo.length;
 
         for (let i = 0; i < allRowCount; i += 1) {
           for (let j = 0; j < columnCount; j += 1) {
-            const { offset } = cellsInfo[i][j + startColumnIndex];
+            const { offset } = cellsInfo[i][j + selectionInfo.startColIdx];
 
             tr.setNodeMarkup(offset, null, { align });
           }
@@ -280,13 +282,21 @@ export class Table extends NodeSchema {
 
   private moveToCell(direction: CursorDirection): Command {
     return (state, dispatch) => {
-      const { selection, tr } = state;
+      const { selection, tr, schema } = state;
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
         const cellsInfo = getTableCellsInfo(anchor);
-        const cellIndex = getCellIndexInfo(anchor);
-        const newTr = moveToCell(direction, tr, cellIndex, cellsInfo);
+        const cellIndex = getCellIndex(anchor, cellsInfo);
+        let newTr: Transaction | null;
+
+        if (canBeOutOfTable(direction, cellsInfo, cellIndex)) {
+          // When there is no content before or after the table,
+          // an empty line('paragraph') is created by pressing the arrow keys.
+          newTr = addParagraphAfterTable(tr, cellsInfo, schema);
+        } else {
+          newTr = moveToCell(direction, tr, cellIndex, cellsInfo);
+        }
 
         if (newTr) {
           dispatch!(newTr);
@@ -320,8 +330,8 @@ export class Table extends NodeSchema {
 
         if (para && canMoveBetweenCells(direction, [cellDepth, para.depth], $from, doc)) {
           const { anchor } = getResolvedSelection(selection);
-          const cellIndex = getCellIndexInfo(anchor);
           const cellsInfo = getTableCellsInfo(anchor);
+          const cellIndex = getCellIndex(anchor, cellsInfo);
 
           let newTr;
 
@@ -329,12 +339,12 @@ export class Table extends NodeSchema {
             // When the cursor position is at the end of the cell,
             // the table is selected when the left / right arrow keys are pressed.
             newTr = selectNode(tr, $from, cellDepth);
-          } else if (canBeOutOfTable(direction, cellsInfo, cellIndex[0])) {
+          } else if (canBeOutOfTable(direction, cellsInfo, cellIndex)) {
             // When there is no content before or after the table,
             // an empty line('paragraph') is created by pressing the arrow keys.
             if (direction === 'up') {
               newTr = addParagraphBeforeTable(tr, cellsInfo, schema);
-            } else if (direction === 'down') {
+            } else if (direction === 'down' || direction === 'right') {
               newTr = addParagraphAfterTable(tr, cellsInfo, schema);
             }
           } else {
@@ -360,15 +370,16 @@ export class Table extends NodeSchema {
       const textSelection = selection instanceof TextSelection;
 
       if (anchor && head && !textSelection) {
-        const selectionInfo = getSelectionInfo(anchor, head);
         const cellsInfo = getTableCellsInfo(anchor);
-        const { startColumnIndex, columnCount } = selectionInfo;
+        const selectionInfo = getSelectionInfo(cellsInfo, anchor, head);
+        const { startColIdx } = selectionInfo;
+        const { columnCount } = getRowAndColumnCount(selectionInfo);
 
         const tableRowCount = cellsInfo.length;
 
         for (let rowIndex = 0; rowIndex < tableRowCount; rowIndex += 1) {
-          const startCellOffset = cellsInfo[rowIndex][startColumnIndex];
-          const endCellOffset = cellsInfo[rowIndex][startColumnIndex + columnCount - 1];
+          const startCellOffset = cellsInfo[rowIndex][startColIdx];
+          const endCellOffset = cellsInfo[rowIndex][startColIdx + columnCount - 1];
           const cells = createDummyCells(columnCount, rowIndex, schema);
 
           tr.replace(

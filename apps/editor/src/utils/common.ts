@@ -146,3 +146,7 @@ export function deepCopy<T extends Record<string, any>>(obj: T) {
     return acc;
   }, {} as T);
 }
+
+export function getSortedNumPair(valueA: number, valueB: number) {
+  return valueA > valueB ? [valueB, valueA] : [valueA, valueB];
+}

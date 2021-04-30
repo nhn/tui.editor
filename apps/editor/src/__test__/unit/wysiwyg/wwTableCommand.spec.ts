@@ -3,7 +3,7 @@ import { oneLineTrim } from 'common-tags';
 import WysiwygEditor from '@/wysiwyg/wwEditor';
 import EventEmitter from '@/event/eventEmitter';
 import CommandManager from '@/commands/commandManager';
-import CellSelection from '@/wysiwyg/plugins/tableSelection/cellSelection';
+import CellSelection from '@/wysiwyg/plugins/selection/cellSelection';
 
 import { getTableCellsInfo } from '@/wysiwyg/helper/table';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';

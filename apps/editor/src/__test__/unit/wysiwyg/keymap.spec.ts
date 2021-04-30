@@ -5,7 +5,7 @@ import { DOMParser } from 'prosemirror-model';
 import WysiwygEditor from '@/wysiwyg/wwEditor';
 import EventEmitter from '@/event/eventEmitter';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
-import CellSelection from '@/wysiwyg/plugins/tableSelection/cellSelection';
+import CellSelection from '@/wysiwyg/plugins/selection/cellSelection';
 
 describe('keymap', () => {
   let wwe: WysiwygEditor, em: EventEmitter;

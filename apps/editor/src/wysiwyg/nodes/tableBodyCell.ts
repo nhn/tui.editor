@@ -1,7 +1,7 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
-import { createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
+import { createCellAttrs, createParsedCellDOM } from '@/wysiwyg/helper/node';
 
 export class TableBodyCell extends NodeSchema {
   get name() {
@@ -15,20 +15,16 @@ export class TableBodyCell extends NodeSchema {
         align: { default: null },
         className: { default: null },
         rawHTML: { default: null },
+        colspan: { default: null },
+        rowspan: { default: null },
+        extended: { default: null },
       },
       isolating: true,
-      parseDOM: [createDOMInfoParsedRawHTML('td')],
+      parseDOM: [createParsedCellDOM('td')],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
-        const { align, className } = attrs;
+        const cellAttrs = createCellAttrs(attrs);
 
-        return [
-          'td',
-          {
-            ...(align && { align }),
-            ...(className && { class: className }),
-          },
-          0,
-        ];
+        return ['td', cellAttrs, 0];
       },
     };
   }

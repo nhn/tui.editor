@@ -1,8 +1,10 @@
-import type { Context, OpenTagToken } from '@toast-ui/toastmark';
-import { MergedTableCell, MergedTableRow } from '@t/markdown';
+import type { ToHTMLConvertorMap } from '@toast-ui/editor';
+import type { OpenTagToken } from '@toast-ui/toastmark';
+import { MergedTableCellMdNode, MergedTableRowMdNode } from '@t/markdown';
 
-export const toHTMLRenderers = {
-  tableRow(node: MergedTableRow, { entering, origin }: Context) {
+export const toHTMLRenderers: ToHTMLConvertorMap = {
+  // @ts-ignore
+  tableRow(node: MergedTableRowMdNode, { entering, origin }) {
     if (entering) {
       return origin!();
     }
@@ -39,15 +41,16 @@ export const toHTMLRenderers = {
 
     return result;
   },
-  tableCell(node: MergedTableCell, { entering, origin }: Context) {
-    const result = origin!() as OpenTagToken;
+  // @ts-ignore
+  tableCell(node: MergedTableCellMdNode, { entering, origin }) {
+    const result = origin!();
 
     if (node.ignored) {
       return result;
     }
 
     if (entering) {
-      const { attributes = {} } = result;
+      const attributes: Record<string, string> = {};
 
       if (node.colspan) {
         attributes.colspan = String(node.colspan);
@@ -55,7 +58,11 @@ export const toHTMLRenderers = {
       if (node.rowspan) {
         attributes.rowspan = String(node.rowspan);
       }
-      result.attributes = attributes;
+
+      (result as OpenTagToken).attributes = {
+        ...(result as OpenTagToken).attributes,
+        ...attributes,
+      };
     }
     return result;
   },

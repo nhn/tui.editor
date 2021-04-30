@@ -1,10 +1,9 @@
-import { Schema, Slice, Fragment, ResolvedPos } from 'prosemirror-model';
+import { Schema, Slice, Fragment, ResolvedPos, ProsemirrorNode } from 'prosemirror-model';
 import { Transform } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
-import { TextSelection } from 'prosemirror-state';
 
 import {
-  CellInfo,
+  RowInfo,
   SelectionInfo,
   getResolvedSelection,
   getSelectionInfo,
@@ -12,6 +11,8 @@ import {
   createDummyCells,
   createTableBodyRows,
   getTableContentFromSlice,
+  getExtendedRanges,
+  getRowAndColumnCount,
 } from '@/wysiwyg/helper/table';
 
 import {
@@ -19,9 +20,11 @@ import {
   copyTableHeadRow,
   copyTableBodyRow,
 } from '@/wysiwyg/clipboard/paste';
+import CellSelection from '../plugins/selection/cellSelection';
+import { last } from '@/utils/common';
 
 interface TargetTableInfo {
-  cellsInfo: CellInfo[][];
+  cellsInfo: RowInfo[];
   tableRowCount: number;
   tableColumnCount: number;
 }
@@ -29,16 +32,20 @@ interface TargetTableInfo {
 interface PastingRangeInfo {
   addedRowCount: number;
   addedColumnCount: number;
-  startRowIndex: number;
-  startColumnIndex: number;
-  endColumnIndex: number;
-  endRowIndex: number;
+  startRowIdx: number;
+  startColIdx: number;
+  endColIdx: number;
+  endRowIdx: number;
 }
 
 interface ReplacedCellsOffsets {
   startCellOffset: number;
   endCellOffset: number;
-  nextCellOffset: number;
+  rowIdx: number;
+  startColIdx: number;
+  endColIdx: number;
+  extendedStart?: boolean;
+  extendedEnd?: boolean;
 }
 
 const DUMMY_CELL_SIZE = 4;
@@ -50,31 +57,22 @@ function getDummyCellSize(dummyCellCount: number) {
 
 function createPastingCells(
   tableContent: Fragment,
-  selectionInfo: SelectionInfo,
-  textSelection: boolean,
+  curSelectionInfo: SelectionInfo,
   schema: Schema
 ) {
+  const pastingRows: Fragment[] = [];
   const pastingTableRows = createRowsFromPastingTable(tableContent);
-  const { startRowIndex, columnCount, rowCount } = selectionInfo;
+  const columnCount = pastingTableRows[0].childCount;
+  const rowCount = pastingTableRows.length;
 
-  const tableRowCount = pastingTableRows.length;
-  const pastingRowCount = textSelection ? tableRowCount : Math.min(tableRowCount, rowCount);
-
-  const tableColumnCount = pastingTableRows[0].childCount;
-  const pastingColumnCount = textSelection
-    ? tableColumnCount
-    : Math.min(tableColumnCount, columnCount);
-
-  const startToTableHead = startRowIndex === 0;
-  const slicedRows = pastingTableRows.slice(0, pastingRowCount);
-
-  const pastingRows = [];
+  const startToTableHead = curSelectionInfo.startRowIdx === 0;
+  const slicedRows = pastingTableRows.slice(0, rowCount);
 
   if (startToTableHead) {
     const tableHeadRow = slicedRows.shift();
 
     if (tableHeadRow) {
-      const { content } = copyTableHeadRow(tableHeadRow, pastingColumnCount, schema);
+      const { content } = copyTableHeadRow(tableHeadRow, columnCount, schema);
 
       pastingRows.push(content);
     }
@@ -82,13 +80,13 @@ function createPastingCells(
 
   slicedRows.forEach((tableBodyRow) => {
     if (!tableBodyRow.attrs.dummyRowForPasting) {
-      const { content } = copyTableBodyRow(tableBodyRow, pastingColumnCount, schema);
+      const { content } = copyTableBodyRow(tableBodyRow, columnCount, schema);
 
       pastingRows.push(content);
     }
   });
 
-  return [...pastingRows];
+  return pastingRows;
 }
 
 function getTargetTableInfo(anchor: ResolvedPos) {
@@ -103,49 +101,64 @@ function getTargetTableInfo(anchor: ResolvedPos) {
 
 function getPastingRangeInfo(
   { tableRowCount, tableColumnCount }: TargetTableInfo,
-  { startRowIndex, startColumnIndex }: SelectionInfo,
+  { startRowIdx, startColIdx }: SelectionInfo,
   pastingCells: Fragment[]
-) {
+): PastingRangeInfo {
   const pastingRowCount = pastingCells.length;
-  const pastingColumnCount = pastingCells[0].childCount;
+  let pastingColumnCount = 0;
 
-  const endRowIndex = startRowIndex + pastingRowCount - 1;
-  const endColumnIndex = startColumnIndex + pastingColumnCount - 1;
+  for (let i = 0; i < pastingRowCount; i += 1) {
+    let columnCount = pastingCells[i].childCount;
 
-  const addedRowCount = Math.max(endRowIndex + 1 - tableRowCount, 0);
-  const addedColumnCount = Math.max(endColumnIndex + 1 - tableColumnCount, 0);
+    pastingCells[i].forEach(({ attrs }) => {
+      const { colspan } = attrs;
+
+      if (colspan > 1) {
+        columnCount += colspan - 1;
+      }
+    });
+    pastingColumnCount = Math.max(pastingColumnCount, columnCount);
+  }
+
+  const endRowIdx = startRowIdx + pastingRowCount - 1;
+  const endColIdx = startColIdx + pastingColumnCount - 1;
+  const addedRowCount = Math.max(endRowIdx + 1 - tableRowCount, 0);
+  const addedColumnCount = Math.max(endColIdx + 1 - tableColumnCount, 0);
 
   return {
-    startRowIndex,
-    startColumnIndex,
-    endRowIndex,
-    endColumnIndex,
+    startRowIdx,
+    startColIdx,
+    endRowIdx,
+    endColIdx,
     addedRowCount,
     addedColumnCount,
   };
 }
 
 function addReplacedOffsets(
-  { cellsInfo, tableColumnCount }: TargetTableInfo,
+  { cellsInfo }: TargetTableInfo,
   {
-    startRowIndex,
-    startColumnIndex,
-    endRowIndex,
-    endColumnIndex,
+    startRowIdx,
+    startColIdx,
+    endRowIdx,
+    endColIdx,
     addedRowCount,
     addedColumnCount,
   }: PastingRangeInfo,
-  replacedCellsOffsets: ReplacedCellsOffsets[]
+  cellsOffsets: ReplacedCellsOffsets[]
 ) {
-  for (let rowIndex = startRowIndex; rowIndex <= endRowIndex - addedRowCount; rowIndex += 1) {
-    const start = cellsInfo[rowIndex][startColumnIndex];
-    const end = cellsInfo[rowIndex][endColumnIndex - addedColumnCount];
-    const rowEnd = cellsInfo[rowIndex][tableColumnCount - 1];
+  for (let rowIdx = startRowIdx; rowIdx <= endRowIdx - addedRowCount; rowIdx += 1) {
+    const start = cellsInfo[rowIdx][startColIdx];
+    const end = cellsInfo[rowIdx][endColIdx - addedColumnCount];
 
-    replacedCellsOffsets.push({
+    cellsOffsets.push({
+      rowIdx,
+      startColIdx,
+      endColIdx: endColIdx - addedColumnCount,
       startCellOffset: start.offset,
       endCellOffset: end.offset + end.nodeSize,
-      nextCellOffset: rowEnd.offset + rowEnd.nodeSize + TR_NODES_SIZE,
+      extendedStart: start.extended,
+      extendedEnd: end.extended,
     });
   }
 }
@@ -155,30 +168,35 @@ function expandColumns(
   schema: Schema,
   { tableRowCount, cellsInfo }: TargetTableInfo,
   {
-    startRowIndex,
-    startColumnIndex,
-    endRowIndex,
-    endColumnIndex,
+    startRowIdx,
+    startColIdx,
+    endRowIdx,
+    endColIdx,
     addedRowCount,
     addedColumnCount,
   }: PastingRangeInfo,
-  replacedCellsOffsets: ReplacedCellsOffsets[]
+  cellsOffsets: ReplacedCellsOffsets[]
 ) {
   let index = 0;
 
-  for (let rowIndex = 0; rowIndex < tableRowCount; rowIndex += 1) {
-    const { offset, nodeSize } = cellsInfo[rowIndex][endColumnIndex - addedColumnCount];
+  for (let rowIdx = 0; rowIdx < tableRowCount; rowIdx += 1) {
+    const { offset, nodeSize } = cellsInfo[rowIdx][endColIdx - addedColumnCount];
     const insertOffset = tr.mapping.map(offset + nodeSize);
-    const cells = createDummyCells(addedColumnCount, rowIndex, schema);
+    const cells = createDummyCells(addedColumnCount, rowIdx, schema);
 
     tr.insert(insertOffset, cells);
 
-    if (rowIndex >= startRowIndex && rowIndex <= endRowIndex - addedRowCount) {
-      const startCellOffset = tr.mapping.map(cellsInfo[rowIndex][startColumnIndex].offset);
+    if (rowIdx >= startRowIdx && rowIdx <= endRowIdx - addedRowCount) {
+      const startCellOffset = tr.mapping.map(cellsInfo[rowIdx][startColIdx].offset);
       const endCellOffset = insertOffset + getDummyCellSize(addedColumnCount);
-      const nextCellOffset = endCellOffset + TR_NODES_SIZE;
 
-      replacedCellsOffsets[index] = { startCellOffset, endCellOffset, nextCellOffset };
+      cellsOffsets[index] = {
+        rowIdx,
+        startCellOffset,
+        endCellOffset,
+        startColIdx,
+        endColIdx,
+      };
       index += 1;
     }
   }
@@ -187,43 +205,101 @@ function expandColumns(
 function expandRows(
   tr: Transform,
   schema: Schema,
-  { tableColumnCount }: TargetTableInfo,
-  { addedRowCount, addedColumnCount, startColumnIndex, endColumnIndex }: PastingRangeInfo,
-  replacedCellsOffsets: ReplacedCellsOffsets[]
+  { tableColumnCount, cellsInfo }: TargetTableInfo,
+  { addedRowCount, addedColumnCount, startColIdx, endColIdx }: PastingRangeInfo,
+  cellsOffsets: ReplacedCellsOffsets[]
 ) {
-  const endCell = replacedCellsOffsets[replacedCellsOffsets.length - 1];
-  const rows = createTableBodyRows(addedRowCount, tableColumnCount + addedColumnCount, schema);
+  const endCell = cellsOffsets[cellsOffsets.length - 1];
+  const resolvedPos = tr.doc.resolve(endCell.startCellOffset);
+  const table = resolvedPos.node(resolvedPos.depth - 2);
+  const tableEndPos = resolvedPos.before(resolvedPos.depth - 2) + table.nodeSize - 2;
 
-  let startOffset = endCell.nextCellOffset - 1;
+  const rows = createTableBodyRows(addedRowCount, tableColumnCount + addedColumnCount, schema);
+  let startOffset = tableEndPos;
 
   tr.insert(tr.mapping.slice(tr.mapping.maps.length).map(startOffset), rows);
 
   for (let rowIndex = 0; rowIndex < addedRowCount; rowIndex += 1) {
-    const startCellOffset = startOffset + getDummyCellSize(startColumnIndex);
-    const endCellOffset = startOffset + getDummyCellSize(endColumnIndex + 1);
+    const startCellOffset = startOffset + getDummyCellSize(startColIdx) + 1;
+    const endCellOffset = startOffset + getDummyCellSize(endColIdx + 1) + 1;
     const nextCellOffset =
       startOffset + getDummyCellSize(tableColumnCount + addedColumnCount) + TR_NODES_SIZE;
 
-    replacedCellsOffsets.push({ startCellOffset, endCellOffset, nextCellOffset });
-
+    cellsOffsets.push({
+      rowIdx: rowIndex + cellsInfo.length,
+      startColIdx,
+      endColIdx,
+      startCellOffset,
+      endCellOffset,
+    });
     startOffset = nextCellOffset;
   }
+}
+
+function positionAt(
+  table: ProsemirrorNode[],
+  cellsInfo: RowInfo[],
+  tableStart: number,
+  rowIdx: number,
+  colIdx: number
+) {
+  const columnCount = cellsInfo[0].length;
+
+  for (let i = 0, rowStart = tableStart; ; i += 1) {
+    const rowEnd = rowStart + table[i].nodeSize;
+
+    if (i === rowIdx) {
+      let index = colIdx;
+
+      // Skip pasting cells from previous rows (via rowspan)
+      while (index < columnCount && cellsInfo[i][index].offset < rowStart) {
+        index += 1;
+      }
+
+      return index === columnCount ? rowEnd : cellsInfo[i][index].offset;
+    }
+    rowStart = rowEnd;
+  }
+}
+
+function getTableRowsAndStartPos(startPos: number, doc: ProsemirrorNode) {
+  const rows: ProsemirrorNode[] = [];
+  const tableStart = startPos - TR_NODES_SIZE;
+  const resolvedPos = doc.resolve(tableStart);
+  const table = resolvedPos.node();
+
+  table.forEach((headOrBody) => {
+    headOrBody.forEach((row) => {
+      rows.push(row);
+    });
+  });
+  return { tableStart, rows };
 }
 
 function replaceCells(
   tr: Transform,
   pastingRows: Fragment[],
-  replacedCellsOffsets: ReplacedCellsOffsets[]
+  cellsOffsets: ReplacedCellsOffsets[],
+  cellsInfo: RowInfo[]
 ) {
   const mapFrom = tr.mapping.maps.length;
+  const { tableStart, rows } = getTableRowsAndStartPos(cellsInfo[0][0].offset, tr.doc);
 
-  replacedCellsOffsets.forEach((offsets, index) => {
+  cellsOffsets.forEach((offsets, index) => {
+    const { extendedStart, extendedEnd, rowIdx, startColIdx, endColIdx } = offsets;
     const mapping = tr.mapping.slice(mapFrom);
     const startCellOffset = mapping.map(offsets.startCellOffset);
     const endCellOffset = mapping.map(offsets.endCellOffset);
     const cells = new Slice(pastingRows[index], 0, 0);
 
-    tr.replace(startCellOffset, endCellOffset, cells);
+    const from = extendedStart
+      ? mapping.map(positionAt(rows, cellsInfo, tableStart, rowIdx, startColIdx))
+      : startCellOffset;
+    const to = extendedEnd
+      ? mapping.map(positionAt(rows, cellsInfo, tableStart, rowIdx, endColIdx))
+      : endCellOffset;
+
+    tr.replace(from, to, cells);
   });
 }
 
@@ -238,31 +314,62 @@ export function pasteToTable(view: EditorView, slice: Slice) {
       return false;
     }
 
-    const selectionInfo = getSelectionInfo(anchor, head);
-    const textSelection = selection instanceof TextSelection;
-
     const targetTableInfo = getTargetTableInfo(anchor);
-    const pastingCells = createPastingCells(tableContent, selectionInfo, textSelection, schema);
-    const pastingInfo = getPastingRangeInfo(targetTableInfo, selectionInfo, pastingCells);
+    const { cellsInfo } = targetTableInfo;
+    const curSelectionInfo = getSelectionInfo(cellsInfo, anchor, head);
 
-    const replacedCellsOffsets: ReplacedCellsOffsets[] = [];
+    const pastingCells = createPastingCells(tableContent, curSelectionInfo, schema);
+    const pastingInfo = getPastingRangeInfo(targetTableInfo, curSelectionInfo, pastingCells);
 
-    addReplacedOffsets(targetTableInfo, pastingInfo, replacedCellsOffsets);
+    const cellsOffsets: ReplacedCellsOffsets[] = [];
 
-    if (pastingInfo.addedColumnCount) {
-      expandColumns(tr, schema, targetTableInfo, pastingInfo, replacedCellsOffsets);
+    // @TODO: unmerge the span and paste the cell
+    if (canMerge(cellsInfo, pastingInfo)) {
+      addReplacedOffsets(targetTableInfo, pastingInfo, cellsOffsets);
+
+      if (pastingInfo.addedColumnCount) {
+        expandColumns(tr, schema, targetTableInfo, pastingInfo, cellsOffsets);
+      }
+
+      if (pastingInfo.addedRowCount) {
+        expandRows(tr, schema, targetTableInfo, pastingInfo, cellsOffsets);
+      }
+      replaceCells(tr, pastingCells, cellsOffsets, cellsInfo);
+
+      view.dispatch!(tr);
+
+      setSelection(view, cellsOffsets, cellsInfo[0][0].offset);
     }
-
-    if (pastingInfo.addedRowCount) {
-      expandRows(tr, schema, targetTableInfo, pastingInfo, replacedCellsOffsets);
-    }
-
-    replaceCells(tr, pastingCells, replacedCellsOffsets);
-
-    view.dispatch!(tr);
-
     return true;
   }
-
   return false;
+}
+
+function setSelection(view: EditorView, cellsOffsets: ReplacedCellsOffsets[], startPos: number) {
+  const { tr, doc } = view.state;
+  // get changed cell info
+  const cellsInfo = getTableCellsInfo(doc.resolve(startPos));
+
+  // eslint-disable-next-line prefer-destructuring
+  const { rowIdx: startRowIdx, startColIdx } = cellsOffsets[0];
+  const { rowIdx: endRowIdx, endColIdx } = last(cellsOffsets);
+
+  const startOffset = cellsInfo[startRowIdx][startColIdx].offset;
+  const endOffset = cellsInfo[endRowIdx][endColIdx].offset;
+
+  const from = doc.resolve(startOffset);
+  const to = doc.resolve(endOffset);
+
+  view.dispatch!(tr.setSelection(new CellSelection(from, to)));
+}
+
+function canMerge(cellsInfo: RowInfo[], pastingInfo: PastingRangeInfo) {
+  const ranges = getExtendedRanges(pastingInfo, cellsInfo);
+
+  const { rowCount, columnCount } = getRowAndColumnCount(ranges);
+  const { rowCount: pastingRowCount, columnCount: pastingColumnCount } = getRowAndColumnCount(
+    pastingInfo
+  );
+
+  return rowCount === pastingRowCount && columnCount === pastingColumnCount;
 }
