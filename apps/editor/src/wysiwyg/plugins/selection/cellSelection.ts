@@ -1,5 +1,5 @@
 import { Node, ResolvedPos, Slice, Fragment } from 'prosemirror-model';
-import { Selection, SelectionRange } from 'prosemirror-state';
+import { Selection, SelectionRange, TextSelection } from 'prosemirror-state';
 import { Mappable } from 'prosemirror-transform';
 
 import { SelectionInfo } from '@/wysiwyg/helper/table';
@@ -57,8 +57,20 @@ export default class CellSelection extends Selection {
   }
 
   map(doc: Node, mapping: Mappable) {
-    const startCell = doc.resolve(mapping.map(this.startCell.pos));
-    const endCell = doc.resolve(mapping.map(this.endCell.pos));
+    const startPos = this.startCell.pos;
+    const endPos = this.endCell.pos;
+    const startCell = doc.resolve(mapping.map(startPos));
+    const endCell = doc.resolve(mapping.map(endPos));
+
+    if (mapping.mapResult(startPos).deleted || mapping.mapResult(endPos).deleted) {
+      const depthMap = { tableBody: 1, tableRow: 2, tableCell: 3, paragraph: 4 };
+      const depthFromTable = depthMap[endCell.parent.type.name as keyof typeof depthMap];
+      const tableEndPos = endCell.end(endCell.depth - depthFromTable);
+      // subtract 4(</td></tr></tbody></table> tag length)
+      const from = Math.min(tableEndPos - 4, endCell.pos);
+
+      return TextSelection.create(doc, from);
+    }
 
     return new CellSelection(startCell, endCell);
   }

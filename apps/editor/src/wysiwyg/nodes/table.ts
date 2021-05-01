@@ -411,7 +411,6 @@ export class Table extends NodeSchema {
 
         if (newTr) {
           dispatch!(newTr);
-
           return true;
         }
       }
@@ -446,7 +445,7 @@ export class Table extends NodeSchema {
 
           let newTr;
 
-          if (canSelectTableNode(direction, map, cellIndex, $from, para.depth)) {
+          if (canSelectTableNode(direction, map, cellIndex)) {
             // When the cursor position is at the end of the cell,
             // the table is selected when the left / right arrow keys are pressed.
             newTr = selectNode(tr, $from, cellDepth);
@@ -455,7 +454,7 @@ export class Table extends NodeSchema {
             // an empty line('paragraph') is created by pressing the arrow keys.
             if (direction === 'up') {
               newTr = addParagraphBeforeTable(tr, map, schema);
-            } else if (direction === 'down' || direction === 'right') {
+            } else if (direction === 'down') {
               newTr = addParagraphAfterTable(tr, map, schema);
             }
           } else {

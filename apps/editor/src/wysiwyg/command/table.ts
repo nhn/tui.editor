@@ -137,8 +137,7 @@ export function canBeOutOfTable(
   const rowspan = map.getRowspanCount(rowIdx, colIdx);
   const inFirstRow = direction === 'up' && rowIdx === 0;
   const inLastRow =
-    (direction === 'down' || direction === 'right') &&
-    (rowspan ? rowIdx + rowspan - 1 : rowIdx) === map.totalRowCount - 1;
+    direction === 'down' && (rowspan ? rowIdx + rowspan - 1 : rowIdx) === map.totalRowCount - 1;
 
   return inFirstRow || inLastRow;
 }
@@ -257,21 +256,19 @@ export function moveToCell(
 
 export function canSelectTableNode(
   direction: CursorDirection,
-  { totalRowCount, totalColumnCount }: TableOffsetMap,
-  [rowIdx, colIdx]: CellPosition,
-  from: ResolvedPos,
-  paraDepth: number
+  map: TableOffsetMap,
+  [rowIdx, colIdx]: CellPosition
 ) {
-  const curOffset = from.pos;
+  if (direction === 'up' || direction === 'down') {
+    return false;
+  }
+  const { tableStartOffset, tableEndOffset } = map;
+  const { offset, nodeSize } = map.getCellInfo(rowIdx, colIdx);
 
-  const endRowIdx = direction === 'left' ? 0 : totalRowCount - 1;
-  const endColIdx = direction === 'left' ? 0 : totalColumnCount - 1;
-  const endCursorPos = direction === 'left' ? from.start(paraDepth) : from.end(paraDepth);
+  const pos = direction === 'left' ? tableStartOffset : tableEndOffset;
+  const curPos = direction === 'left' ? offset - 2 : offset + nodeSize + 3;
 
-  const endCell = rowIdx === endRowIdx && colIdx === endColIdx;
-  const endCursor = curOffset === endCursorPos;
-
-  return endCell && endCursor;
+  return pos === curPos;
 }
 
 export function selectNode(tr: Transaction, pos: ResolvedPos, depth: number) {
