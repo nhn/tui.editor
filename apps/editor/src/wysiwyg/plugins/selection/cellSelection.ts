@@ -1,24 +1,20 @@
 import { Node, ResolvedPos, Slice, Fragment } from 'prosemirror-model';
-import { Selection, SelectionRange, TextSelection } from 'prosemirror-state';
+import { Selection, SelectionRange } from 'prosemirror-state';
 import { Mappable } from 'prosemirror-transform';
 
-import {
-  getSelectionInfo,
-  getTableCellsInfo,
-  RowInfo,
-  SelectionInfo,
-} from '@/wysiwyg/helper/table';
+import { SelectionInfo } from '@/wysiwyg/helper/table';
+import { TableOffsetMap } from '@/wysiwyg/helper/tableOffsetMap';
 
 function getSelectionRanges(
   doc: Node,
-  cellsInfo: RowInfo[],
+  map: TableOffsetMap,
   { startRowIdx, startColIdx, endRowIdx, endColIdx }: SelectionInfo
 ) {
   const ranges = [];
 
   for (let rowIdx = startRowIdx; rowIdx <= endRowIdx; rowIdx += 1) {
     for (let colIdx = startColIdx; colIdx <= endColIdx; colIdx += 1) {
-      const { offset, nodeSize } = cellsInfo[rowIdx][colIdx];
+      const { offset, nodeSize } = map.getCellInfo(rowIdx, colIdx);
 
       ranges.push(new SelectionRange(doc.resolve(offset + 1), doc.resolve(offset + nodeSize - 1)));
     }
@@ -39,16 +35,16 @@ function createTableFragment(tableHead: Node, tableBody: Node) {
 }
 
 export default class CellSelection extends Selection {
-  startCell: ResolvedPos;
+  private startCell: ResolvedPos;
 
-  endCell: ResolvedPos;
+  private endCell: ResolvedPos;
 
   constructor(startCellPos: ResolvedPos, endCellPos = startCellPos) {
     const doc = startCellPos.node(0);
 
-    const cellsInfo = getTableCellsInfo(startCellPos);
-    const selectionInfo = getSelectionInfo(cellsInfo, startCellPos, endCellPos);
-    const ranges = getSelectionRanges(doc, cellsInfo, selectionInfo);
+    const map = TableOffsetMap.create(startCellPos)!;
+    const selectionInfo = map.getRectOffsets(startCellPos, endCellPos);
+    const ranges = getSelectionRanges(doc, map, selectionInfo);
 
     super(ranges[0].$from, ranges[0].$to, ranges);
 
@@ -62,27 +58,7 @@ export default class CellSelection extends Selection {
 
   map(doc: Node, mapping: Mappable) {
     const startCell = doc.resolve(mapping.map(this.startCell.pos));
-    let endCell = doc.resolve(mapping.map(this.endCell.pos));
-
-    const originCellCount = this.startCell.parent.childCount;
-    const changedCellCount = startCell.parent.childCount;
-
-    const removed = changedCellCount < originCellCount;
-
-    if (removed) {
-      const from = doc.resolve(startCell.pos + 1);
-
-      return TextSelection.between(from, from);
-    }
-
-    const changed =
-      changedCellCount === originCellCount &&
-      startCell.pos === this.startCell.pos &&
-      endCell.pos !== this.endCell.pos;
-
-    if (changed) {
-      endCell = doc.resolve(endCell.pos - endCell.nodeBefore!.nodeSize);
-    }
+    const endCell = doc.resolve(mapping.map(this.endCell.pos));
 
     return new CellSelection(startCell, endCell);
   }
@@ -102,18 +78,18 @@ export default class CellSelection extends Selection {
     const tableHead = table.child(0).type.create()!;
     const tableBody = table.child(1).type.create()!;
 
-    const cellsInfo = getTableCellsInfo(this.startCell);
-    const selectionInfo = getSelectionInfo(cellsInfo, this.startCell, this.endCell);
+    const map = TableOffsetMap.create(this.startCell)!;
+    const selectionInfo = map.getRectOffsets(this.startCell, this.endCell);
     const { startRowIdx, startColIdx, endRowIdx, endColIdx } = selectionInfo;
 
     let isTableHeadCell = false;
 
     for (let rowIdx = startRowIdx; rowIdx <= endRowIdx; rowIdx += 1) {
       const cells = [];
-      const rowInfo = cellsInfo[rowIdx];
+      const rowInfo = map.getRowInfo(rowIdx);
 
       for (let colIdx = startColIdx; colIdx <= endColIdx; colIdx += 1) {
-        const { offset } = cellsInfo[rowIdx][colIdx];
+        const { offset } = map.getCellInfo(rowIdx, colIdx);
         const cell = table.nodeAt(offset - tableOffset);
         const { rowspanMap, colspanMap } = rowInfo;
         const colspan = colspanMap[colIdx];

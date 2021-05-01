@@ -9,7 +9,7 @@ export class TableRow extends NodeSchema {
 
   get defaultSchema() {
     return {
-      content: '(tableHeadCell | tableBodyCell)+',
+      content: '(tableHeadCell | tableBodyCell)*',
       attrs: {
         rawHTML: { default: null },
       },
