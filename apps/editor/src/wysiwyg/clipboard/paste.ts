@@ -55,11 +55,11 @@ function createCells(orgRow: Node, maxColumnCount: number, cell: NodeType) {
   const cells = [];
   const cellCount = orgRow.childCount;
 
-  for (let columnIndex = 0; columnIndex < cellCount; columnIndex += 1) {
-    if (!orgRow.child(columnIndex).attrs.extended) {
+  for (let colIdx = 0; colIdx < cellCount; colIdx += 1) {
+    if (!orgRow.child(colIdx).attrs.extended) {
       const copiedCell =
-        columnIndex < cellCount
-          ? cell.create(orgRow.child(columnIndex).attrs, orgRow.child(columnIndex).content)
+        colIdx < cellCount
+          ? cell.create(orgRow.child(colIdx).attrs, orgRow.child(colIdx).content)
           : cell.createAndFill()!;
 
       cells.push(copiedCell);

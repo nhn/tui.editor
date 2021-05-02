@@ -11,7 +11,6 @@ import {
   createDummyCells,
   getResolvedSelection,
   getRowAndColumnCount,
-  SelectionInfo,
   setAttrs,
 } from '@/wysiwyg/helper/table';
 import {
@@ -29,7 +28,7 @@ import { createTextSelection } from '@/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';
 import { ColumnAlign } from '@t/wysiwyg';
-import { TableOffsetMap } from '../helper/tableOffsetMap';
+import { SelectionInfo, TableOffsetMap } from '@/wysiwyg/helper/tableOffsetMap';
 
 interface AddTablePayload {
   rowCount: number;
@@ -201,7 +200,7 @@ export class Table extends NodeSchema {
 
         for (let rowIdx = 0; rowIdx < totalRowCount; rowIdx += 1) {
           if (judgeToExtendColspan(rowIdx)) {
-            const { node, pos } = map.getColSpanStartNodeAndPos(rowIdx, targetColIdx);
+            const { node, pos } = map.getColspanStartInfo(rowIdx, targetColIdx)!;
             const attrs = setAttrs(node, { colspan: node.attrs.colspan + columnCount });
 
             tr.setNodeMarkup(tr.mapping.map(pos), null, attrs);
@@ -241,9 +240,10 @@ export class Table extends NodeSchema {
         for (let rowIdx = 0; rowIdx < totalRowCount; rowIdx += 1) {
           for (let colIdx = endColIdx; colIdx >= startColIdx; colIdx -= 1) {
             const { offset, nodeSize } = map.getCellInfo(rowIdx, colIdx);
+            const colspanInfo = map.getColspanStartInfo(rowIdx, colIdx)!;
 
-            if (map.getColspanCount(rowIdx, colIdx) > 1) {
-              const { node, pos } = map.getColSpanStartNodeAndPos(rowIdx, colIdx);
+            if (colspanInfo?.count > 1) {
+              const { node, pos } = map.getColspanStartInfo(rowIdx, colIdx)!;
               const colspan = map.decreaseColspanCount(rowIdx, colIdx);
               const attrs = setAttrs(node, { colspan });
 
@@ -287,7 +287,7 @@ export class Table extends NodeSchema {
 
           for (let colIdx = 0; colIdx < totalColumnCount; colIdx += 1) {
             if (judgeToExtendRowspan(colIdx)) {
-              const { node, pos } = map.getRowSpanStartNodeAndPos(targetRowIdx, colIdx);
+              const { node, pos } = map.getRowspanStartInfo(targetRowIdx, colIdx)!;
               const attrs = setAttrs(node, { rowspan: node.attrs.rowspan + rowCount });
 
               tr.setNodeMarkup(tr.mapping.map(pos), null, attrs);
@@ -333,16 +333,18 @@ export class Table extends NodeSchema {
           tr.delete(from - 1, to + 1);
 
           for (let colIdx = 0; colIdx < totalColumnCount; colIdx += 1) {
-            if (map.getRowspanCount(rowIdx, colIdx) > 1 && !map.extendedColspan(rowIdx, colIdx)) {
+            const rowspanInfo = map.getRowspanStartInfo(rowIdx, colIdx)!;
+
+            if (rowspanInfo?.count > 1 && !map.extendedColspan(rowIdx, colIdx)) {
               if (map.extendedRowspan(rowIdx, colIdx)) {
-                const { node, pos } = map.getRowSpanStartNodeAndPos(rowIdx, colIdx);
+                const { node, pos } = map.getRowspanStartInfo(rowIdx, colIdx)!;
                 const rowspan = map.decreaseRowspanCount(rowIdx, colIdx);
                 const attrs = setAttrs(node, { rowspan });
 
                 tr.setNodeMarkup(tr.mapping.slice(mapStart).map(pos), null, attrs);
               } else if (!map.extendedRowspan(rowIdx, colIdx)) {
-                const { node } = map.getRowSpanStartNodeAndPos(rowIdx, colIdx);
-                const attrs = setAttrs(node, { rowspan: map.getRowspanCount(rowIdx, colIdx) - 1 });
+                const { node, count } = map.getRowspanStartInfo(rowIdx, colIdx)!;
+                const attrs = setAttrs(node, { rowspan: count - 1 });
                 const copiedCell = node.type.create(attrs, node.content);
 
                 tr.insert(

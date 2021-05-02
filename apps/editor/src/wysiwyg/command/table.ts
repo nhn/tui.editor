@@ -134,10 +134,11 @@ export function canBeOutOfTable(
   map: TableOffsetMap,
   [rowIdx, colIdx]: CellPosition
 ) {
-  const rowspan = map.getRowspanCount(rowIdx, colIdx);
+  const rowspanInfo = map.getRowspanStartInfo(rowIdx, colIdx)!;
   const inFirstRow = direction === 'up' && rowIdx === 0;
   const inLastRow =
-    direction === 'down' && (rowspan ? rowIdx + rowspan - 1 : rowIdx) === map.totalRowCount - 1;
+    direction === 'down' &&
+    (rowspanInfo?.count > 1 ? rowIdx + rowspanInfo!.count - 1 : rowIdx) === map.totalRowCount - 1;
 
   return inFirstRow || inLastRow;
 }
@@ -168,10 +169,10 @@ export function getRightCellOffset([rowIdx, colIdx]: CellPosition, map: TableOff
 
   if (!lastCellInTable) {
     let nextColIdx = colIdx + 1;
-    const colspan = map.getColspanCount(rowIdx, colIdx);
+    const colspanInfo = map.getColspanStartInfo(rowIdx, colIdx)!;
 
-    if (colspan) {
-      nextColIdx += colspan - 1;
+    if (colspanInfo?.count > 1) {
+      nextColIdx += colspanInfo.count - 1;
     }
 
     if (lastCellInRow || nextColIdx === totalColumnCount) {
@@ -223,10 +224,10 @@ export function getDownCellOffset([rowIdx, colIdx]: CellPosition, map: TableOffs
 
   if (rowIdx < totalRowCount - 1) {
     let nextRowIdx = rowIdx + 1;
-    const rowspan = map.getRowspanCount(rowIdx, colIdx);
+    const rowspanInfo = map.getRowspanStartInfo(rowIdx, colIdx)!;
 
-    if (rowspan) {
-      nextRowIdx += rowspan - 1;
+    if (rowspanInfo?.count > 1) {
+      nextRowIdx += rowspanInfo.count - 1;
     }
     const { offset } = map.getCellInfo(nextRowIdx, colIdx);
 

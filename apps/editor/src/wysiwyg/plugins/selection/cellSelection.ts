@@ -2,8 +2,7 @@ import { Node, ResolvedPos, Slice, Fragment } from 'prosemirror-model';
 import { Selection, SelectionRange, TextSelection } from 'prosemirror-state';
 import { Mappable } from 'prosemirror-transform';
 
-import { SelectionInfo } from '@/wysiwyg/helper/table';
-import { TableOffsetMap } from '@/wysiwyg/helper/tableOffsetMap';
+import { TableOffsetMap, SelectionInfo } from '@/wysiwyg/helper/tableOffsetMap';
 
 function getSelectionRanges(
   doc: Node,
@@ -39,6 +38,8 @@ export default class CellSelection extends Selection {
 
   private endCell: ResolvedPos;
 
+  private offsetMap: TableOffsetMap;
+
   constructor(startCellPos: ResolvedPos, endCellPos = startCellPos) {
     const doc = startCellPos.node(0);
 
@@ -50,6 +51,7 @@ export default class CellSelection extends Selection {
 
     this.startCell = startCellPos;
     this.endCell = endCellPos;
+    this.offsetMap = map;
 
     // This property is the api of the 'Selection' in prosemirror,
     // and is used to disable the text selection.
@@ -61,8 +63,13 @@ export default class CellSelection extends Selection {
     const endPos = this.endCell.pos;
     const startCell = doc.resolve(mapping.map(startPos));
     const endCell = doc.resolve(mapping.map(endPos));
+    const map = TableOffsetMap.create(startCell)!;
 
-    if (mapping.mapResult(startPos).deleted || mapping.mapResult(endPos).deleted) {
+    // text selection when rows or columns are deleted
+    if (
+      this.offsetMap.totalColumnCount > map.totalColumnCount ||
+      this.offsetMap.totalRowCount > map.totalRowCount
+    ) {
       const depthMap = { tableBody: 1, tableRow: 2, tableCell: 3, paragraph: 4 };
       const depthFromTable = depthMap[endCell.parent.type.name as keyof typeof depthMap];
       const tableEndPos = endCell.end(endCell.depth - depthFromTable);
@@ -71,7 +78,6 @@ export default class CellSelection extends Selection {
 
       return TextSelection.create(doc, from);
     }
-
     return new CellSelection(startCell, endCell);
   }
 
@@ -98,23 +104,15 @@ export default class CellSelection extends Selection {
 
     for (let rowIdx = startRowIdx; rowIdx <= endRowIdx; rowIdx += 1) {
       const cells = [];
-      const rowInfo = map.getRowInfo(rowIdx);
 
       for (let colIdx = startColIdx; colIdx <= endColIdx; colIdx += 1) {
         const { offset } = map.getCellInfo(rowIdx, colIdx);
         const cell = table.nodeAt(offset - tableOffset);
-        const { rowspanMap, colspanMap } = rowInfo;
-        const colspan = colspanMap[colIdx];
-        const rowspan = rowspanMap[colIdx];
 
-        // @TODO: mark the extended cell when pasting the table for external data
         if (cell) {
           isTableHeadCell = cell.type.name === 'tableHeadCell';
           // mark the extended cell for pasting
-          if (
-            (colspan && colIdx !== colspan.startSpanIdx) ||
-            (rowspan && rowIdx !== rowspan.startSpanIdx)
-          ) {
+          if (map.extendedRowspan(rowIdx, colIdx) || map.extendedColspan(rowIdx, colIdx)) {
             cells.push(cell.type.create({ extended: true }));
           } else {
             cells.push(cell.copy(cell.content));

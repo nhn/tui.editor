@@ -3,7 +3,6 @@ import { Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 
 import {
-  SelectionInfo,
   getResolvedSelection,
   createDummyCells,
   createTableBodyRows,
@@ -16,9 +15,9 @@ import {
   copyTableHeadRow,
   copyTableBodyRow,
 } from '@/wysiwyg/clipboard/paste';
-import CellSelection from '../plugins/selection/cellSelection';
+import CellSelection from '@/wysiwyg/plugins/selection/cellSelection';
 import { last } from '@/utils/common';
-import { TableOffsetMap } from '../helper/tableOffsetMap';
+import { SelectionInfo, TableOffsetMap } from '@/wysiwyg/helper/tableOffsetMap';
 
 interface PastingRangeInfo {
   addedRowCount: number;

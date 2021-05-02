@@ -4,28 +4,7 @@ import { Selection, TextSelection } from 'prosemirror-state';
 import { findNodeBy } from '@/wysiwyg/helper/node';
 
 import { CellSelection } from '@t/wysiwyg';
-
-export interface CellInfo {
-  offset: number;
-  nodeSize: number;
-  extended?: boolean;
-}
-export interface SelectionInfo {
-  startRowIdx: number;
-  startColIdx: number;
-  endRowIdx: number;
-  endColIdx: number;
-}
-
-interface SpanMap {
-  [key: number]: { count: number; startSpanIdx: number };
-}
-export interface RowInfo {
-  [key: number]: CellInfo;
-  length: number;
-  rowspanMap: SpanMap;
-  colspanMap: SpanMap;
-}
+import type { SelectionInfo } from './tableOffsetMap';
 
 export function createTableHeadRow(columnCount: number, schema: Schema, data?: string[]) {
   const { tableRow, tableHeadCell, paragraph } = schema.nodes;
@@ -100,29 +79,6 @@ export function findCell(pos: ResolvedPos) {
     pos,
     ({ type }: Node) => type.name === 'tableHeadCell' || type.name === 'tableBodyCell'
   );
-}
-
-export function getNextColumnOffsets(
-  rowIdx: number,
-  selectionInfo: SelectionInfo,
-  cellsInfo: RowInfo[]
-) {
-  const { columnCount } = getRowAndColumnCount(selectionInfo);
-  const { offset, nodeSize } = cellsInfo[rowIdx][selectionInfo.startColIdx + columnCount - 1];
-  const mapOffset = offset + nodeSize;
-
-  return { offset, mapOffset };
-}
-
-export function getPrevColumnOffsets(
-  rowIdx: number,
-  { startColIdx }: SelectionInfo,
-  cellsInfo: RowInfo[]
-) {
-  const { offset } = cellsInfo[rowIdx][startColIdx];
-  const mapOffset = offset;
-
-  return { offset, mapOffset };
 }
 
 export function getResolvedSelection(selection: Selection | CellSelection) {
