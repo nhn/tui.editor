@@ -14,7 +14,6 @@ import {
   setAttrs,
 } from '@/wysiwyg/helper/table';
 import {
-  CursorDirection,
   canBeOutOfTable,
   canMoveBetweenCells,
   canSelectTableNode,
@@ -41,11 +40,11 @@ interface AlignColumnPayload {
 }
 
 // eslint-disable-next-line no-shadow
-const enum Direction {
-  LEFT = 1,
-  RIGHT = 2,
-  UP = 3,
-  DOWN = 4,
+export const enum Direction {
+  LEFT = 'left',
+  RIGHT = 'right',
+  UP = 'up',
+  DOWN = 'down',
 }
 
 type ColDirection = Direction.LEFT | Direction.RIGHT;
@@ -199,6 +198,7 @@ export class Table extends NodeSchema {
         const { totalRowCount } = map;
 
         for (let rowIdx = 0; rowIdx < totalRowCount; rowIdx += 1) {
+          // increase colspan count inside the col-spanning cell
           if (judgeToExtendColspan(rowIdx)) {
             const { node, pos } = map.getColspanStartInfo(rowIdx, targetColIdx)!;
             const attrs = setAttrs(node, { colspan: node.attrs.colspan + columnCount });
@@ -242,17 +242,20 @@ export class Table extends NodeSchema {
             const { offset, nodeSize } = map.getCellInfo(rowIdx, colIdx);
             const colspanInfo = map.getColspanStartInfo(rowIdx, colIdx)!;
 
-            if (colspanInfo?.count > 1) {
-              const { node, pos } = map.getColspanStartInfo(rowIdx, colIdx)!;
-              const colspan = map.decreaseColspanCount(rowIdx, colIdx);
-              const attrs = setAttrs(node, { colspan });
+            if (!map.extendedRowspan(rowIdx, colIdx)) {
+              // decrease colspan count inside the col-spanning cell
+              if (colspanInfo?.count > 1) {
+                const { node, pos } = map.getColspanStartInfo(rowIdx, colIdx)!;
+                const colspan = map.decreaseColspanCount(rowIdx, colIdx);
+                const attrs = setAttrs(node, { colspan });
 
-              tr.setNodeMarkup(tr.mapping.slice(mapStart).map(pos), null, attrs);
-            } else if (!map.extendedRowspan(rowIdx, colIdx)) {
-              const from = tr.mapping.slice(mapStart).map(offset);
-              const to = from + nodeSize;
+                tr.setNodeMarkup(tr.mapping.slice(mapStart).map(pos), null, attrs);
+              } else {
+                const from = tr.mapping.slice(mapStart).map(offset);
+                const to = from + nodeSize;
 
-              tr.delete(from, to);
+                tr.delete(from, to);
+              }
             }
           }
         }
@@ -286,6 +289,7 @@ export class Table extends NodeSchema {
           let cells: ProsemirrorNode[] = [];
 
           for (let colIdx = 0; colIdx < totalColumnCount; colIdx += 1) {
+            // increase rowspan count inside the row-spanning cell
             if (judgeToExtendRowspan(colIdx)) {
               const { node, pos } = map.getRowspanStartInfo(targetRowIdx, colIdx)!;
               const attrs = setAttrs(node, { rowspan: node.attrs.rowspan + rowCount });
@@ -330,18 +334,21 @@ export class Table extends NodeSchema {
           const mapStart = tr.mapping.maps.length;
           const { from, to } = getRowRanges(map, rowIdx, totalColumnCount);
 
+          // delete table row
           tr.delete(from - 1, to + 1);
 
           for (let colIdx = 0; colIdx < totalColumnCount; colIdx += 1) {
             const rowspanInfo = map.getRowspanStartInfo(rowIdx, colIdx)!;
 
             if (rowspanInfo?.count > 1 && !map.extendedColspan(rowIdx, colIdx)) {
+              // decrease rowspan count inside the row-spanning cell
               if (map.extendedRowspan(rowIdx, colIdx)) {
                 const { node, pos } = map.getRowspanStartInfo(rowIdx, colIdx)!;
                 const rowspan = map.decreaseRowspanCount(rowIdx, colIdx);
                 const attrs = setAttrs(node, { rowspan });
 
                 tr.setNodeMarkup(tr.mapping.slice(mapStart).map(pos), null, attrs);
+                // the row-spanning cell should be moved down
               } else if (!map.extendedRowspan(rowIdx, colIdx)) {
                 const { node, count } = map.getRowspanStartInfo(rowIdx, colIdx)!;
                 const attrs = setAttrs(node, { rowspan: count - 1 });
@@ -393,7 +400,7 @@ export class Table extends NodeSchema {
     };
   }
 
-  private moveToCell(direction: CursorDirection): Command {
+  private moveToCell(direction: Direction): Command {
     return (state, dispatch) => {
       const { selection, tr, schema } = state;
       const { anchor, head } = getResolvedSelection(selection);
@@ -421,7 +428,7 @@ export class Table extends NodeSchema {
     };
   }
 
-  private moveInCell(direction: CursorDirection): Command {
+  private moveInCell(direction: Direction): Command {
     return (state, dispatch) => {
       const { selection, tr, doc, schema } = state;
       const { $from } = selection;
@@ -520,14 +527,14 @@ export class Table extends NodeSchema {
     const deleteCellsCommand = this.deleteCells();
 
     return {
-      Tab: this.moveToCell('right'),
-      'Shift-Tab': this.moveToCell('left'),
+      Tab: this.moveToCell(Direction.RIGHT),
+      'Shift-Tab': this.moveToCell(Direction.LEFT),
 
-      ArrowUp: this.moveInCell('up'),
-      ArrowDown: this.moveInCell('down'),
+      ArrowUp: this.moveInCell(Direction.UP),
+      ArrowDown: this.moveInCell(Direction.DOWN),
 
-      ArrowLeft: this.moveInCell('left'),
-      ArrowRight: this.moveInCell('right'),
+      ArrowLeft: this.moveInCell(Direction.LEFT),
+      ArrowRight: this.moveInCell(Direction.RIGHT),
 
       Backspace: deleteCellsCommand,
       'Mod-Backspace': deleteCellsCommand,

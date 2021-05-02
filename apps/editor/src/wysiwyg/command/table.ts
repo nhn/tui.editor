@@ -4,15 +4,14 @@ import { Selection, Transaction, NodeSelection } from 'prosemirror-state';
 import { addParagraph } from '@/helper/manipulation';
 
 import { TableOffsetMap } from '../helper/tableOffsetMap';
-
-export type CursorDirection = 'left' | 'right' | 'up' | 'down';
+import type { Direction } from '../nodes/table';
 
 export type CellPosition = [rowIdx: number, colIdx: number];
 
 type CellOffsetFn = ([rowIdx, colIdx]: CellPosition, map: TableOffsetMap) => number | null;
 
 type CellOffsetFnMap = {
-  [key in CursorDirection]: CellOffsetFn;
+  [key in Direction]: CellOffsetFn;
 };
 
 const cellOffsetFnMap: CellOffsetFnMap = {
@@ -62,7 +61,7 @@ function isInLastListItem(pos: ResolvedPos) {
 }
 
 function canMoveToBeforeCell(
-  direction: CursorDirection,
+  direction: Direction,
   [paraDepth, listDepth, curDepth]: number[],
   from: ResolvedPos,
   doc: ProsemirrorNode,
@@ -85,7 +84,7 @@ function canMoveToBeforeCell(
 }
 
 function canMoveToAfterCell(
-  direction: CursorDirection,
+  direction: Direction,
   curDepth: number,
   from: ResolvedPos,
   doc: ProsemirrorNode,
@@ -108,7 +107,7 @@ function canMoveToAfterCell(
 }
 
 export function canMoveBetweenCells(
-  direction: CursorDirection,
+  direction: Direction,
   [cellDepth, paraDepth]: number[],
   from: ResolvedPos,
   doc: ProsemirrorNode
@@ -130,7 +129,7 @@ export function canMoveBetweenCells(
 }
 
 export function canBeOutOfTable(
-  direction: CursorDirection,
+  direction: Direction,
   map: TableOffsetMap,
   [rowIdx, colIdx]: CellPosition
 ) {
@@ -238,7 +237,7 @@ export function getDownCellOffset([rowIdx, colIdx]: CellPosition, map: TableOffs
 }
 
 export function moveToCell(
-  direction: CursorDirection,
+  direction: Direction,
   tr: Transaction,
   cellIndex: CellPosition,
   map: TableOffsetMap
@@ -256,7 +255,7 @@ export function moveToCell(
 }
 
 export function canSelectTableNode(
-  direction: CursorDirection,
+  direction: Direction,
   map: TableOffsetMap,
   [rowIdx, colIdx]: CellPosition
 ) {

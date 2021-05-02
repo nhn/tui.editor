@@ -20,6 +20,7 @@ const eventTypeList: EventTypes[] = [
   'changeToolbarState',
   'setCodeBlockLanguages',
   'toggleScrollSync',
+  'mixinTableOffsetMapProto',
   // provide event for user
   'openPopup',
   'closePopup',

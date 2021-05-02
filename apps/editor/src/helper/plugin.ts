@@ -7,6 +7,7 @@ import { deepMergedCopy } from '@/utils/common';
 import { EditorPlugin } from '@t/editor';
 import { Emitter } from '@t/event';
 import { PluginInfoResult } from '@t/plugin';
+import { mixinTableOffsetMapProto } from '@/wysiwyg/helper/tableOffsetMap';
 
 function execPlugin(plugin: EditorPlugin, eventEmitter: Emitter, usageStatistics: boolean) {
   const pmState = { Plugin, Selection };
@@ -27,6 +28,8 @@ export function getPluginInfo(
   eventEmitter: Emitter,
   usageStatistics: boolean
 ) {
+  eventEmitter.listen('mixinTableOffsetMapProto', mixinTableOffsetMapProto);
+
   return (plugins ?? []).reduce<PluginInfoResult>(
     (acc, plugin) => {
       const pluginInfoResult = execPlugin(plugin, eventEmitter, usageStatistics);
