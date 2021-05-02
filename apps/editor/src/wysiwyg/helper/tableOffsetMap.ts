@@ -112,7 +112,7 @@ export class TableOffsetMap {
         while (index < this.totalColumnCount && this.rowInfo[i][index].offset < rowStart) {
           index += 1;
         }
-        return index === this.totalColumnCount ? rowEnd + 1 : this.rowInfo[i][index].offset;
+        return index === this.totalColumnCount ? rowEnd : this.rowInfo[i][index].offset;
       }
       rowStart = rowEnd;
     }
@@ -150,14 +150,20 @@ export class TableOffsetMap {
 
   decreaseColspanCount(rowIdx: number, colIdx: number) {
     const colspanInfo = this.rowInfo[rowIdx].colspanMap[colIdx];
+    const startColspanInfo = this.rowInfo[rowIdx].colspanMap[colspanInfo.startSpanIdx];
 
-    return (this.rowInfo[rowIdx].colspanMap[colspanInfo.startSpanIdx].count -= 1);
+    startColspanInfo.count -= 1;
+
+    return startColspanInfo.count;
   }
 
   decreaseRowspanCount(rowIdx: number, colIdx: number) {
     const rowspanInfo = this.rowInfo[rowIdx].rowspanMap[colIdx];
+    const startRowspanInfo = this.rowInfo[rowspanInfo.startSpanIdx].rowspanMap[colIdx];
 
-    return (this.rowInfo[rowspanInfo.startSpanIdx].rowspanMap[colIdx].count -= 1);
+    startRowspanInfo.count -= 1;
+
+    return startRowspanInfo.count;
   }
 
   getColspanStartInfo(rowIdx: number, colIdx: number) {
