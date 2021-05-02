@@ -236,17 +236,10 @@ export const toWwConvertors: ToWwConvertorMap = {
 
         const table = tablePart.parent as TableMdNode;
         const { align } = table.columns[(node as TableCellMdNode).startIdx];
-        const attrs: Record<string, string | number> = {};
-        const { colspan, rowspan } = node as TableCellMdNode;
+        const attrs: Record<string, string | number> = { ...(node as TableCellMdNode).attrs };
 
         if (align) {
           attrs.align = align;
-        }
-        if (colspan) {
-          attrs.colspan = Number(colspan);
-        }
-        if (rowspan) {
-          attrs.rowspan = Number(rowspan);
         }
 
         state.openNode(cell, attrs);

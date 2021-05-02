@@ -27,6 +27,4 @@ export interface MergedTableCellMdNode extends TableCellMdNode {
   prev: MergedTableCell | null;
   next: MergedTableCell | null;
   parent: MergedTableRow;
-  colspan: number;
-  rowspan: number;
 }

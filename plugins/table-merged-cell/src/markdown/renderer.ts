@@ -50,14 +50,7 @@ export const toHTMLRenderers: ToHTMLConvertorMap = {
     }
 
     if (entering) {
-      const attributes: Record<string, string> = {};
-
-      if (node.colspan) {
-        attributes.colspan = String(node.colspan);
-      }
-      if (node.rowspan) {
-        attributes.rowspan = String(node.rowspan);
-      }
+      const attributes: Record<string, string> = { ...node.attrs };
 
       (result as OpenTagToken).attributes = {
         ...(result as OpenTagToken).attributes,
