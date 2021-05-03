@@ -242,6 +242,7 @@ export class Table extends NodeSchema {
 
             if (!map.extendedRowspan(rowIdx, colIdx)) {
               // decrease colspan count inside the col-spanning cell
+              // eslint-disable-next-line max-depth
               if (colspanInfo?.count > 1) {
                 const { node, pos } = map.getColspanStartInfo(rowIdx, colIdx)!;
                 const colspan = map.decreaseColspanCount(rowIdx, colIdx);
@@ -340,6 +341,7 @@ export class Table extends NodeSchema {
 
             if (rowspanInfo?.count > 1 && !map.extendedColspan(rowIdx, colIdx)) {
               // decrease rowspan count inside the row-spanning cell
+              // eslint-disable-next-line max-depth
               if (map.extendedRowspan(rowIdx, colIdx)) {
                 const { node, pos } = map.getRowspanStartInfo(rowIdx, colIdx)!;
                 const rowspan = map.decreaseRowspanCount(rowIdx, colIdx);
@@ -459,9 +461,9 @@ export class Table extends NodeSchema {
           } else if (canBeOutOfTable(direction, map, cellIndex)) {
             // When there is no content before or after the table,
             // an empty line('paragraph') is created by pressing the arrow keys.
-            if (direction === 'up') {
+            if (direction === Direction.UP) {
               newTr = addParagraphBeforeTable(tr, map, schema);
-            } else if (direction === 'down') {
+            } else if (direction === Direction.DOWN) {
               newTr = addParagraphAfterTable(tr, map, schema);
             }
           } else {

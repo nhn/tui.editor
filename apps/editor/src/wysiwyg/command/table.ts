@@ -4,7 +4,7 @@ import { Selection, Transaction, NodeSelection } from 'prosemirror-state';
 import { addParagraph } from '@/helper/manipulation';
 
 import { TableOffsetMap } from '../helper/tableOffsetMap';
-import type { Direction } from '../nodes/table';
+import { Direction } from '../nodes/table';
 
 export type CellPosition = [rowIdx: number, colIdx: number];
 
@@ -67,7 +67,7 @@ function canMoveToBeforeCell(
   doc: ProsemirrorNode,
   inList: boolean
 ) {
-  if (direction === 'left' || direction === 'up') {
+  if (direction === Direction.LEFT || direction === Direction.UP) {
     if (inList && !isInFirstListItem(from, doc, [paraDepth, listDepth])) {
       return false;
     }
@@ -90,7 +90,7 @@ function canMoveToAfterCell(
   doc: ProsemirrorNode,
   inList: boolean
 ) {
-  if (direction === 'right' || direction === 'down') {
+  if (direction === Direction.RIGHT || direction === Direction.DOWN) {
     if (inList && !isInLastListItem(from)) {
       return false;
     }
@@ -134,9 +134,9 @@ export function canBeOutOfTable(
   [rowIdx, colIdx]: CellPosition
 ) {
   const rowspanInfo = map.getRowspanStartInfo(rowIdx, colIdx)!;
-  const inFirstRow = direction === 'up' && rowIdx === 0;
+  const inFirstRow = direction === Direction.UP && rowIdx === 0;
   const inLastRow =
-    direction === 'down' &&
+    direction === Direction.DOWN &&
     (rowspanInfo?.count > 1 ? rowIdx + rowspanInfo!.count - 1 : rowIdx) === map.totalRowCount - 1;
 
   return inFirstRow || inLastRow;
@@ -246,7 +246,7 @@ export function moveToCell(
   const offset = cellOffsetFn(cellIndex, map);
 
   if (offset) {
-    const dir = direction === 'right' || direction === 'down' ? 1 : -1;
+    const dir = direction === Direction.RIGHT || direction === Direction.DOWN ? 1 : -1;
 
     return tr.setSelection(Selection.near(tr.doc.resolve(offset), dir));
   }
@@ -259,14 +259,14 @@ export function canSelectTableNode(
   map: TableOffsetMap,
   [rowIdx, colIdx]: CellPosition
 ) {
-  if (direction === 'up' || direction === 'down') {
+  if (direction === Direction.UP || direction === Direction.DOWN) {
     return false;
   }
   const { tableStartOffset, tableEndOffset } = map;
   const { offset, nodeSize } = map.getCellInfo(rowIdx, colIdx);
 
-  const pos = direction === 'left' ? tableStartOffset : tableEndOffset;
-  const curPos = direction === 'left' ? offset - 2 : offset + nodeSize + 3;
+  const pos = direction === Direction.LEFT ? tableStartOffset : tableEndOffset;
+  const curPos = direction === Direction.LEFT ? offset - 2 : offset + nodeSize + 3;
 
   return pos === curPos;
 }

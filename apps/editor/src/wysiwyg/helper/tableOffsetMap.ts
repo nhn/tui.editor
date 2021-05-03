@@ -80,7 +80,7 @@ export class TableOffsetMap {
       const { node, depth, offset } = table;
       const cached = cache.get(node);
 
-      if (cached && cached.tableStartPos === offset) {
+      if (cached?.tableStartPos === offset + 1) {
         return cached;
       }
 
@@ -208,10 +208,7 @@ export class TableOffsetMap {
 
   getRectOffsets(startCellPos: ResolvedPos, endCellPos = startCellPos) {
     if (startCellPos.pos > endCellPos.pos) {
-      const orgStartCellPos = startCellPos;
-
-      startCellPos = endCellPos;
-      endCellPos = orgStartCellPos;
+      [startCellPos, endCellPos] = [endCellPos, startCellPos];
     }
     let [startRowIdx, startColIdx] = this.getCellIndex(startCellPos);
     let [endRowIdx, endColIdx] = this.getCellIndex(endCellPos);
