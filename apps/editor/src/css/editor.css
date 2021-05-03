@@ -189,6 +189,7 @@
 
 .tui-editor-defaultUI .CodeMirror-scroll {
   cursor: text;
+  min-height: inherit;
 }
 
 /* Essential element style */
