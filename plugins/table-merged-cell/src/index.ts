@@ -7,7 +7,7 @@ import { offsetMapMixin, createOffsetMapMixin } from './wysiwyg/tableOffsetMapMi
 
 export default function tableMergedCellPlugin({ i18n, eventEmitter }: PluginContext): PluginInfo {
   addLangs(i18n);
-  eventEmitter.emit('mixinTableOffsetMapProto', offsetMapMixin, createOffsetMapMixin);
+  eventEmitter.emit('mixinTableOffsetMapPrototype', offsetMapMixin, createOffsetMapMixin);
 
   return {
     toHTMLRenderers,

@@ -255,7 +255,7 @@ let createOffsetMap = (headOrBody: Node, startOffset: number) => {
   return cellInfoMatrix;
 };
 
-export function mixinTableOffsetMapProto(
+export function mixinTableOffsetMapPrototype(
   offsetMapMixin: OffsetMap,
   createOffsetMapMixin: CreateOffsetMapMixin
 ) {
