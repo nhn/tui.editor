@@ -163,14 +163,12 @@ export class Table extends NodeSchema {
   private removeTable(): EditorCommand {
     return () => (state, dispatch) => {
       const { selection, tr } = state;
-      const map = TableOffsetMap.create(selection.$anchor);
+      const map = TableOffsetMap.create(selection.$anchor)!;
 
       if (map) {
         const { tableStartOffset, tableEndOffset } = map;
-        const cursorPos = createTextSelection(
-          tr.delete(tableStartOffset, tableEndOffset),
-          tableStartOffset
-        );
+        const startOffset = tableStartOffset - 1;
+        const cursorPos = createTextSelection(tr.delete(startOffset, tableEndOffset), startOffset);
 
         dispatch!(tr.setSelection(cursorPos));
         return true;
@@ -281,9 +279,9 @@ export class Table extends NodeSchema {
           map,
           selectionInfo
         );
-        const selectedOnlyThead = targetRowIdx === 0 && rowCount === 1;
+        const selectedThead = targetRowIdx === 0;
 
-        if (!selectedOnlyThead) {
+        if (!selectedThead) {
           const rows: ProsemirrorNode[] = [];
           const from = tr.mapping.map(map.posAt(targetRowIdx, insertColIdx)) + nodeSize;
           let cells: ProsemirrorNode[] = [];

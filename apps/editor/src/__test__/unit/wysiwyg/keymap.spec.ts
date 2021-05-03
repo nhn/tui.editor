@@ -74,13 +74,13 @@ describe('keymap', () => {
       setContent(html);
     });
 
-    describe('moveToCell keymap with right (tap key)', () => {
-      it('should move to end of right cell', () => {
+    describe('moveToCell keymap with right (tab key)', () => {
+      it('should move to start of right cell', () => {
         wwe.setSelection(7, 7); // in 'foo' cell
 
         forceKeymapFn('table', 'moveToCell', ['right']);
 
-        expect(wwe.getSelection()).toEqual([15, 15]);
+        expect(wwe.getSelection()).toEqual([12, 12]);
       });
 
       it('should move to first cell of next line', () => {
@@ -88,7 +88,7 @@ describe('keymap', () => {
 
         forceKeymapFn('table', 'moveToCell', ['right']);
 
-        expect(wwe.getSelection()).toEqual([26, 26]);
+        expect(wwe.getSelection()).toEqual([23, 23]);
       });
     });
 
