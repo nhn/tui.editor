@@ -23,7 +23,8 @@ type NodeViewPropMap = Record<string, PluginNodeViews>;
 export type CommandFn<T = DefaultPayload> = (
   payload: Payload<T>,
   state: EditorState,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  view: EditorView
 ) => boolean;
 export type PluginCommandMap = Record<string, CommandFn>;
 
