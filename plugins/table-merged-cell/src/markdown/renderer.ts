@@ -1,6 +1,6 @@
 import type { ToHTMLConvertorMap } from '@toast-ui/editor';
 import type { OpenTagToken } from '@toast-ui/toastmark';
-import { MergedTableCellMdNode, MergedTableRowMdNode } from '@t/markdown';
+import { MergedTableCellMdNode, MergedTableRowMdNode } from '@t/index';
 
 export const toHTMLRenderers: ToHTMLConvertorMap = {
   // @ts-ignore
