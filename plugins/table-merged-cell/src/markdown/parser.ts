@@ -1,10 +1,11 @@
 import type { CustomParserMap } from '@toast-ui/toastmark';
-import { MergedTableRowMdNode, MergedTableCellMdNode, SpanInfo, SpanType } from '@t/index';
+import { MergedTableRowMdNode, MergedTableCellMdNode, SpanType } from '@t/index';
 
 interface Attrs {
   colspan?: number;
   rowspan?: number;
 }
+type SpanInfo = [spanCount: number, content: string];
 
 function getSpanInfo(content: string, type: SpanType, oppositeType: SpanType): SpanInfo {
   const reSpan = new RegExp(`^((?:${oppositeType}=[0-9]+:)?)${type}=([0-9]+):(.*)`);
