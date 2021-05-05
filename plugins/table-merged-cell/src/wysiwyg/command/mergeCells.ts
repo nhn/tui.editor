@@ -13,7 +13,7 @@ export function createMergeCellsCommand(context: PluginContext, OffsetMap: Table
 
   const mergeCells: CommandFn = (_, state, dispatch) => {
     const { selection, tr } = state;
-    const { anchor, head } = getResolvedSelection(selection, context.pmState.TextSelection);
+    const { anchor, head } = getResolvedSelection(selection, context);
 
     // @ts-ignore
     // judge cell selection
@@ -30,7 +30,7 @@ export function createMergeCellsCommand(context: PluginContext, OffsetMap: Table
 
     const { startRowIdx, startColIdx, endRowIdx, endColIdx } = selectionInfo;
 
-    const allSelected = rowCount === totalRowCount && columnCount === totalColumnCount;
+    const allSelected = rowCount >= totalRowCount - 1 && columnCount === totalColumnCount;
     const hasTableHead = startRowIdx === 0 && endRowIdx > startRowIdx;
 
     if (!allSelected && !hasTableHead) {
@@ -57,7 +57,6 @@ export function createMergeCellsCommand(context: PluginContext, OffsetMap: Table
       // set first cell span
       const { node, pos } = map.getNodeAndPos(startRowIdx, startColIdx);
 
-      // @ts-ignore
       tr.setNodeMarkup(pos, null, setAttrs(node, { colspan: columnCount, rowspan: rowCount }));
 
       if (fragment.size) {

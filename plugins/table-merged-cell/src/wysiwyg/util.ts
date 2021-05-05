@@ -1,8 +1,7 @@
-import type { ResolvedPos, Node } from 'prosemirror-model';
-import type { Selection, TextSelection } from 'prosemirror-state';
+import type { ResolvedPos, Node, Schema } from 'prosemirror-model';
+import type { Selection } from 'prosemirror-state';
+import type { PluginContext } from '@toast-ui/editor';
 import type { CellSelection, SelectionInfo } from '@t/index';
-
-type TextSelectionClass = typeof TextSelection;
 
 export function findNodeBy(pos: ResolvedPos, condition: (node: Node, depth: number) => boolean) {
   let { depth } = pos;
@@ -31,8 +30,8 @@ export function findCell(pos: ResolvedPos) {
   );
 }
 
-export function getResolvedSelection(selection: Selection, SelectionClass: TextSelectionClass) {
-  if (selection instanceof SelectionClass) {
+export function getResolvedSelection(selection: Selection, context: PluginContext) {
+  if (selection instanceof context.pmState.TextSelection) {
     const { $anchor } = selection;
     const foundCell = findCell($anchor);
 
@@ -65,4 +64,21 @@ export function getCellSelectionClass(selection: Selection) {
   const proto = Object.getPrototypeOf(selection);
 
   return proto.constructor;
+}
+
+export function createDummyCells(
+  columnCount: number,
+  rowIdx: number,
+  schema: Schema,
+  attrs: Record<string, any> | null = null
+) {
+  const { tableHeadCell, tableBodyCell, paragraph } = schema.nodes;
+  const cell = rowIdx === 0 ? tableHeadCell : tableBodyCell;
+  const cells = [];
+
+  for (let index = 0; index < columnCount; index += 1) {
+    cells.push(cell.create(attrs, paragraph.create()));
+  }
+
+  return cells;
 }

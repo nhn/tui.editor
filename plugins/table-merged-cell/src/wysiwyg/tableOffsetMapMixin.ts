@@ -49,7 +49,8 @@ export const offsetMapMixin = {
       return {
         node: this.table.nodeAt(cellInfo.offset - 1)!,
         pos: cellInfo.offset,
-        count: colspanMap[colspanInfo.startSpanIdx].count,
+        startSpanIdx,
+        count: colspanMap[startSpanIdx].count,
       };
     }
     return null;
@@ -65,6 +66,7 @@ export const offsetMapMixin = {
       return {
         node: this.table.nodeAt(cellInfo.offset - 1)!,
         pos: cellInfo.offset,
+        startSpanIdx,
         count: this.rowInfo[startSpanIdx].rowspanMap[colIdx].count,
       };
     }

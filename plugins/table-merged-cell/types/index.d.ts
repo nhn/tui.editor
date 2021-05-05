@@ -15,7 +15,6 @@ interface TableHeadMdNode extends MdNode {
 }
 
 type SpanType = '@cols' | '@rows';
-type SpanInfo = [spanCount: number, content: string];
 
 export interface MergedTableRowMdNode extends MdNode {
   firstChild: MergedTableCell | null;
@@ -66,6 +65,7 @@ interface SpanInfo {
   node: Node;
   pos: number;
   count: number;
+  startSpanIdx: number;
 }
 
 export interface TableOffsetMapFactory {

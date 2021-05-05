@@ -82,18 +82,19 @@ export function tableContextMenu(eventEmitter: Emitter) {
     props: {
       handleDOMEvents: {
         contextmenu: (view: EditorView, ev: Event) => {
-          const foundCell = findCellElement(ev.target as HTMLElement, view.dom);
+          const tableCell = findCellElement(ev.target as HTMLElement, view.dom);
 
-          if (foundCell) {
+          if (tableCell) {
             ev.preventDefault();
 
             const { clientX, clientY } = ev as MouseEvent;
             const { left, top } = (view.dom.parentNode as HTMLElement).getBoundingClientRect();
-            const inTableHead = foundCell.nodeName === 'TH';
+            const inTableHead = tableCell.nodeName === 'TH';
 
             eventEmitter.emit('contextmenu', {
               pos: { left: `${clientX - left + 10}px`, top: `${clientY - top + 30}px` },
               menuGroups: getContextMenuGroups(eventEmitter, inTableHead),
+              tableCell,
             });
 
             return true;

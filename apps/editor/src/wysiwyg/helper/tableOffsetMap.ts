@@ -1,4 +1,4 @@
-import type { Node, ProsemirrorNode, ResolvedPos } from 'prosemirror-model';
+import type { Node, ResolvedPos } from 'prosemirror-model';
 import { findNodeBy } from '@/wysiwyg/helper/node';
 import { assign, getSortedNumPair } from '@/utils/common';
 
@@ -29,6 +29,7 @@ interface SpanInfo {
   node: Node;
   pos: number;
   count: number;
+  startSpanIdx: number;
 }
 
 interface OffsetMap {
@@ -63,20 +64,15 @@ const cache = new Map();
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 export class TableOffsetMap {
-  private table: ProsemirrorNode;
+  private table: Node;
 
-  private tableRows: ProsemirrorNode[];
+  private tableRows: Node[];
 
   private tableStartPos: number;
 
   private rowInfo: RowInfo[];
 
-  constructor(
-    table: ProsemirrorNode,
-    tableRows: ProsemirrorNode[],
-    tableStartPos: number,
-    rowInfo: RowInfo[]
-  ) {
+  constructor(table: Node, tableRows: Node[], tableStartPos: number, rowInfo: RowInfo[]) {
     this.table = table;
     this.tableRows = tableRows;
     this.tableStartPos = tableStartPos;
@@ -94,7 +90,7 @@ export class TableOffsetMap {
         return cached;
       }
 
-      const rows: ProsemirrorNode[] = [];
+      const rows: Node[] = [];
       const tablePos = cellPos.start(depth);
 
       const thead = node.child(0);
@@ -136,14 +132,14 @@ export class TableOffsetMap {
     return this.rowInfo[rowIdx][colIdx];
   }
 
-  posAt(rowIdx: number, colIdx: number) {
+  posAt(rowIdx: number, colIdx: number): number {
     for (let i = 0, rowStart = this.tableStartPos; ; i += 1) {
       const rowEnd = rowStart + this.tableRows[i].nodeSize;
 
       if (i === rowIdx) {
         let index = colIdx;
 
-        // Skip pasting cells from previous rows (via rowspan)
+        // Skip the cells from previous row(via rowspan)
         while (index < this.totalColumnCount && this.rowInfo[i][index].offset < rowStart) {
           index += 1;
         }
