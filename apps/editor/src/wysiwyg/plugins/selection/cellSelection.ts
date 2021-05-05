@@ -34,11 +34,13 @@ function createTableFragment(tableHead: Node, tableBody: Node) {
 }
 
 export default class CellSelection extends Selection {
-  private startCell: ResolvedPos;
-
-  private endCell: ResolvedPos;
-
   private offsetMap: TableOffsetMap;
+
+  startCell: ResolvedPos;
+
+  endCell: ResolvedPos;
+
+  isCellSelection: boolean;
 
   constructor(startCellPos: ResolvedPos, endCellPos = startCellPos) {
     const doc = startCellPos.node(0);
@@ -52,6 +54,7 @@ export default class CellSelection extends Selection {
     this.startCell = startCellPos;
     this.endCell = endCellPos;
     this.offsetMap = map;
+    this.isCellSelection = true;
 
     // This property is the api of the 'Selection' in prosemirror,
     // and is used to disable the text selection.

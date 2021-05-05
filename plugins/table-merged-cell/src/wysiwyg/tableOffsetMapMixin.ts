@@ -1,48 +1,5 @@
+import type { RowInfo, SelectionInfo, TableOffsetMap } from '@t/index';
 import type { Node } from 'prosemirror-model';
-
-interface CellInfo {
-  offset: number;
-  nodeSize: number;
-  extended?: boolean;
-}
-
-interface SelectionInfo {
-  startRowIdx: number;
-  startColIdx: number;
-  endRowIdx: number;
-  endColIdx: number;
-}
-
-interface SpanMap {
-  [key: number]: { count: number; startSpanIdx: number };
-}
-
-interface RowInfo {
-  [key: number]: CellInfo;
-  length: number;
-  rowspanMap: SpanMap;
-  colspanMap: SpanMap;
-}
-
-interface SpanInfo {
-  node: Node;
-  pos: number;
-  count: number;
-}
-
-interface OffsetMapMixin {
-  rowInfo: RowInfo[];
-  table: Node;
-  extendedRowspan(rowIdx: number, colIdx: number): boolean;
-  extendedColspan(rowIdx: number, colIdx: number): boolean;
-  getRowspanCount(rowIdx: number, colIdx: number): number;
-  getColspanCount(rowIdx: number, colIdx: number): number;
-  decreaseColspanCount(rowIdx: number, colIdx: number): number;
-  decreaseRowspanCount(rowIdx: number, colIdx: number): number;
-  getColspanStartInfo(rowIdx: number, colIdx: number): SpanInfo | null;
-  getRowspanStartInfo(rowIdx: number, colIdx: number): SpanInfo | null;
-  getSpannedOffsets(selectionInfo: SelectionInfo): SelectionInfo;
-}
 
 export const offsetMapMixin = {
   extendedRowspan(rowIdx: number, colIdx: number) {
@@ -154,7 +111,7 @@ export const offsetMapMixin = {
 
     return { startRowIdx, startColIdx, endRowIdx, endColIdx };
   },
-} as OffsetMapMixin;
+} as TableOffsetMap;
 
 function extendPrevRowspan(prevRowInfo: RowInfo, rowInfo: RowInfo) {
   const { rowspanMap, colspanMap } = rowInfo;

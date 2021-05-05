@@ -32,6 +32,15 @@ interface SpanInfo {
 }
 
 interface OffsetMap {
+  rowInfo: RowInfo[];
+  table: Node;
+  totalRowCount: number;
+  totalColumnCount: number;
+  tableStartOffset: number;
+  tableEndOffset: number;
+  getCellInfo(rowIdx: number, colIdx: number): CellInfo;
+  posAt(rowIdx: number, colIdx: number): number;
+  getNodeAndPos(rowIdx: number, colIdx: number): { node: Node; pos: number };
   extendedRowspan(rowIdx: number, colIdx: number): boolean;
   extendedColspan(rowIdx: number, colIdx: number): boolean;
   getRowspanCount(rowIdx: number, colIdx: number): number;
@@ -40,6 +49,7 @@ interface OffsetMap {
   decreaseRowspanCount(rowIdx: number, colIdx: number): number;
   getColspanStartInfo(rowIdx: number, colIdx: number): SpanInfo | null;
   getRowspanStartInfo(rowIdx: number, colIdx: number): SpanInfo | null;
+  getRectOffsets(startCellPos: ResolvedPos, endCellPos?: ResolvedPos): SelectionInfo;
   getSpannedOffsets(selectionInfo: SelectionInfo): SelectionInfo;
 }
 
@@ -258,4 +268,6 @@ export function mixinTableOffsetMapPrototype(
 ) {
   assign(TableOffsetMap.prototype, offsetMapMixin);
   createOffsetMap = createOffsetMapMixin;
+
+  return TableOffsetMap;
 }
