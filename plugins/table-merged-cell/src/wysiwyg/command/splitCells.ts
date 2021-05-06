@@ -40,7 +40,8 @@ export function createSplitCellsCommand(context: PluginContext, OffsetMap: Table
 
           let pos = tr.mapping.map(mappedPos);
 
-          // add 2(tr end, open tag length) in case of all cells are spanning on the current row
+          // add 2(tr end, open tag length) to insert the cell on the next row
+          // in case that all next cells are spanning on the current row
           if (
             map.extendedRowspan(rowIdx, colspanEndIdx) &&
             map.extendedRowspan(rowIdx, map.totalColumnCount - 1) &&
