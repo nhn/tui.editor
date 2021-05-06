@@ -77,5 +77,8 @@ export function createMergeCellsCommand(context: PluginContext, OffsetMap: Table
 }
 
 function appendFragment(rowIdx: number, colIdx: number, fragment: Fragment, map: TableOffsetMap) {
-  return fragment.append(map.getNodeAndPos(rowIdx, colIdx).node.content);
+  const targetFragment = map.getNodeAndPos(rowIdx, colIdx).node.content;
+
+  // prevent to add empty string
+  return targetFragment.size > 2 ? fragment.append(targetFragment) : fragment;
 }

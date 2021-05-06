@@ -43,6 +43,7 @@ export function createSplitCellsCommand(context: PluginContext, OffsetMap: Table
           // add 2(tr end, open tag length) in case of all cells are spanning on the current row
           if (
             map.extendedRowspan(rowIdx, colspanEndIdx) &&
+            map.extendedRowspan(rowIdx, map.totalColumnCount - 1) &&
             mappedPos === map.posAt(rowIdx, map.totalColumnCount - 1)
           ) {
             pos += 2;
