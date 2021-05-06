@@ -38,7 +38,7 @@ export function createRemoveColumnCommand(
           if (colspanInfo?.count > 1) {
             const { node, pos } = map.getColspanStartInfo(rowIdx, colIdx)!;
             const colspan = map.decreaseColspanCount(rowIdx, colIdx);
-            const attrs = setAttrs(node, { colspan });
+            const attrs = setAttrs(node, { colspan: colspan > 1 ? colspan : null });
 
             tr.setNodeMarkup(tr.mapping.slice(mapStart).map(pos), null, attrs);
           } else {

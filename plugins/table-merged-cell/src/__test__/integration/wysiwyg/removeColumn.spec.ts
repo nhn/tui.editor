@@ -25,13 +25,13 @@ describe('removeColumn command', () => {
       <table>
         <thead>
           <tr>
-            <th colspan="1"><p>mergedHead1</p></th>
+            <th><p>mergedHead1</p></th>
             <th colspan="3"><p>mergedHead2</p></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td colspan="1"><p>mergedCell1-1</p></td>
+            <td><p>mergedCell1-1</p></td>
             <td><p>cell1-2</p></td>
             <td colspan="2" rowspan="5"><p>mergedCell1-3</p></td>
           </tr>
@@ -65,13 +65,13 @@ describe('removeColumn command', () => {
       <table>
         <thead>
           <tr>
-            <th colspan="1"><p>mergedHead1</p></th>
+            <th><p>mergedHead1</p></th>
             <th colspan="3"><p>mergedHead2</p></th>
           </tr>
         </thead>
         <tbody>
         <tr>
-            <td colspan="1"><p>mergedCell1-1</p></td>
+            <td><p>mergedCell1-1</p></td>
             <td><p>cell1-2</p></td>
             <td colspan="2" rowspan="5"><p>mergedCell1-3</p></td>
           </tr>

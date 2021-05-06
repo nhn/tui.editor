@@ -53,13 +53,13 @@ export function createRemoveRowCommand(context: PluginContext, OffsetMap: TableO
             if (map.extendedRowspan(rowIdx, colIdx)) {
               const { node, pos } = map.getRowspanStartInfo(rowIdx, colIdx)!;
               const rowspan = map.decreaseRowspanCount(rowIdx, colIdx);
-              const attrs = setAttrs(node, { rowspan });
+              const attrs = setAttrs(node, { rowspan: rowspan > 1 ? rowspan : null });
 
               tr.setNodeMarkup(tr.mapping.slice(mapStart).map(pos), null, attrs);
               // the row-spanning cell should be moved down
             } else if (!map.extendedRowspan(rowIdx, colIdx)) {
               const { node, count } = map.getRowspanStartInfo(rowIdx, colIdx)!;
-              const attrs = setAttrs(node, { rowspan: count - 1 });
+              const attrs = setAttrs(node, { rowspan: count > 2 ? count - 1 : null });
               const copiedCell = node.type.create(attrs, node.content);
 
               tr.insert(tr.mapping.slice(mapStart).map(map.posAt(rowIdx + 1, colIdx)), copiedCell);

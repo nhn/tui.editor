@@ -36,8 +36,8 @@ describe('removeRow command', () => {
             <td colspan="2" rowspan="4"><p>mergedCell1-3</p></td>
           </tr>
           <tr>
-            <td rowspan="1"><p>mergedCell2-1</p></td>
-            <td rowspan="1"><p>mergedCell2-2</p></td>
+            <td><p>mergedCell2-1</p></td>
+            <td><p>mergedCell2-2</p></td>
             <td><p>cell3-1</p></td>
           </tr>
           <tr>
@@ -76,8 +76,8 @@ describe('removeRow command', () => {
             <td colspan="2" rowspan="4"><p>mergedCell1-3</p></td>
           </tr>
           <tr>
-            <td rowspan="1"><p>mergedCell2-1</p></td>
-            <td rowspan="1"><p>mergedCell2-2</p></td>
+            <td><p>mergedCell2-1</p></td>
+            <td><p>mergedCell2-2</p></td>
             <td><p>cell2-3</p></td>
           </tr>
           <tr>
