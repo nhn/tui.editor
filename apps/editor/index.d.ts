@@ -740,6 +740,8 @@ declare namespace toastui {
 
     constructor(options: EditorOptions);
 
+    public eventManager: EventManager;
+
     public addHook(type: string, handler: HandlerFunc): void;
 
     public addWidget(selection: Range, node: Node, style: string, offset?: number): void;
