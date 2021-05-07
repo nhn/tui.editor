@@ -126,8 +126,7 @@ export interface TableCellMdNode extends BlockMdNode {
   paddingLeft: number;
   paddingRight: number;
   ignored: boolean;
-  colspan?: number;
-  rowspan?: number;
+  attrs?: Record<string, any>;
 }
 
 export interface RefDefMdNode extends BlockMdNode {

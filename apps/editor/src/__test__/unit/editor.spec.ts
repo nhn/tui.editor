@@ -207,12 +207,13 @@ describe('editor', () => {
     it('addCommand()', () => {
       const spy = jest.fn();
       // @ts-ignore
-      const { state, dispatch } = editor.mdEditor.view;
+      const { view } = editor.mdEditor;
+      const { state, dispatch } = view;
 
       editor.addCommand('markdown', 'custom', spy);
       editor.exec('custom', { prop: 'prop' });
 
-      expect(spy).toHaveBeenCalledWith({ prop: 'prop' }, state, dispatch);
+      expect(spy).toHaveBeenCalledWith({ prop: 'prop' }, state, dispatch, view);
       expect(spy).toHaveBeenCalled();
     });
 

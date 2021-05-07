@@ -1,7 +1,13 @@
 import type { CustomParserMap } from '@toast-ui/toastmark';
-import { MergedTableRowMdNode, MergedTableCellMdNode, SpanInfo, SpanType } from '@t/markdown';
+import { MergedTableRowMdNode, MergedTableCellMdNode, SpanType } from '@t/index';
 
-function getSpanInfo(content: string, type: SpanType, oppositeType: SpanType): SpanInfo {
+interface Attrs {
+  colspan?: number;
+  rowspan?: number;
+}
+type CellSpanInfo = [spanCount: number, content: string];
+
+function getSpanInfo(content: string, type: SpanType, oppositeType: SpanType): CellSpanInfo {
   const reSpan = new RegExp(`^((?:${oppositeType}=[0-9]+:)?)${type}=([0-9]+):(.*)`);
   const parsed = reSpan.exec(content);
   let spanCount = 1;
@@ -70,6 +76,7 @@ export const markdownParsers: CustomParserMap = {
     const { parent, prev, stringContent } = node;
 
     if (entering) {
+      const attrs: Attrs = {};
       let content = stringContent!;
       let [colspan, rowspan] = [1, 1];
 
@@ -83,12 +90,13 @@ export const markdownParsers: CustomParserMap = {
         node.endIdx = node.startIdx;
       }
       if (colspan > 1) {
-        node.colspan = colspan;
+        attrs.colspan = colspan;
         node.endIdx += colspan - 1;
       }
       if (rowspan > 1) {
-        node.rowspan = rowspan;
+        attrs.rowspan = rowspan;
       }
+      node.attrs = attrs;
 
       extendTableCellIndexWithRowspanMap(node, parent, rowspan);
 

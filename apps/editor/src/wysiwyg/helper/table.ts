@@ -1,32 +1,10 @@
-import { Node, Schema, ResolvedPos, Slice } from 'prosemirror-model';
+import { Node, Schema, ResolvedPos, Slice, ProsemirrorNode } from 'prosemirror-model';
 import { Selection, TextSelection } from 'prosemirror-state';
 
 import { findNodeBy } from '@/wysiwyg/helper/node';
 
 import { CellSelection } from '@t/wysiwyg';
-import { getSortedNumPair } from '@/utils/common';
-
-export interface CellInfo {
-  offset: number;
-  nodeSize: number;
-  extended?: boolean;
-}
-export interface SelectionInfo {
-  startRowIdx: number;
-  startColIdx: number;
-  endRowIdx: number;
-  endColIdx: number;
-}
-
-interface SpanMap {
-  [key: number]: { count: number; startSpanIdx: number };
-}
-export interface RowInfo {
-  [key: number]: CellInfo;
-  length: number;
-  rowspanMap: SpanMap;
-  colspanMap: SpanMap;
-}
+import type { SelectionInfo } from './tableOffsetMap';
 
 export function createTableHeadRow(columnCount: number, schema: Schema, data?: string[]) {
   const { tableRow, tableHeadCell, paragraph } = schema.nodes;
@@ -67,13 +45,18 @@ export function createTableBodyRows(
   return tableRows;
 }
 
-export function createDummyCells(columnCount: number, rowIdx: number, schema: Schema) {
+export function createDummyCells(
+  columnCount: number,
+  rowIdx: number,
+  schema: Schema,
+  attrs: Record<string, any> | null = null
+) {
   const { tableHeadCell, tableBodyCell, paragraph } = schema.nodes;
   const cell = rowIdx === 0 ? tableHeadCell : tableBodyCell;
   const cells = [];
 
   for (let index = 0; index < columnCount; index += 1) {
-    cells.push(cell.create(null, paragraph.create()));
+    cells.push(cell.create(attrs, paragraph.create()));
   }
 
   return cells;
@@ -98,59 +81,6 @@ export function findCell(pos: ResolvedPos) {
   );
 }
 
-export function getNextRowOffset(selectionInfo: SelectionInfo, cellsInfo: RowInfo[]) {
-  const { rowCount } = getRowAndColumnCount(selectionInfo);
-  const { startRowIdx } = selectionInfo;
-  const allColumnCount = cellsInfo[0].length;
-  const selectedOnlyThead = startRowIdx === 0 && rowCount === 1;
-
-  if (!selectedOnlyThead) {
-    const rowIdx = startRowIdx + rowCount - 1;
-    const colIdx = allColumnCount - 1;
-    const { offset, nodeSize } = cellsInfo[rowIdx][colIdx];
-
-    return offset + nodeSize + 1;
-  }
-
-  return -1;
-}
-
-export function getPrevRowOffset({ startRowIdx }: SelectionInfo, cellsInfo: RowInfo[]) {
-  const selectedThead = startRowIdx === 0;
-
-  if (!selectedThead) {
-    // eslint-disable-next-line prefer-destructuring
-    const { offset } = cellsInfo[startRowIdx][0];
-
-    return offset - 1;
-  }
-
-  return -1;
-}
-
-export function getNextColumnOffsets(
-  rowIdx: number,
-  selectionInfo: SelectionInfo,
-  cellsInfo: RowInfo[]
-) {
-  const { columnCount } = getRowAndColumnCount(selectionInfo);
-  const { offset, nodeSize } = cellsInfo[rowIdx][selectionInfo.startColIdx + columnCount - 1];
-  const mapOffset = offset + nodeSize;
-
-  return { offset, mapOffset };
-}
-
-export function getPrevColumnOffsets(
-  rowIdx: number,
-  { startColIdx }: SelectionInfo,
-  cellsInfo: RowInfo[]
-) {
-  const { offset } = cellsInfo[rowIdx][startColIdx];
-  const mapOffset = offset;
-
-  return { offset, mapOffset };
-}
-
 export function getResolvedSelection(selection: Selection | CellSelection) {
   if (selection instanceof TextSelection) {
     const { $anchor } = selection;
@@ -166,215 +96,6 @@ export function getResolvedSelection(selection: Selection | CellSelection) {
   const { startCell, endCell } = selection as CellSelection;
 
   return { anchor: startCell, head: endCell };
-}
-
-function extendPrevRowspan(prevRowInfo: RowInfo, rowInfo: RowInfo) {
-  const { rowspanMap, colspanMap } = rowInfo;
-  const { rowspanMap: prevRowspanMap, colspanMap: prevColspanMap } = prevRowInfo;
-
-  Object.keys(prevRowspanMap).forEach((key) => {
-    const colIdx = Number(key);
-    const prevRowspanInfo = prevRowspanMap[colIdx];
-
-    if (prevRowspanInfo?.count > 1) {
-      const prevColspanInfo = prevColspanMap[colIdx];
-      const { count, startSpanIdx } = prevRowspanInfo;
-
-      rowspanMap[colIdx] = { count: count - 1, startSpanIdx };
-      colspanMap[colIdx] = prevColspanInfo;
-
-      rowInfo[colIdx] = { ...prevRowInfo[colIdx], extended: true };
-      rowInfo.length += 1;
-    }
-  });
-}
-
-function extendPrevColspan(
-  rowspan: number,
-  colspan: number,
-  rowIdx: number,
-  colIdx: number,
-  rowInfo: RowInfo
-) {
-  const { rowspanMap, colspanMap } = rowInfo;
-
-  for (let i = 1; i < colspan; i += 1) {
-    colspanMap[colIdx + i] = { count: colspan - i, startSpanIdx: colIdx };
-
-    if (rowspan > 1) {
-      rowspanMap[colIdx + i] = { count: rowspan, startSpanIdx: rowIdx };
-    }
-
-    rowInfo[colIdx + i] = { ...rowInfo[colIdx] };
-    rowInfo.length += 1;
-  }
-}
-
-function getCellsInfo(headOrBody: Node, startOffset: number) {
-  const cellInfoMatrix: RowInfo[] = [];
-  const beInBody = headOrBody.type.name === 'tableBody';
-
-  headOrBody.forEach((row: Node, rowOffset: number, rowIdx: number) => {
-    // get row index based on table(not table head or table body)
-    const rowIdxInWholeTable = beInBody ? rowIdx + 1 : rowIdx;
-    const prevRowInfo = cellInfoMatrix[rowIdx - 1];
-    const rowInfo: RowInfo = { rowspanMap: {}, colspanMap: {}, length: 0 };
-
-    if (prevRowInfo) {
-      extendPrevRowspan(prevRowInfo, rowInfo);
-    }
-
-    row.forEach(({ nodeSize, attrs }: Node, cellOffset: number) => {
-      const colspan: number = attrs.colspan ?? 1;
-      const rowspan: number = attrs.rowspan ?? 1;
-      let colIdx = 0;
-
-      while (rowInfo[colIdx]) {
-        colIdx += 1;
-      }
-
-      rowInfo[colIdx] = {
-        // 2 is the sum of the front and back positions of the closing tag
-        offset: startOffset + rowOffset + cellOffset + 2,
-        nodeSize,
-      };
-
-      rowInfo.length += 1;
-
-      if (rowspan > 1) {
-        rowInfo.rowspanMap[colIdx] = { count: rowspan, startSpanIdx: rowIdxInWholeTable };
-      }
-
-      if (colspan > 1) {
-        rowInfo.colspanMap[colIdx] = { count: colspan, startSpanIdx: colIdx };
-        extendPrevColspan(rowspan, colspan, rowIdxInWholeTable, colIdx, rowInfo);
-      }
-    });
-    cellInfoMatrix.push(rowInfo);
-  });
-
-  return cellInfoMatrix;
-}
-
-export function getTableCellsInfo(cellPos: ResolvedPos) {
-  const foundTable = findNodeBy(cellPos, ({ type }: Node) => type.name === 'table');
-
-  if (foundTable) {
-    const { node, depth } = foundTable;
-    const tablePos = cellPos.start(depth);
-
-    const thead = node.child(0);
-    const tbody = node.child(1);
-
-    const theadCellInfo = getCellsInfo(thead, tablePos);
-    const tbodyCellInfo = getCellsInfo(tbody, tablePos + thead.nodeSize);
-
-    return theadCellInfo.concat(tbodyCellInfo);
-  }
-
-  return [];
-}
-
-export function getCellIndex(
-  cellPos: ResolvedPos,
-  cellsInfo: RowInfo[]
-): [rowIdx: number, colIdx: number] {
-  const rowCount = cellsInfo.length;
-
-  for (let rowIdx = 0; rowIdx < rowCount; rowIdx += 1) {
-    const rowInfo = cellsInfo[rowIdx];
-    const columnCount = rowInfo.length;
-
-    for (let colIdx = 0; colIdx < columnCount; colIdx += 1) {
-      if (rowInfo[colIdx].offset + 1 > cellPos.pos) {
-        return [rowIdx, colIdx];
-      }
-    }
-  }
-  return [0, 0];
-}
-
-export function getLastCell(cellsInfo: RowInfo[]) {
-  const rowCount = cellsInfo.length;
-  const columnCount = cellsInfo[0].length;
-  // eslint-disable-next-line prefer-destructuring
-  let lastCell = cellsInfo[0][0];
-
-  for (let i = 0; i < rowCount; i += 1) {
-    for (let j = 0; j < columnCount; j += 1) {
-      if (lastCell.offset < cellsInfo[i][j].offset) {
-        lastCell = cellsInfo[i][j];
-      }
-    }
-  }
-  return lastCell;
-}
-
-export function getExtendedRanges(
-  selectionInfo: SelectionInfo,
-  cellsInfo: RowInfo[]
-): SelectionInfo {
-  let { startRowIdx, startColIdx, endRowIdx, endColIdx } = selectionInfo;
-
-  for (let rowIdx = endRowIdx; rowIdx >= startRowIdx; rowIdx -= 1) {
-    if (cellsInfo[rowIdx]) {
-      const { rowspanMap, colspanMap } = cellsInfo[rowIdx];
-
-      for (let colIdx = endColIdx; colIdx >= startColIdx; colIdx -= 1) {
-        const rowspanInfo = rowspanMap[colIdx];
-        const colspanInfo = colspanMap[colIdx];
-
-        if (rowspanInfo) {
-          startRowIdx = Math.min(startRowIdx, rowspanInfo.startSpanIdx);
-        }
-        if (colspanInfo) {
-          startColIdx = Math.min(startColIdx, colspanInfo.startSpanIdx);
-        }
-      }
-    }
-  }
-
-  for (let rowIdx = startRowIdx; rowIdx <= endRowIdx; rowIdx += 1) {
-    if (cellsInfo[rowIdx]) {
-      const { rowspanMap, colspanMap } = cellsInfo[rowIdx];
-
-      for (let colIdx = startColIdx; colIdx <= endColIdx; colIdx += 1) {
-        const rowspanInfo = rowspanMap[colIdx];
-        const colspanInfo = colspanMap[colIdx];
-
-        if (rowspanInfo) {
-          endRowIdx = Math.max(endRowIdx, rowIdx + rowspanInfo.count - 1);
-        }
-        if (colspanInfo) {
-          endColIdx = Math.max(endColIdx, colIdx + colspanInfo.count - 1);
-        }
-      }
-    }
-  }
-
-  return { startRowIdx, startColIdx, endRowIdx, endColIdx };
-}
-
-export function getSelectionInfo(
-  cellsInfo: RowInfo[],
-  startCellPos: ResolvedPos,
-  endCellPos = startCellPos
-) {
-  if (startCellPos.pos > endCellPos.pos) {
-    const orgStartCellPos = startCellPos;
-
-    startCellPos = endCellPos;
-    endCellPos = orgStartCellPos;
-  }
-  let [startRowIdx, startColIdx] = getCellIndex(startCellPos, cellsInfo);
-  let [endRowIdx, endColIdx] = getCellIndex(endCellPos, cellsInfo);
-
-  [startRowIdx, endRowIdx] = getSortedNumPair(startRowIdx, endRowIdx);
-  [startColIdx, endColIdx] = getSortedNumPair(startColIdx, endColIdx);
-
-  const selectionInfo: SelectionInfo = { startRowIdx, startColIdx, endRowIdx, endColIdx };
-
-  return getExtendedRanges(selectionInfo, cellsInfo);
 }
 
 export function getTableContentFromSlice(slice: Slice) {
@@ -405,9 +126,18 @@ export function getTableContentFromSlice(slice: Slice) {
   return null;
 }
 
-export function getRowAndColumnCount(selectionInfo: SelectionInfo) {
-  return {
-    rowCount: selectionInfo.endRowIdx - selectionInfo.startRowIdx + 1,
-    columnCount: selectionInfo.endColIdx - selectionInfo.startColIdx + 1,
-  };
+export function getRowAndColumnCount({
+  startRowIdx,
+  startColIdx,
+  endRowIdx,
+  endColIdx,
+}: SelectionInfo) {
+  const rowCount = endRowIdx - startRowIdx + 1;
+  const columnCount = endColIdx - startColIdx + 1;
+
+  return { rowCount, columnCount };
+}
+
+export function setAttrs(cell: ProsemirrorNode, attrs: Record<string, any>) {
+  return { ...cell.attrs, ...attrs };
 }

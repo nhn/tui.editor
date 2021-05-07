@@ -35,6 +35,7 @@ export type EventTypes =
   | 'changeToolbarState'
   | 'setCodeBlockLanguages'
   | 'toggleScrollSync'
+  | 'mixinTableOffsetMapPrototype'
   // provide event for user
   | 'openPopup'
   | 'closePopup'

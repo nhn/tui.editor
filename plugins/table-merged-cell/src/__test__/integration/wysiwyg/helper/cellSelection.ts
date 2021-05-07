@@ -1,8 +1,8 @@
 import { Node, ResolvedPos, Slice, Fragment } from 'prosemirror-model';
 import { Selection, SelectionRange, TextSelection } from 'prosemirror-state';
 import { Mappable } from 'prosemirror-transform';
-
-import { TableOffsetMap, SelectionInfo } from '@/wysiwyg/helper/tableOffsetMap';
+import { SelectionInfo } from '@t/index';
+import { TableOffsetMap } from './TableOffsetMap';
 
 function getSelectionRanges(
   doc: Node,
