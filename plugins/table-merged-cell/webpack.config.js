@@ -3,10 +3,13 @@ const path = require('path');
 const webpack = require('webpack');
 const { name, version, author, license } = require('./package.json');
 
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const ESLintPlugin = require('eslint-webpack-plugin');
+
+const filename = `toastui-${name.replace(/@toast-ui\//, '')}`;
 
 function getOutputConfig(isProduction, isCDN, minify) {
-  const filename = `toastui-${name.replace(/@toast-ui\//, '')}`;
   const defaultConfig = {
     environment: {
       arrowFunction: false,
@@ -34,8 +37,11 @@ function getOutputConfig(isProduction, isCDN, minify) {
   }
 
   return {
-    libraryExport: 'default',
-    libraryTarget: 'commonjs2',
+    ...defaultConfig,
+    library: {
+      export: 'default',
+      type: 'commonjs2',
+    },
     path: path.resolve(__dirname, 'dist'),
     filename: `${filename}.js`,
   };
@@ -61,7 +67,7 @@ module.exports = (env) => {
   const { minify = false, cdn = false } = env;
   const config = {
     mode: isProduction ? 'production' : 'development',
-    entry: './src/js/index.js',
+    entry: './src/index.ts',
     output: getOutputConfig(isProduction, cdn, minify),
     module: {
       rules: [
@@ -77,8 +83,29 @@ module.exports = (env) => {
           ],
           exclude: /node_modules/,
         },
+        {
+          test: /\.css$/,
+          use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        },
       ],
     },
+    resolve: {
+      extensions: ['.ts', '.js'],
+      alias: {
+        '@': path.resolve('src'),
+        '@t': path.resolve('types'),
+      },
+    },
+    plugins: [
+      new MiniCssExtractPlugin({
+        filename: () => `${filename}${minify ? '.min' : ''}.css`,
+      }),
+      new ESLintPlugin({
+        extensions: ['js', 'ts'],
+        exclude: ['node_modules', 'dist'],
+        failOnError: isProduction,
+      }),
+    ],
     optimization: getOptimizationConfig(isProduction, minify),
   };
 

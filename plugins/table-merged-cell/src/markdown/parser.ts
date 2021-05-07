@@ -1,12 +1,13 @@
 import type { CustomParserMap } from '@toast-ui/toastmark';
-import { MergedTableRowMdNode, MergedTableCellMdNode, SpanInfo, SpanType } from '@t/markdown';
+import { MergedTableRowMdNode, MergedTableCellMdNode, SpanType } from '@t/index';
 
 interface Attrs {
   colspan?: number;
   rowspan?: number;
 }
+type CellSpanInfo = [spanCount: number, content: string];
 
-function getSpanInfo(content: string, type: SpanType, oppositeType: SpanType): SpanInfo {
+function getSpanInfo(content: string, type: SpanType, oppositeType: SpanType): CellSpanInfo {
   const reSpan = new RegExp(`^((?:${oppositeType}=[0-9]+:)?)${type}=([0-9]+):(.*)`);
   const parsed = reSpan.exec(content);
   let spanCount = 1;

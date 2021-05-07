@@ -353,7 +353,7 @@ class ToastUIEditor {
     const commandHoc = (paylaod: Record<string, any> = {}) => {
       const { view } = type === 'markdown' ? this.mdEditor : this.wwEditor;
 
-      command(paylaod, view.state, view.dispatch);
+      command(paylaod, view.state, view.dispatch, view);
     };
 
     this.commandManager.addCommand(type, name, commandHoc);

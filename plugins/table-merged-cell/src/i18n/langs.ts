@@ -3,7 +3,7 @@ import { I18n } from '@toast-ui/editor';
 export function addLangs(i18n: I18n) {
   i18n.setLanguage(['ko', 'ko-KR'], {
     'Merge cells': '셀 병합',
-    'Unmerge cells': '셀 병합해제',
+    'Split cells': '셀 병합해제',
     'Cannot change part of merged cell': '병합된 셀의 일부를 변경할 수 없습니다.',
     'Cannot paste row merged cells into the table header':
       '테이블 헤더에는 행 병합된 셀을 붙여넣을 수 없습니다.',
@@ -11,7 +11,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage(['en', 'en-US'], {
     'Merge cells': 'Merge cells',
-    'Unmerge cells': 'Unmerge cells',
+    'Split cells': 'Split cells',
     'Cannot change part of merged cell': 'Cannot change part of merged cell.',
     'Cannot paste row merged cells into the table header':
       'Cannot paste row merged cells into the table header.',
@@ -19,7 +19,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage(['es', 'es-ES'], {
     'Merge cells': 'Combinar celdas',
-    'Unmerge cells': 'Separar celdas',
+    'Split cells': 'Separar celdas',
     'Cannot change part of merged cell': 'No se puede cambiar parte de una celda combinada.',
     'Cannot paste row merged cells into the table header':
       'No se pueden pegar celdas combinadas en el encabezado de tabla.',
@@ -27,7 +27,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage(['ja', 'ja-JP'], {
     'Merge cells': 'セルの結合',
-    'Unmerge cells': 'セルの結合を解除',
+    'Split cells': 'セルの結合を解除',
     'Cannot change part of merged cell': '結合されたセルの一部を変更することはできません。',
     'Cannot paste row merged cells into the table header':
       '行にマージされたセルをヘッダーに貼り付けることはできません。',
@@ -35,7 +35,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage(['nl', 'nl-NL'], {
     'Merge cells': 'Cellen samenvoegen',
-    'Unmerge cells': 'Samengevoegde cellen ongedaan maken',
+    'Split cells': 'Samengevoegde cellen ongedaan maken',
     'Cannot change part of merged cell': 'Kan geen deel uit van een samengevoegde cel veranderen.',
     'Cannot paste row merged cells into the table header':
       'Kan geen rij met samengevoegde cellen in de koptekst plakken.',
@@ -43,14 +43,14 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage('zh-CN', {
     'Merge cells': '合并单元格',
-    'Unmerge cells': '取消合并单元格',
+    'Split cells': '取消合并单元格',
     'Cannot change part of merged cell': '无法更改合并单元格的一部分。',
     'Cannot paste row merged cells into the table header': '无法将行合并单元格粘贴到标题中。',
   });
 
   i18n.setLanguage(['de', 'de-DE'], {
     'Merge cells': 'Zellen zusammenführen',
-    'Unmerge cells': 'Zusammenführen rückgängig machen',
+    'Split cells': 'Zusammenführen rückgängig machen',
     'Cannot change part of merged cell':
       'Der Teil der verbundenen Zelle kann nicht geändert werden.',
     'Cannot paste row merged cells into the table header':
@@ -59,7 +59,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage(['ru', 'ru-RU'], {
     'Merge cells': 'Объединить ячейки',
-    'Unmerge cells': 'Разъединить ячейки',
+    'Split cells': 'Разъединить ячейки',
     'Cannot change part of merged cell': 'Вы не можете изменять часть комбинированной ячейки.',
     'Cannot paste row merged cells into the table header':
       'Вы не можете вставлять объединенные ячейки в заголовок таблицы.',
@@ -67,7 +67,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage(['fr', 'fr-FR'], {
     'Merge cells': 'Fusionner les cellules',
-    'Unmerge cells': 'Séparer les cellules',
+    'Split cells': 'Séparer les cellules',
     'Cannot change part of merged cell':
       'Impossible de modifier une partie de la cellule fusionnée.',
     'Cannot paste row merged cells into the table header':
@@ -76,7 +76,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage(['uk', 'uk-UA'], {
     'Merge cells': "Об'єднати комірки",
-    'Unmerge cells': "Роз'єднати комірки",
+    'Split cells': "Роз'єднати комірки",
     'Cannot change part of merged cell': 'Ви не можете змінювати частину комбінованої комірки.',
     'Cannot paste row merged cells into the table header':
       "Ви не можете вставляти об'єднані комірки в заголовок таблиці.",
@@ -84,7 +84,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage(['tr', 'tr-TR'], {
     'Merge cells': 'Hücreleri birleştir',
-    'Unmerge cells': 'Hücreleri ayır',
+    'Split cells': 'Hücreleri ayır',
     'Cannot change part of merged cell': 'Birleştirilmiş hücrelerin bir kısmı değiştirelemez.',
     'Cannot paste row merged cells into the table header':
       'Satırda birleştirilmiş hücreler sütun başlığına yapıştırılamaz',
@@ -92,7 +92,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage(['fi', 'fi-FI'], {
     'Merge cells': 'Yhdistä solut',
-    'Unmerge cells': 'Jaa solut',
+    'Split cells': 'Jaa solut',
     'Cannot change part of merged cell': 'Yhdistettyjen solujen osaa ei voi muuttaa',
     'Cannot paste row merged cells into the table header':
       'Soluja ei voi yhdistää taulukon otsikkoriviin',
@@ -100,7 +100,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage(['cs', 'cs-CZ'], {
     'Merge cells': 'Spojit buňky',
-    'Unmerge cells': 'Rozpojit buňky',
+    'Split cells': 'Rozpojit buňky',
     'Cannot change part of merged cell': 'Nelze měnit část spojené buňky',
     'Cannot paste row merged cells into the table header':
       'Nelze vkládat spojené buňky do záhlaví tabulky',
@@ -108,7 +108,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage('ar', {
     'Merge cells': 'دمج الوحدات',
-    'Unmerge cells': 'إلغاء دمج الوحدات',
+    'Split cells': 'إلغاء دمج الوحدات',
     'Cannot change part of merged cell': 'لا يمكن تغيير جزء من الخلية المدموجة',
     'Cannot paste row merged cells into the table header':
       'لا يمكن لصق الخلايا المدموجة من صف واحد في رأس الجدول',
@@ -116,7 +116,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage(['pl', 'pl-PL'], {
     'Merge cells': 'Scal komórki',
-    'Unmerge cells': 'Rozłącz komórki',
+    'Split cells': 'Rozłącz komórki',
     'Cannot change part of merged cell': 'Nie można zmienić części scalonej komórki.',
     'Cannot paste row merged cells into the table header':
       'Nie można wkleić komórek o scalonym rzędzie w nagłówek tabeli.',
@@ -124,14 +124,14 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage('zh-TW', {
     'Merge cells': '合併儲存格',
-    'Unmerge cells': '取消合併儲存格',
+    'Split cells': '取消合併儲存格',
     'Cannot change part of merged cell': '無法變更儲存格的一部分。',
     'Cannot paste row merged cells into the table header': '無法將合併的儲存格貼上至表格標題中。',
   });
 
   i18n.setLanguage(['gl', 'gl-ES'], {
     'Merge cells': 'Combinar celas',
-    'Unmerge cells': 'Separar celas',
+    'Split cells': 'Separar celas',
     'Cannot change part of merged cell': 'Non se pode cambiar parte dunha cela combinada',
     'Cannot paste row merged cells into the table header':
       'Non se poden pegar celas no encabezado da táboa',
@@ -139,7 +139,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage(['sv', 'sv-SE'], {
     'Merge cells': 'Sammanfoga celler',
-    'Unmerge cells': 'Dela celler',
+    'Split cells': 'Dela celler',
     'Cannot change part of merged cell': 'Ej möjligt att ändra en del av en sammanfogad cell',
     'Cannot paste row merged cells into the table header':
       'Ej möjligt att klistra in rad-sammanfogade celler i tabellens huvud',
@@ -147,7 +147,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage(['it', 'it-IT'], {
     'Merge cells': 'Unisci celle',
-    'Unmerge cells': 'Separa celle',
+    'Split cells': 'Separa celle',
     'Cannot change part of merged cell': 'Non è possibile modificare parte di una cella unita',
     'Cannot paste row merged cells into the table header':
       "Non è possibile incollare celle unite per riga nell'intestazione della tabella",
@@ -155,7 +155,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage(['nb', 'nb-NO'], {
     'Merge cells': 'Slå sammen celler',
-    'Unmerge cells': 'Separer celler',
+    'Split cells': 'Separer celler',
     'Cannot change part of merged cell': 'Kan ikke endre deler av sammenslåtte celler',
     'Cannot paste row merged cells into the table header':
       'Kan ikke lime inn rad med sammenslåtte celler',
@@ -163,7 +163,7 @@ export function addLangs(i18n: I18n) {
 
   i18n.setLanguage(['hr', 'hr-HR'], {
     'Merge cells': 'Spoji ćelije',
-    'Unmerge cells': 'Odspoji ćelije',
+    'Split cells': 'Odspoji ćelije',
     'Cannot change part of merged cell': 'Ne mogu mijenjati dio spojene ćelije.',
     'Cannot paste row merged cells into the table header':
       'Ne mogu zaljepiti redak spojenih ćelija u zaglavlje tablice',

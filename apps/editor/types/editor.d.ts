@@ -1,19 +1,12 @@
-import { Schema, NodeSpec } from 'prosemirror-model';
+import { Schema, NodeSpec, Fragment } from 'prosemirror-model';
 import { EditorView, Decoration, DecorationSet } from 'prosemirror-view';
-import { EditorState, Plugin, Selection } from 'prosemirror-state';
+import { EditorState, Plugin, Selection, TextSelection } from 'prosemirror-state';
 import { HTMLConvertorMap, MdPos, Sourcepos } from '@toast-ui/toastmark';
 import { Emitter, Handler } from './event';
 import { Context, EditorAllCommandMap, EditorCommandFn, SpecManager } from './spec';
 import { ToMdConvertorMap } from './convertor';
 import { DefaultUI, ToolbarItemOptions } from './ui';
-import {
-  PluginProp,
-  NodeViewPropMap,
-  PluginCommandMap,
-  PluginToolbarItem,
-  CommandFn,
-  PluginInfo,
-} from './plugin';
+import { CommandFn, PluginInfo } from './plugin';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -108,8 +101,13 @@ export interface PluginContext {
   eventEmitter: Emitter;
   usageStatistics?: boolean;
   i18n: I18n;
-  pmState: { Plugin: typeof Plugin; Selection: typeof Selection };
+  pmState: {
+    Plugin: typeof Plugin;
+    Selection: typeof Selection;
+    TextSelection: typeof TextSelection;
+  };
   pmView: { Decoration: typeof Decoration; DecorationSet: typeof DecorationSet };
+  pmModel: { Fragment: typeof Fragment };
 }
 
 export type PluginFn = (context: PluginContext, options?: Record<string, any>) => PluginInfo | null;

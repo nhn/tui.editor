@@ -50,67 +50,32 @@ export const enum Direction {
 type ColDirection = Direction.LEFT | Direction.RIGHT;
 type RowDirection = Direction.UP | Direction.DOWN;
 
-function getTargetColInfo(
-  direction: ColDirection,
-  map: TableOffsetMap,
-  selectionInfo: SelectionInfo
-) {
-  let targetColIdx: number;
-  let judgeToExtendColspan: (rowIdx: number) => boolean;
-  let insertColIdx: number;
-
-  if (direction === Direction.LEFT) {
-    targetColIdx = selectionInfo.startColIdx;
-    judgeToExtendColspan = (rowIdx: number) => map.extendedColspan(rowIdx, targetColIdx);
-    insertColIdx = targetColIdx;
-  } else {
-    targetColIdx = selectionInfo.endColIdx;
-    judgeToExtendColspan = (rowIdx: number) => map.getColspanCount(rowIdx, targetColIdx) > 1;
-    insertColIdx = targetColIdx + 1;
-  }
-
-  return { targetColIdx, judgeToExtendColspan, insertColIdx };
-}
-
 function getTargetRowInfo(
   direction: RowDirection,
   map: TableOffsetMap,
   selectionInfo: SelectionInfo
 ) {
   let targetRowIdx: number;
-  let judgeToExtendRowspan: (rowIdx: number) => boolean;
   let insertColIdx: number;
   let nodeSize: number;
 
   if (direction === Direction.UP) {
     targetRowIdx = selectionInfo.startRowIdx;
-    judgeToExtendRowspan = (colIdx: number) => map.extendedRowspan(targetRowIdx, colIdx);
     insertColIdx = 0;
     nodeSize = -1;
   } else {
     targetRowIdx = selectionInfo.endRowIdx;
-    judgeToExtendRowspan = (colIdx: number) => map.getRowspanCount(targetRowIdx, colIdx) > 1;
     insertColIdx = map.totalColumnCount - 1;
-    nodeSize = !map.extendedRowspan(targetRowIdx, insertColIdx)
-      ? map.getCellInfo(targetRowIdx, insertColIdx).nodeSize + 1
-      : 2;
+    nodeSize = map.getCellInfo(targetRowIdx, insertColIdx).nodeSize + 1;
   }
-  return { targetRowIdx, judgeToExtendRowspan, insertColIdx, nodeSize };
+  return { targetRowIdx, insertColIdx, nodeSize };
 }
 
 function getRowRanges(map: TableOffsetMap, rowIdx: number, totalColumnCount: number) {
-  let from = Number.MAX_VALUE;
-  let to = 0;
+  const { offset: startOffset } = map.getCellInfo(rowIdx, 0);
+  const { offset, nodeSize } = map.getCellInfo(rowIdx, totalColumnCount - 1);
 
-  for (let colIdx = 0; colIdx < totalColumnCount; colIdx += 1) {
-    if (!map.extendedRowspan(rowIdx, colIdx)) {
-      const { offset, nodeSize } = map.getCellInfo(rowIdx, colIdx);
-
-      from = Math.min(from, offset);
-      to = Math.max(to, offset + nodeSize);
-    }
-  }
-  return { from, to };
+  return { from: startOffset, to: offset + nodeSize };
 }
 
 export class Table extends NodeSchema {
@@ -186,27 +151,16 @@ export class Table extends NodeSchema {
         const map = TableOffsetMap.create(anchor)!;
         const selectionInfo = map.getRectOffsets(anchor, head);
 
-        const { targetColIdx, judgeToExtendColspan, insertColIdx } = getTargetColInfo(
-          direction,
-          map,
-          selectionInfo
-        );
+        const targetColIdx =
+          direction === Direction.LEFT ? selectionInfo.startColIdx : selectionInfo.endColIdx + 1;
 
         const { columnCount } = getRowAndColumnCount(selectionInfo);
         const { totalRowCount } = map;
 
         for (let rowIdx = 0; rowIdx < totalRowCount; rowIdx += 1) {
-          // increase colspan count inside the col-spanning cell
-          if (judgeToExtendColspan(rowIdx)) {
-            const { node, pos } = map.getColspanStartInfo(rowIdx, targetColIdx)!;
-            const attrs = setAttrs(node, { colspan: node.attrs.colspan + columnCount });
+          const cells = createDummyCells(columnCount, rowIdx, schema);
 
-            tr.setNodeMarkup(tr.mapping.map(pos), null, attrs);
-          } else {
-            const cells = createDummyCells(columnCount, rowIdx, schema);
-
-            tr.insert(tr.mapping.map(map.posAt(rowIdx, insertColIdx)), cells);
-          }
+          tr.insert(tr.mapping.map(map.posAt(rowIdx, targetColIdx)), cells);
         }
         dispatch!(tr);
         return true;
@@ -238,24 +192,11 @@ export class Table extends NodeSchema {
         for (let rowIdx = 0; rowIdx < totalRowCount; rowIdx += 1) {
           for (let colIdx = endColIdx; colIdx >= startColIdx; colIdx -= 1) {
             const { offset, nodeSize } = map.getCellInfo(rowIdx, colIdx);
-            const colspanInfo = map.getColspanStartInfo(rowIdx, colIdx)!;
 
-            if (!map.extendedRowspan(rowIdx, colIdx)) {
-              // decrease colspan count inside the col-spanning cell
-              // eslint-disable-next-line max-depth
-              if (colspanInfo?.count > 1) {
-                const { node, pos } = map.getColspanStartInfo(rowIdx, colIdx)!;
-                const colspan = map.decreaseColspanCount(rowIdx, colIdx);
-                const attrs = setAttrs(node, { colspan });
+            const from = tr.mapping.slice(mapStart).map(offset);
+            const to = from + nodeSize;
 
-                tr.setNodeMarkup(tr.mapping.slice(mapStart).map(pos), null, attrs);
-              } else {
-                const from = tr.mapping.slice(mapStart).map(offset);
-                const to = from + nodeSize;
-
-                tr.delete(from, to);
-              }
-            }
+            tr.delete(from, to);
           }
         }
         dispatch!(tr);
@@ -275,7 +216,7 @@ export class Table extends NodeSchema {
         const { totalColumnCount } = map;
         const selectionInfo = map.getRectOffsets(anchor, head);
         const { rowCount } = getRowAndColumnCount(selectionInfo);
-        const { targetRowIdx, judgeToExtendRowspan, insertColIdx, nodeSize } = getTargetRowInfo(
+        const { targetRowIdx, insertColIdx, nodeSize } = getTargetRowInfo(
           direction,
           map,
           selectionInfo
@@ -288,17 +229,8 @@ export class Table extends NodeSchema {
           let cells: ProsemirrorNode[] = [];
 
           for (let colIdx = 0; colIdx < totalColumnCount; colIdx += 1) {
-            // increase rowspan count inside the row-spanning cell
-            if (judgeToExtendRowspan(colIdx)) {
-              const { node, pos } = map.getRowspanStartInfo(targetRowIdx, colIdx)!;
-              const attrs = setAttrs(node, { rowspan: node.attrs.rowspan + rowCount });
-
-              tr.setNodeMarkup(tr.mapping.map(pos), null, attrs);
-            } else {
-              cells = cells.concat(createDummyCells(1, targetRowIdx, schema));
-            }
+            cells = cells.concat(createDummyCells(1, targetRowIdx, schema));
           }
-
           for (let i = 0; i < rowCount; i += 1) {
             rows.push(schema.nodes.tableRow.create(null, cells));
           }
@@ -316,7 +248,7 @@ export class Table extends NodeSchema {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        let map = TableOffsetMap.create(anchor)!;
+        const map = TableOffsetMap.create(anchor)!;
         const { totalRowCount, totalColumnCount } = map;
         const selectionInfo = map.getRectOffsets(anchor, head);
         const { rowCount } = getRowAndColumnCount(selectionInfo);
@@ -330,38 +262,10 @@ export class Table extends NodeSchema {
         }
 
         for (let rowIdx = endRowIdx; rowIdx >= startRowIdx; rowIdx -= 1) {
-          const mapStart = tr.mapping.maps.length;
           const { from, to } = getRowRanges(map, rowIdx, totalColumnCount);
 
           // delete table row
           tr.delete(from - 1, to + 1);
-
-          for (let colIdx = 0; colIdx < totalColumnCount; colIdx += 1) {
-            const rowspanInfo = map.getRowspanStartInfo(rowIdx, colIdx)!;
-
-            if (rowspanInfo?.count > 1 && !map.extendedColspan(rowIdx, colIdx)) {
-              // decrease rowspan count inside the row-spanning cell
-              // eslint-disable-next-line max-depth
-              if (map.extendedRowspan(rowIdx, colIdx)) {
-                const { node, pos } = map.getRowspanStartInfo(rowIdx, colIdx)!;
-                const rowspan = map.decreaseRowspanCount(rowIdx, colIdx);
-                const attrs = setAttrs(node, { rowspan });
-
-                tr.setNodeMarkup(tr.mapping.slice(mapStart).map(pos), null, attrs);
-                // the row-spanning cell should be moved down
-              } else if (!map.extendedRowspan(rowIdx, colIdx)) {
-                const { node, count } = map.getRowspanStartInfo(rowIdx, colIdx)!;
-                const attrs = setAttrs(node, { rowspan: count - 1 });
-                const copiedCell = node.type.create(attrs, node.content);
-
-                tr.insert(
-                  tr.mapping.slice(mapStart).map(map.posAt(rowIdx + 1, colIdx)),
-                  copiedCell
-                );
-              }
-            }
-          }
-          map = TableOffsetMap.create(tr.doc.resolve(map.tableStartOffset))!;
         }
         dispatch!(tr);
         return true;
@@ -524,7 +428,7 @@ export class Table extends NodeSchema {
   }
 
   keymaps() {
-    const deleteCellsCommand = this.deleteCells();
+    const deleteCellContent = this.deleteCells();
 
     return {
       Tab: this.moveToCell(Direction.RIGHT),
@@ -536,10 +440,10 @@ export class Table extends NodeSchema {
       ArrowLeft: this.moveInCell(Direction.LEFT),
       ArrowRight: this.moveInCell(Direction.RIGHT),
 
-      Backspace: deleteCellsCommand,
-      'Mod-Backspace': deleteCellsCommand,
-      Delete: deleteCellsCommand,
-      'Mod-Delete': deleteCellsCommand,
+      Backspace: deleteCellContent,
+      'Mod-Backspace': deleteCellContent,
+      Delete: deleteCellContent,
+      'Mod-Delete': deleteCellContent,
     };
   }
 }
