@@ -1,17 +1,20 @@
 import isArray from 'tui-code-snippet/type/isArray';
-import { Plugin, Selection } from 'prosemirror-state';
+import { Plugin, Selection, TextSelection } from 'prosemirror-state';
 import { Decoration, DecorationSet } from 'prosemirror-view';
+import { Fragment } from 'prosemirror-model';
 import i18n from '@/i18n/i18n';
 import { deepMergedCopy } from '@/utils/common';
 
 import { EditorPlugin } from '@t/editor';
 import { Emitter } from '@t/event';
 import { PluginInfoResult } from '@t/plugin';
+import { mixinTableOffsetMapPrototype } from '@/wysiwyg/helper/tableOffsetMap';
 
 function execPlugin(plugin: EditorPlugin, eventEmitter: Emitter, usageStatistics: boolean) {
-  const pmState = { Plugin, Selection };
+  const pmState = { Plugin, Selection, TextSelection };
   const pmView = { Decoration, DecorationSet };
-  const context = { eventEmitter, usageStatistics, pmState, pmView, i18n };
+  const pmModel = { Fragment };
+  const context = { eventEmitter, usageStatistics, pmState, pmView, pmModel, i18n };
 
   if (isArray(plugin)) {
     const [pluginFn, options = {}] = plugin;
@@ -27,6 +30,8 @@ export function getPluginInfo(
   eventEmitter: Emitter,
   usageStatistics: boolean
 ) {
+  eventEmitter.listen('mixinTableOffsetMapPrototype', mixinTableOffsetMapPrototype);
+
   return (plugins ?? []).reduce<PluginInfoResult>(
     (acc, plugin) => {
       const pluginInfoResult = execPlugin(plugin, eventEmitter, usageStatistics);
@@ -36,6 +41,7 @@ export function getPluginInfo(
       }
 
       const {
+        markdownParsers,
         toHTMLRenderers,
         toMarkdownRenderers,
         markdownPlugins,
@@ -78,6 +84,10 @@ export function getPluginInfo(
         acc.toolbarItems = acc.toolbarItems!.concat(toolbarItems);
       }
 
+      if (markdownParsers) {
+        acc.markdownParsers = { ...acc.markdownParsers, ...markdownParsers };
+      }
+
       return acc;
     },
     {
@@ -89,6 +99,7 @@ export function getPluginInfo(
       mdCommands: {},
       wwCommands: {},
       toolbarItems: [],
+      markdownParsers: {},
     }
   );
 }

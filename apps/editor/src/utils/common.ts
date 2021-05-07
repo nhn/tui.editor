@@ -146,3 +146,21 @@ export function deepCopy<T extends Record<string, any>>(obj: T) {
     return acc;
   }, {} as T);
 }
+
+export function assign(targetObj: Record<string, any>, obj: Record<string, any>) {
+  Object.keys(obj).forEach((prop) => {
+    if (targetObj.hasOwnProperty(prop) && typeof targetObj[prop] === 'object') {
+      if (Array.isArray(obj[prop])) {
+        targetObj[prop] = obj[prop];
+      } else {
+        assign(targetObj[prop], obj[prop]);
+      }
+    } else {
+      targetObj[prop] = obj[prop];
+    }
+  });
+}
+
+export function getSortedNumPair(valueA: number, valueB: number) {
+  return valueA > valueB ? [valueB, valueA] : [valueA, valueB];
+}

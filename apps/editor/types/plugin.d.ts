@@ -2,7 +2,7 @@ import { Plugin, EditorState } from 'prosemirror-state';
 import { EditorView, NodeView } from 'prosemirror-view';
 import { Node } from 'prosemirror-model';
 
-import { HTMLConvertorMap } from '@toast-ui/toastmark';
+import { HTMLConvertorMap, CustomParserMap } from '@toast-ui/toastmark';
 import { Emitter } from './event';
 import { ToDOMAdaptor, ToMdConvertorMap } from './convertor';
 import { Dispatch, Payload, DefaultPayload } from './spec';
@@ -23,7 +23,8 @@ type NodeViewPropMap = Record<string, PluginNodeViews>;
 export type CommandFn<T = DefaultPayload> = (
   payload: Payload<T>,
   state: EditorState,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  view: EditorView
 ) => boolean;
 export type PluginCommandMap = Record<string, CommandFn>;
 
@@ -42,6 +43,7 @@ export interface PluginInfo {
   markdownCommands?: PluginCommandMap;
   wysiwygCommands?: PluginCommandMap;
   toolbarItems?: PluginToolbarItem[];
+  markdownParsers?: CustomParserMap;
 }
 
 export interface PluginInfoResult {
@@ -53,4 +55,5 @@ export interface PluginInfoResult {
   mdCommands: PluginCommandMap;
   wwCommands: PluginCommandMap;
   toolbarItems: PluginToolbarItem[];
+  markdownParsers: CustomParserMap;
 }

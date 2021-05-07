@@ -164,18 +164,18 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
     state.closeBlock(node);
   },
 
-  tableHead(state, { node }) {
+  tableHead(state, { node }, { delim }) {
     const row = node.firstChild;
 
     state.convertNode(node);
 
-    let result = '';
+    let result = delim ?? '';
 
-    if (row) {
+    if (!delim && row) {
       row.forEach(({ textContent, attrs }) => {
-        const delim = createTableHeadDelim(textContent, attrs.align);
+        const headDelim = createTableHeadDelim(textContent, attrs.align);
 
-        result += `| ${delim} `;
+        result += `| ${headDelim} `;
       });
     }
 
@@ -193,14 +193,14 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
     state.ensureNewLine();
   },
 
-  tableHeadCell(state, { node }) {
-    state.write('| ');
+  tableHeadCell(state, { node }, { delim = '| ' }) {
+    state.write(delim as string);
     state.convertTableCell(node);
     state.write(' ');
   },
 
-  tableBodyCell(state, { node }) {
-    state.write('| ');
+  tableBodyCell(state, { node }, { delim = '| ' }) {
+    state.write(delim as string);
     state.convertTableCell(node);
     state.write(' ');
   },

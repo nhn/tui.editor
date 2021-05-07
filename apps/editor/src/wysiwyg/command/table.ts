@@ -1,21 +1,17 @@
 import { ProsemirrorNode, ResolvedPos, Schema } from 'prosemirror-model';
 import { Selection, Transaction, NodeSelection } from 'prosemirror-state';
 
-import { createParagraph, createTextSelection, addParagraph } from '@/helper/manipulation';
+import { addParagraph } from '@/helper/manipulation';
 
-import { CellInfo } from '@/wysiwyg/helper/table';
+import { TableOffsetMap } from '../helper/tableOffsetMap';
+import { Direction } from '../nodes/table';
 
-export type CursorDirection = 'left' | 'right' | 'up' | 'down';
+export type CellPosition = [rowIdx: number, colIdx: number];
 
-export type CellPosition = [rowIndex: number, columnIndex: number];
-
-type CellOffsetFn = (
-  [rowIndex, columnIndex]: CellPosition,
-  cellsInfo: CellInfo[][]
-) => number | null;
+type CellOffsetFn = ([rowIdx, colIdx]: CellPosition, map: TableOffsetMap) => number | null;
 
 type CellOffsetFnMap = {
-  [key in CursorDirection]: CellOffsetFn;
+  [key in Direction]: CellOffsetFn;
 };
 
 const cellOffsetFnMap: CellOffsetFnMap = {
@@ -65,13 +61,13 @@ function isInLastListItem(pos: ResolvedPos) {
 }
 
 function canMoveToBeforeCell(
-  direction: CursorDirection,
+  direction: Direction,
   [paraDepth, listDepth, curDepth]: number[],
   from: ResolvedPos,
   doc: ProsemirrorNode,
   inList: boolean
 ) {
-  if (direction === 'left' || direction === 'up') {
+  if (direction === Direction.LEFT || direction === Direction.UP) {
     if (inList && !isInFirstListItem(from, doc, [paraDepth, listDepth])) {
       return false;
     }
@@ -88,13 +84,13 @@ function canMoveToBeforeCell(
 }
 
 function canMoveToAfterCell(
-  direction: CursorDirection,
+  direction: Direction,
   curDepth: number,
   from: ResolvedPos,
   doc: ProsemirrorNode,
   inList: boolean
 ) {
-  if (direction === 'right' || direction === 'down') {
+  if (direction === Direction.RIGHT || direction === Direction.DOWN) {
     if (inList && !isInLastListItem(from)) {
       return false;
     }
@@ -111,7 +107,7 @@ function canMoveToAfterCell(
 }
 
 export function canMoveBetweenCells(
-  direction: CursorDirection,
+  direction: Direction,
   [cellDepth, paraDepth]: number[],
   from: ResolvedPos,
   doc: ProsemirrorNode
@@ -133,80 +129,78 @@ export function canMoveBetweenCells(
 }
 
 export function canBeOutOfTable(
-  direction: CursorDirection,
-  cellsInfo: CellInfo[][],
-  rowIndex: number
+  direction: Direction,
+  map: TableOffsetMap,
+  [rowIdx, colIdx]: CellPosition
 ) {
-  const inFirstRow = direction === 'up' && rowIndex === 0;
-  const inLastRow = direction === 'down' && rowIndex === cellsInfo.length - 1;
+  const rowspanInfo = map.getRowspanStartInfo(rowIdx, colIdx)!;
+  const inFirstRow = direction === Direction.UP && rowIdx === 0;
+  const inLastRow =
+    direction === Direction.DOWN &&
+    (rowspanInfo?.count > 1 ? rowIdx + rowspanInfo!.count - 1 : rowIdx) === map.totalRowCount - 1;
 
   return inFirstRow || inLastRow;
 }
 
-export function addParagraphBeforeTable(tr: Transaction, cellsInfo: CellInfo[][], schema: Schema) {
-  // 3 is position value of <table><thead><tr>
-  const tableStartPos = tr.doc.resolve(cellsInfo[0][0].offset - 3);
+export function addParagraphBeforeTable(tr: Transaction, map: TableOffsetMap, schema: Schema) {
+  const tableStartPos = tr.doc.resolve(map.tableStartOffset - 1);
 
   if (!tableStartPos.nodeBefore) {
     return addParagraph(tr, tableStartPos, schema);
   }
-
   return tr.setSelection(Selection.near(tableStartPos, -1));
 }
 
-export function addParagraphAfterTable(tr: Transaction, cellsInfo: CellInfo[][], schema: Schema) {
-  const rowCount = cellsInfo.length;
-  const columnCount = cellsInfo[0].length;
-  const lastCell = cellsInfo[rowCount - 1][columnCount - 1];
-
-  // 3 is position value of </tr></tbody></table>
-  const tableEndPos = tr.doc.resolve(lastCell.offset + lastCell.nodeSize + 3);
+export function addParagraphAfterTable(tr: Transaction, map: TableOffsetMap, schema: Schema) {
+  const tableEndPos = tr.doc.resolve(map.tableEndOffset);
 
   if (!tableEndPos.nodeAfter) {
     return addParagraph(tr, tableEndPos, schema);
   }
-
   return tr.setSelection(Selection.near(tableEndPos, 1));
 }
 
-export function getRightCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: CellInfo[][]) {
-  const allRowCount = cellsInfo.length;
-  const allColumnCount = cellsInfo[0].length;
+export function getRightCellOffset([rowIdx, colIdx]: CellPosition, map: TableOffsetMap) {
+  const { totalRowCount, totalColumnCount } = map;
 
-  const lastCellInRow = columnIndex === allColumnCount - 1;
-  const lastCellInTable = rowIndex === allRowCount - 1 && lastCellInRow;
+  const lastCellInRow = colIdx === totalColumnCount - 1;
+  const lastCellInTable = rowIdx === totalRowCount - 1 && lastCellInRow;
 
   if (!lastCellInTable) {
-    columnIndex += 1;
+    let nextColIdx = colIdx + 1;
+    const colspanInfo = map.getColspanStartInfo(rowIdx, colIdx)!;
 
-    if (lastCellInRow) {
-      rowIndex += 1;
-      columnIndex = 0;
+    if (colspanInfo?.count > 1) {
+      nextColIdx += colspanInfo.count - 1;
     }
 
-    const { offset, nodeSize } = cellsInfo[rowIndex][columnIndex];
+    if (lastCellInRow || nextColIdx === totalColumnCount) {
+      rowIdx += 1;
+      nextColIdx = 0;
+    }
+    const { offset } = map.getCellInfo(rowIdx, nextColIdx);
 
-    return offset + nodeSize - 2;
+    return offset + 2;
   }
 
   return null;
 }
 
-export function getLeftCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: CellInfo[][]) {
-  const allColumnCount = cellsInfo[0].length;
+export function getLeftCellOffset([rowIdx, colIdx]: CellPosition, map: TableOffsetMap) {
+  const { totalColumnCount } = map;
 
-  const firstCellInRow = columnIndex === 0;
-  const firstCellInTable = rowIndex === 0 && firstCellInRow;
+  const firstCellInRow = colIdx === 0;
+  const firstCellInTable = rowIdx === 0 && firstCellInRow;
 
   if (!firstCellInTable) {
-    columnIndex -= 1;
+    colIdx -= 1;
 
     if (firstCellInRow) {
-      rowIndex -= 1;
-      columnIndex = allColumnCount - 1;
+      rowIdx -= 1;
+      colIdx = totalColumnCount - 1;
     }
 
-    const { offset, nodeSize } = cellsInfo[rowIndex][columnIndex];
+    const { offset, nodeSize } = map.getCellInfo(rowIdx, colIdx);
 
     return offset + nodeSize - 2;
   }
@@ -214,9 +208,9 @@ export function getLeftCellOffset([rowIndex, columnIndex]: CellPosition, cellsIn
   return null;
 }
 
-export function getUpCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: CellInfo[][]) {
-  if (rowIndex > 0) {
-    const { offset, nodeSize } = cellsInfo[rowIndex - 1][columnIndex];
+export function getUpCellOffset([rowIdx, colIdx]: CellPosition, map: TableOffsetMap) {
+  if (rowIdx > 0) {
+    const { offset, nodeSize } = map.getCellInfo(rowIdx - 1, colIdx);
 
     return offset + nodeSize - 2;
   }
@@ -224,11 +218,17 @@ export function getUpCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo
   return null;
 }
 
-export function getDownCellOffset([rowIndex, columnIndex]: CellPosition, cellsInfo: CellInfo[][]) {
-  const allRowCount = cellsInfo.length;
+export function getDownCellOffset([rowIdx, colIdx]: CellPosition, map: TableOffsetMap) {
+  const { totalRowCount } = map;
 
-  if (rowIndex < allRowCount - 1) {
-    const { offset } = cellsInfo[rowIndex + 1][columnIndex];
+  if (rowIdx < totalRowCount - 1) {
+    let nextRowIdx = rowIdx + 1;
+    const rowspanInfo = map.getRowspanStartInfo(rowIdx, colIdx)!;
+
+    if (rowspanInfo?.count > 1) {
+      nextRowIdx += rowspanInfo.count - 1;
+    }
+    const { offset } = map.getCellInfo(nextRowIdx, colIdx);
 
     return offset + 2;
   }
@@ -237,16 +237,16 @@ export function getDownCellOffset([rowIndex, columnIndex]: CellPosition, cellsIn
 }
 
 export function moveToCell(
-  direction: CursorDirection,
+  direction: Direction,
   tr: Transaction,
   cellIndex: CellPosition,
-  cellsInfo: CellInfo[][]
+  map: TableOffsetMap
 ) {
   const cellOffsetFn = cellOffsetFnMap[direction];
-  const offset = cellOffsetFn(cellIndex, cellsInfo);
+  const offset = cellOffsetFn(cellIndex, map);
 
   if (offset) {
-    const dir = direction === 'right' || direction === 'down' ? 1 : -1;
+    const dir = direction === Direction.RIGHT || direction === Direction.DOWN ? 1 : -1;
 
     return tr.setSelection(Selection.near(tr.doc.resolve(offset), dir));
   }
@@ -255,22 +255,20 @@ export function moveToCell(
 }
 
 export function canSelectTableNode(
-  direction: CursorDirection,
-  cellsInfo: CellInfo[][],
-  [rowIndex, columnIndex]: CellPosition,
-  from: ResolvedPos,
-  paraDepth: number
+  direction: Direction,
+  map: TableOffsetMap,
+  [rowIdx, colIdx]: CellPosition
 ) {
-  const curOffset = from.pos;
+  if (direction === Direction.UP || direction === Direction.DOWN) {
+    return false;
+  }
+  const { tableStartOffset, tableEndOffset } = map;
+  const { offset, nodeSize } = map.getCellInfo(rowIdx, colIdx);
 
-  const endRowIndex = direction === 'left' ? 0 : cellsInfo.length - 1;
-  const endColIndex = direction === 'left' ? 0 : cellsInfo[0].length - 1;
-  const endCursorPos = direction === 'left' ? from.start(paraDepth) : from.end(paraDepth);
+  const pos = direction === Direction.LEFT ? tableStartOffset : tableEndOffset;
+  const curPos = direction === Direction.LEFT ? offset - 2 : offset + nodeSize + 3;
 
-  const endCell = rowIndex === endRowIndex && columnIndex === endColIndex;
-  const endCursor = curOffset === endCursorPos;
-
-  return endCell && endCursor;
+  return pos === curPos;
 }
 
 export function selectNode(tr: Transaction, pos: ResolvedPos, depth: number) {

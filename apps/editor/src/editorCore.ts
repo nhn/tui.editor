@@ -185,6 +185,7 @@ class ToastUIEditor {
       wwNodeViews,
       mdCommands,
       wwCommands,
+      markdownParsers,
     } = this.pluginInfo;
     const rendererOptions = {
       linkAttributes,
@@ -218,6 +219,7 @@ class ToastUIEditor {
       referenceDefinition,
       disallowDeepHeading: true,
       frontMatter,
+      customParser: markdownParsers,
     });
 
     this.mdEditor = new MarkdownEditor(this.eventEmitter, {
@@ -351,7 +353,7 @@ class ToastUIEditor {
     const commandHoc = (paylaod: Record<string, any> = {}) => {
       const { view } = type === 'markdown' ? this.mdEditor : this.wwEditor;
 
-      command(paylaod, view.state, view.dispatch);
+      command(paylaod, view.state, view.dispatch, view);
     };
 
     this.commandManager.addCommand(type, name, commandHoc);

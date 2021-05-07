@@ -1,4 +1,7 @@
 import { Node as ProsemirrorNode, ResolvedPos } from 'prosemirror-model';
+import { includes } from '@/utils/common';
+
+type NodeAttrs = Record<string, any>;
 
 export function findNodeBy(
   pos: ResolvedPos,
@@ -55,6 +58,35 @@ export function createDOMInfoParsedRawHTML(tag: string) {
       return {
         ...(rawHTML && { rawHTML }),
       };
+    },
+  };
+}
+
+export function createCellAttrs(attrs: NodeAttrs) {
+  return Object.keys(attrs).reduce<NodeAttrs>((acc, attrName) => {
+    if (attrName !== 'rawHTML' && attrs[attrName]) {
+      attrName = attrName === 'className' ? 'class' : attrName;
+      acc[attrName] = attrs[attrName];
+    }
+    return acc;
+  }, {});
+}
+
+export function createParsedCellDOM(tag: string) {
+  return {
+    tag,
+    getAttrs(dom: Node | string) {
+      return ['rawHTML', 'colspan', 'rowspan', 'extended'].reduce<NodeAttrs>((acc, attrName) => {
+        const attrNameInDOM = attrName === 'rawHTML' ? 'data-raw-html' : attrName;
+        const attrValue = (dom as HTMLElement).getAttribute(attrNameInDOM);
+
+        if (attrValue) {
+          acc[attrName] = includes(['rawHTML', 'extended'], attrName)
+            ? attrValue
+            : Number(attrValue);
+        }
+        return acc;
+      }, {});
     },
   };
 }

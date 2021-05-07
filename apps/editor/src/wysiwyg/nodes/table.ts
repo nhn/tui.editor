@@ -1,27 +1,19 @@
-import { DOMOutputSpecArray, Node as ProsemirrorNode, Fragment, Slice } from 'prosemirror-model';
-import { ReplaceStep } from 'prosemirror-transform';
-import { TextSelection } from 'prosemirror-state';
+import { DOMOutputSpecArray, Node as ProsemirrorNode } from 'prosemirror-model';
+import { TextSelection, Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 
 import NodeSchema from '@/spec/node';
 import { isInTableNode, findNodeBy, createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
 
-// @TODO Separate the clipboard and command file, leaving only those commonly used in `helper/table`.
 import {
   createTableHeadRow,
   createTableBodyRows,
   createDummyCells,
   getResolvedSelection,
-  getSelectionInfo,
-  getTableCellsInfo,
-  getCellIndexInfo,
-  getNextRowOffset,
-  getPrevRowOffset,
-  getNextColumnOffsets,
-  getPrevColumnOffsets,
+  getRowAndColumnCount,
+  setAttrs,
 } from '@/wysiwyg/helper/table';
 import {
-  CursorDirection,
   canBeOutOfTable,
   canMoveBetweenCells,
   canSelectTableNode,
@@ -35,6 +27,7 @@ import { createTextSelection } from '@/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';
 import { ColumnAlign } from '@t/wysiwyg';
+import { SelectionInfo, TableOffsetMap } from '@/wysiwyg/helper/tableOffsetMap';
 
 interface AddTablePayload {
   rowCount: number;
@@ -44,6 +37,45 @@ interface AddTablePayload {
 
 interface AlignColumnPayload {
   align: ColumnAlign;
+}
+
+// eslint-disable-next-line no-shadow
+export const enum Direction {
+  LEFT = 'left',
+  RIGHT = 'right',
+  UP = 'up',
+  DOWN = 'down',
+}
+
+type ColDirection = Direction.LEFT | Direction.RIGHT;
+type RowDirection = Direction.UP | Direction.DOWN;
+
+function getTargetRowInfo(
+  direction: RowDirection,
+  map: TableOffsetMap,
+  selectionInfo: SelectionInfo
+) {
+  let targetRowIdx: number;
+  let insertColIdx: number;
+  let nodeSize: number;
+
+  if (direction === Direction.UP) {
+    targetRowIdx = selectionInfo.startRowIdx;
+    insertColIdx = 0;
+    nodeSize = -1;
+  } else {
+    targetRowIdx = selectionInfo.endRowIdx;
+    insertColIdx = map.totalColumnCount - 1;
+    nodeSize = map.getCellInfo(targetRowIdx, insertColIdx).nodeSize + 1;
+  }
+  return { targetRowIdx, insertColIdx, nodeSize };
+}
+
+function getRowRanges(map: TableOffsetMap, rowIdx: number, totalColumnCount: number) {
+  const { offset: startOffset } = map.getCellInfo(rowIdx, 0);
+  const { offset, nodeSize } = map.getCellInfo(rowIdx, totalColumnCount - 1);
+
+  return { from: startOffset, to: offset + nodeSize };
 }
 
 export class Table extends NodeSchema {
@@ -95,54 +127,44 @@ export class Table extends NodeSchema {
 
   private removeTable(): EditorCommand {
     return () => (state, dispatch) => {
-      const { selection, schema, tr } = state;
-      const { head } = getResolvedSelection(selection);
-      const { table } = schema.nodes;
-      const foundTable = findNodeBy(head, ({ type }: ProsemirrorNode) => type === table);
+      const { selection, tr } = state;
+      const map = TableOffsetMap.create(selection.$anchor)!;
 
-      if (foundTable) {
-        const { depth } = foundTable;
-        const startCellPos = head.before(depth);
-        const endCellPos = head.after(depth);
-        const cursorPos = createTextSelection(tr.delete(startCellPos, endCellPos), startCellPos);
+      if (map) {
+        const { tableStartOffset, tableEndOffset } = map;
+        const startOffset = tableStartOffset - 1;
+        const cursorPos = createTextSelection(tr.delete(startOffset, tableEndOffset), startOffset);
 
         dispatch!(tr.setSelection(cursorPos));
-
         return true;
       }
-
       return false;
     };
   }
 
-  private addColumn(direction = 1): EditorCommand {
+  private addColumn(direction: ColDirection): EditorCommand {
     return () => (state, dispatch) => {
       const { selection, tr, schema } = state;
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsInfo = getTableCellsInfo(anchor);
-        const { columnCount } = selectionInfo;
-        const allRowCount = cellsInfo.length;
+        const map = TableOffsetMap.create(anchor)!;
+        const selectionInfo = map.getRectOffsets(anchor, head);
 
-        for (let rowIndex = 0; rowIndex < allRowCount; rowIndex += 1) {
-          const { mapOffset } =
-            direction === 1
-              ? getNextColumnOffsets(rowIndex, selectionInfo, cellsInfo)
-              : getPrevColumnOffsets(rowIndex, selectionInfo, cellsInfo);
+        const targetColIdx =
+          direction === Direction.LEFT ? selectionInfo.startColIdx : selectionInfo.endColIdx + 1;
 
-          const from = tr.mapping.map(mapOffset);
-          const cells = createDummyCells(columnCount, rowIndex, schema);
+        const { columnCount } = getRowAndColumnCount(selectionInfo);
+        const { totalRowCount } = map;
 
-          tr.insert(from, cells);
+        for (let rowIdx = 0; rowIdx < totalRowCount; rowIdx += 1) {
+          const cells = createDummyCells(columnCount, rowIdx, schema);
+
+          tr.insert(tr.mapping.map(map.posAt(rowIdx, targetColIdx)), cells);
         }
-
         dispatch!(tr);
-
         return true;
       }
-
       return false;
     };
   }
@@ -153,64 +175,69 @@ export class Table extends NodeSchema {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsInfo = getTableCellsInfo(anchor);
-        const { startColumnIndex, columnCount } = selectionInfo;
-        const allColumnCount = cellsInfo[0].length;
+        const map = TableOffsetMap.create(anchor)!;
+        const selectionInfo = map.getRectOffsets(anchor, head);
 
-        const selectedAllColumn = columnCount === allColumnCount;
+        const { totalColumnCount, totalRowCount } = map;
+        const { columnCount } = getRowAndColumnCount(selectionInfo);
+        const selectedAllColumn = columnCount === totalColumnCount;
 
         if (selectedAllColumn) {
           return false;
         }
 
-        const allRowCount = cellsInfo.length;
-        const mapOffset = tr.mapping.maps.length;
+        const { startColIdx, endColIdx } = selectionInfo;
+        const mapStart = tr.mapping.maps.length;
 
-        for (let i = 0; i < allRowCount; i += 1) {
-          for (let j = 0; j < columnCount; j += 1) {
-            const { offset, nodeSize } = cellsInfo[i][j + startColumnIndex];
+        for (let rowIdx = 0; rowIdx < totalRowCount; rowIdx += 1) {
+          for (let colIdx = endColIdx; colIdx >= startColIdx; colIdx -= 1) {
+            const { offset, nodeSize } = map.getCellInfo(rowIdx, colIdx);
 
-            const from = tr.mapping.slice(mapOffset).map(offset);
+            const from = tr.mapping.slice(mapStart).map(offset);
             const to = from + nodeSize;
 
             tr.delete(from, to);
           }
         }
-
         dispatch!(tr);
-
         return true;
       }
-
       return false;
     };
   }
 
-  private addRow(direction = 1): EditorCommand {
+  private addRow(direction: Direction.UP | Direction.DOWN): EditorCommand {
     return () => (state, dispatch) => {
       const { selection, schema, tr } = state;
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsInfo = getTableCellsInfo(anchor);
-        const { rowCount } = selectionInfo;
-        const allColumnCount = cellsInfo[0].length;
-        const from =
-          direction === 1
-            ? getNextRowOffset(selectionInfo, cellsInfo)
-            : getPrevRowOffset(selectionInfo, cellsInfo);
+        const map = TableOffsetMap.create(anchor)!;
+        const { totalColumnCount } = map;
+        const selectionInfo = map.getRectOffsets(anchor, head);
+        const { rowCount } = getRowAndColumnCount(selectionInfo);
+        const { targetRowIdx, insertColIdx, nodeSize } = getTargetRowInfo(
+          direction,
+          map,
+          selectionInfo
+        );
+        const selectedThead = targetRowIdx === 0;
 
-        if (from > -1) {
-          const rows = createTableBodyRows(rowCount, allColumnCount, schema);
+        if (!selectedThead) {
+          const rows: ProsemirrorNode[] = [];
+          const from = tr.mapping.map(map.posAt(targetRowIdx, insertColIdx)) + nodeSize;
+          let cells: ProsemirrorNode[] = [];
 
-          dispatch!(tr.step(new ReplaceStep(from, from, new Slice(Fragment.from(rows), 0, 0))));
-
+          for (let colIdx = 0; colIdx < totalColumnCount; colIdx += 1) {
+            cells = cells.concat(createDummyCells(1, targetRowIdx, schema));
+          }
+          for (let i = 0; i < rowCount; i += 1) {
+            rows.push(schema.nodes.tableRow.create(null, cells));
+          }
+          dispatch!(tr.insert(from, rows));
           return true;
         }
       }
-
       return false;
     };
   }
@@ -221,27 +248,26 @@ export class Table extends NodeSchema {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsInfo = getTableCellsInfo(anchor);
-        const { startRowIndex, rowCount } = selectionInfo;
-        const allRowCount = cellsInfo.length;
+        const map = TableOffsetMap.create(anchor)!;
+        const { totalRowCount, totalColumnCount } = map;
+        const selectionInfo = map.getRectOffsets(anchor, head);
+        const { rowCount } = getRowAndColumnCount(selectionInfo);
+        const { startRowIdx, endRowIdx } = selectionInfo;
 
-        const selectedThead = startRowIndex === 0;
-        const selectedAllTbodyRow = rowCount === allRowCount - 1;
+        const selectedThead = startRowIdx === 0;
+        const selectedAllTbodyRow = rowCount === totalRowCount - 1;
 
-        if (selectedThead || selectedAllTbodyRow) {
+        if (selectedAllTbodyRow || selectedThead) {
           return false;
         }
 
-        const from = cellsInfo[startRowIndex][0].offset - 1;
+        for (let rowIdx = endRowIdx; rowIdx >= startRowIdx; rowIdx -= 1) {
+          const { from, to } = getRowRanges(map, rowIdx, totalColumnCount);
 
-        const rowIdx = startRowIndex + rowCount - 1;
-        const colIdx = cellsInfo[0].length - 1;
-        const { offset, nodeSize } = cellsInfo[rowIdx][colIdx];
-        const to = offset + nodeSize + 1;
-
-        dispatch!(tr.step(new ReplaceStep(from, to, Slice.empty)));
-
+          // delete table row
+          tr.delete(from - 1, to + 1);
+        }
+        dispatch!(tr);
         return true;
       }
 
@@ -256,41 +282,48 @@ export class Table extends NodeSchema {
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsInfo = getTableCellsInfo(anchor);
-        const { startColumnIndex, columnCount } = selectionInfo;
-        const allRowCount = cellsInfo.length;
+        const map = TableOffsetMap.create(anchor)!;
+        const { totalRowCount } = map;
+        const selectionInfo = map.getRectOffsets(anchor, head);
+        const { startColIdx, endColIdx } = selectionInfo;
 
-        for (let i = 0; i < allRowCount; i += 1) {
-          for (let j = 0; j < columnCount; j += 1) {
-            const { offset } = cellsInfo[i][j + startColumnIndex];
+        for (let rowIdx = 0; rowIdx < totalRowCount; rowIdx += 1) {
+          for (let colIdx = startColIdx; colIdx <= endColIdx; colIdx += 1) {
+            if (!map.extendedRowspan(rowIdx, colIdx) && !map.extendedColspan(rowIdx, colIdx)) {
+              const { node, pos } = map.getNodeAndPos(rowIdx, colIdx);
+              const attrs = setAttrs(node, { align });
 
-            tr.setNodeMarkup(offset, null, { align });
+              tr.setNodeMarkup(pos, null, attrs);
+            }
           }
         }
-
         dispatch!(tr);
-
         return true;
       }
-
       return false;
     };
   }
 
-  private moveToCell(direction: CursorDirection): Command {
+  private moveToCell(direction: Direction): Command {
     return (state, dispatch) => {
-      const { selection, tr } = state;
+      const { selection, tr, schema } = state;
       const { anchor, head } = getResolvedSelection(selection);
 
       if (anchor && head) {
-        const cellsInfo = getTableCellsInfo(anchor);
-        const cellIndex = getCellIndexInfo(anchor);
-        const newTr = moveToCell(direction, tr, cellIndex, cellsInfo);
+        const map = TableOffsetMap.create(anchor)!;
+        const cellIndex = map.getCellIndex(anchor);
+        let newTr: Transaction | null;
+
+        if (canBeOutOfTable(direction, map, cellIndex)) {
+          // When there is no content before or after the table,
+          // an empty line('paragraph') is created by pressing the arrow keys.
+          newTr = addParagraphAfterTable(tr, map, schema);
+        } else {
+          newTr = moveToCell(direction, tr, cellIndex, map);
+        }
 
         if (newTr) {
           dispatch!(newTr);
-
           return true;
         }
       }
@@ -299,7 +332,7 @@ export class Table extends NodeSchema {
     };
   }
 
-  private moveInCell(direction: CursorDirection): Command {
+  private moveInCell(direction: Direction): Command {
     return (state, dispatch) => {
       const { selection, tr, doc, schema } = state;
       const { $from } = selection;
@@ -320,25 +353,25 @@ export class Table extends NodeSchema {
 
         if (para && canMoveBetweenCells(direction, [cellDepth, para.depth], $from, doc)) {
           const { anchor } = getResolvedSelection(selection);
-          const cellIndex = getCellIndexInfo(anchor);
-          const cellsInfo = getTableCellsInfo(anchor);
+          const map = TableOffsetMap.create(anchor)!;
+          const cellIndex = map.getCellIndex(anchor);
 
           let newTr;
 
-          if (canSelectTableNode(direction, cellsInfo, cellIndex, $from, para.depth)) {
+          if (canSelectTableNode(direction, map, cellIndex)) {
             // When the cursor position is at the end of the cell,
             // the table is selected when the left / right arrow keys are pressed.
             newTr = selectNode(tr, $from, cellDepth);
-          } else if (canBeOutOfTable(direction, cellsInfo, cellIndex[0])) {
+          } else if (canBeOutOfTable(direction, map, cellIndex)) {
             // When there is no content before or after the table,
             // an empty line('paragraph') is created by pressing the arrow keys.
-            if (direction === 'up') {
-              newTr = addParagraphBeforeTable(tr, cellsInfo, schema);
-            } else if (direction === 'down') {
-              newTr = addParagraphAfterTable(tr, cellsInfo, schema);
+            if (direction === Direction.UP) {
+              newTr = addParagraphBeforeTable(tr, map, schema);
+            } else if (direction === Direction.DOWN) {
+              newTr = addParagraphAfterTable(tr, map, schema);
             }
           } else {
-            newTr = moveToCell(direction, tr, cellIndex, cellsInfo);
+            newTr = moveToCell(direction, tr, cellIndex, map);
           }
 
           if (newTr) {
@@ -360,29 +393,22 @@ export class Table extends NodeSchema {
       const textSelection = selection instanceof TextSelection;
 
       if (anchor && head && !textSelection) {
-        const selectionInfo = getSelectionInfo(anchor, head);
-        const cellsInfo = getTableCellsInfo(anchor);
-        const { startColumnIndex, columnCount } = selectionInfo;
+        const map = TableOffsetMap.create(anchor)!;
+        const { startRowIdx, startColIdx, endRowIdx, endColIdx } = map.getRectOffsets(anchor, head);
 
-        const tableRowCount = cellsInfo.length;
+        for (let rowIdx = startRowIdx; rowIdx <= endRowIdx; rowIdx += 1) {
+          for (let colIdx = startColIdx; colIdx <= endColIdx; colIdx += 1) {
+            if (!map.extendedRowspan(rowIdx, colIdx) && !map.extendedColspan(rowIdx, colIdx)) {
+              const { node, pos } = map.getNodeAndPos(rowIdx, colIdx);
+              const cells = createDummyCells(1, rowIdx, schema, node.attrs);
 
-        for (let rowIndex = 0; rowIndex < tableRowCount; rowIndex += 1) {
-          const startCellOffset = cellsInfo[rowIndex][startColumnIndex];
-          const endCellOffset = cellsInfo[rowIndex][startColumnIndex + columnCount - 1];
-          const cells = createDummyCells(columnCount, rowIndex, schema);
-
-          tr.replace(
-            tr.mapping.map(startCellOffset.offset),
-            tr.mapping.map(endCellOffset.offset + endCellOffset.nodeSize),
-            new Slice(Fragment.from(cells), 0, 0)
-          );
+              tr.replaceWith(tr.mapping.map(pos), tr.mapping.map(pos + node.nodeSize), cells);
+            }
+          }
         }
-
         dispatch!(tr);
-
         return true;
       }
-
       return false;
     };
   }
@@ -391,33 +417,33 @@ export class Table extends NodeSchema {
     return {
       addTable: this.addTable(),
       removeTable: this.removeTable(),
-      addColumnToRight: this.addColumn(1),
-      addColumnToLeft: this.addColumn(-1),
+      addColumnToLeft: this.addColumn(Direction.LEFT),
+      addColumnToRight: this.addColumn(Direction.RIGHT),
       removeColumn: this.removeColumn(),
-      addRowToDown: this.addRow(1),
-      addRowToUp: this.addRow(-1),
+      addRowToUp: this.addRow(Direction.UP),
+      addRowToDown: this.addRow(Direction.DOWN),
       removeRow: this.removeRow(),
       alignColumn: this.alignColumn(),
     };
   }
 
   keymaps() {
-    const deleteCellsCommand = this.deleteCells();
+    const deleteCellContent = this.deleteCells();
 
     return {
-      Tab: this.moveToCell('right'),
-      'Shift-Tab': this.moveToCell('left'),
+      Tab: this.moveToCell(Direction.RIGHT),
+      'Shift-Tab': this.moveToCell(Direction.LEFT),
 
-      ArrowUp: this.moveInCell('up'),
-      ArrowDown: this.moveInCell('down'),
+      ArrowUp: this.moveInCell(Direction.UP),
+      ArrowDown: this.moveInCell(Direction.DOWN),
 
-      ArrowLeft: this.moveInCell('left'),
-      ArrowRight: this.moveInCell('right'),
+      ArrowLeft: this.moveInCell(Direction.LEFT),
+      ArrowRight: this.moveInCell(Direction.RIGHT),
 
-      Backspace: deleteCellsCommand,
-      'Mod-Backspace': deleteCellsCommand,
-      Delete: deleteCellsCommand,
-      'Mod-Delete': deleteCellsCommand,
+      Backspace: deleteCellContent,
+      'Mod-Backspace': deleteCellContent,
+      Delete: deleteCellContent,
+      'Mod-Delete': deleteCellContent,
     };
   }
 }

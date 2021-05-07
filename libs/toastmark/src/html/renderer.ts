@@ -62,11 +62,14 @@ export class Renderer implements HTMLRenderer {
     if (this.options.convertors) {
       const customConvertors = this.options.convertors;
       const nodeTypes = Object.keys(customConvertors) as MdNodeType[];
+      const defaultConvertors = { ...baseConvertors, ...gfmConvertors };
       nodeTypes.forEach((nodeType) => {
         const orgConvertor = convertors[nodeType];
         const convertor = customConvertors[nodeType]!;
         const convertorType =
-          Object.keys(baseConvertors).indexOf(nodeType) === -1 ? nodeType.toLowerCase() : nodeType;
+          Object.keys(defaultConvertors).indexOf(nodeType) === -1
+            ? nodeType.toLowerCase()
+            : nodeType;
 
         if (orgConvertor) {
           convertors[convertorType] = (node, context) => {

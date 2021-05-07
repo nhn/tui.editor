@@ -3,10 +3,10 @@ import { oneLineTrim } from 'common-tags';
 import WysiwygEditor from '@/wysiwyg/wwEditor';
 import EventEmitter from '@/event/eventEmitter';
 import CommandManager from '@/commands/commandManager';
-import CellSelection from '@/wysiwyg/plugins/tableSelection/cellSelection';
+import CellSelection from '@/wysiwyg/plugins/selection/cellSelection';
 
-import { getTableCellsInfo } from '@/wysiwyg/helper/table';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
+import { TableOffsetMap } from '@/wysiwyg/helper/tableOffsetMap';
 
 describe('wysiwyg table commands', () => {
   let wwe: WysiwygEditor, em: EventEmitter, cmd: CommandManager;
@@ -23,15 +23,15 @@ describe('wysiwyg table commands', () => {
   }
 
   function setCellSelection(
-    [startRowIndex, startColumnIndex]: number[],
-    [endRowIndex, endColumnIndex]: number[],
+    [startRowIdx, startColIdx]: number[],
+    [endRowIdx, endColIdx]: number[],
     cellSelection = true
   ) {
     const doc = wwe.getModel();
-    const cellsInfo = getTableCellsInfo(doc.resolve(1));
+    const map = TableOffsetMap.create(doc.resolve(1))!;
 
-    const startCellOffset = cellsInfo[startRowIndex][startColumnIndex].offset;
-    const endCellOffset = cellsInfo[endRowIndex][endColumnIndex].offset;
+    const startCellOffset = map.getCellInfo(startRowIdx, startColIdx).offset;
+    const endCellOffset = map.getCellInfo(endRowIdx, endColIdx).offset;
 
     if (startCellOffset === endCellOffset && !cellSelection) {
       const from = startCellOffset + 1;

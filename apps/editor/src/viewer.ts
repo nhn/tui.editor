@@ -72,7 +72,7 @@ class ToastUIEditorViewer {
     this.eventEmitter = new EventEmitter();
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
-    const { toHTMLRenderers } =
+    const { toHTMLRenderers, markdownParsers } =
       getPluginInfo(this.options.plugins, this.eventEmitter, this.options.usageStatistics) || {};
     const {
       customHTMLRenderer,
@@ -108,6 +108,7 @@ class ToastUIEditorViewer {
       referenceDefinition,
       disallowDeepHeading: true,
       frontMatter,
+      customParser: markdownParsers,
     });
     this.preview = new MarkdownPreview(this.eventEmitter, {
       ...rendererOptions,

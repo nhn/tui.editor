@@ -9,9 +9,8 @@ export class TableRow extends NodeSchema {
 
   get defaultSchema() {
     return {
-      content: '(tableHeadCell | tableBodyCell)+',
+      content: '(tableHeadCell | tableBodyCell)*',
       attrs: {
-        columns: { default: 1 },
         rawHTML: { default: null },
       },
       parseDOM: [
@@ -25,7 +24,7 @@ export class TableRow extends NodeSchema {
               return false;
             }
 
-            return { columns, ...(rawHTML && { rawHTML }) };
+            return { ...(rawHTML && { rawHTML }) };
           },
         },
       ],
