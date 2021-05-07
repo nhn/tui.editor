@@ -15,6 +15,21 @@ function getColspanEndIdx(rowIdx: number, colIdx: number, map: TableOffsetMap) {
   return endColIdx;
 }
 
+function judgeInsertToNextRow(
+  map: TableOffsetMap,
+  mappedPos: number,
+  rowIdx: number,
+  colIdx: number
+) {
+  const { totalColumnCount } = map;
+
+  return (
+    map.extendedRowspan(rowIdx, colIdx) &&
+    map.extendedRowspan(rowIdx, totalColumnCount - 1) &&
+    mappedPos === map.posAt(rowIdx, totalColumnCount - 1)
+  );
+}
+
 export function createSplitCellsCommand(context: PluginContext, OffsetMap: TableOffsetMapFactory) {
   const splitCells: CommandFn = (_, state, dispatch, view) => {
     const { selection, tr } = state;
@@ -32,8 +47,8 @@ export function createSplitCellsCommand(context: PluginContext, OffsetMap: Table
 
     for (let rowIdx = startRowIdx; rowIdx <= endRowIdx; rowIdx += 1) {
       for (let colIdx = startColIdx; colIdx <= endColIdx; colIdx += 1) {
-        // insert empty cell in spanning cell position
         if (map.extendedRowspan(rowIdx, colIdx) || map.extendedColspan(rowIdx, colIdx)) {
+          // insert empty cell in spanning cell position
           const { node } = map.getNodeAndPos(rowIdx, colIdx);
           const colspanEndIdx = getColspanEndIdx(rowIdx, colIdx, map);
           const mappedPos = map.posAt(rowIdx, colspanEndIdx);
@@ -42,24 +57,22 @@ export function createSplitCellsCommand(context: PluginContext, OffsetMap: Table
 
           // add 2(tr end, open tag length) to insert the cell on the next row
           // in case that all next cells are spanning on the current row
-          if (
-            map.extendedRowspan(rowIdx, colspanEndIdx) &&
-            map.extendedRowspan(rowIdx, map.totalColumnCount - 1) &&
-            mappedPos === map.posAt(rowIdx, map.totalColumnCount - 1)
-          ) {
+          if (judgeInsertToNextRow(map, mappedPos, rowIdx, colspanEndIdx)) {
             pos += 2;
           }
 
+          // get the last cell position for cell selection after splitting cells
           lastCellPos = Math.max(pos, lastCellPos);
 
           tr.insert(
             pos,
             node.type.createAndFill(setAttrs(node, { colspan: null, rowspan: null }))!
           );
-          // remove colspan, rowspan of the root spanning cell
         } else {
+          // remove colspan, rowspan of the root spanning cell
           const { node, pos } = map.getNodeAndPos(rowIdx, colIdx);
 
+          // get the last cell position for cell selection after splitting cells
           lastCellPos = Math.max(tr.mapping.map(pos), lastCellPos);
 
           tr.setNodeMarkup(

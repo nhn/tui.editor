@@ -1,3 +1,4 @@
+// merge cell example1
 const content1 = [
   '| @cols=2:mergedHead1 | @cols=3:mergedHead2 |',
   '| --- | --- | --- | --- | --- |',
@@ -9,6 +10,7 @@ const content1 = [
   '',
 ].join('\n');
 
+// merge cell example2
 const content2 = [
   '| @cols=2:merged | @cols=5:merged |',
   '| --- | --- | --- | --- | --- | --- | --- |',
@@ -19,6 +21,7 @@ const content2 = [
   '|  |  |  | table |',
 ].join('\n');
 
+// normal cell example
 const content3 = [
   '| a | b| c | d |',
   '| --- | --- | --- | --- |',

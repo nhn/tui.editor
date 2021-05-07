@@ -41,44 +41,47 @@ export function createAddRowCommand(
     const { selection, schema, tr } = state;
     const { anchor, head } = getResolvedSelection(selection, context);
 
-    if (anchor && head) {
-      const map = OffsetMap.create(anchor)!;
-      const { totalColumnCount } = map;
-      const selectionInfo = map.getRectOffsets(anchor, head);
-      const { rowCount } = getRowAndColumnCount(selectionInfo);
-      const { targetRowIdx, judgeToExtendRowspan, insertColIdx, nodeSize } = getTargetRowInfo(
-        direction,
-        map,
-        selectionInfo
-      );
-      const selectedThead = targetRowIdx === 0;
+    if (!anchor || !head) {
+      return false;
+    }
 
-      if (!selectedThead) {
-        const rows: Node[] = [];
+    const map = OffsetMap.create(anchor)!;
+    const { totalColumnCount } = map;
+    const selectionInfo = map.getRectOffsets(anchor, head);
+    const { rowCount } = getRowAndColumnCount(selectionInfo);
+    const { targetRowIdx, judgeToExtendRowspan, insertColIdx, nodeSize } = getTargetRowInfo(
+      direction,
+      map,
+      selectionInfo
+    );
+    const selectedThead = targetRowIdx === 0;
 
-        const from = tr.mapping.map(map.posAt(targetRowIdx, insertColIdx)) + nodeSize;
-        let cells: Node[] = [];
+    if (selectedThead) {
+      return false;
+    }
 
-        for (let colIdx = 0; colIdx < totalColumnCount; colIdx += 1) {
-          // increase rowspan count inside the row-spanning cell
-          if (judgeToExtendRowspan(colIdx)) {
-            const { node, pos } = map.getRowspanStartInfo(targetRowIdx, colIdx)!;
-            const attrs = setAttrs(node, { rowspan: node.attrs.rowspan + rowCount });
+    const rows: Node[] = [];
 
-            tr.setNodeMarkup(tr.mapping.map(pos), null, attrs);
-          } else {
-            cells = cells.concat(createDummyCells(1, targetRowIdx, schema));
-          }
-        }
+    const from = tr.mapping.map(map.posAt(targetRowIdx, insertColIdx)) + nodeSize;
+    let cells: Node[] = [];
 
-        for (let i = 0; i < rowCount; i += 1) {
-          rows.push(schema.nodes.tableRow.create(null, cells));
-        }
-        dispatch!(tr.insert(from, rows));
-        return true;
+    for (let colIdx = 0; colIdx < totalColumnCount; colIdx += 1) {
+      // increase rowspan count inside the row-spanning cell
+      if (judgeToExtendRowspan(colIdx)) {
+        const { node, pos } = map.getRowspanStartInfo(targetRowIdx, colIdx)!;
+        const attrs = setAttrs(node, { rowspan: node.attrs.rowspan + rowCount });
+
+        tr.setNodeMarkup(tr.mapping.map(pos), null, attrs);
+      } else {
+        cells = cells.concat(createDummyCells(1, targetRowIdx, schema));
       }
     }
-    return false;
+
+    for (let i = 0; i < rowCount; i += 1) {
+      rows.push(schema.nodes.tableRow.create(null, cells));
+    }
+    dispatch!(tr.insert(from, rows));
+    return true;
   };
 
   return addRow;

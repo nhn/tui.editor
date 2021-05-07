@@ -5,9 +5,9 @@ interface Attrs {
   colspan?: number;
   rowspan?: number;
 }
-type SpanInfo = [spanCount: number, content: string];
+type CellSpanInfo = [spanCount: number, content: string];
 
-function getSpanInfo(content: string, type: SpanType, oppositeType: SpanType): SpanInfo {
+function getSpanInfo(content: string, type: SpanType, oppositeType: SpanType): CellSpanInfo {
   const reSpan = new RegExp(`^((?:${oppositeType}=[0-9]+:)?)${type}=([0-9]+):(.*)`);
   const parsed = reSpan.exec(content);
   let spanCount = 1;

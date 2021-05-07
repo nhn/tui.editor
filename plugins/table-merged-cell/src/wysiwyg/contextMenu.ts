@@ -47,6 +47,7 @@ export function addMergedTableContextMenu(context: PluginContext) {
     const mergedTableContextMenu = createMergedTableContextMenu(context, tableCell);
 
     if (mergedTableContextMenu.length) {
+      // add merged table context menu on third group
       menuGroups.splice(2, 0, mergedTableContextMenu);
     }
   });

@@ -28,7 +28,7 @@ function setCellSelection(startPos: number, endPos: number) {
   );
 }
 
-describe('mergeCells command', () => {
+describe('splitCells command', () => {
   it('should split cells included spanning cell', () => {
     setCellSelection(37, 131); // select [1, 0] cell(mergedCell1-1 text) to [3, 2](cell3-1 text)
     editor.exec('splitCells');
