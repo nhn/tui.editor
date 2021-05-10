@@ -416,17 +416,17 @@ table.ProseMirror-selectednode {
   background-color: #e5e9ea;
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDI1LjIuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPgo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IuugiOydtOyWtF8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiCgkgeT0iMHB4IiB2aWV3Qm94PSIwIDAgMzAgMzAiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDMwIDMwOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+Cgkuc3Qwe2ZpbGwtcnVsZTpldmVub2RkO2NsaXAtcnVsZTpldmVub2RkO2ZpbGw6IzU1NTU1NTt9Cjwvc3R5bGU+CjxnPgoJPGc+CgkJPGc+CgkJCTxnPgoJCQkJPGc+CgkJCQkJPHBhdGggY2xhc3M9InN0MCIgZD0iTTE1LjUsMTIuNWwyLDJMMTIsMjBoLTJ2LTJMMTUuNSwxMi41eiBNMTgsMTBsMiwybC0xLjUsMS41bC0yLTJMMTgsMTB6Ii8+CgkJCQk8L2c+CgkJCTwvZz4KCQk8L2c+Cgk8L2c+CjwvZz4KPC9zdmc+Cg==');
   background-repeat: no-repeat;
-  background-position: right center;
-  background-size: 30px;
+  background-position: right;
   border-radius: 2px;
+  background-size: 30px 30px;
   cursor: pointer;
 }
 
 .toastui-editor-ww-code-block-language {
-  position: absolute;
+  position: fixed;
   display: inline-block;
   width: 100px;
-  height: 26px;
+  height: 27px;
   right: 35px;
   border: 1px solid #ccc;
   border-radius: 2px;
@@ -476,31 +476,4 @@ table.ProseMirror-selectednode {
   left: -1000px;
   top: -1000px;
   z-index: -1;
-}
-
-@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
-  /* IE10+11 */
-  .toastui-editor-ww-container .toastui-editor-contents li {
-    vertical-align: middle;
-  }
-
-  .toastui-editor-ww-container .toastui-editor-contents ul > li::before,
-  .toastui-editor-ww-container .toastui-editor-contents ol > li::before,
-  .toastui-editor-ww-container .toastui-editor-contents .task-list-item::before {
-    position: static;
-    vertical-align: middle;
-  }
-
-  .toastui-editor-ww-container .toastui-editor-contents ul > li::before {
-    margin-top: -3px;
-    margin-right: 12px;
-  }
-
-  .toastui-editor-ww-container .toastui-editor-contents ol > li::before {
-    margin-right: 6px;
-  }
-
-  .toastui-editor-ww-container .toastui-editor-contents .task-list-item {
-    padding-left: 2px;
-  }
 }

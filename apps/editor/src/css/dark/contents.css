@@ -48,6 +48,15 @@
   color: #fff;
 }
 
+.toastui-editor-dark .toastui-editor-ww-code-block-language {
+  border-color: #303238;
+  background-color: #121212;
+}
+
+.toastui-editor-dark .toastui-editor-ww-code-block-language input {
+  color: #fff;
+}
+
 .toastui-editor-dark .toastui-editor-contents .toastui-editor-ww-code-block:after {
   background-color: #232428;
   border: 1px solid #393b42;
