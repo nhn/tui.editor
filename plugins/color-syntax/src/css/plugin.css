@@ -52,7 +52,6 @@
   border: 1px solid #e1e3e9;
   border-radius: 2px;
   float: left;
-  outline-color: #00a9ff;
 }
 
 .toastui-editor-popup-color button {
@@ -101,7 +100,34 @@
 }
 
 .toastui-editor-toolbar-icons.color {
-  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIxMTYiIHZpZXdCb3g9IjAgMCAyNCAxMTYiPgogICAgPGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgICA8Zz4KICAgICAgICAgICAgPGc+CiAgICAgICAgICAgICAgICA8Zz4KICAgICAgICAgICAgICAgICAgICA8ZyB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtNjAwIC0xOTIpIHRyYW5zbGF0ZSg2MDAgMTkyKSI+CiAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0wIDBIMjRWMjRIMHoiLz4KICAgICAgICAgICAgICAgICAgICAgICAgPGc+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8cGF0aCBmaWxsPSIjNTU1IiBkPSJNMiA4LjI1TDEwIDguMjUgMTAgOS43NSAyIDkuNzV6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2IDQuNzUpIi8+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8cGF0aCBzdHJva2U9IiM1NTUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0wIDE0LjVMNiAwIDEyIDE0LjUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDYgNC43NSkiLz4KICAgICAgICAgICAgICAgICAgICAgICAgPC9nPgogICAgICAgICAgICAgICAgICAgICAgICA8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiB4PSIxOCIgeT0iNCIgZmlsbD0iI0ZBMjgyOCIgcng9IjIuNSIvPgogICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDxnPgogICAgICAgICAgICAgICAgICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC02MDAgLTE5MikgdHJhbnNsYXRlKDYwMCAxOTIpIHRyYW5zbGF0ZSgwIDUyKSI+CiAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0wIDBIMjRWMjRIMHoiLz4KICAgICAgICAgICAgICAgICAgICAgICAgPGc+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8cGF0aCBmaWxsPSIjRUVFIiBkPSJNMiA4LjI1TDEwIDguMjUgMTAgOS43NSAyIDkuNzV6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2IDQuNzUpIi8+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8cGF0aCBzdHJva2U9IiNFRUUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0wIDE0LjVMNiAwIDEyIDE0LjUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDYgNC43NSkiLz4KICAgICAgICAgICAgICAgICAgICAgICAgPC9nPgogICAgICAgICAgICAgICAgICAgICAgICA8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiB4PSIxOCIgeT0iNCIgZmlsbD0iI0ZGNDg0OCIgcng9IjIuNSIvPgogICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDxnPgogICAgICAgICAgICAgICAgICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC02MDAgLTE5MikgdHJhbnNsYXRlKDYwMCAxOTIpIHRyYW5zbGF0ZSgwIDI2KSI+CiAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0wIDBIMjRWMjRIMHoiLz4KICAgICAgICAgICAgICAgICAgICAgICAgPGc+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8cGF0aCBmaWxsPSIjMDBBOUZGIiBkPSJNMiA4LjI1TDEwIDguMjUgMTAgOS43NSAyIDkuNzV6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2IDQuNzUpIi8+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8cGF0aCBzdHJva2U9IiMwMEE5RkYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0wIDE0LjVMNiAwIDEyIDE0LjUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDYgNC43NSkiLz4KICAgICAgICAgICAgICAgICAgICAgICAgPC9nPgogICAgICAgICAgICAgICAgICAgICAgICA8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiB4PSIxOCIgeT0iNCIgZmlsbD0iI0ZBMjgyOCIgcng9IjIuNSIvPgogICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDxnPgogICAgICAgICAgICAgICAgICAgIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC02MDAgLTE5MikgdHJhbnNsYXRlKDYwMCAxOTIpIHRyYW5zbGF0ZSgwIDc4KSI+CiAgICAgICAgICAgICAgICAgICAgICAgIDxwYXRoIGQ9Ik0wIDBIMjRWMjRIMHoiLz4KICAgICAgICAgICAgICAgICAgICAgICAgPGc+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8cGF0aCBmaWxsPSIjNjdDQ0ZGIiBkPSJNMiA4LjI1TDEwIDguMjUgMTAgOS43NSAyIDkuNzV6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSg2IDQuNzUpIi8+CiAgICAgICAgICAgICAgICAgICAgICAgICAgICA8cGF0aCBzdHJva2U9IiM2N0NDRkYiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgc3Ryb2tlLXdpZHRoPSIxLjUiIGQ9Ik0wIDE0LjVMNiAwIDEyIDE0LjUiIHRyYW5zZm9ybT0idHJhbnNsYXRlKDYgNC43NSkiLz4KICAgICAgICAgICAgICAgICAgICAgICAgPC9nPgogICAgICAgICAgICAgICAgICAgICAgICA8cmVjdCB3aWR0aD0iNSIgaGVpZ2h0PSI1IiB4PSIxOCIgeT0iNCIgZmlsbD0iI0ZGNDg0OCIgcng9IjIuNSIvPgogICAgICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDwvZz4KICAgICAgICAgICAgICAgIDxnIGZpbGw9IiNGRkYiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLW9wYWNpdHk9Ii4yIj4KICAgICAgICAgICAgICAgICAgICA8cGF0aCBkPSJNNiAuNWMxLjUxOSAwIDIuODk0LjYxNiAzLjg5IDEuNjEuOTk0Ljk5NiAxLjYxIDIuMzcxIDEuNjEgMy44OSAwIDEuNTE5LS42MTYgMi44OTQtMS42MSAzLjg5LS45OTYuOTk0LTIuMzcxIDEuNjEtMy44OSAxLjYxLTEuNTE5IDAtMi44OTQtLjYxNi0zLjg5LTEuNjFDMS4xMTcgOC44OTMuNSA3LjUxOC41IDZjMC0xLjUxOS42MTYtMi44OTQgMS42MS0zLjg5QzMuMTA3IDEuMTE3IDQuNDgyLjUgNiAuNXpNNiAzYy0uODI4IDAtMS41NzguMzM2LTIuMTIxLjg3OUMzLjMzNiA0LjQyMiAzIDUuMTcyIDMgNmMwIC44MjguMzM2IDEuNTc4Ljg3OSAyLjEyMUM0LjQyMiA4LjY2NCA1LjE3MiA5IDYgOWMuODI4IDAgMS41NzgtLjMzNiAyLjEyMS0uODc5QzguNjY0IDcuNTc4IDkgNi44MjggOSA2YzAtLjgyOC0uMzM2LTEuNTc4LS44NzktMi4xMjFDNy41NzggMy4zMzYgNi44MjggMyA2IDN6IiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtNjAwIC0xOTIpIHRyYW5zbGF0ZSg2MDAgMTkyKSB0cmFuc2xhdGUoMCAxMDQpIi8+CiAgICAgICAgICAgICAgICA8L2c+CiAgICAgICAgICAgIDwvZz4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPgo=');
+  background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='116' viewBox='0 0 24 116'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg%3E%3Cg%3E%3Cg%3E%3Cg transform='translate(-600 -192) translate(600 192)'%3E%3Cpath d='M0 0H24V24H0z'/%3E%3Cg%3E%3Cpath fill='%23555' d='M2 8.25L10 8.25 10 9.75 2 9.75z' transform='translate(6 4.75)'/%3E%3Cpath stroke='%23555' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M0 14.5L6 0 12 14.5' transform='translate(6 4.75)'/%3E%3C/g%3E%3Crect width='5' height='5' x='18' y='4' fill='%23FA2828' rx='2.5'/%3E%3C/g%3E%3C/g%3E%3Cg%3E%3Cg transform='translate(-600 -192) translate(600 192) translate(0 52)'%3E%3Cpath d='M0 0H24V24H0z'/%3E%3Cg%3E%3Cpath fill='%23EEE' d='M2 8.25L10 8.25 10 9.75 2 9.75z' transform='translate(6 4.75)'/%3E%3Cpath stroke='%23EEE' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M0 14.5L6 0 12 14.5' transform='translate(6 4.75)'/%3E%3C/g%3E%3Crect width='5' height='5' x='18' y='4' fill='%23FF4848' rx='2.5'/%3E%3C/g%3E%3C/g%3E%3Cg%3E%3Cg transform='translate(-600 -192) translate(600 192) translate(0 26)'%3E%3Cpath d='M0 0H24V24H0z'/%3E%3Cg%3E%3Cpath fill='%2300A9FF' d='M2 8.25L10 8.25 10 9.75 2 9.75z' transform='translate(6 4.75)'/%3E%3Cpath stroke='%2300A9FF' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M0 14.5L6 0 12 14.5' transform='translate(6 4.75)'/%3E%3C/g%3E%3Crect width='5' height='5' x='18' y='4' fill='%23FA2828' rx='2.5'/%3E%3C/g%3E%3C/g%3E%3Cg%3E%3Cg transform='translate(-600 -192) translate(600 192) translate(0 78)'%3E%3Cpath d='M0 0H24V24H0z'/%3E%3Cg%3E%3Cpath fill='%2367CCFF' d='M2 8.25L10 8.25 10 9.75 2 9.75z' transform='translate(6 4.75)'/%3E%3Cpath stroke='%2367CCFF' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M0 14.5L6 0 12 14.5' transform='translate(6 4.75)'/%3E%3C/g%3E%3Crect width='5' height='5' x='18' y='4' fill='%23FF4848' rx='2.5'/%3E%3C/g%3E%3C/g%3E%3Cg fill='%23FFF' stroke='%23000' stroke-opacity='.2'%3E%3Cpath d='M6 .5c1.519 0 2.894.616 3.89 1.61.994.996 1.61 2.371 1.61 3.89 0 1.519-.616 2.894-1.61 3.89-.996.994-2.371 1.61-3.89 1.61-1.519 0-2.894-.616-3.89-1.61C1.117 8.893.5 7.518.5 6c0-1.519.616-2.894 1.61-3.89C3.107 1.117 4.482.5 6 .5zM6 3c-.828 0-1.578.336-2.121.879C3.336 4.422 3 5.172 3 6c0 .828.336 1.578.879 2.121C4.422 8.664 5.172 9 6 9c.828 0 1.578-.336 2.121-.879C8.664 7.578 9 6.828 9 6c0-.828-.336-1.578-.879-2.121C7.578 3.336 6.828 3 6 3z' transform='translate(-600 -192) translate(600 192) translate(0 104)'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");
   background-size: 23px 112px;
   background-position: 3px 3px;
+}
+
+.toastui-editor-dark .toastui-editor-toolbar-icons.color {
+  background-position-y: -47px;
+}
+
+.toastui-editor-dark .toastui-editor-popup-body input[type='text'].tui-colorpicker-palette-hex {
+  border-color: #303238;
+}
+
+.toastui-editor-dark .toastui-editor-popup-color button {
+  color: #eee;
+  border-color: #303238;
+  background-color: #232428;
+}
+
+.toastui-editor-dark .toastui-editor-popup-color button:hover {
+  border-color: #494c56;
+}
+
+.toastui-editor-dark .toastui-editor-popup-color .tui-colorpicker-container li .tui-colorpicker-palette-button {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.toastui-editor-dark .toastui-editor-popup-color .tui-colorpicker-container .tui-colorpicker-svg-slider,
+.toastui-editor-dark .toastui-editor-popup-color .tui-colorpicker-slider-container .tui-colorpicker-svg-huebar {
+  border-color: rgba(255, 255, 255, 0.05);
 }
