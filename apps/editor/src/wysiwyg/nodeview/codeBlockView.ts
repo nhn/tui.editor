@@ -101,13 +101,13 @@ export class CodeBlockView implements NodeView {
     input.value = this.node.attrs.language;
 
     wrapper.appendChild(input);
-    document.body.appendChild(wrapper);
+    document.querySelector<HTMLElement>('.toastui-editor.ww-mode')!.appendChild(wrapper);
 
     const wrpperWidth = Math.max(wrapper.clientWidth, width);
 
     css(wrapper, {
       top: `${top + 10}px`,
-      left: `${right - wrpperWidth - 12}px`,
+      left: `${right - wrpperWidth - 10}px`,
       width: `${wrpperWidth}px`,
     });
 
