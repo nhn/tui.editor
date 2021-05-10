@@ -28,11 +28,11 @@
   background-color: #303238;
 }
 
-.toastui-editor-dark.toastui-editor-tooltip {
+.toastui-editor-dark .toastui-editor-tooltip {
   background-color: #535662;
 }
 
-.toastui-editor-dark.toastui-editor-tooltip .arrow {
+.toastui-editor-dark .toastui-editor-tooltip .arrow {
   background-color: #535662;
 }
 

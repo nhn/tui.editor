@@ -1,4 +1,5 @@
 import isUndefined from 'tui-code-snippet/type/isUndefined';
+import isNull from 'tui-code-snippet/type/isNull';
 import sendHostname from 'tui-code-snippet/request/sendHostname';
 
 import { LinkAttributeNames, LinkAttributes } from '@t/editor';
@@ -63,11 +64,15 @@ export function quote(text: string) {
   return result[0] + text + result[1];
 }
 
+function isNil(value: unknown): value is null | undefined {
+  return isNull(value) || isUndefined(value);
+}
+
 export function shallowEqual(o1: Record<string, any>, o2: Record<string, any>) {
   if (o1 === null && o1 === o2) {
     return true;
   }
-  if (typeof o1 !== 'object' || typeof o2 !== 'object') {
+  if (typeof o1 !== 'object' || typeof o2 !== 'object' || isNil(o1) || isNil(o2)) {
     return o1 === o2;
   }
   for (const key in o1) {

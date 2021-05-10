@@ -245,6 +245,7 @@
   font-size: 13px;
   background: #f7f9fc;
   border-bottom: 1px solid #ebedf2;
+  border-top-left-radius: 3px;
 }
 
 .toastui-editor-md-tab-container .toastui-editor-tabs {
@@ -286,13 +287,13 @@
   background-color: #f7f9fc;
   border-bottom: 1px solid #ebedf2;
   overflow: hidden;
+  border-radius: 3px 3px 0 0;
 }
 
 .toastui-editor-toolbar {
   height: 46px;
   box-sizing: border-box;
   position: relative;
-  border-radius: 3px 3px 0 0;
 }
 
 .toastui-editor-toolbar-divider {
@@ -753,7 +754,7 @@
   display: inline-block;
   width: 10px;
   height: 10px;
-  /* background-color: #444; */
+  background-color: #444;
   -webkit-transform: rotate(45deg);
   -moz-transform: rotate(45deg);
   -ms-transform: rotate(45deg);
