@@ -1,3 +1,8 @@
+/* prevent to create draggable box in IE with prism */
+pre[class*="language-"] {
+  overflow: visible;
+}
+
 .toastui-editor-ww-code-block-highlighting {
   position: relative;
 }
