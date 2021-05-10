@@ -51,7 +51,7 @@
 .toastui-editor-dark .toastui-editor-contents .toastui-editor-ww-code-block:after {
   background-color: #232428;
   border: 1px solid #393b42;
-  color: #aaa;
+  color: #eee;
   background-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23fff'%3E%3Cg%3E%3Cg%3E%3Cg%3E%3Cpath d='M5.5 2.5l2 2L2 10H0V8l5.5-5.5zM8 0l2 2-1.5 1.5-2-2L8 0z' transform='translate(-940 -712) translate(60 647) translate(875 60) translate(5 5)'/%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
