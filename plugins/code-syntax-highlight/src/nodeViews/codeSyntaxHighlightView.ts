@@ -4,7 +4,7 @@ import type { Node as ProsemirrorNode } from 'prosemirror-model';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 
-import { isPositionInBox, cls } from '@/utils/dom';
+import { cls } from '@/utils/dom';
 import { LanguageSelectBox } from '@/nodeViews/languageSelectBox';
 import type { Emitter, ToDOMAdaptor } from '@toast-ui/editor';
 
@@ -95,9 +95,9 @@ class CodeSyntaxHighlightView implements NodeView {
   private onClickEditingButton = (ev: MouseEvent) => {
     const target = ev.target as HTMLElement;
     const style = getComputedStyle(target, ':after');
-    const { offsetX, offsetY } = ev;
 
-    if (isPositionInBox(style, offsetX, offsetY) && isFunction(this.getPos)) {
+    // judge to click pseudo element with background image for IE11
+    if (style.backgroundImage !== 'none' && isFunction(this.getPos)) {
       const pos = this.view.coordsAtPos(this.getPos());
 
       this.openLanguageSelectBox(pos);
