@@ -79,6 +79,7 @@ import { createHTMLSchemaMap } from './wysiwyg/nodes/html';
  *     @param {boolean} [options.previewHighlight=false] - whether highlight preview area
  *     @param {boolean} [options.frontMatter=false] - whether use the front matter
  *     @param {Array.<object>} [options.widgetRules=[]] - The rules for replacing the text with widget node
+ *     @param {string} [options.theme] - The theme to style the editor with. The default is included in toastui-editor.css.
  */
 class ToastUIEditor {
   private initialHtml: string;
