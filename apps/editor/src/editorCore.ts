@@ -274,12 +274,15 @@ class ToastUIEditor {
       sendHostName();
     }
 
-    this.getCurrentModeEditor().focus();
     this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
     this.addInitEvent();
     this.addInitCommand(mdCommands, wwCommands);
 
     this.eventEmitter.emit('load', this);
+    // prevent the error for IE11
+    setTimeout(() => {
+      this.focus();
+    });
   }
 
   private addInitEvent() {
