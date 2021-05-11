@@ -59,6 +59,7 @@ export default class MdEditor extends EditorBase {
     const { toastMark, useCommandShortcut = true, mdPlugins = [] } = options;
 
     this.editorType = 'markdown';
+    this.el.classList.add('md-mode');
     this.toastMark = toastMark;
     this.extraPlugins = mdPlugins;
     this.specs = this.createSpecs();

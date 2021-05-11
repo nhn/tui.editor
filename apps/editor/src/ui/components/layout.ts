@@ -19,6 +19,7 @@ interface Props {
   previewStyle: PreviewStyle;
   editorType: EditorType;
   toolbarItems: ToolbarItem[];
+  theme: string;
 }
 
 interface State {
@@ -26,7 +27,7 @@ interface State {
   previewStyle: PreviewStyle;
   hide: boolean;
 }
-// @TODO: arrange class prefix
+
 export class Layout extends Component<Props, State> {
   private toolbar!: Toolbar;
 
@@ -59,15 +60,16 @@ export class Layout extends Component<Props, State> {
   }
 
   render() {
-    const { eventEmitter, hideModeSwitch, toolbarItems } = this.props;
+    const { eventEmitter, hideModeSwitch, toolbarItems, theme } = this.props;
     const { hide, previewStyle, editorType } = this.state;
     const displayClassName = hide ? ' hidden' : '';
     const editorTypeClassName = editorType === 'markdown' ? cls('md-mode') : cls('ww-mode');
     const previewClassName = `${cls('md')}-${previewStyle}-style`;
+    const themeClassName = theme === 'light' ? '' : `${cls(theme)} `;
 
     return html`
       <div
-        class="${cls('defaultUI')}${displayClassName}"
+        class="${themeClassName}${cls('defaultUI')}${displayClassName}"
         ref=${(el: HTMLElement) => (this.refs.el = el)}
       >
         <${Toolbar}

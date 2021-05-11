@@ -26,6 +26,7 @@ class Editor extends EditorCore {
           toolbarItems=${this.options.toolbarItems}
           previewStyle=${this.options.previewStyle}
           editorType=${this.options.initialEditType}
+          theme=${this.options.theme}
         />
       ` as VNode
     );

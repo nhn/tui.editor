@@ -64,7 +64,7 @@
 }
 
 .toastui-editor-md-block-quote .toastui-editor-md-marked-text,
-.toastui-editor-md-list-item.toastui-editor-md-meta {
+.toastui-editor-md-list-item .toastui-editor-md-meta {
   color: #555;
 }
 

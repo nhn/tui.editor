@@ -12,7 +12,14 @@ import {
 } from '@t/ui';
 import html from '@/ui/vdom/template';
 import { Component } from '@/ui/vdom/component';
-import { createElementWith, getOuterWidth, closest, getTotalOffset, cls } from '@/utils/dom';
+import {
+  createElementWith,
+  getOuterWidth,
+  closest,
+  getTotalOffset,
+  cls,
+  removeNode,
+} from '@/utils/dom';
 import {
   createToolbarItemInfo,
   toggleScrollSync,
@@ -54,7 +61,7 @@ export class Toolbar extends Component<Props, State> {
 
   private itemWidthMap: ItemWidthMap;
 
-  private tooltipEl!: HTMLElement;
+  private tooltipRef!: { current: HTMLElement | null };
 
   private initialItems: ToolbarGroupInfo[];
 
@@ -76,8 +83,8 @@ export class Toolbar extends Component<Props, State> {
       popupInfo: {} as PopupInfo,
       activeTab: 'write',
     };
+    this.tooltipRef = { current: null };
     this.addEvent();
-    this.appendTooltipToBody();
   }
 
   insertToolbarItem(indexList: IndexList, item: string | ToolbarItemOptions) {
@@ -117,13 +124,16 @@ export class Toolbar extends Component<Props, State> {
     window.addEventListener('resize', this.handleResize);
   }
 
-  private appendTooltipToBody() {
+  private appendTooltipToRoot() {
     const tooltip = `<div class="${cls('tooltip')}" style="display:none">
         <div class="arrow"></div>
         <span class="text"></span>
       </div>`;
 
-    this.tooltipEl = createElementWith(tooltip, document.body) as HTMLElement;
+    this.tooltipRef.current = createElementWith(
+      tooltip,
+      document.querySelector<HTMLElement>(`.${cls('defaultUI-toolbar')}`)!
+    ) as HTMLElement;
   }
 
   private hiddenScrollSync() {
@@ -223,6 +233,7 @@ export class Toolbar extends Component<Props, State> {
     }
     // classify toolbar and dropdown toolbar after DOM has been rendered
     this.setState(this.classifyToolbarItems());
+    this.appendTooltipToRoot();
   }
 
   updated(prevProps: Props) {
@@ -245,7 +256,7 @@ export class Toolbar extends Component<Props, State> {
 
   beforeDestroy() {
     window.removeEventListener('resize', this.handleResize);
-    document.body.removeChild(this.tooltipEl);
+    removeNode(this.tooltipRef.current!);
   }
 
   render() {
@@ -253,11 +264,12 @@ export class Toolbar extends Component<Props, State> {
     const { popupInfo, showPopup, activeTab, items, dropdownItems } = this.state;
     const props = {
       eventEmitter,
-      tooltipEl: this.tooltipEl,
+      tooltipRef: this.tooltipRef,
       disabled: editorType === 'markdown' && previewStyle === 'tab' && activeTab === 'preview',
       execCommand: this.execCommand,
       setPopupInfo: this.setPopupInfo,
     };
+    const toolbarStyle = previewStyle === 'tab' ? { borderTopLeftRadius: 0 } : null;
 
     return html`
       <div class="${cls('toolbar')}">
@@ -269,7 +281,11 @@ export class Toolbar extends Component<Props, State> {
         >
           <${Tabs} tabs=${this.tabs} activeTab=${activeTab} onClick=${this.toggleTab} />
         </div>
-        <div class="${cls('defaultUI-toolbar')}" ref=${(el: HTMLElement) => (this.refs.el = el)}>
+        <div
+          class="${cls('defaultUI-toolbar')}"
+          ref=${(el: HTMLElement) => (this.refs.el = el)}
+          style=${toolbarStyle}
+        >
           ${items.map(
             (group, index) => html`
               <${ToolbarGroup}

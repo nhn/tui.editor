@@ -64,15 +64,6 @@
   height: inherit;
 }
 
-.toastui-editor-md-container .ProseMirror {
-  font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
-    'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
-  color: #222;
-  font-size: 13px;
-  overflow: auto;
-  height: calc(100% - 36px);
-}
-
 .toastui-editor-md-container .toastui-editor-md-preview {
   overflow: auto;
   padding: 0 25px;
@@ -123,7 +114,7 @@
   top: 0;
   height: 100%;
   width: 1px;
-  border-left: 1px solid #ebedf2;
+  background-color: #ebedf2;
 }
 
 .toastui-editor-main .toastui-editor-md-vertical-style .toastui-editor-md-splitter {
@@ -221,7 +212,7 @@
   text-align: right;
   height: 28px;
   padding-right: 10px;
-  border-radius: 0 0 4px 4px;
+  border-radius: 0 0 3px 3px;
 }
 
 .toastui-editor-mode-switch .tab-item {
@@ -253,7 +244,8 @@
   height: 45px;
   font-size: 13px;
   background: #f7f9fc;
-  border-top-left-radius: 4px;
+  border-bottom: 1px solid #ebedf2;
+  border-top-left-radius: 3px;
 }
 
 .toastui-editor-md-tab-container .toastui-editor-tabs {
@@ -295,13 +287,12 @@
   background-color: #f7f9fc;
   border-bottom: 1px solid #ebedf2;
   overflow: hidden;
-  border-radius: 4px;
+  border-radius: 3px 3px 0 0;
 }
 
 .toastui-editor-toolbar {
   height: 46px;
   box-sizing: border-box;
-  border-bottom: 1px solid #e5e5e5;
   position: relative;
 }
 
@@ -326,9 +317,7 @@
   border: 1px solid #f7f9fc;
 }
 
-.toastui-editor-defaultUI-toolbar button:not(:disabled):hover,
-.toastui-editor-defaultUI-toolbar button:not(:disabled):active,
-.toastui-editor-defaultUI-toolbar button:not(:disabled).active {
+.toastui-editor-defaultUI-toolbar button:not(:disabled):hover {
   border: 1px solid #e4e7ee;
   background-color: #fff;
 }
@@ -452,8 +441,12 @@
   padding: 0 12px;
   border-radius: 2px;
   border: 1px solid #e1e3e9;
-  outline-color: #00a9ff;
   color: #333;
+}
+
+.toastui-editor-popup-body input[type='text']:focus {
+  outline: 1px solid #00a9ff;
+  border-color: transparent;
 }
 
 .toastui-editor-popup-body input[type='text'].disabled {
@@ -517,6 +510,9 @@
   height: 30px;
   line-height: 30px;
   padding: 0 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -529,9 +525,9 @@
   margin-left: 5px;
   height: 32px;
   border-radius: 2px;
-  border: 1px solid #e1e3e9;
+  border: 1px solid #dadde6;
   background-color: #f7f9fc;
-  vertical-align: bottom;
+  vertical-align: top;
 }
 
 .toastui-editor-popup-add-image .toastui-editor-file-select-button:hover {
@@ -664,7 +660,7 @@
 }
 
 .toastui-editor-context-menu .menu-group:last-child {
-  border-bottom: none;
+  border-bottom: none !important;
 }
 
 .toastui-editor-context-menu .menu-item {
@@ -788,76 +784,84 @@
   }
 }
 
+.toastui-editor-toolbar-icons {
+  background-position-y: 3px;
+}
+
 .toastui-editor-toolbar-icons:disabled {
   opacity: 0.3;
 }
 
 .toastui-editor-toolbar-icons.heading {
-  background-position: 3px 3px;
+  background-position-x: 3px;
 }
 
 .toastui-editor-toolbar-icons.bold {
-  background-position: -23px 3px;
+  background-position-x: -23px;
 }
 
 .toastui-editor-toolbar-icons.italic {
-  background-position: -49px 3px;
+  background-position-x: -49px;
 }
 
 .toastui-editor-toolbar-icons.strike {
-  background-position: -75px 3px;
+  background-position-x: -75px;
 }
 
 .toastui-editor-toolbar-icons.hrline {
-  background-position: -101px 4px;
+  background-position-x: -101px;
 }
 
 .toastui-editor-toolbar-icons.quote {
-  background-position: -127px 4px;
+  background-position-x: -127px;
 }
 
 .toastui-editor-toolbar-icons.bullet-list {
-  background-position: -153px 3px;
+  background-position-x: -153px;
 }
 
 .toastui-editor-toolbar-icons.ordered-list {
-  background-position: -179px 3px;
+  background-position-x: -179px;
 }
 
 .toastui-editor-toolbar-icons.task-list {
-  background-position: -205px 3px;
+  background-position-x: -205px;
 }
 
 .toastui-editor-toolbar-icons.indent {
-  background-position: -231px 3px;
+  background-position-x: -231px;
 }
 
 .toastui-editor-toolbar-icons.outdent {
-  background-position: -257px 3px;
+  background-position-x: -257px;
 }
 
 .toastui-editor-toolbar-icons.table {
-  background-position: -283px 3px;
+  background-position-x: -283px;
 }
 
 .toastui-editor-toolbar-icons.image {
-  background-position: -309px 3px;
+  background-position-x: -309px;
 }
 
 .toastui-editor-toolbar-icons.link {
-  background-position: -334px 3px;
+  background-position-x: -334px;
 }
 
 .toastui-editor-toolbar-icons.code {
-  background-position: -361px 3px;
+  background-position-x: -361px;
 }
 
 .toastui-editor-toolbar-icons.codeblock {
-  background-position: -388px 3px;
+  background-position-x: -388px;
 }
 
 .toastui-editor-toolbar-icons.more {
-  background-position: -412px 4px;
+  background-position-x: -412px;
+}
+
+.toastui-editor-toolbar-icons:not(:disabled).active {
+  background-position-y: -23px;
 }
 
 @media only screen and (max-width: 480px) {

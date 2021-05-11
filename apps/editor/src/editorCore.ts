@@ -79,6 +79,7 @@ import { createHTMLSchemaMap } from './wysiwyg/nodes/html';
  *     @param {boolean} [options.previewHighlight=false] - whether highlight preview area
  *     @param {boolean} [options.frontMatter=false] - whether use the front matter
  *     @param {Array.<object>} [options.widgetRules=[]] - The rules for replacing the text with widget node
+ *     @param {string} [options.theme] - The theme to style the editor with. The default is included in toastui-editor.css.
  */
 class ToastUIEditor {
   private initialHtml: string;
@@ -146,6 +147,7 @@ class ToastUIEditor {
         customHTMLSanitizer: null,
         frontMatter: false,
         widgetRules: [],
+        theme: 'light',
       },
       options
     );
@@ -274,12 +276,15 @@ class ToastUIEditor {
       sendHostName();
     }
 
-    this.getCurrentModeEditor().focus();
     this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
     this.addInitEvent();
     this.addInitCommand(mdCommands, wwCommands);
 
     this.eventEmitter.emit('load', this);
+    // prevent the error for IE11
+    setTimeout(() => {
+      this.focus();
+    });
   }
 
   private addInitEvent() {

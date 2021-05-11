@@ -71,6 +71,7 @@ export default class WysiwygEditor extends EditorBase {
     } = options;
 
     this.editorType = 'wysiwyg';
+    this.el.classList.add('ww-mode');
     this.toDOMAdaptor = toDOMAdaptor;
     this.linkAttributes = linkAttributes!;
     this.extraPlugins = wwPlugins;

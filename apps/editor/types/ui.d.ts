@@ -133,7 +133,7 @@ export type ExecCommand = (command: string, payload?: Record<string, any>) => vo
 export type HidePopup = () => void;
 export type SetPopupInfo = (info: PopupInfo) => void;
 export type SetItemWidth = (name: string, width: number) => void;
-export type ShowTooltip = (el: HTMLElement, active?: boolean) => void;
+export type ShowTooltip = (el: HTMLElement) => void;
 export type HideTooltip = () => void;
 export type GetBound = (el: HTMLElement, active?: boolean) => Pos;
 

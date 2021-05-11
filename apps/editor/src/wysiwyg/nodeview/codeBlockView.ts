@@ -4,7 +4,7 @@ import { Node as ProsemirrorNode } from 'prosemirror-model';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import css from 'tui-code-snippet/domUtil/css';
 
-import { isPositionInBox, removeNode } from '@/utils/dom';
+import { removeNode } from '@/utils/dom';
 
 import { ToDOMAdaptor } from '@t/convertor';
 import { Emitter } from '@t/event';
@@ -14,7 +14,6 @@ type GetPos = (() => number) | boolean;
 type InputPos = {
   top: number;
   right: number;
-  width: number;
 };
 
 const WRAPPER_CLASS_NAME = 'toastui-editor-ww-code-block';
@@ -90,7 +89,7 @@ export class CodeBlockView implements NodeView {
     return pre;
   }
 
-  private createLanguageEditor({ top, right, width }: InputPos) {
+  private createLanguageEditor({ top, right }: InputPos) {
     const wrapper = document.createElement('span');
 
     wrapper.className = CODE_BLOCK_LANG_CLASS_NAME;
@@ -101,13 +100,12 @@ export class CodeBlockView implements NodeView {
     input.value = this.node.attrs.language;
 
     wrapper.appendChild(input);
-    document.body.appendChild(wrapper);
-
-    const wrpperWidth = Math.max(wrapper.clientWidth, width);
+    document.querySelector<HTMLElement>('.toastui-editor.ww-mode')!.appendChild(wrapper);
+    const wrpperWidth = wrapper.clientWidth;
 
     css(wrapper, {
       top: `${top + 10}px`,
-      left: `${right - wrpperWidth - 12}px`,
+      left: `${right - wrpperWidth - 10}px`,
       width: `${wrpperWidth}px`,
     });
 
@@ -135,16 +133,12 @@ export class CodeBlockView implements NodeView {
   private handleMousedown = (ev: MouseEvent) => {
     const target = ev.target as HTMLElement;
     const style = getComputedStyle(target, ':after');
-    const { offsetX, offsetY } = ev;
 
-    if (isPositionInBox(style, offsetX, offsetY) && isFunction(this.getPos)) {
+    // judge to click pseudo element with background image for IE11
+    if (style.backgroundImage !== 'none' && isFunction(this.getPos)) {
       const { top, right } = this.view.coordsAtPos(this.getPos());
-      const width =
-        parseInt(style.width, 10) +
-        parseInt(style.paddingLeft, 10) +
-        parseInt(style.paddingRight, 10);
 
-      this.createLanguageEditor({ top, right, width });
+      this.createLanguageEditor({ top, right });
     }
   };
 

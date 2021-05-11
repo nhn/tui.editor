@@ -1,0 +1,221 @@
+@charset "utf-8";
+.toastui-editor-dark.toastui-editor-defaultUI {
+  border-color: #494c56;
+  color: #eee;
+}
+
+.toastui-editor-dark .toastui-editor-md-container,
+.toastui-editor-dark .toastui-editor-ww-container {
+  background-color: #121212;
+}
+
+.toastui-editor-dark .toastui-editor-defaultUI-toolbar {
+  background-color: #232428;
+  border-bottom-color: #303238;
+}
+
+.toastui-editor-dark .toastui-editor-toolbar-icons {
+  background-position-y: -49px;
+  border-color: #232428;
+}
+
+.toastui-editor-dark .toastui-editor-toolbar-icons:not(:disabled):hover {
+  background-color: #36383f;
+  border-color: #36383f;
+}
+
+.toastui-editor-dark .toastui-editor-toolbar-divider {
+  background-color: #303238;
+}
+
+.toastui-editor-dark .toastui-editor-tooltip {
+  background-color: #535662;
+}
+
+.toastui-editor-dark .toastui-editor-tooltip .arrow {
+  background-color: #535662;
+}
+
+.toastui-editor-dark .toastui-editor-defaultUI-toolbar .scroll-sync::before {
+  color: #8f939f;
+}
+
+.toastui-editor-dark .toastui-editor-defaultUI-toolbar .scroll-sync.active::before {
+  color: #67ccff;
+}
+
+.toastui-editor-dark .toastui-editor-defaultUI-toolbar .switch {
+  background-color: #2b4455;
+}
+
+.toastui-editor-dark .toastui-editor-defaultUI-toolbar input:checked + .switch {
+  background-color: #2b4455;
+}
+
+.toastui-editor-dark .toastui-editor-defaultUI-toolbar .switch::before {
+  background-color: #8f939f;
+}
+
+.toastui-editor-dark .toastui-editor-defaultUI-toolbar input:checked + .switch::before {
+  background-color: #67ccff;
+}
+
+.toastui-editor-dark .toastui-editor-main .toastui-editor-md-splitter {
+  background-color: #303238;
+}
+
+.toastui-editor-dark .toastui-editor-mode-switch {
+  border-top-color: #393b42;
+  background-color: #121212;
+}
+
+.toastui-editor-dark .toastui-editor-mode-switch .tab-item {
+  border-color: #393b42;
+  background-color: #232428;
+  color: #757a86;
+}
+
+.toastui-editor-dark .toastui-editor-mode-switch .tab-item.active {
+  border-top-color: #121212;
+  background-color: #121212;
+  color: #eee;
+}
+
+.toastui-editor-dark .toastui-editor-popup,
+.toastui-editor-dark .toastui-editor-context-menu {
+  background-color: #121212;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+  border-color: #494c56;
+}
+
+.toastui-editor-dark .toastui-editor-popup-add-heading ul li:hover {
+  background-color: #36383f;
+}
+
+.toastui-editor-dark .toastui-editor-popup-body label {
+  color: #9a9da3;
+}
+
+.toastui-editor-dark .toastui-editor-popup-body input[type='text'] {
+  background-color: transparent;
+  color: #eee;
+  border-color: #303238;
+}
+
+.toastui-editor-dark .toastui-editor-popup-body input[type='text']:focus {
+  outline-color: #67ccff;
+}
+
+.toastui-editor-dark .toastui-editor-popup-body input[type='text'].disabled {
+  color: #969aa5;
+  border-color: #303238;
+  background-color: rgba(48, 50, 56, 0.4);
+}
+
+.toastui-editor-dark .toastui-editor-popup-add-image .toastui-editor-tabs .tab-item {
+  border-bottom-color: #292e37;
+  color: #eee;
+}
+
+.toastui-editor-dark .toastui-editor-popup-add-image .toastui-editor-tabs .tab-item:hover {
+  border-bottom-color: #3c424d;
+}
+
+.toastui-editor-dark .toastui-editor-popup-add-image .toastui-editor-tabs .tab-item.active {
+  color: #67ccff;
+  border-bottom-color: #67ccff;
+}
+
+.toastui-editor-dark .toastui-editor-popup-body .toastui-editor-file-name {
+  border-color: #303238;
+  color: #eee;
+}
+
+.toastui-editor-dark .toastui-editor-popup-body .toastui-editor-file-select-button {
+  border-color: #303238;
+  background-color: #232428;
+  color: #eee;
+}
+
+.toastui-editor-dark .toastui-editor-popup-body .toastui-editor-file-select-button:hover {
+  border-color: #494c56;
+}
+
+.toastui-editor-dark.toastui-editor-defaultUI .toastui-editor-close-button {
+  color: #eee;
+  border-color: #303238;
+  background-color: #232428;
+}
+
+.toastui-editor-dark.toastui-editor-defaultUI .toastui-editor-close-button:hover {
+  border-color: #494c56;
+}
+
+.toastui-editor-dark.toastui-editor-defaultUI .toastui-editor-ok-button {
+  color: #121212;
+  background-color: #67ccff;
+}
+
+.toastui-editor-dark.toastui-editor-defaultUI .toastui-editor-ok-button:hover {
+  color: #121212;
+  background-color: #32baff;
+}
+
+.toastui-editor-dark .toastui-editor-popup-add-table .toastui-editor-table-cell {
+  border-color: #303238;
+  background-color: #121212;
+}
+
+.toastui-editor-dark .toastui-editor-popup-add-table .toastui-editor-table-cell.header {
+  border-color: #303238;
+  background-color: #232428;
+}
+
+.toastui-editor-dark .toastui-editor-popup-add-table .toastui-editor-table-selection-layer {
+  border-color: rgba(103, 204, 255, 0.4);
+  background-color: rgba(103, 204, 255, 0.1);
+}
+
+.toastui-editor-dark .toastui-editor-popup-add-table .toastui-editor-table-description {
+  color: #eee
+}
+
+.toastui-editor-dark .toastui-editor-md-tab-container {
+  background-color: #232428;
+  border-bottom-color: #303238;
+}
+
+.toastui-editor-dark .toastui-editor-md-tab-container .tab-item {
+  border-color: #393b42;
+  background-color: #2d2f34;
+  color: #757a86;
+}
+
+.toastui-editor-dark .toastui-editor-md-tab-container .tab-item.active {
+  border-bottom-color: #121212;
+  background-color: #121212;
+  color: #eee;
+}
+
+
+.toastui-editor-dark .toastui-editor-context-menu .menu-group {
+  border-bottom-color: #303238;
+  color: #eee;
+}
+
+.toastui-editor-dark .toastui-editor-context-menu .menu-item span::before {
+  background-position-y: -126px;
+}
+
+.toastui-editor-dark .toastui-editor-context-menu li:not(.disabled):hover {
+  background-color: #36383f;
+}
+
+.toastui-editor-dark .toastui-editor-context-menu li.disabled {
+  color: #969aa5;
+}
+
+.toastui-editor-dark .toastui-editor-dropdown-toolbar {
+  border-color: #494c56;
+  background-color: #232428;
+}

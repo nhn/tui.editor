@@ -13,7 +13,7 @@ import { Component } from '@/ui/vdom/component';
 import { closest, cls, getTotalOffset } from '@/utils/dom';
 
 interface Props {
-  tooltipEl: HTMLElement;
+  tooltipRef: { current: HTMLElement };
   disabled: boolean;
   eventEmitter: Emitter;
   item: ToolbarItemInfo;
@@ -22,7 +22,7 @@ interface Props {
   setItemWidth?: SetItemWidth;
 }
 
-const TOOLTIP_TOP_INDENT = 5;
+const TOOLTIP_INDENT = 6;
 
 export function connectHOC(WrappedComponent: ComponentClass) {
   return class ButtonHOC extends Component<Props> {
@@ -39,20 +39,17 @@ export function connectHOC(WrappedComponent: ComponentClass) {
       const { tooltip } = this.props.item as ToolbarButtonInfo;
 
       if (!this.props.disabled && tooltip) {
-        const rect = el.getBoundingClientRect();
-        let left: string | number = rect.left + window.pageXOffset;
-        let top: string | number = rect.top + window.pageYOffset + el.offsetHeight;
+        const bound = this.getBound(el);
+        const left = `${bound.left + TOOLTIP_INDENT}px`;
+        const top = `${bound.top + TOOLTIP_INDENT}px`;
 
-        left = `${left}px`;
-        top = `${top + TOOLTIP_TOP_INDENT}px`;
-
-        css(this.props.tooltipEl, { display: 'block', left, top });
-        this.props.tooltipEl.querySelector<HTMLElement>('.text')!.textContent = tooltip;
+        css(this.props.tooltipRef.current, { display: 'block', left, top });
+        this.props.tooltipRef.current.querySelector<HTMLElement>('.text')!.textContent = tooltip;
       }
     };
 
     private hideTooltip = () => {
-      css(this.props.tooltipEl, 'display', 'none');
+      css(this.props.tooltipRef.current, 'display', 'none');
     };
 
     render() {

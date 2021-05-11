@@ -138,6 +138,7 @@ export interface EditorOptions {
   previewHighlight?: boolean;
   frontMatter?: boolean;
   widgetRules?: WidgetRule[];
+  theme?: string;
 }
 
 interface Slots {

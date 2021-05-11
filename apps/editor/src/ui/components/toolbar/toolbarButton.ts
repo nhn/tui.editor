@@ -74,7 +74,7 @@ export class ToolbarButtonComp extends Component<Props, State> {
   }
 
   private showTooltip = () => {
-    this.props.showTooltip(this.refs.el, this.state.active);
+    this.props.showTooltip(this.refs.el);
   };
 
   private execCommand = () => {

@@ -41,7 +41,7 @@ export class ImageView implements NodeView {
     this.getPos = getPos;
     this.toDOMAdaptor = toDOMAdaptor;
     this.eventEmitter = eventEmitter;
-    this.imageLink = node.marks.find(({ type }) => type.name === 'link') || null;
+    this.imageLink = node.marks.filter(({ type }) => type.name === 'link')[0] ?? null;
     this.dom = this.createElement();
 
     this.bindEvent();

@@ -54,7 +54,7 @@ export class LanguageSelectBox {
     this.createInputElement();
     this.createLanguageListElement();
 
-    document.body.appendChild(this.wrapper);
+    document.querySelector<HTMLElement>('.toastui-editor.ww-mode')!.appendChild(this.wrapper);
 
     this.hide();
   }

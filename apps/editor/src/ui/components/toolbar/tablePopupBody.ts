@@ -66,8 +66,8 @@ export class TablePopupBody extends Component<Props, State> {
 
   private getRangeByOffset(x: number, y: number) {
     return {
-      colIdx: Math.trunc(x / CELL_WIDTH),
-      rowIdx: Math.trunc(y / CELL_HEIGHT),
+      colIdx: Math.floor(x / CELL_WIDTH),
+      rowIdx: Math.floor(y / CELL_HEIGHT),
     };
   }
 
@@ -93,7 +93,7 @@ export class TablePopupBody extends Component<Props, State> {
       return { display: 'none' };
     }
 
-    return { width: width - BORDER_WIDTH, height: height - BORDER_WIDTH };
+    return { width: width - BORDER_WIDTH, height: height - BORDER_WIDTH, display: 'block' };
   }
 
   private getSelectionRangeByOffset(x: number, y: number) {
