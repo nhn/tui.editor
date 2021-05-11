@@ -65,10 +65,11 @@ export class Layout extends Component<Props, State> {
     const displayClassName = hide ? ' hidden' : '';
     const editorTypeClassName = editorType === 'markdown' ? cls('md-mode') : cls('ww-mode');
     const previewClassName = `${cls('md')}-${previewStyle}-style`;
+    const themeClassName = theme === 'light' ? '' : `${cls(theme)} `;
 
     return html`
       <div
-        class="${cls(theme)} ${cls('defaultUI')}${displayClassName}"
+        class="${themeClassName}${cls('defaultUI')}${displayClassName}"
         ref=${(el: HTMLElement) => (this.refs.el = el)}
       >
         <${Toolbar}
