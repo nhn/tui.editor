@@ -147,6 +147,7 @@ class ToastUIEditor {
         customHTMLSanitizer: null,
         frontMatter: false,
         widgetRules: [],
+        theme: '',
       },
       options
     );
