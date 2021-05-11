@@ -9,9 +9,8 @@
   ],
   "scripts": {
     "lint": "eslint .",
-    "build": "webpack build",
-    "serve:ie": "webpack serve",
-    "storybook": "start-storybook -p 6006"
+    "serve": "snowpack dev",
+    "build": "webpack build"
   },
   "homepage": "https://ui.toast.com",
   "bugs": {
@@ -25,7 +24,10 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "vue": "^2.5.0"
+    "vue": "^2.5.0",
+    "vue-loader": "^15.9.6",
+    "vue-template-compiler": "^2.6.12",
+    "@morgul/snowpack-plugin-vue2": "^0.4.0"
   },
   "peerDependencies": {
     "vue": "^2.5.0"
