@@ -11,9 +11,7 @@
     "test:types": "tsc",
     "lint": "eslint .",
     "serve": "snowpack dev",
-    "build": "webpack build",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build": "webpack build"
   },
   "homepage": "https://ui.toast.com",
   "bugs": {
