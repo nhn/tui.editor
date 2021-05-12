@@ -6,8 +6,6 @@ import html from './ui/vdom/template';
 import { Layout } from './ui/components/layout';
 import { render } from './ui/vdom/renderer';
 
-import '@/css/editor.css';
-
 class Editor extends EditorCore {
   private defaultUI!: DefaultUI;
 
