@@ -13,8 +13,11 @@
     "merged-cell"
   ],
   "main": "dist/toastui-editor-plugin-table-merged-cell.js",
+  "module": "dist/esm/index.js",
   "files": [
     "dist/*.js",
+    "dist/*.css",
+    "dist/esm",
     "index.d.ts"
   ],
   "author": "NHN FE Development Lab <dl_javascript@nhn.com>",
@@ -36,7 +39,8 @@
     "serve": "snowpack dev",
     "serve:ie": "webpack serve",
     "build:cdn": "webpack build --env cdn & webpack build --env cdn minify",
-    "build": "webpack build && npm run build:cdn"
+    "build": "npm run build:esm && webpack build && npm run build:cdn",
+    "build:esm": "snowpack build --config=./snowpack.build.config.js && rm ./dist/esm/index.css"
   },
   "publishConfig": {
     "access": "public"
