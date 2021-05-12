@@ -8,7 +8,7 @@
     "test": "jest --watch",
     "serve": "snowpack dev",
     "serve:ie": "webpack serve",
-    "build": "webpack --mode=production"
+    "build": "snowpack build --config=./snowpack.build.config.js && webpack build"
   },
   "types": "types/index.d.ts",
   "files": [
@@ -21,7 +21,7 @@
   ],
   "author": "NHN",
   "main": "dist/toastmark.js",
-  "module": "dist/toastmark.js",
+  "module": "dist/esm/index.js",
   "license": "MIT",
   "devDependencies": {
     "@types/codemirror": "0.0.85",

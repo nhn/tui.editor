@@ -7,11 +7,6 @@ module.exports = {
   devOptions: {
     port: 8000,
   },
-  buildOptions: {
-    clean: true,
-    sourceMaps: false,
-    out: 'dist',
-  },
   alias: {
     '@t': './types',
   },
