@@ -4,7 +4,6 @@ import {
   HTMLToken,
   MdNode,
   MdNodeType,
-  TextToken,
   Renderer,
 } from '@toast-ui/toastmark';
 import { DOMOutputSpecArray, Node as ProsemirrorNode, Mark } from 'prosemirror-model';
