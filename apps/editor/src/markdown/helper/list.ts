@@ -216,7 +216,9 @@ export const otherNodeToList: NodeToList = {
 
     for (let i = startLine - 1; i > 0; i -= 1) {
       const mdNode = toastMark.findFirstNodeAtLine(i)!;
-      const canBeListNode = !!findClosestNode(mdNode, (targetNode) => isListNode(targetNode));
+      const text = getTextByMdLine(doc, i);
+      const canBeListNode =
+        text && !!findClosestNode(mdNode, (targetNode) => isListNode(targetNode));
       const searchResult = reOrderedListGroup.exec(getTextByMdLine(doc, i));
 
       if (!searchResult && !canBeListNode) {
