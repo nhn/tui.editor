@@ -16,7 +16,8 @@
   "types": "types/index.d.ts",
   "files": [
     "dist/*.js",
-    "types"
+    "dist/*.css",
+    "types/index.d.ts"
   ],
   "author": "NHN FE Development Lab <dl_javascript@nhn.com>",
   "license": "MIT",
