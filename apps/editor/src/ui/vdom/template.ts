@@ -1,4 +1,4 @@
-import html from 'htm/mini';
+import html from './htm';
 import isBoolean from 'tui-code-snippet/type/isBoolean';
 import isString from 'tui-code-snippet/type/isString';
 import isNumber from 'tui-code-snippet/type/isNumber';
@@ -39,4 +39,5 @@ function h(type: string | ComponentClass, props: Record<string, any>, ...childre
   return new VNode(type, props || {}, flatted);
 }
 
+// @ts-ignore
 export default html.bind(h) as (strings: TemplateStringsArray, ...values: any[]) => VNode;
