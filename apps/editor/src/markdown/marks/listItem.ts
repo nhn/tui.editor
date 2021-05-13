@@ -3,6 +3,7 @@ import { Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import { ListItemMdNode, MdNode } from '@toast-ui/toastmark';
 import isNumber from 'tui-code-snippet/type/isNumber';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
 import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
@@ -80,8 +81,10 @@ export class ListItem extends Mark {
 
       if (isEmpty) {
         const emptyNode = createParagraph(schema);
+        // add 2 empty lines when the node is last node
+        const nodes = doc.childCount - 1 === endIndex ? [emptyNode, emptyNode] : [emptyNode];
 
-        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, [emptyNode, emptyNode]));
+        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, nodes));
       } else {
         const commandType = getListType(textContent);
         // should add `1` to line for the markdown parser
@@ -147,8 +150,14 @@ export class ListItem extends Mark {
         const { firstIndex, lastIndex, changedResults } = isListNode(mdNode)
           ? otherListToList[commandType](context as ToListContext)
           : otherNodeToList[commandType](context);
-        const { startOffset: firstListStartOffset } = getNodeOffsetRange(doc, firstIndex!);
-        const { endOffset: lastListEndOffset } = getNodeOffsetRange(doc, lastIndex!);
+        let firstListStartOffset, lastListEndOffset;
+
+        if (!isUndefined(firstIndex)) {
+          firstListStartOffset = getNodeOffsetRange(doc, firstIndex).startOffset;
+        }
+        if (!isUndefined(lastIndex)) {
+          lastListEndOffset = getNodeOffsetRange(doc, lastIndex).endOffset;
+        }
 
         if (changedResults) {
           skipLines = skipLines.concat(changedResults.map((info) => info.line));
@@ -170,7 +179,8 @@ export class ListItem extends Mark {
         changed.sort((a, b) => (a.line < b.line ? -1 : 1));
         const nodes = changed.map((info) => createParagraph(schema, info.text));
 
-        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, nodes));
+        replaceNodes(tr, startFromOffset, endToOffset, nodes);
+        dispatch!(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset) - 1)));
         return true;
       }
       return false;
