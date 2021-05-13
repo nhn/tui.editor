@@ -228,6 +228,11 @@ module.exports = (env) => {
               commonjs2: 'prosemirror-view',
               amd: 'prosemirror-view',
             },
+            'prosemirror-transform': {
+              commonjs: 'prosemirror-transform',
+              commonjs2: 'prosemirror-transform',
+              amd: 'prosemirror-transform',
+            },
           },
         ],
         optimization: {
