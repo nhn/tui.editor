@@ -8,9 +8,4 @@ module.exports = {
     port: 8080,
   },
   plugins: ['@morgul/snowpack-plugin-vue2'],
-  buildOptions: {
-    clean: true,
-    sourceMaps: false,
-    out: 'dist',
-  },
 };

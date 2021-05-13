@@ -11,9 +11,6 @@ module.exports = {
   devOptions: {
     port: 8081,
   },
-  packageOptions: {
-    polyfillNode: true,
-  },
   routes: [
     {
       src: '/img/.*',

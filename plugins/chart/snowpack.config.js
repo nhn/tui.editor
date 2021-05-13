@@ -23,9 +23,4 @@ module.exports = {
     '@': './src',
     '@t': './types',
   },
-  buildOptions: {
-    clean: true,
-    sourceMaps: false,
-    out: 'dist',
-  },
 };

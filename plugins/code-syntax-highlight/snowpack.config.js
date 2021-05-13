@@ -11,9 +11,6 @@ module.exports = {
   devOptions: {
     port: 8081,
   },
-  packageOptions: {
-    polyfillNode: true,
-  },
   routes: [
     {
       src: '/img/.*',
@@ -22,11 +19,6 @@ module.exports = {
       },
     },
   ],
-  buildOptions: {
-    clean: true,
-    sourceMaps: false,
-    out: 'dist',
-  },
   alias: {
     '@': './src',
     '@t': './types',
