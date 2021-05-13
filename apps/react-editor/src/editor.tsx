@@ -40,7 +40,6 @@ export default class extends React.Component<EditorProps> {
     const { height, previewStyle } = nextProps;
 
     if (height && this.props.height !== height) {
-      // @TODO: change API for 3.x
       instance.setHeight(height);
     }
 

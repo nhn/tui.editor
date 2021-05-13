@@ -1,13 +1,14 @@
 /** @type {import("snowpack").SnowpackUserConfig } */
 module.exports = {
   mount: {
-    demo: '/',
+    'demo/esm': '/',
     src: '/dist',
   },
   devOptions: {
-    port: 8000,
+    port: 8080,
   },
   alias: {
+    '@': './src',
     '@t': './types',
   },
 };

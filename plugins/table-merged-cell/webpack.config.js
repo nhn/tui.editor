@@ -3,6 +3,7 @@ const path = require('path');
 const webpack = require('webpack');
 const { name, version, author, license } = require('./package.json');
 
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
@@ -55,7 +56,8 @@ function getOptimizationConfig(isProduction, minify) {
       new TerserPlugin({
         parallel: true,
         extractComments: false,
-      })
+      }),
+      new CssMinimizerPlugin()
     );
   }
 
@@ -110,7 +112,7 @@ module.exports = (env) => {
   };
 
   if (isProduction) {
-    config.plugins = [
+    config.plugins.push(
       new webpack.BannerPlugin(
         [
           'TOAST UI Editor : Table Merged Cell Plugin',
@@ -118,8 +120,8 @@ module.exports = (env) => {
           `@author ${author}`,
           `@license ${license}`,
         ].join('\n')
-      ),
-    ];
+      )
+    );
   } else {
     config.devServer = {
       // https://github.com/webpack/webpack-dev-server/issues/2484

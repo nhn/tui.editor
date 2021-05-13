@@ -19,9 +19,4 @@ module.exports = {
       },
     },
   ],
-  buildOptions: {
-    clean: true,
-    sourceMaps: false,
-    out: 'dist',
-  },
 };

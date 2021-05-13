@@ -10,22 +10,17 @@ module.exports = {
     filename: 'toastui-vue-editor.js',
     path: path.resolve(__dirname, 'dist'),
     library: {
-      name: 'toastui',
-      type: 'umd',
+      type: 'commonjs2',
     },
   },
   externals: {
     '@toast-ui/editor': {
       commonjs: '@toast-ui/editor',
       commonjs2: '@toast-ui/editor',
-      amd: '@toast-ui/editor',
-      root: ['toastui', 'Editor'],
     },
     '@toast-ui/editor/dist/toastui-editor-viewer': {
       commonjs: '@toast-ui/editor/dist/toastui-editor-viewer',
       commonjs2: '@toast-ui/editor/dist/toastui-editor-viewer',
-      amd: '@toast-ui/editor/dist/toastui-editor-viewer',
-      root: ['toastui', 'Editor'],
     },
   },
   module: {

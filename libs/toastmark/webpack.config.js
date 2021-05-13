@@ -2,9 +2,11 @@
 const path = require('path');
 const { merge } = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
 const commonConfig = {
   entry: path.resolve(__dirname, './src/index.ts'),
+  mode: 'production',
   module: {
     rules: [
       {
@@ -36,16 +38,27 @@ const commonConfig = {
     publicPath: '/dist',
     path: path.resolve(__dirname, 'dist'),
   },
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        parallel: true,
+        extractComments: false,
+      }),
+    ],
+  },
 };
 
-module.exports = (env, { mode = 'development' }) => {
-  if (mode === 'production') {
+module.exports = (env) => {
+  const isProduction = env.WEBPACK_BUILD;
+
+  if (isProduction) {
     return commonConfig;
   }
 
   return merge(commonConfig, {
     entry: path.resolve(__dirname, './src/__sample__/index.ts'),
-    mode,
+    mode: 'development',
     devtool: 'inline-source-map',
     output: {
       library: {

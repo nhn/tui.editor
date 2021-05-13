@@ -14,10 +14,12 @@
     "gfm"
   ],
   "main": "dist/toastui-editor.js",
+  "module": "dist/esm/index.js",
   "types": "types/index.d.ts",
   "files": [
     "dist/*.js",
     "dist/*.css",
+    "dist/esm",
     "dist/i18n",
     "types"
   ],
@@ -41,7 +43,8 @@
     "serve:ie": "webpack serve",
     "build:i18n": "cross-env webpack --config scripts/webpack.config.i18n.js && webpack --config scripts/webpack.config.i18n.js --env minify",
     "build:prod": "cross-env webpack build && webpack build --env minify && node tsBannerGenerator.js",
-    "build": "npm run build:i18n && npm run build:prod",
+    "build": "npm run build:esm && npm run build:i18n && npm run build:prod",
+    "build:esm": "snowpack build --config=./snowpack.build.config.js && rm ./dist/esm/manifest.json",
     "note": "tui-note --tag=$(git describe --tags)",
     "doc:serve": "tuidoc --serv",
     "doc": "tuidoc"

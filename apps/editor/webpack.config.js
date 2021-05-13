@@ -9,6 +9,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const FileManagerPlugin = require('filemanager-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const ENTRY_EDITOR = './src/index.ts';
 const ENTRY_ONLY_STYLE = './src/indexEditorOnlyStyle.ts';
@@ -31,6 +32,18 @@ function addFileManagerPlugin(config) {
       };
 
   config.plugins.push(new FileManagerPlugin({ events: { onEnd: options } }));
+}
+
+function addCopyPluginForThemeCss(config) {
+  const options = minify
+    ? {
+        patterns: [{ from: './src/css/theme/*.css', to: './theme/toastui-editor-[name].min.css' }],
+      }
+    : {
+        patterns: [{ from: './src/css/theme/*.css', to: './theme/toastui-editor-[name].css' }],
+      };
+
+  config.plugins.push(new CopyPlugin(options));
 }
 
 function addMinifyPlugin(config) {
@@ -82,6 +95,7 @@ function setProductionConfig(config) {
   };
 
   addFileManagerPlugin(config);
+  addCopyPluginForThemeCss(config);
 
   if (minify) {
     addMinifyPlugin(config);
@@ -93,6 +107,8 @@ function setProductionConfigForAll(config) {
   config.entry = { 'editor-all': ENTRY_EDITOR };
   config.output.path = path.resolve(__dirname, 'dist/cdn');
   config.externals = [];
+
+  addCopyPluginForThemeCss(config);
 
   if (minify) {
     addMinifyPlugin(config);
@@ -211,6 +227,11 @@ module.exports = (env) => {
               commonjs: 'prosemirror-view',
               commonjs2: 'prosemirror-view',
               amd: 'prosemirror-view',
+            },
+            'prosemirror-transform': {
+              commonjs: 'prosemirror-transform',
+              commonjs2: 'prosemirror-transform',
+              amd: 'prosemirror-transform',
             },
           },
         ],

@@ -1,13 +1,11 @@
 /** @type {import("snowpack").SnowpackUserConfig } */
 module.exports = {
   mount: {
-    demo: '/',
+    'demo/esm': '/',
     src: '/dist',
   },
   devOptions: {
-    port: 8000,
+    port: 8080,
   },
-  alias: {
-    '@t': './types',
-  },
+  plugins: ['@morgul/snowpack-plugin-vue2'],
 };

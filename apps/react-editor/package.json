@@ -10,9 +10,8 @@
   "scripts": {
     "test:types": "tsc",
     "lint": "eslint .",
-    "build": "webpack build",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "serve": "snowpack dev",
+    "build": "webpack build"
   },
   "homepage": "https://ui.toast.com",
   "bugs": {
@@ -31,7 +30,7 @@
   },
   "devDependencies": {
     "@types/react": "^17.0.3",
-    "react": "17.0.1",
+    "react": "^17.0.1",
     "react-dom": "^17.0.1"
   }
 }

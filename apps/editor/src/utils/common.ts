@@ -164,6 +164,7 @@ export function assign(targetObj: Record<string, any>, obj: Record<string, any>)
       targetObj[prop] = obj[prop];
     }
   });
+  return targetObj;
 }
 
 export function getSortedNumPair(valueA: number, valueB: number) {
