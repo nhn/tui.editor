@@ -15,6 +15,7 @@
   "main": "dist/toastui-editor-plugin-color-syntax.js",
   "files": [
     "dist/*.js",
+    "dist/*.css",
     "index.d.ts"
   ],
   "author": "NHN FE Development Lab <dl_javascript@nhn.com>",
