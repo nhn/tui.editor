@@ -143,7 +143,7 @@ export class Table extends Mark {
           }
         }
 
-        const pos = endFromOffset + chOffset;
+        const pos = Math.min(endFromOffset + chOffset, tr.doc.content.size - 1);
 
         dispatch!(tr.setSelection(createTextSelection(tr, pos)));
 
