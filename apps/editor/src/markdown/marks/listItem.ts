@@ -25,7 +25,7 @@ import {
   reList,
   ToListContext,
 } from '../helper/list';
-import { getRangeInfo, getNodeOffsetRange } from '../helper/pos';
+import { getRangeInfo, getNodeContentOffsetRange } from '../helper/pos';
 import { getTextContent } from '../helper/query';
 
 type CommandType = 'bullet' | 'ordered' | 'task';
@@ -100,7 +100,7 @@ export class ListItem extends Mark {
         // change ordinal number of backward ordered list
         if (changedResults?.length) {
           // get end offset of the last list
-          const { endOffset } = getNodeOffsetRange(doc, lastIndex!);
+          const { endOffset } = getNodeContentOffsetRange(doc, lastIndex!);
           const nodes = changedResults.map(({ text }) => createParagraph(schema, text));
 
           nodes.unshift(node);
@@ -128,7 +128,7 @@ export class ListItem extends Mark {
       // should add `1` to line for the markdown parser
       // because markdown parser has `1`(not zero) as the start number
       const startLine = rangeInfo.startIndex + 1;
-      const endLine = rangeInfo.endIndex + 1;
+      let endLine = rangeInfo.endIndex + 1;
       let { startFromOffset, endToOffset } = rangeInfo;
 
       let skipLines: number[] = [];
@@ -153,10 +153,11 @@ export class ListItem extends Mark {
         let firstListStartOffset, lastListEndOffset;
 
         if (!isUndefined(firstIndex)) {
-          firstListStartOffset = getNodeOffsetRange(doc, firstIndex).startOffset;
+          firstListStartOffset = getNodeContentOffsetRange(doc, firstIndex).startOffset;
         }
         if (!isUndefined(lastIndex)) {
-          lastListEndOffset = getNodeOffsetRange(doc, lastIndex).endOffset;
+          endLine = Math.max(endLine, lastIndex + 1);
+          lastListEndOffset = getNodeContentOffsetRange(doc, lastIndex).endOffset;
         }
 
         if (changedResults) {
@@ -200,7 +201,7 @@ export class ListItem extends Mark {
           const { checked, padding } = mdNode.listData;
           const stateChar = checked ? ' ' : 'x';
           const [mdPos] = mdNode.sourcepos!;
-          let { startOffset } = getNodeOffsetRange(doc, mdPos[0] - 1);
+          let { startOffset } = getNodeContentOffsetRange(doc, mdPos[0] - 1);
 
           startOffset += mdPos[1] + padding;
 
