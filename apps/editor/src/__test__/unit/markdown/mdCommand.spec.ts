@@ -530,6 +530,68 @@ describe('orderedList command', () => {
 
     expect(getTextContent(mde)).toBe(result);
   });
+
+  it('should change bullet list to ordered list partially', () => {
+    const input = source`
+      * bullet1
+      * bullet2
+      * bullet3
+         * bullet4
+         * bullet5
+    `;
+    const firstResult = source`
+      1. bullet1
+      2. bullet2
+      3. bullet3
+         * bullet4
+         * bullet5
+    `;
+    const secondResult = source`
+      1. bullet1
+      2. bullet2
+      3. bullet3
+         1. bullet4
+         2. bullet5
+    `;
+
+    mde.setMarkdown(input);
+
+    mde.setSelection([1, 2], [1, 2]);
+    cmd.exec('orderedList');
+
+    expect(getTextContent(mde)).toBe(firstResult);
+
+    mde.setSelection([4, 2], [4, 2]);
+    cmd.exec('orderedList');
+
+    expect(getTextContent(mde)).toBe(secondResult);
+  });
+
+  it('should change bullet list to ordered list with extended ranges', () => {
+    const input = source`
+      * bullet1
+      * bullet2
+      * bullet3
+         * bullet4
+         * bullet5
+      * bullet6
+    `;
+    const result = source`
+      1. bullet1
+      2. bullet2
+      3. bullet3
+         1. bullet4
+         2. bullet5
+      4. bullet6
+    `;
+
+    mde.setMarkdown(input);
+
+    mde.setSelection([1, 2], [1, 2]);
+    cmd.exec('orderedList');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
 });
 
 describe('taskList command', () => {
