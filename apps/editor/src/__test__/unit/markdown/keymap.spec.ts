@@ -353,6 +353,15 @@ describe('extend list keymap', () => {
 
       expect(getTextContent(mde)).toBe(input);
     });
+
+    it('should delete the row in case of empty bullet list content with next content', () => {
+      mde.setMarkdown('* bullet1\n* \nparagraph');
+      mde.setSelection([2, 3], [2, 3]);
+
+      forceKeymapFn('listItem', 'extendList');
+
+      expect(getTextContent(mde)).toBe('* bullet1\n\nparagraph');
+    });
   });
 
   describe('ordered list', () => {

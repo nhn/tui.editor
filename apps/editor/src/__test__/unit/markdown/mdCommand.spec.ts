@@ -508,6 +508,28 @@ describe('orderedList command', () => {
 
     expect(getTextContent(mde)).toBe(result);
   });
+
+  it('should change paragraph to ordered list with prev bullet list', () => {
+    const input = source`
+      * bullet1
+
+      ordered1
+      ordered2
+    `;
+    const result = source`
+    * bullet1
+
+    1. ordered1
+    2. ordered2
+    `;
+
+    mde.setMarkdown(input);
+
+    mde.setSelection([3, 2], [4, 2]);
+    cmd.exec('orderedList');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
 });
 
 describe('taskList command', () => {
