@@ -37,21 +37,23 @@ export class BlockQuote extends Mark {
       const textContent = getTextContent(doc, endIndex);
       const isBlockQuote = reBlockQuote.test(textContent);
 
-      if (isBlockQuote) {
+      if (isBlockQuote && to > endFromOffset) {
         const isEmpty = !textContent.replace(reBlockQuote, '').trim();
 
         if (isEmpty) {
           const emptyNode = createParagraph(schema);
+          // add 2 empty lines when the node is last node
+          const nodes = doc.childCount - 1 === endIndex ? [emptyNode, emptyNode] : [emptyNode];
 
-          dispatch!(replaceNodes(tr, endFromOffset, endToOffset, [emptyNode, emptyNode]));
+          dispatch!(replaceNodes(tr, endFromOffset, endToOffset, nodes));
         } else {
           const slicedText = textContent.slice(to - endFromOffset).trim();
           const node = createParagraph(schema, this.createBlockQuoteText(slicedText));
           const newTr = slicedText
-            ? replaceNodes(tr, to, endToOffset, node, { from: 0, to: 1 })
+            ? replaceNodes(tr, to, endToOffset, node, { from: 0, to: 0 })
             : insertNodes(tr, endToOffset, node);
           // should add `4` to selection end position considering `> ` text and start, end block tag position
-          const newSelection = createTextSelection(newTr, to + slicedText.length + 4);
+          const newSelection = createTextSelection(newTr, to + 4);
 
           dispatch!(newTr.setSelection(newSelection));
         }
@@ -77,7 +79,8 @@ export class BlockQuote extends Mark {
       }
 
       if (nodes.length) {
-        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, nodes));
+        replaceNodes(tr, startFromOffset, endToOffset, nodes);
+        dispatch!(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset) - 1)));
         return true;
       }
       return false;
