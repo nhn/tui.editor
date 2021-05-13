@@ -152,7 +152,7 @@ export function deepCopy<T extends Record<string, any>>(obj: T) {
   }, {} as T);
 }
 
-export function assign(targetObj: Record<string, any>, obj: Record<string, any>) {
+export function assign(targetObj: Record<string, any>, obj: Record<string, any> = {}) {
   Object.keys(obj).forEach((prop) => {
     if (targetObj.hasOwnProperty(prop) && typeof targetObj[prop] === 'object') {
       if (Array.isArray(obj[prop])) {
