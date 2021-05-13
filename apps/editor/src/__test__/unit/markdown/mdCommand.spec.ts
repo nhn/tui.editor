@@ -184,6 +184,19 @@ describe('blockQuote command', () => {
 
     expect(getTextContent(mde)).toBe('blockQuote');
   });
+
+  it('should select last position of the line when adding the blockQuote syntax', () => {
+    mde.setMarkdown('\ntest');
+
+    mde.setSelection([1, 1], [1, 1]);
+    cmd.exec('blockQuote');
+
+    expect(getTextContent(mde)).toBe('> \ntest');
+    expect(mde.getSelection()).toEqual([
+      [1, 3],
+      [1, 3],
+    ]);
+  });
 });
 
 describe('hr command', () => {
@@ -294,6 +307,19 @@ describe('heading command', () => {
     cmd.exec('heading', { level: 2 });
 
     expect(getTextContent(mde)).toBe('## heading1\n## heading2');
+  });
+
+  it('should select last position of the line when adding the heading syntax', () => {
+    mde.setMarkdown('\ntest');
+
+    mde.setSelection([1, 1], [1, 1]);
+    cmd.exec('heading', { level: 1 });
+
+    expect(getTextContent(mde)).toBe('# \ntest');
+    expect(mde.getSelection()).toEqual([
+      [1, 3],
+      [1, 3],
+    ]);
   });
 });
 
