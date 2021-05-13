@@ -109,7 +109,7 @@ export class ListItem extends Mark {
             : insertNodes(tr, endToOffset, node);
         }
         // should add `2` to selection end position considering start, end block tag position
-        const newSelection = createTextSelection(newTr, endToOffset + listSyntax.length + 2);
+        const newSelection = createTextSelection(newTr, to + listSyntax.length + 2);
 
         dispatch!(newTr.setSelection(newSelection));
       }
