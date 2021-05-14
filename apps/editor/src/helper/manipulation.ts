@@ -48,7 +48,8 @@ export function createText(schema: Schema, text: string, marks?: Mark[]) {
 }
 
 export function createTextSelection(tr: Transaction, from: number, to = from) {
-  const { size } = tr.doc.content;
+  const contentSize = tr.doc.content.size;
+  const size = contentSize > 0 ? contentSize - 1 : 1;
 
   return TextSelection.create(tr.doc, Math.min(from, size), Math.min(to, size));
 }
