@@ -13,7 +13,7 @@ import {
   replaceNodes,
 } from '@/helper/manipulation';
 import { reBlockQuote } from '../marks/blockQuote';
-import { getRangeInfo, getNodeOffsetRange } from '../helper/pos';
+import { getRangeInfo, getNodeContentOffsetRange } from '../helper/pos';
 import { getReorderedListInfo, reList, reOrderedListGroup } from '../helper/list';
 import { getTextByMdLine, getTextContent } from '../helper/query';
 
@@ -126,8 +126,8 @@ export class Paragraph extends Node {
 
     endLine = Math.max(endLine, line - 1);
 
-    const { startOffset } = getNodeOffsetRange(doc, startLine - 1);
-    const { endOffset } = getNodeOffsetRange(doc, endLine - 1);
+    const { startOffset } = getNodeContentOffsetRange(doc, startLine - 1);
+    const { endOffset } = getNodeContentOffsetRange(doc, endLine - 1);
     const newTr = replaceNodes(tr, startOffset, endOffset, nodes);
     const newSelection = createTextSelection(newTr, selection.from, selection.to);
 

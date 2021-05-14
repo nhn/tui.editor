@@ -148,15 +148,16 @@ export function getRangeInfo(selection: Selection) {
   };
 }
 
-export function getNodeOffsetRange(doc: ProsemirrorNode, targetIndex: number) {
+export function getNodeContentOffsetRange(doc: ProsemirrorNode, targetIndex: number) {
   let startOffset = 1;
   let endOffset = 1;
 
   for (let i = 0, offset = 0; i < doc.childCount; i += 1) {
     const { nodeSize } = doc.child(i);
 
+    // calculate content start, end offset(not node offset)
     startOffset = offset + 1;
-    endOffset = offset + nodeSize;
+    endOffset = offset + nodeSize - 1;
 
     if (i === targetIndex) {
       break;

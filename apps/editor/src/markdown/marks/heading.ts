@@ -2,7 +2,7 @@ import { DOMOutputSpecArray, Mark as ProsemirrorMark, ProsemirrorNode } from 'pr
 import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { createParagraph, replaceNodes } from '@/helper/manipulation';
+import { createParagraph, createTextSelection, replaceNodes } from '@/helper/manipulation';
 import { getRangeInfo } from '../helper/pos';
 import { getTextContent } from '../helper/query';
 
@@ -67,7 +67,8 @@ export class Heading extends Mark {
       }
 
       if (nodes.length) {
-        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, nodes));
+        replaceNodes(tr, startFromOffset, endToOffset, nodes);
+        dispatch!(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset) - 1)));
         return true;
       }
       return false;

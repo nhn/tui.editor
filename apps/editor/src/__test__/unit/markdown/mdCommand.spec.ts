@@ -184,6 +184,19 @@ describe('blockQuote command', () => {
 
     expect(getTextContent(mde)).toBe('blockQuote');
   });
+
+  it('should select last position of the line when adding the blockQuote syntax', () => {
+    mde.setMarkdown('\ntest');
+
+    mde.setSelection([1, 1], [1, 1]);
+    cmd.exec('blockQuote');
+
+    expect(getTextContent(mde)).toBe('> \ntest');
+    expect(mde.getSelection()).toEqual([
+      [1, 3],
+      [1, 3],
+    ]);
+  });
 });
 
 describe('hr command', () => {
@@ -294,6 +307,19 @@ describe('heading command', () => {
     cmd.exec('heading', { level: 2 });
 
     expect(getTextContent(mde)).toBe('## heading1\n## heading2');
+  });
+
+  it('should select last position of the line when adding the heading syntax', () => {
+    mde.setMarkdown('\ntest');
+
+    mde.setSelection([1, 1], [1, 1]);
+    cmd.exec('heading', { level: 1 });
+
+    expect(getTextContent(mde)).toBe('# \ntest');
+    expect(mde.getSelection()).toEqual([
+      [1, 3],
+      [1, 3],
+    ]);
   });
 });
 
@@ -478,6 +504,90 @@ describe('orderedList command', () => {
     mde.setMarkdown(input);
 
     cmd.exec('selectAll');
+    cmd.exec('orderedList');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should change paragraph to ordered list with prev bullet list', () => {
+    const input = source`
+      * bullet1
+
+      ordered1
+      ordered2
+    `;
+    const result = source`
+    * bullet1
+
+    1. ordered1
+    2. ordered2
+    `;
+
+    mde.setMarkdown(input);
+
+    mde.setSelection([3, 2], [4, 2]);
+    cmd.exec('orderedList');
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should change bullet list to ordered list partially', () => {
+    const input = source`
+      * bullet1
+      * bullet2
+      * bullet3
+         * bullet4
+         * bullet5
+    `;
+    const firstResult = source`
+      1. bullet1
+      2. bullet2
+      3. bullet3
+         * bullet4
+         * bullet5
+    `;
+    const secondResult = source`
+      1. bullet1
+      2. bullet2
+      3. bullet3
+         1. bullet4
+         2. bullet5
+    `;
+
+    mde.setMarkdown(input);
+
+    mde.setSelection([1, 2], [1, 2]);
+    cmd.exec('orderedList');
+
+    expect(getTextContent(mde)).toBe(firstResult);
+
+    mde.setSelection([4, 2], [4, 2]);
+    cmd.exec('orderedList');
+
+    expect(getTextContent(mde)).toBe(secondResult);
+  });
+
+  it('should change bullet list to ordered list with extended ranges', () => {
+    const input = source`
+      * bullet1
+      * bullet2
+      * bullet3
+         * bullet4
+         * bullet5
+      * bullet6
+    `;
+    const result = source`
+      1. bullet1
+      2. bullet2
+      3. bullet3
+         * bullet4
+         * bullet5
+      4. bullet6
+    `;
+
+    mde.setMarkdown(input);
+
+    mde.setSelection([1, 2], [1, 2]);
     cmd.exec('orderedList');
 
     expect(getTextContent(mde)).toBe(result);

@@ -1,5 +1,5 @@
 import { source, stripIndent } from 'common-tags';
-import { ToastMark } from '@toast-ui/toastmark';
+import { Sourcepos, ToastMark } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdown/mdEditor';
 import EventEmitter from '@/event/eventEmitter';
 import { getTextContent } from './util';
@@ -16,6 +16,10 @@ function forceKeymapFn(type: string, methodName: string, args: any[] = []) {
 }
 
 let mde: MarkdownEditor, em: EventEmitter;
+
+function assertSelection(mdPos: Sourcepos) {
+  expect(mde.getSelection()).toEqual(mdPos);
+}
 
 beforeEach(() => {
   em = new EventEmitter();
@@ -125,6 +129,10 @@ describe('extend block quote keymap', () => {
     forceKeymapFn('blockQuote', 'extendBlockQuote');
 
     expect(getTextContent(mde)).toBe('> block\n> ');
+    assertSelection([
+      [2, 3],
+      [2, 3],
+    ]);
   });
 
   it('should extend the block quote with sliced text', () => {
@@ -134,6 +142,10 @@ describe('extend block quote keymap', () => {
     forceKeymapFn('blockQuote', 'extendBlockQuote');
 
     expect(getTextContent(mde)).toBe('> blo\n> ck');
+    assertSelection([
+      [2, 3],
+      [2, 3],
+    ]);
   });
 
   it('should extend the block quot on multi line selection', () => {
@@ -152,6 +164,24 @@ describe('extend block quote keymap', () => {
     forceKeymapFn('blockQuote', 'extendBlockQuote');
 
     expect(getTextContent(mde)).toBe('> block\n\n');
+  });
+
+  it('should delete the row in case of empty block quote content with next content', () => {
+    mde.setMarkdown('> block\n>\nparagraph');
+    mde.setSelection([2, 2], [2, 2]);
+
+    forceKeymapFn('blockQuote', 'extendBlockQuote');
+
+    expect(getTextContent(mde)).toBe('> block\n\nparagraph');
+  });
+
+  it('should not extend block quote when position is start offset', () => {
+    mde.setMarkdown('> block');
+    mde.setSelection([1, 1], [1, 1]);
+
+    forceKeymapFn('blockQuote', 'extendBlockQuote');
+
+    expect(getTextContent(mde)).toBe('> block');
   });
 });
 
@@ -172,6 +202,10 @@ describe('extend list keymap', () => {
       forceKeymapFn('listItem', 'extendList');
 
       expect(getTextContent(mde)).toBe(result);
+      assertSelection([
+        [2, 3],
+        [2, 3],
+      ]);
     });
 
     it('should extend the bullet list with sliced text', () => {
@@ -189,6 +223,10 @@ describe('extend list keymap', () => {
       forceKeymapFn('listItem', 'extendList');
 
       expect(getTextContent(mde)).toBe(result);
+      assertSelection([
+        [2, 3],
+        [2, 3],
+      ]);
     });
 
     it('should extend the nested bullet list', () => {
@@ -244,6 +282,10 @@ describe('extend list keymap', () => {
       forceKeymapFn('listItem', 'extendList');
 
       expect(getTextContent(mde)).toBe(result);
+      assertSelection([
+        [2, 7],
+        [2, 7],
+      ]);
     });
 
     it('should extend the bullet list on multi line selection', () => {
@@ -311,6 +353,15 @@ describe('extend list keymap', () => {
 
       expect(getTextContent(mde)).toBe(input);
     });
+
+    it('should delete the row in case of empty bullet list content with next content', () => {
+      mde.setMarkdown('* bullet1\n* \nparagraph');
+      mde.setSelection([2, 3], [2, 3]);
+
+      forceKeymapFn('listItem', 'extendList');
+
+      expect(getTextContent(mde)).toBe('* bullet1\n\nparagraph');
+    });
   });
 
   describe('ordered list', () => {
@@ -329,6 +380,10 @@ describe('extend list keymap', () => {
       forceKeymapFn('listItem', 'extendList');
 
       expect(getTextContent(mde)).toBe(result);
+      assertSelection([
+        [2, 4],
+        [2, 4],
+      ]);
     });
 
     it('should extend the ordered list with sliced text', () => {
@@ -346,6 +401,10 @@ describe('extend list keymap', () => {
       forceKeymapFn('listItem', 'extendList');
 
       expect(getTextContent(mde)).toBe(result);
+      assertSelection([
+        [2, 4],
+        [2, 4],
+      ]);
     });
 
     it('should reorder the list list in the middle of ordered list', () => {
@@ -434,6 +493,10 @@ describe('extend list keymap', () => {
       forceKeymapFn('listItem', 'extendList');
 
       expect(getTextContent(mde)).toBe(result);
+      assertSelection([
+        [2, 8],
+        [2, 8],
+      ]);
     });
 
     it('should extend the ordered list on multi line selection', () => {

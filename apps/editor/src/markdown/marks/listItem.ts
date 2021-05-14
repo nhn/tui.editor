@@ -1,14 +1,14 @@
-import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
+import { DOMOutputSpecArray, Mark as ProsemirrorMark, ProsemirrorNode } from 'prosemirror-model';
 import { Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import { ListItemMdNode, MdNode } from '@toast-ui/toastmark';
-import isNumber from 'tui-code-snippet/type/isNumber';
 import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
 import {
   createParagraph,
+  createText,
   createTextSelection,
   insertNodes,
   replaceNodes,
@@ -24,7 +24,7 @@ import {
   reList,
   ToListContext,
 } from '../helper/list';
-import { getRangeInfo, getNodeOffsetRange } from '../helper/pos';
+import { getRangeInfo, getNodeContentOffsetRange } from '../helper/pos';
 import { getTextContent } from '../helper/query';
 
 type CommandType = 'bullet' | 'ordered' | 'task';
@@ -80,8 +80,10 @@ export class ListItem extends Mark {
 
       if (isEmpty) {
         const emptyNode = createParagraph(schema);
+        // add 2 empty lines when the node is last node
+        const nodes = doc.childCount - 1 === endIndex ? [emptyNode, emptyNode] : [emptyNode];
 
-        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, [emptyNode, emptyNode]));
+        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, nodes));
       } else {
         const commandType = getListType(textContent);
         // should add `1` to line for the markdown parser
@@ -97,7 +99,7 @@ export class ListItem extends Mark {
         // change ordinal number of backward ordered list
         if (changedResults?.length) {
           // get end offset of the last list
-          const { endOffset } = getNodeOffsetRange(doc, lastIndex!);
+          const { endOffset } = getNodeContentOffsetRange(doc, lastIndex!);
           const nodes = changedResults.map(({ text }) => createParagraph(schema, text));
 
           nodes.unshift(node);
@@ -109,7 +111,7 @@ export class ListItem extends Mark {
             : insertNodes(tr, endToOffset, node);
         }
         // should add `2` to selection end position considering start, end block tag position
-        const newSelection = createTextSelection(newTr, endToOffset + listSyntax.length + 2);
+        const newSelection = createTextSelection(newTr, to + listSyntax.length + 2);
 
         dispatch!(newTr.setSelection(newSelection));
       }
@@ -119,17 +121,16 @@ export class ListItem extends Mark {
   }
 
   private toList(commandType: CommandType): EditorCommand {
-    return () => ({ doc, tr, selection, schema }, dispatch) => {
+    return () => ({ doc, tr, selection }, dispatch) => {
       const { toastMark } = this.context;
       const rangeInfo = getRangeInfo(selection);
       // should add `1` to line for the markdown parser
       // because markdown parser has `1`(not zero) as the start number
       const startLine = rangeInfo.startIndex + 1;
       const endLine = rangeInfo.endIndex + 1;
-      let { startFromOffset, endToOffset } = rangeInfo;
+      let { endToOffset } = rangeInfo;
 
       let skipLines: number[] = [];
-      let changed: ChangedListInfo[] = [];
 
       for (let line = startLine; line <= endLine; line += 1) {
         const mdNode: MdNode = toastMark.findFirstNodeAtLine(line)!;
@@ -144,37 +145,44 @@ export class ListItem extends Mark {
         }
 
         const context: ToListContext<MdNode> = { toastMark, mdNode, doc, line, startLine };
-        const { firstIndex, lastIndex, changedResults } = isListNode(mdNode)
+        const { changedResults } = isListNode(mdNode)
           ? otherListToList[commandType](context as ToListContext)
           : otherNodeToList[commandType](context);
-        const { startOffset: firstListStartOffset } = getNodeOffsetRange(doc, firstIndex!);
-        const { endOffset: lastListEndOffset } = getNodeOffsetRange(doc, lastIndex!);
+
+        const endOffset = this.changeToListPerLine(tr, doc, changedResults);
+
+        endToOffset = Math.max(endOffset, endToOffset);
 
         if (changedResults) {
           skipLines = skipLines.concat(changedResults.map((info) => info.line));
         }
-
-        // resolve start offset to change forward same depth list
-        if (isNumber(firstListStartOffset) && firstListStartOffset < startFromOffset) {
-          startFromOffset = firstListStartOffset;
-        }
-
-        // resolve end offset to change backward same depth list
-        if (isNumber(lastListEndOffset) && lastListEndOffset > endToOffset) {
-          endToOffset = lastListEndOffset;
-        }
-        changed = changed.concat(changedResults);
       }
 
-      if (changed.length) {
-        changed.sort((a, b) => (a.line < b.line ? -1 : 1));
-        const nodes = changed.map((info) => createParagraph(schema, info.text));
-
-        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, nodes));
-        return true;
-      }
+      dispatch!(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset))));
       return false;
     };
+  }
+
+  private changeToListPerLine(
+    tr: Transaction,
+    doc: ProsemirrorNode,
+    changedResults: ChangedListInfo[]
+  ) {
+    const { mapping } = tr;
+    const { schema } = this.context;
+    let maxEndOffset = 0;
+
+    changedResults.forEach(({ line, text }) => {
+      // should subtract '1' to markdown line position
+      // because markdown parser has '1'(not zero) as the start number
+      const { startOffset, endOffset } = getNodeContentOffsetRange(doc, line - 1);
+
+      tr.replaceWith(mapping.map(startOffset), mapping.map(endOffset), createText(schema, text));
+
+      maxEndOffset = Math.max(maxEndOffset, endOffset);
+    });
+
+    return maxEndOffset;
   }
 
   private toggleTask(): Command {
@@ -190,7 +198,7 @@ export class ListItem extends Mark {
           const { checked, padding } = mdNode.listData;
           const stateChar = checked ? ' ' : 'x';
           const [mdPos] = mdNode.sourcepos!;
-          let { startOffset } = getNodeOffsetRange(doc, mdPos[0] - 1);
+          let { startOffset } = getNodeContentOffsetRange(doc, mdPos[0] - 1);
 
           startOffset += mdPos[1] + padding;
 

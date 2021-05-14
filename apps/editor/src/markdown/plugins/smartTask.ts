@@ -3,7 +3,7 @@ import { EditorView } from 'prosemirror-view';
 import { MdPos } from '@toast-ui/toastmark';
 import { MdContext } from '@t/spec';
 import { findClosestNode } from '@/utils/markdown';
-import { getRangeInfo, getNodeOffsetRange } from '../helper/pos';
+import { getRangeInfo, getNodeContentOffsetRange } from '../helper/pos';
 
 const reTaskMarkerKey = /x|backspace/i;
 const reTaskMarker = /^\[(\s*)(x?)(\s*)\](?:\s+)/i;
@@ -34,7 +34,7 @@ export function smartTask({ schema, toastMark }: MdContext) {
                 const [startMdPos] = firstChild.sourcepos!;
                 const [, startSpaces, stateChar, lastSpaces] = matched;
                 const spaces = startSpaces.length + lastSpaces.length;
-                const { startOffset } = getNodeOffsetRange(doc, startMdPos[0] - 1);
+                const { startOffset } = getNodeContentOffsetRange(doc, startMdPos[0] - 1);
                 const startPos = startMdPos[1] + startOffset;
 
                 if (stateChar) {

@@ -2,7 +2,7 @@ import { DOMOutputSpecArray } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { createParagraph, createTextSelection } from '@/helper/manipulation';
+import { createParagraph, createTextSelection, replaceNodes } from '@/helper/manipulation';
 import { getRangeInfo } from '../helper/pos';
 
 const thematicBreakSyntax = '***';
@@ -32,8 +32,9 @@ export class ThematicBreak extends Mark {
         nodes.push(emptyNode);
       }
 
+      replaceNodes(tr, from, to, nodes, { from: 0, to: 0 });
       // add 3(`***` length) and 3(start, end block tag position)
-      dispatch!(tr.replaceWith(from, to, nodes).setSelection(createTextSelection(tr, from + 6)));
+      dispatch!(tr.setSelection(createTextSelection(tr, from + 6)));
 
       return true;
     };
