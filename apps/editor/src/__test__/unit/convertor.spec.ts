@@ -97,7 +97,7 @@ describe('Convertor', () => {
       const markdown = source`
         * foo
         * bar
-          * qux
+            * qux
         * baz
     	`;
 
@@ -288,7 +288,7 @@ describe('Convertor', () => {
     it('task', () => {
       const markdown = source`
         * [ ] foo
-          * [x] baz
+            * [x] baz
         * [x] bar
         
         1. [x] foo
@@ -308,7 +308,7 @@ describe('Convertor', () => {
       `;
       const expected = source`
         > * foo
-        >   * baz
+        >     * baz
         > * bar
         > > 1. qux
         > > 2. quxx 
