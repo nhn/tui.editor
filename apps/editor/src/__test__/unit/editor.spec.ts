@@ -1,5 +1,5 @@
 import '@/i18n/en-us';
-import { oneLineTrim } from 'common-tags';
+import { oneLineTrim, stripIndents } from 'common-tags';
 import i18n from '@/i18n/i18n';
 import Editor from '@/editor';
 import Viewer from '@/Viewer';
@@ -58,6 +58,21 @@ describe('editor', () => {
 
       expect(mdEditor).toContainHTML(expected);
       expect(wwEditor).toContainHTML(expected);
+    });
+
+    it('getHTML()', () => {
+      editor.setMarkdown('# heading\n* bullet');
+
+      const result = stripIndents`
+        <h1>heading</h1>
+        <ul>
+          <li>
+            <p>bullet</p>
+          </li>
+        </ul>
+      `;
+
+      expect(editor.getHTML()).toBe(result);
     });
 
     it('changeMode()', () => {
