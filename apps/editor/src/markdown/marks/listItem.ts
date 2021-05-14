@@ -2,8 +2,6 @@ import { DOMOutputSpecArray, Mark as ProsemirrorMark, ProsemirrorNode } from 'pr
 import { Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import { ListItemMdNode, MdNode } from '@toast-ui/toastmark';
-import isNumber from 'tui-code-snippet/type/isNumber';
-import isUndefined from 'tui-code-snippet/type/isUndefined';
 import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
@@ -123,7 +121,7 @@ export class ListItem extends Mark {
   }
 
   private toList(commandType: CommandType): EditorCommand {
-    return () => ({ doc, tr, selection, schema }, dispatch) => {
+    return () => ({ doc, tr, selection }, dispatch) => {
       const { toastMark } = this.context;
       const rangeInfo = getRangeInfo(selection);
       // should add `1` to line for the markdown parser
