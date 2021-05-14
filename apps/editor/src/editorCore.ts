@@ -665,9 +665,9 @@ class ToastUIEditor {
   /**
    * Change editor's mode to given mode string
    * @param {string} mode - Editor mode name of want to change
-   * @param {boolean} [isWithoutFocus] - Change mode without focus
+   * @param {boolean} [withoutFocus] - Change mode without focus
    */
-  changeMode(mode: EditorType, isWithoutFocus?: boolean) {
+  changeMode(mode: EditorType, withoutFocus?: boolean) {
     if (this.mode === mode) {
       return;
     }
@@ -682,12 +682,12 @@ class ToastUIEditor {
     } else {
       const wwNode = this.wwEditor.getModel();
 
-      this.mdEditor.setMarkdown(this.convertor.toMarkdownText(wwNode), !isWithoutFocus);
+      this.mdEditor.setMarkdown(this.convertor.toMarkdownText(wwNode), !withoutFocus);
     }
 
     this.eventEmitter.emit('changeMode', mode);
 
-    if (!isWithoutFocus) {
+    if (!withoutFocus) {
       this.focus();
     }
   }
