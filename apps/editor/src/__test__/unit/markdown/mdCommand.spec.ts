@@ -580,8 +580,8 @@ describe('orderedList command', () => {
       1. bullet1
       2. bullet2
       3. bullet3
-         1. bullet4
-         2. bullet5
+         * bullet4
+         * bullet5
       4. bullet6
     `;
 
