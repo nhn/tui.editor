@@ -1,6 +1,6 @@
 import { oneLineTrim } from 'common-tags';
 import Editor from '@/editorCore';
-import { trailingDataAttr } from '@/__test__/unit/markdown/util';
+import { removeDataAttr } from '@/__test__/unit/markdown/util';
 
 describe('widgetNode', () => {
   let container: HTMLElement,
@@ -10,7 +10,7 @@ describe('widgetNode', () => {
     editor: Editor;
 
   function getPreviewHTML() {
-    return trailingDataAttr(mdPreview.querySelector('.toastui-editor-contents')!.innerHTML);
+    return removeDataAttr(mdPreview.querySelector('.toastui-editor-contents')!.innerHTML);
   }
 
   beforeEach(() => {

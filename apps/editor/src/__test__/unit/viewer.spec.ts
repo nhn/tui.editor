@@ -1,12 +1,12 @@
 import { oneLineTrim } from 'common-tags';
 import Viewer from '@/viewer';
-import { trailingDataAttr } from './markdown/util';
+import { removeDataAttr } from './markdown/util';
 
 describe('Viewer', () => {
   let viewer: Viewer, container: HTMLElement;
 
   function getViewerHTML() {
-    return oneLineTrim`${trailingDataAttr(
+    return oneLineTrim`${removeDataAttr(
       container.querySelector('.toastui-editor-contents')!.innerHTML
     )}`;
   }

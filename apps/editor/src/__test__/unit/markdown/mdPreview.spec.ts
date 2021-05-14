@@ -3,10 +3,10 @@ import MarkdownPreview, { CLASS_HIGHLIGHT } from '@/markdown/mdPreview';
 import MarkdownEditor from '@/markdown/mdEditor';
 import EventEmitter from '@/event/eventEmitter';
 import * as sanitizer from '@/sanitizer/htmlSanitizer';
-import { createHTMLrenderer, trailingDataAttr } from './util';
+import { createHTMLrenderer, removeDataAttr } from './util';
 
 function getHTML(preview: MarkdownPreview) {
-  return trailingDataAttr(preview.getHTML());
+  return removeDataAttr(preview.getHTML());
 }
 
 describe('Preview', () => {
