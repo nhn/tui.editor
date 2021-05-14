@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
+import { DOMOutputSpecArray, Mark as ProsemirrorMark, ProsemirrorNode } from 'prosemirror-model';
 import { Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import { ListItemMdNode, MdNode } from '@toast-ui/toastmark';
@@ -10,6 +10,7 @@ import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
 import {
   createParagraph,
+  createText,
   createTextSelection,
   insertNodes,
   replaceNodes,
@@ -128,11 +129,10 @@ export class ListItem extends Mark {
       // should add `1` to line for the markdown parser
       // because markdown parser has `1`(not zero) as the start number
       const startLine = rangeInfo.startIndex + 1;
-      let endLine = rangeInfo.endIndex + 1;
-      let { startFromOffset, endToOffset } = rangeInfo;
+      const endLine = rangeInfo.endIndex + 1;
+      let { endToOffset } = rangeInfo;
 
       let skipLines: number[] = [];
-      let changed: ChangedListInfo[] = [];
 
       for (let line = startLine; line <= endLine; line += 1) {
         const mdNode: MdNode = toastMark.findFirstNodeAtLine(line)!;
@@ -147,45 +147,44 @@ export class ListItem extends Mark {
         }
 
         const context: ToListContext<MdNode> = { toastMark, mdNode, doc, line, startLine };
-        const { firstIndex, lastIndex, changedResults } = isListNode(mdNode)
+        const { changedResults } = isListNode(mdNode)
           ? otherListToList[commandType](context as ToListContext)
           : otherNodeToList[commandType](context);
-        let firstListStartOffset, lastListEndOffset;
 
-        if (!isUndefined(firstIndex)) {
-          firstListStartOffset = getNodeContentOffsetRange(doc, firstIndex).startOffset;
-        }
-        if (!isUndefined(lastIndex)) {
-          endLine = Math.max(endLine, lastIndex + 1);
-          lastListEndOffset = getNodeContentOffsetRange(doc, lastIndex).endOffset;
-        }
+        const endOffset = this.changeToListPerLine(tr, doc, changedResults);
+
+        endToOffset = Math.max(endOffset, endToOffset);
 
         if (changedResults) {
           skipLines = skipLines.concat(changedResults.map((info) => info.line));
         }
-
-        // resolve start offset to change forward same depth list
-        if (isNumber(firstListStartOffset) && firstListStartOffset < startFromOffset) {
-          startFromOffset = firstListStartOffset;
-        }
-
-        // resolve end offset to change backward same depth list
-        if (isNumber(lastListEndOffset) && lastListEndOffset > endToOffset) {
-          endToOffset = lastListEndOffset;
-        }
-        changed = changed.concat(changedResults);
       }
 
-      if (changed.length) {
-        changed.sort((a, b) => (a.line < b.line ? -1 : 1));
-        const nodes = changed.map((info) => createParagraph(schema, info.text));
-
-        replaceNodes(tr, startFromOffset, endToOffset, nodes);
-        dispatch!(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset) - 1)));
-        return true;
-      }
+      dispatch!(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset))));
       return false;
     };
+  }
+
+  private changeToListPerLine(
+    tr: Transaction,
+    doc: ProsemirrorNode,
+    changedResults: ChangedListInfo[]
+  ) {
+    const { mapping } = tr;
+    const { schema } = this.context;
+    let maxEndOffset = 0;
+
+    changedResults.forEach(({ line, text }) => {
+      // should subtract '1' to markdown line position
+      // because markdown parser has '1'(not zero) as the start number
+      const { startOffset, endOffset } = getNodeContentOffsetRange(doc, line - 1);
+
+      tr.replaceWith(mapping.map(startOffset), mapping.map(endOffset), createText(schema, text));
+
+      maxEndOffset = Math.max(maxEndOffset, endOffset);
+    });
+
+    return maxEndOffset;
   }
 
   private toggleTask(): Command {
