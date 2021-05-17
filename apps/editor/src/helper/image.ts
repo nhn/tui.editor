@@ -1,6 +1,6 @@
 import toArray from 'tui-code-snippet/collection/toArray';
 
-import { EditorType, HookCallback } from '@t/editor';
+import { HookCallback } from '@t/editor';
 import { Emitter } from '@t/event';
 
 export function addDefaultImageBlobHook(eventEmitter: Emitter) {
@@ -12,21 +12,12 @@ export function addDefaultImageBlobHook(eventEmitter: Emitter) {
   });
 }
 
-export function emitImageBlobHook(
-  eventEmitter: Emitter,
-  editorType: EditorType,
-  blob: File,
-  type: string
-) {
+export function emitImageBlobHook(eventEmitter: Emitter, blob: File, type: string) {
   const hook: HookCallback = (imageUrl, altText) => {
-    eventEmitter.emit(
-      'command',
-      { type: editorType, command: 'addImage' },
-      {
-        imageUrl,
-        altText: altText || blob.name || 'image',
-      }
-    );
+    eventEmitter.emit('command', 'addImage', {
+      imageUrl,
+      altText: altText || blob.name || 'image',
+    });
   };
 
   eventEmitter.emit('addImageBlobHook', blob, hook, type);

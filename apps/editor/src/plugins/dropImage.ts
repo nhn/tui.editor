@@ -2,9 +2,8 @@ import { Plugin } from 'prosemirror-state';
 import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import { Context } from '@t/spec';
 import { emitImageBlobHook } from '@/helper/image';
-import { EditorType } from '@t/editor';
 
-export function dropImage({ eventEmitter }: Context, editorType: EditorType) {
+export function dropImage({ eventEmitter }: Context) {
   return new Plugin({
     props: {
       handleDOMEvents: {
@@ -16,7 +15,7 @@ export function dropImage({ eventEmitter }: Context, editorType: EditorType) {
               if (item.type.indexOf('image') !== -1) {
                 ev.preventDefault();
                 ev.stopPropagation();
-                emitImageBlobHook(eventEmitter, editorType, item, ev.type);
+                emitImageBlobHook(eventEmitter, item, ev.type);
 
                 return false;
               }

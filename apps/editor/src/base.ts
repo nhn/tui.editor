@@ -92,7 +92,7 @@ export default abstract class EditorBase implements Base {
       history(),
       placeholder(this.placeholder),
       addWidget(this.eventEmitter),
-      dropImage(this.context, this.editorType),
+      dropImage(this.context),
     ];
 
     return rules ? plugins.concat(rules) : plugins;

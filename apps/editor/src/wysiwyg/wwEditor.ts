@@ -174,7 +174,7 @@ export default class WysiwygEditor extends EditorBase {
             if (imageBlob) {
               ev.preventDefault();
 
-              emitImageBlobHook(this.eventEmitter, 'wysiwyg', imageBlob, ev.type);
+              emitImageBlobHook(this.eventEmitter, imageBlob, ev.type);
             }
           }
           return false;
