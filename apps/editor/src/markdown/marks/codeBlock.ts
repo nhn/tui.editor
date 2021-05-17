@@ -1,17 +1,15 @@
-import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpecArray, Fragment } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
+import type { Transaction } from 'prosemirror-state';
 import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import {
-  createParagraph,
-  createTextSelection,
-  insertNodes,
-  replaceNodes,
-} from '@/helper/manipulation';
+import { createText, createTextSelection } from '@/helper/manipulation';
 import { isCodeBlockNode } from '@/utils/markdown';
 import { getRangeInfo } from '../helper/pos';
 import { getTextContent } from '../helper/query';
+
+const fencedCodeBlockSyntax = '```';
 
 export class CodeBlock extends Mark {
   context!: MdSpecContext;
@@ -30,21 +28,32 @@ export class CodeBlock extends Mark {
 
   commands(): EditorCommand {
     return () => (state, dispatch) => {
-      const { selection, doc, schema } = state;
+      const { selection, doc, schema, tr } = state;
       const { startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(selection);
-      const fencedNode = createParagraph(schema, '```');
-      const nodes: ProsemirrorNode[] = [fencedNode];
+      const fencedNode = createText(schema, fencedCodeBlockSyntax);
+      let from = startFromOffset;
+
+      // add fenced start block
+      tr.insert(startFromOffset, fencedNode).split(startFromOffset + 3);
 
       for (let i = startIndex; i <= endIndex; i += 1) {
-        const textContent = getTextContent(doc, i);
+        const { nodeSize, textContent, content } = doc.child(i);
+        const node = textContent ? createText(schema, textContent) : Fragment.empty;
+        const mappedFrom = tr.mapping.map(from);
+        const mappedTo = mappedFrom + content.size;
 
-        nodes.push(createParagraph(schema, textContent));
+        tr.replaceWith(mappedFrom, mappedTo, node);
+        from += nodeSize;
       }
-      nodes.push(fencedNode);
+      // add fenced end block
+      tr.split(tr.mapping.map(endToOffset)).insert(tr.mapping.map(endToOffset), fencedNode);
 
-      const tr = replaceNodes(state.tr, startFromOffset, endToOffset, nodes);
-
-      dispatch!(tr.setSelection(createTextSelection(tr, startFromOffset + 4)));
+      dispatch!(
+        tr.setSelection(
+          // subtract fenced syntax length and open, close tag(2)
+          createTextSelection(tr, tr.mapping.map(endToOffset) - (fencedCodeBlockSyntax.length + 2))
+        )
+      );
 
       return true;
     };
@@ -63,13 +72,15 @@ export class CodeBlock extends Mark {
         if (isCodeBlockNode(mdNode) && matched) {
           const [spaces] = matched;
           const slicedText = textContent.slice(to - startFromOffset);
-          const node = createParagraph(schema, spaces + slicedText);
-          const newTr = slicedText
-            ? replaceNodes(tr, to, endToOffset, node, { from: 0, to: 1 })
-            : insertNodes(tr, endToOffset, node);
-          const newSelection = createTextSelection(newTr, endToOffset + spaces.length + 2);
+          const slicedTextLen = slicedText.length;
+          const node = createText(schema, spaces + slicedText);
 
-          dispatch!(newTr.setSelection(newSelection));
+          (tr.split(endToOffset) as Transaction)
+            .delete(endToOffset - slicedTextLen, endToOffset)
+            .insert(tr.mapping.map(endToOffset), node)
+            .setSelection(createTextSelection(tr, tr.mapping.map(endToOffset) - slicedTextLen));
+
+          dispatch!(tr);
 
           return true;
         }
