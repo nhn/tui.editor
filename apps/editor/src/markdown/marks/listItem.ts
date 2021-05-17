@@ -6,13 +6,7 @@ import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
-import {
-  createParagraph,
-  createText,
-  createTextSelection,
-  insertNodes,
-  replaceNodes,
-} from '@/helper/manipulation';
+import { createText, createTextSelection } from '@/helper/manipulation';
 import {
   ChangedListInfo,
   extendList,
@@ -66,56 +60,63 @@ export class ListItem extends Mark {
   }
 
   private extendList(): Command {
-    return ({ selection, tr, doc, schema }, dispatch) => {
+    return ({ selection, doc, schema, tr }, dispatch) => {
       const { toastMark } = this.context;
-      const { to, startFromOffset, endFromOffset, endToOffset, endIndex } = getRangeInfo(selection);
+      const { to, startFromOffset, endFromOffset, endIndex, endToOffset } = getRangeInfo(selection);
       const textContent = getTextContent(doc, endIndex);
       const isList = reList.test(textContent);
 
-      if (!isList || selection.from === startFromOffset) {
+      if (!isList || selection.from === startFromOffset || !selection.empty) {
         return false;
       }
 
       const isEmpty = !textContent.replace(reCanBeTaskList, '').trim();
 
       if (isEmpty) {
-        const emptyNode = createParagraph(schema);
-        // add 2 empty lines when the node is last node
-        const nodes = doc.childCount - 1 === endIndex ? [emptyNode, emptyNode] : [emptyNode];
-
-        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, nodes));
+        tr.deleteRange(endFromOffset, endToOffset).split(tr.mapping.map(endToOffset));
       } else {
         const commandType = getListType(textContent);
         // should add `1` to line for the markdown parser
         // because markdown parser has `1`(not zero) as the start number
         const mdNode = toastMark.findFirstNodeAtLine(endIndex + 1) as ListItemMdNode;
         const slicedText = textContent.slice(to - endFromOffset);
+        const slicedTextLen = slicedText.length;
         const context: ExtendListContext = { toastMark, mdNode, doc, line: endIndex + 1 };
-        const { listSyntax, changedResults, lastIndex } = extendList[commandType](context);
+        const { listSyntax, changedResults } = extendList[commandType](context);
 
-        const node = createParagraph(schema, listSyntax + slicedText);
-        let newTr: Transaction | null;
+        const node = createText(schema, listSyntax + slicedText);
+
+        // split the block
+        tr.split(to);
 
         // change ordinal number of backward ordered list
         if (changedResults?.length) {
-          // get end offset of the last list
-          const { endOffset } = getNodeContentOffsetRange(doc, lastIndex!);
-          const nodes = changedResults.map(({ text }) => createParagraph(schema, text));
+          changedResults.unshift({ text: listSyntax + slicedText, line: endIndex + 1 });
+          let from = to;
+          const sIndex = changedResults[0].line;
+          const eIndex = changedResults[changedResults.length - 1].line;
 
-          nodes.unshift(node);
+          for (let i = sIndex; i <= eIndex; i += 1) {
+            const { nodeSize, content } = tr.doc.child(i);
+            const mappedFrom = tr.mapping.map(from);
+            const mappedTo = mappedFrom + content.size;
+            const [changedResult] = changedResults.filter((result) => result.line === i);
 
-          newTr = replaceNodes(tr, to, endOffset, nodes, { from: 0, to: 1 });
+            if (changedResult) {
+              tr.replaceWith(mappedFrom, mappedTo, createText(schema, changedResult.text));
+            }
+            from += nodeSize;
+          }
+          const pos = tr.mapping.map(endToOffset) - slicedText.length;
+
+          tr.setSelection(createTextSelection(tr, pos));
         } else {
-          newTr = slicedText
-            ? replaceNodes(tr, to, endToOffset, node, { from: 0, to: 1 })
-            : insertNodes(tr, endToOffset, node);
+          tr.delete(tr.mapping.map(endToOffset) - slicedTextLen, tr.mapping.map(endToOffset))
+            .insert(tr.mapping.map(endToOffset), node)
+            .setSelection(createTextSelection(tr, tr.mapping.map(endToOffset) - slicedTextLen));
         }
-        // should add `2` to selection end position considering start, end block tag position
-        const newSelection = createTextSelection(newTr, to + listSyntax.length + 2);
-
-        dispatch!(newTr.setSelection(newSelection));
       }
-
+      dispatch!(tr);
       return true;
     };
   }
