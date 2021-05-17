@@ -9,7 +9,6 @@ import { getRangeInfo } from '../helper/pos';
 import { getTextContent } from '../helper/query';
 
 export const reBlockQuote = /^\s*> ?/;
-export const blockQuoteSyntax = '> ';
 
 export class BlockQuote extends Mark {
   get name() {
