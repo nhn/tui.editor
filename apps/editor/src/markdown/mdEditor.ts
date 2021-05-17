@@ -88,7 +88,6 @@ export default class MdEditor extends EditorBase {
     this.clipboard = document.createElement('textarea');
     this.clipboard.className = cls('pseudo-clipboard');
     this.clipboard.addEventListener('paste', (ev: ClipboardEvent) => {
-      ev.preventDefault();
       const clipboardData =
         (ev as ClipboardEvent).clipboardData || (window as WindowWithClipboard).clipboardData;
       const items = clipboardData && clipboardData.items;
@@ -97,15 +96,18 @@ export default class MdEditor extends EditorBase {
         const imageBlob = pasteImageOnly(items);
 
         if (imageBlob) {
-          emitImageBlobHook(this.eventEmitter, 'markdown', imageBlob, ev.type);
-
-          return;
+          ev.preventDefault();
+          emitImageBlobHook(this.eventEmitter, imageBlob, ev.type);
         }
       }
-
-      const text = clipboardData!.getData('text');
+    });
+    // process the pasted data in input event for IE11
+    this.clipboard.addEventListener('input', (ev) => {
+      const text = (ev.target as HTMLTextAreaElement).value;
 
       this.replaceSelection(text);
+      ev.preventDefault();
+      (ev.target as HTMLTextAreaElement).value = '';
     });
     this.el.insertBefore(this.clipboard, this.view.dom);
   }
