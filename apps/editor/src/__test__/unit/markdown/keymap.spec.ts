@@ -75,19 +75,12 @@ describe('extend table keymap', () => {
     expect(getTextContent(mde)).toBe(`${result}\n\n`);
   });
 
-  it('should extend table list on multi line selection', () => {
+  it('should not extend table list on multi line selection', () => {
     const input = source`
       | head1 | head2 |
       | --- | --- |
       | row1 | row1 |
       | row2 | row2 |
-    `;
-    const result = source`
-      | head1 | head2 |
-      | --- | --- |
-      | row1 | row1 |
-      | row2 | row2 |
-      |  |  |
     `;
 
     mde.setMarkdown(input);
@@ -95,7 +88,7 @@ describe('extend table keymap', () => {
 
     forceKeymapFn('table', 'extendTable');
 
-    expect(getTextContent(mde)).toBe(result);
+    expect(getTextContent(mde)).toBe(input);
   });
 
   it('should not extend the table out of table range', () => {
@@ -148,13 +141,15 @@ describe('extend block quote keymap', () => {
     ]);
   });
 
-  it('should extend the block quot on multi line selection', () => {
-    mde.setMarkdown('> block1\n> block2');
+  it('should not extend the block quote on multi line selection', () => {
+    const input = '> block1\n> block2';
+
+    mde.setMarkdown(input);
     mde.setSelection([1, 2], [2, 4]);
 
     forceKeymapFn('blockQuote', 'extendBlockQuote');
 
-    expect(getTextContent(mde)).toBe('> block1\n> b\n> lock2');
+    expect(getTextContent(mde)).toBe(input);
   });
 
   it('should delete the row in case of empty block quote content', () => {
@@ -172,7 +167,7 @@ describe('extend block quote keymap', () => {
 
     forceKeymapFn('blockQuote', 'extendBlockQuote');
 
-    expect(getTextContent(mde)).toBe('> block\n\nparagraph');
+    expect(getTextContent(mde)).toBe('> block\n\n\nparagraph');
   });
 
   it('should not extend block quote when position is start offset', () => {
@@ -288,15 +283,10 @@ describe('extend list keymap', () => {
       ]);
     });
 
-    it('should extend the bullet list on multi line selection', () => {
+    it('should not extend the bullet list on multi line selection', () => {
       const input = source`
         * bullet1
         * bullet2
-      `;
-      const result = source`
-        * bullet1
-        * b
-        * ullet2
       `;
 
       mde.setMarkdown(input);
@@ -304,7 +294,7 @@ describe('extend list keymap', () => {
 
       forceKeymapFn('listItem', 'extendList');
 
-      expect(getTextContent(mde)).toBe(result);
+      expect(getTextContent(mde)).toBe(input);
     });
 
     it('should delete the row in case of empty bullet list content', () => {
@@ -360,7 +350,7 @@ describe('extend list keymap', () => {
 
       forceKeymapFn('listItem', 'extendList');
 
-      expect(getTextContent(mde)).toBe('* bullet1\n\nparagraph');
+      expect(getTextContent(mde)).toBe('* bullet1\n\n\nparagraph');
     });
   });
 
@@ -499,15 +489,10 @@ describe('extend list keymap', () => {
       ]);
     });
 
-    it('should extend the ordered list on multi line selection', () => {
+    it('should not extend the ordered list on multi line selection', () => {
       const input = source`
         1. ordered1
         2. ordered2
-      `;
-      const result = source`
-        1. ordered1
-        2. o
-        3. rdered2
       `;
 
       mde.setMarkdown(input);
@@ -515,7 +500,7 @@ describe('extend list keymap', () => {
 
       forceKeymapFn('listItem', 'extendList');
 
-      expect(getTextContent(mde)).toBe(result);
+      expect(getTextContent(mde)).toBe(input);
     });
 
     it('should extend the ordered list excluding blank line', () => {
