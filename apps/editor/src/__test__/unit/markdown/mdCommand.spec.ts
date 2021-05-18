@@ -1,15 +1,22 @@
 import { source, stripIndent } from 'common-tags';
+import { undo } from 'prosemirror-history';
 import { ToastMark } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdown/mdEditor';
 import EventEmitter from '@/event/eventEmitter';
 import CommandManager from '@/commands/commandManager';
-import { getTextContent } from './util';
+import { getTextContent, TestEditorWithNoneDelayHistory } from './util';
 
 let mde: MarkdownEditor, em: EventEmitter, cmd: CommandManager;
 
+function execUndo() {
+  const { state, dispatch } = mde.view;
+
+  undo(state, dispatch);
+}
+
 beforeEach(() => {
   em = new EventEmitter();
-  mde = new MarkdownEditor(em, { toastMark: new ToastMark() });
+  mde = new TestEditorWithNoneDelayHistory(em, { toastMark: new ToastMark() });
   cmd = new CommandManager(em, mde.commands, {}, () => 'markdown');
 });
 
@@ -197,6 +204,21 @@ describe('blockQuote command', () => {
       [1, 3],
     ]);
   });
+
+  it('should undo blockQuote command properly', () => {
+    const input = 'test\nparagraph';
+
+    mde.setMarkdown(input);
+
+    mde.setSelection([1, 1], [1, 1]);
+    cmd.exec('blockQuote');
+
+    expect(getTextContent(mde)).toBe('> test\nparagraph');
+
+    execUndo();
+
+    expect(getTextContent(mde)).toBe(input);
+  });
 });
 
 describe('hr command', () => {
@@ -213,6 +235,21 @@ describe('hr command', () => {
     cmd.exec('hr');
 
     expect(getTextContent(mde)).toBe('p\n***\nagraph');
+  });
+
+  it('should undo hr command properly', () => {
+    const input = 'test\nparagraph';
+
+    mde.setMarkdown(input);
+
+    mde.setSelection([1, 5], [1, 5]);
+    cmd.exec('hr');
+
+    expect(getTextContent(mde)).toBe('test\n***\n\nparagraph');
+
+    execUndo();
+
+    expect(getTextContent(mde)).toBe(input);
   });
 });
 
@@ -429,6 +466,34 @@ describe('bulletList command', () => {
 
     expect(getTextContent(mde)).toBe(result);
   });
+
+  it('should undo bullet list command properly', () => {
+    const input = source`
+      1. ordered1
+      2. ordered2
+      3. ordered3
+         1. sub1
+         2. sub2
+    `;
+    const result = source`
+      * ordered1
+      * ordered2
+      * ordered3
+         1. sub1
+         2. sub2
+    `;
+
+    mde.setMarkdown(input);
+
+    mde.setSelection([1, 2], [1, 2]);
+    cmd.exec('bulletList');
+
+    expect(getTextContent(mde)).toBe(result);
+
+    execUndo();
+
+    expect(getTextContent(mde)).toBe(input);
+  });
 });
 
 describe('orderedList command', () => {
@@ -592,6 +657,36 @@ describe('orderedList command', () => {
 
     expect(getTextContent(mde)).toBe(result);
   });
+
+  it('should undo ordered list command properly', () => {
+    const input = source`
+      * bullet1
+      * bullet2
+      * bullet3
+         * bullet4
+         * bullet5
+      * bullet6
+    `;
+    const result = source`
+      1. bullet1
+      2. bullet2
+      3. bullet3
+         * bullet4
+         * bullet5
+      4. bullet6
+    `;
+
+    mde.setMarkdown(input);
+
+    mde.setSelection([1, 2], [1, 2]);
+    cmd.exec('orderedList');
+
+    expect(getTextContent(mde)).toBe(result);
+
+    execUndo();
+
+    expect(getTextContent(mde)).toBe(input);
+  });
 });
 
 describe('taskList command', () => {
@@ -730,6 +825,27 @@ describe('addTable command', () => {
 
     expect(getTextContent(mde)).toBe(result);
   });
+
+  it('should undo table command properly', () => {
+    const result = source`
+      text
+      |  |  |
+      | --- | --- |
+      |  |  |
+      |  |  |
+    `;
+
+    mde.setMarkdown('text');
+
+    cmd.exec('selectAll');
+    cmd.exec('addTable', { columnCount: 2, rowCount: 3 });
+
+    expect(getTextContent(mde)).toBe(result);
+
+    execUndo();
+
+    expect(getTextContent(mde)).toBe('text');
+  });
 });
 
 describe('indent command', () => {
@@ -762,6 +878,32 @@ describe('indent command', () => {
     cmd.exec('indent');
 
     expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should undo indent command properly', () => {
+    const input = source`
+      * line1
+      * line2
+      * line3
+      * line4
+    `;
+    const result = stripIndent`
+      * line1
+          * line2
+          * line3
+      * line4
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([2, 3], [3, 2]);
+
+    cmd.exec('indent');
+
+    expect(getTextContent(mde)).toBe(result);
+
+    execUndo();
+
+    expect(getTextContent(mde)).toBe(input);
   });
 
   describe('ordered list', () => {
@@ -865,6 +1007,32 @@ describe('outdent command', () => {
     expect(getTextContent(mde)).toBe(result);
   });
 
+  it('should undo outdent command properly', () => {
+    const input = stripIndent`
+      * line1
+          * line2
+          * line3
+      * line4
+    `;
+    const result = source`
+      * line1
+      * line2
+      * line3
+      * line4
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([2, 3], [3, 2]);
+
+    cmd.exec('outdent');
+
+    expect(getTextContent(mde)).toBe(result);
+
+    execUndo();
+
+    expect(getTextContent(mde)).toBe(input);
+  });
+
   describe('ordered list', () => {
     it('should reorder ordered list after removing soft-tab indentation based on caret position', () => {
       const input = stripIndent`
@@ -947,28 +1115,5 @@ describe('outdent command', () => {
 
       expect(getTextContent(mde)).toBe(result);
     });
-  });
-});
-
-describe('history command', () => {
-  beforeEach(() => {
-    mde.setMarkdown('italicBold');
-
-    cmd.exec('selectAll');
-    cmd.exec('bold');
-    cmd.exec('italic');
-  });
-
-  it('undo go back to before previous action', () => {
-    cmd.exec('undo');
-
-    expect(getTextContent(mde)).toBe('**italicBold**');
-  });
-
-  it('redo cancel undo action', () => {
-    cmd.exec('undo');
-    cmd.exec('redo');
-
-    expect(getTextContent(mde)).toBe('***italicBold***');
   });
 });

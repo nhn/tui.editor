@@ -1,8 +1,9 @@
 import { source, stripIndent } from 'common-tags';
+import { undo } from 'prosemirror-history';
 import { Sourcepos, ToastMark } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdown/mdEditor';
 import EventEmitter from '@/event/eventEmitter';
-import { getTextContent } from './util';
+import { getTextContent, TestEditorWithNoneDelayHistory } from './util';
 
 // @TODO: all tests should move to e2e test
 
@@ -21,9 +22,15 @@ function assertSelection(mdPos: Sourcepos) {
   expect(mde.getSelection()).toEqual(mdPos);
 }
 
+function execUndo() {
+  const { state, dispatch } = mde.view;
+
+  undo(state, dispatch);
+}
+
 beforeEach(() => {
   em = new EventEmitter();
-  mde = new MarkdownEditor(em, { toastMark: new ToastMark() });
+  mde = new TestEditorWithNoneDelayHistory(em, { toastMark: new ToastMark() });
 });
 
 // @TODO: should add test case after developing the markdown editor API
@@ -112,6 +119,35 @@ describe('extend table keymap', () => {
 
     expect(getTextContent(mde)).toBe(result);
   });
+
+  it('should undo extend the table properly', () => {
+    const input = source`
+      | head1 | head2 |
+      | --- | --- |
+      | row1 | row1 |
+      | row2 | row2 |
+      text
+    `;
+    const result = source`
+      | head1 | head2 |
+      | --- | --- |
+      | row1 | row1 |
+      | row2 | row2 |
+      |  |  |
+      text
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([4, 2], [4, 2]);
+
+    forceKeymapFn('table', 'extendTable');
+
+    expect(getTextContent(mde)).toBe(result);
+
+    execUndo();
+
+    expect(getTextContent(mde)).toBe(input);
+  });
 });
 
 describe('extend block quote keymap', () => {
@@ -177,6 +213,21 @@ describe('extend block quote keymap', () => {
     forceKeymapFn('blockQuote', 'extendBlockQuote');
 
     expect(getTextContent(mde)).toBe('> block');
+  });
+
+  it('should undo extend the block quote properly', () => {
+    const input = '> block\nparagraph';
+
+    mde.setMarkdown(input);
+    mde.setSelection([1, 6], [1, 6]);
+
+    forceKeymapFn('blockQuote', 'extendBlockQuote');
+
+    expect(getTextContent(mde)).toBe('> blo\n> ck\nparagraph');
+
+    execUndo();
+
+    expect(getTextContent(mde)).toBe(input);
   });
 });
 
@@ -351,6 +402,29 @@ describe('extend list keymap', () => {
       forceKeymapFn('listItem', 'extendList');
 
       expect(getTextContent(mde)).toBe('* bullet1\n\n\nparagraph');
+    });
+
+    it('should undo extend the bullet list properly', () => {
+      const input = source`
+        * bullet
+        paragraph
+      `;
+      const result = source`
+        * bullet
+        * 
+        paragraph
+      `;
+
+      mde.setMarkdown(input);
+      mde.setSelection([1, 9], [1, 9]);
+
+      forceKeymapFn('listItem', 'extendList');
+
+      expect(getTextContent(mde)).toBe(result);
+
+      execUndo();
+
+      expect(getTextContent(mde)).toBe(input);
     });
   });
 
@@ -913,6 +987,33 @@ describe('keep indentation in code block', () => {
     mde.setSelection([2, 3], [3, 10]);
 
     forceKeymapFn('codeBlock', 'keepIndentation');
+
+    expect(getTextContent(mde)).toBe(input);
+  });
+
+  it('should undo extend the code block properly', () => {
+    const input = stripIndent`
+      \`\`\`js
+      console.log('line1');
+          console.log('line2');
+      \`\`\`
+    `;
+    const result = stripIndent`
+      \`\`\`js
+      console.log('line1');
+          console.log('li
+          ne2');
+      \`\`\`
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([3, 20], [3, 20]);
+
+    forceKeymapFn('codeBlock', 'keepIndentation');
+
+    expect(getTextContent(mde)).toBe(result);
+
+    execUndo();
 
     expect(getTextContent(mde)).toBe(input);
   });
