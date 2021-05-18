@@ -86,7 +86,7 @@ export class Viewer {
 
   isWysiwygMode(): boolean;
 
-  setCodeBlockLanguages(languages?: string[]): void;
+  addHook(type: string, handler: Handler): void;
 }
 
 export interface I18n {
@@ -233,8 +233,6 @@ export class EditorCore {
   getSelection(): SelectionPos;
 
   setPlaceholder(placeholder: string): void;
-
-  setCodeBlockLanguages(languages: string[]): void;
 
   getEditorElements(): Slots;
 }

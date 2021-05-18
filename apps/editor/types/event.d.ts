@@ -33,7 +33,6 @@ export type EventTypes =
   | 'hide'
   | 'changeLanguage'
   | 'changeToolbarState'
-  | 'setCodeBlockLanguages'
   | 'toggleScrollSync'
   | 'mixinTableOffsetMapPrototype'
   // provide event for user
