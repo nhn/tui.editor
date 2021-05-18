@@ -84,8 +84,6 @@ import { createHTMLSchemaMap } from './wysiwyg/nodes/html';
 class ToastUIEditor {
   private initialHtml: string;
 
-  private codeBlockLanguages: string[];
-
   private toastMark: ToastMark;
 
   private mdEditor: MarkdownEditor;
@@ -164,7 +162,6 @@ class ToastUIEditor {
       customHTMLSanitizer,
     } = this.options;
 
-    this.codeBlockLanguages = [];
     this.mode = initialEditType || 'markdown';
     this.mdPreviewStyle = this.options.previewStyle;
 
@@ -485,7 +482,10 @@ class ToastUIEditor {
     const mdNode = this.toastMark.getRootNode();
     const mdRenderer = this.preview.getRenderer();
 
-    return mdRenderer.render(mdNode);
+    return mdRenderer
+      .render(mdNode)
+      .replace(/\sdata-nodeid="\d{1,}"/g, '')
+      .trim();
   }
 
   /**
@@ -770,19 +770,6 @@ class ToastUIEditor {
   }
 
   /**
-   * Set code block languages
-   * @param {Array} languages - code language list
-   */
-  setCodeBlockLanguages(languages: string[] = []) {
-    languages.forEach((lang) => {
-      if (this.codeBlockLanguages.indexOf(lang) < 0) {
-        this.codeBlockLanguages.push(lang);
-      }
-    });
-    this.eventEmitter.emit('setCodeBlockLanguages', this.codeBlockLanguages);
-  }
-
-  /**
    * Get markdown editor, preview, wysiwyg editor DOM elements
    */
   getEditorElements() {
@@ -797,11 +784,5 @@ class ToastUIEditor {
 // // (Not an official API)
 // // Create a function converting markdown to HTML using the internal parser and renderer.
 // ToastUIEditor._createMarkdownToHTML = createMarkdownToHTML;
-
-// /**
-//  * Check whether is viewer (using in plugins)
-//  * @type {boolean}
-//  */
-// ToastUIEditor.isViewer = false;
 
 export default ToastUIEditor;

@@ -17,7 +17,7 @@ export function getTextContent(editor: MarkdownEditor) {
   return text;
 }
 
-export function trailingDataAttr(html: string) {
+export function removeDataAttr(html: string) {
   return html.replace(/\sdata-nodeid="\d{1,}"/g, '').trim();
 }
 

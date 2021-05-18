@@ -37,18 +37,9 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *     @param {boolean} [options.frontMatter=false] - whether use the front matter
  */
 class ToastUIEditorViewer {
-  /**
-   * Check whether is viewer (using in plugins)
-   * @type {boolean}
-   * @ignore
-   */
-  static isViewer = true;
-
   private options: Required<ViewerOptions>;
 
   private toastMark: ToastMark;
-
-  private codeBlockLanguages: string[];
 
   private eventEmitter: Emitter;
 
@@ -67,8 +58,6 @@ class ToastUIEditorViewer {
       },
       options
     );
-    this.codeBlockLanguages = [];
-
     this.eventEmitter = new EventEmitter();
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
@@ -177,6 +166,16 @@ class ToastUIEditorViewer {
   }
 
   /**
+   * Add hook to TUIEditor event
+   * @param {string} type Event type
+   * @param {function} handler Event handler
+   */
+  addHook(type: string, handler: Handler) {
+    this.eventEmitter.removeEventHandler(type);
+    this.eventEmitter.listen(type, handler);
+  }
+
+  /**
    * Remove Viewer preview from document
    */
   destroy() {
@@ -207,18 +206,6 @@ class ToastUIEditorViewer {
    */
   isWysiwygMode() {
     return false;
-  }
-
-  /**
-   * Set code block languages
-   * @param {Array} languages - code lauguage list
-   */
-  setCodeBlockLanguages(languages = []) {
-    languages.forEach((lang) => {
-      if (this.codeBlockLanguages.indexOf(lang) < 0) {
-        this.codeBlockLanguages.push(lang);
-      }
-    });
   }
 }
 
