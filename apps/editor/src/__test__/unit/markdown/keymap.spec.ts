@@ -800,9 +800,7 @@ describe('delete lines keymap', () => {
       aaaa
       bbbb
     `;
-    const result = stripIndent`
-      bbbb
-    `;
+    const result = '\nbbbb';
 
     mde.setMarkdown(input);
     mde.setSelection([1, 1], [1, 1]);
@@ -818,9 +816,7 @@ describe('delete lines keymap', () => {
       bbbb
       cccc
     `;
-    const result = stripIndent`
-      cccc
-    `;
+    const result = '\ncccc';
 
     mde.setMarkdown(input);
     mde.setSelection([1, 1], [2, 1]);

@@ -1,6 +1,6 @@
 import { DOMOutputSpecArray, ProsemirrorNode, Schema } from 'prosemirror-model';
 import { Transaction, Selection } from 'prosemirror-state';
-import { Command, joinForward } from 'prosemirror-commands';
+import { chainCommands, Command, joinForward } from 'prosemirror-commands';
 import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Node from '@/spec/node';
@@ -233,10 +233,13 @@ export class Paragraph extends Node {
       const { view } = this.context;
       const { startFromOffset, endToOffset } = getRangeInfo(state.selection);
 
-      dispatch!(state.tr.deleteRange(startFromOffset, endToOffset));
-      joinForward(view.state, dispatch, view);
+      const deleteRange: Command = () => {
+        dispatch!(state.tr.deleteRange(startFromOffset, endToOffset));
 
-      return true;
+        return true;
+      };
+
+      return chainCommands(deleteRange, joinForward)(state, dispatch, view);
     };
   }
 
