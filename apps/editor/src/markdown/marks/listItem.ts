@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, Mark as ProsemirrorMark, ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import { ListItemMdNode, MdNode } from '@toast-ui/toastmark';
@@ -6,7 +6,8 @@ import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
-import { createText, createTextSelection } from '@/helper/manipulation';
+import { createTextNode, createTextSelection, splitAndExtendBlock } from '@/helper/manipulation';
+import { last } from '@/utils/common';
 import {
   ChangedListInfo,
   extendList,
@@ -25,6 +26,13 @@ type CommandType = 'bullet' | 'ordered' | 'task';
 
 function cannotBeListNode({ type }: MdNode) {
   return type === 'codeBlock' || type === 'heading' || type.indexOf('table') !== -1;
+}
+
+interface RangeInfo {
+  from: number;
+  startLine: number;
+  endLine: number;
+  indexDiff?: number;
 }
 
 export class ListItem extends Mark {
@@ -80,40 +88,31 @@ export class ListItem extends Mark {
         // because markdown parser has `1`(not zero) as the start number
         const mdNode = toastMark.findFirstNodeAtLine(endIndex + 1) as ListItemMdNode;
         const slicedText = textContent.slice(to - endFromOffset);
-        const slicedTextLen = slicedText.length;
         const context: ExtendListContext = { toastMark, mdNode, doc, line: endIndex + 1 };
         const { listSyntax, changedResults } = extendList[commandType](context);
 
-        const node = createText(schema, listSyntax + slicedText);
-
-        // split the block
-        tr.split(to);
-
         // change ordinal number of backward ordered list
         if (changedResults?.length) {
+          // split the block
+          tr.split(to);
+
+          // set first ordered list info
           changedResults.unshift({ text: listSyntax + slicedText, line: endIndex + 1 });
-          let from = to;
-          const sIndex = changedResults[0].line;
-          const eIndex = changedResults[changedResults.length - 1].line;
 
-          for (let i = sIndex; i <= eIndex; i += 1) {
-            const { nodeSize, content } = tr.doc.child(i);
-            const mappedFrom = tr.mapping.map(from);
-            const mappedTo = mappedFrom + content.size;
-            const [changedResult] = changedResults.filter((result) => result.line === i);
+          this.changeToListPerLine(tr, changedResults, {
+            from: to,
+            // don't subtract 1 because the line has increased through 'split' command.
+            startLine: changedResults[0].line,
+            endLine: last(changedResults).line,
+          });
 
-            if (changedResult) {
-              tr.replaceWith(mappedFrom, mappedTo, createText(schema, changedResult.text));
-            }
-            from += nodeSize;
-          }
           const pos = tr.mapping.map(endToOffset) - slicedText.length;
 
           tr.setSelection(createTextSelection(tr, pos));
         } else {
-          tr.delete(tr.mapping.map(endToOffset) - slicedTextLen, tr.mapping.map(endToOffset))
-            .insert(tr.mapping.map(endToOffset), node)
-            .setSelection(createTextSelection(tr, tr.mapping.map(endToOffset) - slicedTextLen));
+          const node = createTextNode(schema, listSyntax + slicedText);
+
+          splitAndExtendBlock(tr, endToOffset, slicedText, node);
         }
       }
       dispatch!(tr);
@@ -150,7 +149,12 @@ export class ListItem extends Mark {
           ? otherListToList[commandType](context as ToListContext)
           : otherNodeToList[commandType](context);
 
-        const endOffset = this.changeToListPerLine(tr, doc, changedResults);
+        const endOffset = this.changeToListPerLine(tr, changedResults, {
+          from: getNodeContentOffsetRange(doc, changedResults[0].line - 1).startOffset,
+          startLine: changedResults[0].line,
+          endLine: last(changedResults).line,
+          indexDiff: 1,
+        });
 
         endToOffset = Math.max(endOffset, endToOffset);
 
@@ -160,28 +164,33 @@ export class ListItem extends Mark {
       }
 
       dispatch!(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset))));
-      return false;
+      return true;
     };
   }
 
   private changeToListPerLine(
     tr: Transaction,
-    doc: ProsemirrorNode,
-    changedResults: ChangedListInfo[]
+    changedResults: ChangedListInfo[],
+    { from, startLine, endLine, indexDiff = 0 }: RangeInfo
   ) {
-    const { mapping } = tr;
-    const { schema } = this.context;
     let maxEndOffset = 0;
 
-    changedResults.forEach(({ line, text }) => {
-      // should subtract '1' to markdown line position
-      // because markdown parser has '1'(not zero) as the start number
-      const { startOffset, endOffset } = getNodeContentOffsetRange(doc, line - 1);
+    for (let i = startLine - indexDiff; i <= endLine - indexDiff; i += 1) {
+      const { nodeSize, content } = tr.doc.child(i);
+      const mappedFrom = tr.mapping.map(from);
+      const mappedTo = mappedFrom + content.size;
+      const [changedResult] = changedResults.filter((result) => result.line - indexDiff === i);
 
-      tr.replaceWith(mapping.map(startOffset), mapping.map(endOffset), createText(schema, text));
-
-      maxEndOffset = Math.max(maxEndOffset, endOffset);
-    });
+      if (changedResult) {
+        tr.replaceWith(
+          mappedFrom,
+          mappedTo,
+          createTextNode(this.context.schema, changedResult.text)
+        );
+        maxEndOffset = Math.max(maxEndOffset, from + content.size);
+      }
+      from += nodeSize;
+    }
 
     return maxEndOffset;
   }

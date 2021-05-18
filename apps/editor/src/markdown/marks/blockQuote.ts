@@ -1,10 +1,14 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
-import type { Transaction } from 'prosemirror-state';
 import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { createText, createTextSelection } from '@/helper/manipulation';
+import {
+  createTextNode,
+  createTextSelection,
+  replaceTextNode,
+  splitAndExtendBlock,
+} from '@/helper/manipulation';
 import { getRangeInfo } from '../helper/pos';
 import { getTextContent } from '../helper/query';
 
@@ -40,13 +44,9 @@ export class BlockQuote extends Mark {
           tr.deleteRange(endFromOffset, endToOffset).split(tr.mapping.map(endToOffset));
         } else {
           const slicedText = textContent.slice(to - endFromOffset).trim();
-          const slicedTextLen = slicedText.length;
-          const node = createText(schema, this.createBlockQuoteText(slicedText));
+          const node = createTextNode(schema, this.createBlockQuoteText(slicedText));
 
-          (tr.split(endToOffset) as Transaction)
-            .delete(endToOffset - slicedTextLen, endToOffset)
-            .insert(tr.mapping.map(endToOffset), node)
-            .setSelection(createTextSelection(tr, tr.mapping.map(endToOffset) - slicedTextLen));
+          splitAndExtendBlock(tr, endToOffset, slicedText, node);
         }
         dispatch!(tr);
         return true;
@@ -57,21 +57,17 @@ export class BlockQuote extends Mark {
   }
 
   commands(): EditorCommand {
-    return () => ({ selection, doc, tr, schema }, dispatch) => {
+    return () => (state, dispatch) => {
+      const { selection, doc } = state;
       const { startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(selection);
       const isBlockQuote = reBlockQuote.test(getTextContent(doc, startIndex));
-      let from = startFromOffset;
-
-      for (let i = startIndex; i <= endIndex; i += 1) {
-        const { nodeSize, textContent, content } = doc.child(i);
-        const blockQuoteText = this.createBlockQuoteText(textContent, isBlockQuote);
-        const node = createText(schema, blockQuoteText);
-        const mappedFrom = tr.mapping.map(from);
-        const mappedTo = mappedFrom + content.size;
-
-        tr.replaceWith(mappedFrom, mappedTo, node);
-        from += nodeSize;
-      }
+      const tr = replaceTextNode({
+        state,
+        startIndex,
+        endIndex,
+        from: startFromOffset,
+        createText: (textContent) => this.createBlockQuoteText(textContent, isBlockQuote),
+      });
 
       dispatch!(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset))));
       return true;

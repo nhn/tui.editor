@@ -5,7 +5,7 @@ import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Node from '@/spec/node';
 import { isOrderedListNode } from '@/utils/markdown';
-import { createText, createTextSelection } from '@/helper/manipulation';
+import { createTextNode, createTextSelection, replaceTextNode } from '@/helper/manipulation';
 import { reBlockQuote } from '../marks/blockQuote';
 import { getRangeInfo, getNodeContentOffsetRange } from '../helper/pos';
 import { getReorderedListInfo, reList, reOrderedListGroup } from '../helper/list';
@@ -139,7 +139,7 @@ export class Paragraph extends Node {
 
   private indent(tabKey = false): EditorCommand {
     return () => (state, dispatch) => {
-      const { schema, selection, tr, doc } = state;
+      const { schema, selection, doc } = state;
       const { from, to, startFromOffset, startIndex, endIndex } = getRangeInfo(selection);
 
       if (tabKey && isInTableCellNode(doc, schema, selection)) {
@@ -152,19 +152,13 @@ export class Paragraph extends Node {
         (tabKey && isBlockUnit(from, to, startLineText)) ||
         (!tabKey && reList.test(startLineText))
       ) {
-        let startFrom = startFromOffset;
-
-        for (let line = startIndex; line <= endIndex; line += 1) {
-          const { nodeSize, textContent, content } = doc.child(line);
-          const mappedFrom = tr.mapping.map(startFrom);
-          const mappedTo = mappedFrom + content.size;
-          const node = createText(schema, `    ${textContent}`);
-
-          tr.replaceWith(mappedFrom, mappedTo, node);
-
-          startFrom += nodeSize;
-        }
-
+        const tr = replaceTextNode({
+          state,
+          from: startFromOffset,
+          startIndex,
+          endIndex,
+          createText: (textContent) => `    ${textContent}`,
+        });
         const posInfo: IndentSelectionInfo = {
           type: 'indent',
           from,
@@ -178,7 +172,7 @@ export class Paragraph extends Node {
           this.reorderList(startIndex + 1, endIndex + 1);
         }
       } else if (tabKey) {
-        dispatch!(tr.insert(to, createText(schema, '    ')));
+        dispatch!(state.tr.insert(to, createTextNode(schema, '    ')));
       }
 
       return true;
@@ -187,7 +181,7 @@ export class Paragraph extends Node {
 
   private outdent(tabKey = false): EditorCommand {
     return () => (state, dispatch) => {
-      const { selection, tr, doc, schema } = state;
+      const { selection, doc, schema } = state;
       const { from, to, startFromOffset, startIndex, endIndex } = getRangeInfo(selection);
 
       if (tabKey && isInTableCellNode(doc, schema, selection)) {
@@ -201,22 +195,19 @@ export class Paragraph extends Node {
         (!tabKey && reList.test(startLineText))
       ) {
         const spaceLenList: number[] = [];
-        let startFrom = startFromOffset;
+        const tr = replaceTextNode({
+          state,
+          from: startFromOffset,
+          startIndex,
+          endIndex,
+          createText: (textContent) => {
+            const searchResult = reStartSpace.exec(textContent);
 
-        for (let line = startIndex; line <= endIndex; line += 1) {
-          const { nodeSize, textContent, content } = doc.child(line);
-          const searchResult = reStartSpace.exec(textContent);
+            spaceLenList.push(searchResult ? searchResult[1].length : 0);
 
-          spaceLenList.push(searchResult ? searchResult[1].length : 0);
-
-          const mappedFrom = tr.mapping.map(startFrom);
-          const mappedTo = mappedFrom + content.size;
-          const node = createText(schema, textContent.replace(reStartSpace, '$2'));
-
-          tr.replaceWith(mappedFrom, mappedTo, node);
-
-          startFrom += nodeSize;
-        }
+            return textContent.replace(reStartSpace, '$2');
+          },
+        });
 
         const posInfo: OutdentSelectionInfo = { type: 'outdent', from, to, spaceLenList };
 
@@ -230,7 +221,7 @@ export class Paragraph extends Node {
         const startTextWithoutSpace = startText.replace(/\s{1,4}$/, '');
         const deletStart = to - (startText.length - startTextWithoutSpace.length);
 
-        dispatch!(tr.delete(deletStart, to));
+        dispatch!(state.tr.delete(deletStart, to));
       }
 
       return true;
@@ -260,7 +251,7 @@ export class Paragraph extends Node {
         tr.delete(endToOffset, endToOffset + nodeSize)
           .split(startFromOffset)
           // subtract 2(start, end tag length) to insert prev line
-          .insert(tr.mapping.map(startFromOffset) - 2, createText(schema, textContent));
+          .insert(tr.mapping.map(startFromOffset) - 2, createTextNode(schema, textContent));
 
         dispatch!(tr);
         return true;
@@ -279,7 +270,7 @@ export class Paragraph extends Node {
 
         tr.delete(startFromOffset - nodeSize, startFromOffset)
           .split(tr.mapping.map(endToOffset))
-          .insert(tr.mapping.map(endToOffset), createText(schema, textContent));
+          .insert(tr.mapping.map(endToOffset), createTextNode(schema, textContent));
 
         dispatch!(tr);
 

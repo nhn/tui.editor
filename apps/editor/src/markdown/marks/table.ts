@@ -8,7 +8,7 @@ import { clsWithMdPrefix } from '@/utils/dom';
 import { findClosestNode, getMdEndCh, isTableCellNode } from '@/utils/markdown';
 import Mark from '@/spec/mark';
 import { getRangeInfo } from '../helper/pos';
-import { createText, createTextSelection } from '@/helper/manipulation';
+import { createTextNode, createTextSelection } from '@/helper/manipulation';
 import { getTextContent } from '../helper/query';
 
 interface Payload {
@@ -98,7 +98,7 @@ export class Table extends Mark {
         } else {
           (tr
             .split(endToOffset)
-            .insert(tr.mapping.map(endToOffset), createText(schema, row)) as Transaction)
+            .insert(tr.mapping.map(endToOffset), createTextNode(schema, row)) as Transaction)
             // should subtract `2` to selection end position considering ` |` text
             .setSelection(createTextSelection(tr, tr.mapping.map(endToOffset) - 2));
         }
@@ -163,7 +163,7 @@ export class Table extends Mark {
       rows.forEach((row) => {
         tr.split(tr.mapping.map(endToOffset)).insert(
           tr.mapping.map(endToOffset),
-          createText(schema, row)
+          createTextNode(schema, row)
         );
       });
       // should add `4` to selection position considering `| ` text and start block tag length

@@ -3,7 +3,7 @@ import type { Transaction } from 'prosemirror-state';
 import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { createText, createTextSelection } from '@/helper/manipulation';
+import { createTextNode, createTextSelection } from '@/helper/manipulation';
 import { getRangeInfo } from '../helper/pos';
 
 const thematicBreakSyntax = '***';
@@ -25,7 +25,7 @@ export class ThematicBreak extends Mark {
     return () => (state, dispatch) => {
       const { selection, schema, tr } = state;
       const { from, to, endToOffset } = getRangeInfo(selection);
-      const node = createText(schema, thematicBreakSyntax);
+      const node = createTextNode(schema, thematicBreakSyntax);
 
       (tr
         .split(from)

@@ -1,10 +1,9 @@
-import { DOMOutputSpecArray, Mark as ProsemirrorMark, ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
-import { createParagraph, createTextSelection, replaceNodes } from '@/helper/manipulation';
+import { createTextSelection, replaceTextNode } from '@/helper/manipulation';
 import { getRangeInfo } from '../helper/pos';
-import { getTextContent } from '../helper/query';
 
 const reHeading = /^#{1,6}\s/;
 
@@ -48,30 +47,25 @@ export class Heading extends Mark {
   }
 
   commands(): EditorCommand<Payload> {
-    return (payload) => ({ selection, doc, tr, schema }, dispatch) => {
+    return (payload) => (state, dispatch) => {
       const { level } = payload!;
-      const { startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(selection);
-      const nodes: ProsemirrorNode[] = [];
+      const { startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(state.selection);
 
-      for (let i = startIndex; i <= endIndex; i += 1) {
-        const textContent = getTextContent(doc, i);
-        const matchedHeading = textContent.match(reHeading);
-        const curHeadingSyntax = matchedHeading ? matchedHeading[0] : '';
-        const curLevel = curHeadingSyntax.trim().length;
+      const tr = replaceTextNode({
+        state,
+        from: startFromOffset,
+        startIndex,
+        endIndex,
+        createText: (textContent) => {
+          const matchedHeading = textContent.match(reHeading);
+          const curHeadingSyntax = matchedHeading ? matchedHeading[0] : '';
 
-        if (curLevel !== level) {
-          const result = this.createHeadingText(level, textContent, curHeadingSyntax);
+          return this.createHeadingText(level, textContent, curHeadingSyntax);
+        },
+      });
 
-          nodes.push(createParagraph(schema, result));
-        }
-      }
-
-      if (nodes.length) {
-        replaceNodes(tr, startFromOffset, endToOffset, nodes);
-        dispatch!(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset) - 1)));
-        return true;
-      }
-      return false;
+      dispatch!(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset))));
+      return true;
     };
   }
 }
