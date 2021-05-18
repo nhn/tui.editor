@@ -126,14 +126,14 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
 
   bulletList(state, { node }, { delim }) {
     // soft-tab(4)
-    state.convertList(node, '    ', () => `${delim} `);
+    state.convertList(node, repeat(' ', 4), () => `${delim} `);
   },
 
   orderedList(state, { node }) {
     const start = node.attrs.order || 1;
 
     // soft-tab(4)
-    state.convertList(node, '    ', (index: number) => {
+    state.convertList(node, repeat(' ', 4), (index: number) => {
       const orderedNum = String(start + index);
 
       return `${orderedNum}. `;
