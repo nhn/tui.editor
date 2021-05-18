@@ -5,7 +5,7 @@ import MarkdownEditor from '@/markdown/mdEditor';
 import MarkdownPreview from '@/markdown/mdPreview';
 import EventEmitter from '@/event/eventEmitter';
 import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
-import { getTextContent, TestEditorWithNoneDelayHistory, trailingDataAttr } from './util';
+import { getTextContent, TestEditorWithNoneDelayHistory, removeDataAttr } from './util';
 
 // @TODO: all tests should move to e2e test
 
@@ -21,7 +21,7 @@ function forceKeymapFn(type: string, methodName: string, args: any[] = []) {
 let mde: MarkdownEditor, em: EventEmitter, preview: MarkdownPreview;
 
 function getPreviewHTML() {
-  return oneLineTrim`${trailingDataAttr(preview.getHTML())}`;
+  return oneLineTrim`${removeDataAttr(preview.getHTML())}`;
 }
 
 function assertSelection(mdPos: Sourcepos) {

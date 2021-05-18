@@ -6,7 +6,7 @@ import MarkdownPreview from '@/markdown/mdPreview';
 import EventEmitter from '@/event/eventEmitter';
 import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 import CommandManager from '@/commands/commandManager';
-import { getTextContent, TestEditorWithNoneDelayHistory, trailingDataAttr } from './util';
+import { getTextContent, TestEditorWithNoneDelayHistory, removeDataAttr } from './util';
 
 let mde: MarkdownEditor, em: EventEmitter, cmd: CommandManager, preview: MarkdownPreview;
 
@@ -17,7 +17,7 @@ function execUndo() {
 }
 
 function getPreviewHTML() {
-  return oneLineTrim`${trailingDataAttr(preview.getHTML())}`;
+  return oneLineTrim`${removeDataAttr(preview.getHTML())}`;
 }
 
 beforeEach(() => {
