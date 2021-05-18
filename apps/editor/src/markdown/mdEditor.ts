@@ -1,7 +1,7 @@
 import { Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Fragment, Slice } from 'prosemirror-model';
-import { Step, ReplaceAroundStep } from 'prosemirror-transform';
+import { ReplaceAroundStep } from 'prosemirror-transform';
 import { MdPos, ToastMark } from '@toast-ui/toastmark';
 import { MdContext } from '@t/spec';
 import { Emitter } from '@t/event';
@@ -200,7 +200,7 @@ export default class MdEditor extends EditorBase {
       tr.steps.forEach((step, index) => {
         if (step.slice && !(step instanceof ReplaceAroundStep)) {
           const doc = tr.docs[index];
-          const [from, to] = this.getResolvedRange(tr, step);
+          const [from, to] = [step.from, step.to];
           const [startPos, endPos] = getEditorToMdPos(doc, from, to);
           let changed = this.getChanged(step.slice);
 
@@ -215,12 +215,6 @@ export default class MdEditor extends EditorBase {
         }
       });
     }
-  }
-
-  private getResolvedRange(tr: Transaction, step: Step): [number, number] {
-    const resolvedPos = tr.getMeta('resolvedPos');
-
-    return resolvedPos || [step.from, step.to];
   }
 
   private getChanged(slice: Slice) {
