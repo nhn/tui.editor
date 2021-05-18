@@ -49,8 +49,6 @@ export function createHTMLrenderer() {
 
 export class TestEditorWithNoneDelayHistory extends MarkdownEditor {
   get defaultPlugins() {
-    const plugins = [...this.keymaps, history({ newGroupDelay: -1 })];
-
-    return plugins;
+    return [...this.keymaps, history({ newGroupDelay: -1 })];
   }
 }
