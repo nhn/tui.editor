@@ -1,5 +1,6 @@
 import { DOMOutputSpecArray } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
+import type { Transaction } from 'prosemirror-state';
 import { TableCellMdNode, MdNode, MdPos } from '@toast-ui/toastmark';
 import { EditorCommand, MdSpecContext } from '@t/spec';
 import { TableRowMdNode } from '@t/markdown';
@@ -7,12 +8,7 @@ import { clsWithMdPrefix } from '@/utils/dom';
 import { findClosestNode, getMdEndCh, isTableCellNode } from '@/utils/markdown';
 import Mark from '@/spec/mark';
 import { getRangeInfo } from '../helper/pos';
-import {
-  createParagraph,
-  createTextSelection,
-  insertNodes,
-  replaceNodes,
-} from '@/helper/manipulation';
+import { createTextNode, createTextSelection } from '@/helper/manipulation';
 import { getTextContent } from '../helper/query';
 
 interface Payload {
@@ -74,7 +70,11 @@ export class Table extends Mark {
 
   private extendTable(): Command {
     return ({ selection, doc, tr, schema }, dispatch) => {
-      const { startFromOffset, endFromOffset, endToOffset, endIndex, to } = getRangeInfo(selection);
+      if (!selection.empty) {
+        return false;
+      }
+
+      const { endFromOffset, endToOffset, endIndex, to } = getRangeInfo(selection);
       const textContent = getTextContent(doc, endIndex);
       // should add `1` to line for the markdown parser
       // because markdown parser has `1`(not zero) as the start number
@@ -94,15 +94,15 @@ export class Table extends Mark {
         const row = createTableRow(columnCount);
 
         if (isEmpty) {
-          const emptyNode = createParagraph(schema);
-
-          dispatch!(replaceNodes(tr, startFromOffset, endToOffset, [emptyNode, emptyNode]));
+          tr.deleteRange(endFromOffset, endToOffset).split(tr.mapping.map(endToOffset));
         } else {
-          const newTr = insertNodes(tr, endToOffset, createParagraph(schema, row));
-
-          // should add `4` to selection end position considering `| ` text and start, end block tag position
-          dispatch!(newTr.setSelection(createTextSelection(newTr, endToOffset + 4)));
+          (tr
+            .split(endToOffset)
+            .insert(tr.mapping.map(endToOffset), createTextNode(schema, row)) as Transaction)
+            // should subtract `2` to selection end position considering ` |` text
+            .setSelection(createTextSelection(tr, tr.mapping.map(endToOffset) - 2));
         }
+        dispatch!(tr);
         return true;
       }
       return false;
@@ -158,12 +158,16 @@ export class Table extends Mark {
 
       const headerRows = createTableHeader(columnCount);
       const bodyRows = createTableBody(columnCount, rowCount - 1);
+      const rows = [...headerRows, ...bodyRows];
 
-      const nodes = [...headerRows, ...bodyRows].map((row) => createParagraph(schema, row));
-      const newTr = insertNodes(tr, endToOffset, nodes);
-
-      dispatch!(tr.setSelection(createTextSelection(newTr, endToOffset + 4)));
-
+      rows.forEach((row) => {
+        tr.split(tr.mapping.map(endToOffset)).insert(
+          tr.mapping.map(endToOffset),
+          createTextNode(schema, row)
+        );
+      });
+      // should add `4` to selection position considering `| ` text and start block tag length
+      dispatch!(tr.setSelection(createTextSelection(tr, endToOffset + 4)));
       return true;
     };
   }

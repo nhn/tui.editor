@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, Mark as ProsemirrorMark, ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import { ListItemMdNode, MdNode } from '@toast-ui/toastmark';
@@ -6,13 +6,8 @@ import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { isListNode } from '@/utils/markdown';
-import {
-  createParagraph,
-  createText,
-  createTextSelection,
-  insertNodes,
-  replaceNodes,
-} from '@/helper/manipulation';
+import { createTextNode, createTextSelection, splitAndExtendBlock } from '@/helper/manipulation';
+import { last } from '@/utils/common';
 import {
   ChangedListInfo,
   extendList,
@@ -31,6 +26,13 @@ type CommandType = 'bullet' | 'ordered' | 'task';
 
 function cannotBeListNode({ type }: MdNode) {
   return type === 'codeBlock' || type === 'heading' || type.indexOf('table') !== -1;
+}
+
+interface RangeInfo {
+  from: number;
+  startLine: number;
+  endLine: number;
+  indexDiff?: number;
 }
 
 export class ListItem extends Mark {
@@ -66,24 +68,20 @@ export class ListItem extends Mark {
   }
 
   private extendList(): Command {
-    return ({ selection, tr, doc, schema }, dispatch) => {
+    return ({ selection, doc, schema, tr }, dispatch) => {
       const { toastMark } = this.context;
-      const { to, startFromOffset, endFromOffset, endToOffset, endIndex } = getRangeInfo(selection);
+      const { to, startFromOffset, endFromOffset, endIndex, endToOffset } = getRangeInfo(selection);
       const textContent = getTextContent(doc, endIndex);
       const isList = reList.test(textContent);
 
-      if (!isList || selection.from === startFromOffset) {
+      if (!isList || selection.from === startFromOffset || !selection.empty) {
         return false;
       }
 
       const isEmpty = !textContent.replace(reCanBeTaskList, '').trim();
 
       if (isEmpty) {
-        const emptyNode = createParagraph(schema);
-        // add 2 empty lines when the node is last node
-        const nodes = doc.childCount - 1 === endIndex ? [emptyNode, emptyNode] : [emptyNode];
-
-        dispatch!(replaceNodes(tr, startFromOffset, endToOffset, nodes));
+        tr.deleteRange(endFromOffset, endToOffset).split(tr.mapping.map(endToOffset));
       } else {
         const commandType = getListType(textContent);
         // should add `1` to line for the markdown parser
@@ -91,31 +89,33 @@ export class ListItem extends Mark {
         const mdNode = toastMark.findFirstNodeAtLine(endIndex + 1) as ListItemMdNode;
         const slicedText = textContent.slice(to - endFromOffset);
         const context: ExtendListContext = { toastMark, mdNode, doc, line: endIndex + 1 };
-        const { listSyntax, changedResults, lastIndex } = extendList[commandType](context);
-
-        const node = createParagraph(schema, listSyntax + slicedText);
-        let newTr: Transaction | null;
+        const { listSyntax, changedResults } = extendList[commandType](context);
 
         // change ordinal number of backward ordered list
         if (changedResults?.length) {
-          // get end offset of the last list
-          const { endOffset } = getNodeContentOffsetRange(doc, lastIndex!);
-          const nodes = changedResults.map(({ text }) => createParagraph(schema, text));
+          // split the block
+          tr.split(to);
 
-          nodes.unshift(node);
+          // set first ordered list info
+          changedResults.unshift({ text: listSyntax + slicedText, line: endIndex + 1 });
 
-          newTr = replaceNodes(tr, to, endOffset, nodes, { from: 0, to: 1 });
+          this.changeToListPerLine(tr, changedResults, {
+            from: to,
+            // don't subtract 1 because the line has increased through 'split' command.
+            startLine: changedResults[0].line,
+            endLine: last(changedResults).line,
+          });
+
+          const pos = tr.mapping.map(endToOffset) - slicedText.length;
+
+          tr.setSelection(createTextSelection(tr, pos));
         } else {
-          newTr = slicedText
-            ? replaceNodes(tr, to, endToOffset, node, { from: 0, to: 1 })
-            : insertNodes(tr, endToOffset, node);
+          const node = createTextNode(schema, listSyntax + slicedText);
+
+          splitAndExtendBlock(tr, endToOffset, slicedText, node);
         }
-        // should add `2` to selection end position considering start, end block tag position
-        const newSelection = createTextSelection(newTr, to + listSyntax.length + 2);
-
-        dispatch!(newTr.setSelection(newSelection));
       }
-
+      dispatch!(tr);
       return true;
     };
   }
@@ -149,7 +149,12 @@ export class ListItem extends Mark {
           ? otherListToList[commandType](context as ToListContext)
           : otherNodeToList[commandType](context);
 
-        const endOffset = this.changeToListPerLine(tr, doc, changedResults);
+        const endOffset = this.changeToListPerLine(tr, changedResults, {
+          from: getNodeContentOffsetRange(doc, changedResults[0].line - 1).startOffset,
+          startLine: changedResults[0].line,
+          endLine: last(changedResults).line,
+          indexDiff: 1,
+        });
 
         endToOffset = Math.max(endOffset, endToOffset);
 
@@ -159,28 +164,33 @@ export class ListItem extends Mark {
       }
 
       dispatch!(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset))));
-      return false;
+      return true;
     };
   }
 
   private changeToListPerLine(
     tr: Transaction,
-    doc: ProsemirrorNode,
-    changedResults: ChangedListInfo[]
+    changedResults: ChangedListInfo[],
+    { from, startLine, endLine, indexDiff = 0 }: RangeInfo
   ) {
-    const { mapping } = tr;
-    const { schema } = this.context;
     let maxEndOffset = 0;
 
-    changedResults.forEach(({ line, text }) => {
-      // should subtract '1' to markdown line position
-      // because markdown parser has '1'(not zero) as the start number
-      const { startOffset, endOffset } = getNodeContentOffsetRange(doc, line - 1);
+    for (let i = startLine - indexDiff; i <= endLine - indexDiff; i += 1) {
+      const { nodeSize, content } = tr.doc.child(i);
+      const mappedFrom = tr.mapping.map(from);
+      const mappedTo = mappedFrom + content.size;
+      const [changedResult] = changedResults.filter((result) => result.line - indexDiff === i);
 
-      tr.replaceWith(mapping.map(startOffset), mapping.map(endOffset), createText(schema, text));
-
-      maxEndOffset = Math.max(maxEndOffset, endOffset);
-    });
+      if (changedResult) {
+        tr.replaceWith(
+          mappedFrom,
+          mappedTo,
+          createTextNode(this.context.schema, changedResult.text)
+        );
+        maxEndOffset = Math.max(maxEndOffset, from + content.size);
+      }
+      from += nodeSize;
+    }
 
     return maxEndOffset;
   }

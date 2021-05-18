@@ -1,13 +1,13 @@
-import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpecArray } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
 import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import {
-  createParagraph,
+  createTextNode,
   createTextSelection,
-  insertNodes,
-  replaceNodes,
+  replaceTextNode,
+  splitAndExtendBlock,
 } from '@/helper/manipulation';
 import { getRangeInfo } from '../helper/pos';
 import { getTextContent } from '../helper/query';
@@ -37,27 +37,18 @@ export class BlockQuote extends Mark {
       const textContent = getTextContent(doc, endIndex);
       const isBlockQuote = reBlockQuote.test(textContent);
 
-      if (isBlockQuote && to > endFromOffset) {
+      if (isBlockQuote && to > endFromOffset && selection.empty) {
         const isEmpty = !textContent.replace(reBlockQuote, '').trim();
 
         if (isEmpty) {
-          const emptyNode = createParagraph(schema);
-          // add 2 empty lines when the node is last node
-          const nodes = doc.childCount - 1 === endIndex ? [emptyNode, emptyNode] : [emptyNode];
-
-          dispatch!(replaceNodes(tr, endFromOffset, endToOffset, nodes));
+          tr.deleteRange(endFromOffset, endToOffset).split(tr.mapping.map(endToOffset));
         } else {
           const slicedText = textContent.slice(to - endFromOffset).trim();
-          const node = createParagraph(schema, this.createBlockQuoteText(slicedText));
-          const newTr = slicedText
-            ? replaceNodes(tr, to, endToOffset, node, { from: 0, to: 0 })
-            : insertNodes(tr, endToOffset, node);
-          // should add `4` to selection end position considering `> ` text and start, end block tag position
-          const newSelection = createTextSelection(newTr, to + 4);
+          const node = createTextNode(schema, this.createBlockQuoteText(slicedText));
 
-          dispatch!(newTr.setSelection(newSelection));
+          splitAndExtendBlock(tr, endToOffset, slicedText, node);
         }
-
+        dispatch!(tr);
         return true;
       }
 
@@ -66,24 +57,20 @@ export class BlockQuote extends Mark {
   }
 
   commands(): EditorCommand {
-    return () => ({ selection, doc, tr, schema }, dispatch) => {
+    return () => (state, dispatch) => {
+      const { selection, doc } = state;
       const { startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(selection);
       const isBlockQuote = reBlockQuote.test(getTextContent(doc, startIndex));
-      const nodes: ProsemirrorNode[] = [];
+      const tr = replaceTextNode({
+        state,
+        startIndex,
+        endIndex,
+        from: startFromOffset,
+        createText: (textContent) => this.createBlockQuoteText(textContent, isBlockQuote),
+      });
 
-      for (let i = startIndex; i <= endIndex; i += 1) {
-        const textContent = getTextContent(doc, i);
-        const result = this.createBlockQuoteText(textContent, isBlockQuote);
-
-        nodes.push(createParagraph(schema, result));
-      }
-
-      if (nodes.length) {
-        replaceNodes(tr, startFromOffset, endToOffset, nodes);
-        dispatch!(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset) - 1)));
-        return true;
-      }
-      return false;
+      dispatch!(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset))));
+      return true;
     };
   }
 

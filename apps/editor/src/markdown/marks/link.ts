@@ -3,7 +3,7 @@ import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { decodeURIGraceful, encodeMarkdownText } from '@/utils/encoder';
-import { createText } from '@/helper/manipulation';
+import { createTextNode } from '@/helper/manipulation';
 import { resolveSelectionPos } from '../helper/pos';
 
 type CommandType = 'image' | 'link';
@@ -60,7 +60,7 @@ export class Link extends Mark {
       url = encodeMarkdownText(decodeURIGraceful(url), true);
       syntax += `[${text}](${url})`;
 
-      dispatch!(tr.replaceWith(from, to, createText(schema, syntax)));
+      dispatch!(tr.replaceWith(from, to, createTextNode(schema, syntax)));
 
       return true;
     };

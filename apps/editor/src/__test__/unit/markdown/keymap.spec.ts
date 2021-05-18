@@ -1,8 +1,11 @@
-import { source, stripIndent } from 'common-tags';
+import { oneLineTrim, source, stripIndent } from 'common-tags';
+import { undo } from 'prosemirror-history';
 import { Sourcepos, ToastMark } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdown/mdEditor';
+import MarkdownPreview from '@/markdown/mdPreview';
 import EventEmitter from '@/event/eventEmitter';
-import { getTextContent } from './util';
+import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
+import { getTextContent, TestEditorWithNoneDelayHistory, removeDataAttr } from './util';
 
 // @TODO: all tests should move to e2e test
 
@@ -15,15 +18,35 @@ function forceKeymapFn(type: string, methodName: string, args: any[] = []) {
   keymapFn[methodName](...args)(view.state, view.dispatch);
 }
 
-let mde: MarkdownEditor, em: EventEmitter;
+let mde: MarkdownEditor, em: EventEmitter, preview: MarkdownPreview;
+
+function getPreviewHTML() {
+  return oneLineTrim`${removeDataAttr(preview.getHTML())}`;
+}
 
 function assertSelection(mdPos: Sourcepos) {
   expect(mde.getSelection()).toEqual(mdPos);
 }
 
+function execUndo() {
+  const { state, dispatch } = mde.view;
+
+  undo(state, dispatch);
+}
+
 beforeEach(() => {
   em = new EventEmitter();
-  mde = new MarkdownEditor(em, { toastMark: new ToastMark() });
+  mde = new TestEditorWithNoneDelayHistory(em, { toastMark: new ToastMark() });
+
+  const options = {
+    linkAttributes: null,
+    customHTMLRenderer: {},
+    isViewer: false,
+    highlight: false,
+    sanitizer: sanitizeHTML,
+  };
+
+  preview = new MarkdownPreview(em, options);
 });
 
 // @TODO: should add test case after developing the markdown editor API
@@ -75,19 +98,12 @@ describe('extend table keymap', () => {
     expect(getTextContent(mde)).toBe(`${result}\n\n`);
   });
 
-  it('should extend table list on multi line selection', () => {
+  it('should not extend table list on multi line selection', () => {
     const input = source`
       | head1 | head2 |
       | --- | --- |
       | row1 | row1 |
       | row2 | row2 |
-    `;
-    const result = source`
-      | head1 | head2 |
-      | --- | --- |
-      | row1 | row1 |
-      | row2 | row2 |
-      |  |  |
     `;
 
     mde.setMarkdown(input);
@@ -95,7 +111,7 @@ describe('extend table keymap', () => {
 
     forceKeymapFn('table', 'extendTable');
 
-    expect(getTextContent(mde)).toBe(result);
+    expect(getTextContent(mde)).toBe(input);
   });
 
   it('should not extend the table out of table range', () => {
@@ -118,6 +134,46 @@ describe('extend table keymap', () => {
     forceKeymapFn('table', 'extendTable');
 
     expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should undo extend the table properly', () => {
+    const input = source`
+      | head1 | head2 |
+      | --- | --- |
+      | row1 | row1 |
+      | row2 | row2 |
+      text
+    `;
+    const result = oneLineTrim`
+      <table>
+        <thead>
+          <tr>
+            <th>head1</th>
+            <th>head2</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>row1</td>
+            <td>row1</td>
+          </tr>
+          <tr>
+            <td>row2</td>
+            <td>row2</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>text</p>
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([4, 2], [4, 2]);
+
+    forceKeymapFn('table', 'extendTable');
+
+    execUndo();
+
+    expect(getPreviewHTML()).toBe(result);
   });
 });
 
@@ -148,13 +204,15 @@ describe('extend block quote keymap', () => {
     ]);
   });
 
-  it('should extend the block quot on multi line selection', () => {
-    mde.setMarkdown('> block1\n> block2');
+  it('should not extend the block quote on multi line selection', () => {
+    const input = '> block1\n> block2';
+
+    mde.setMarkdown(input);
     mde.setSelection([1, 2], [2, 4]);
 
     forceKeymapFn('blockQuote', 'extendBlockQuote');
 
-    expect(getTextContent(mde)).toBe('> block1\n> b\n> lock2');
+    expect(getTextContent(mde)).toBe(input);
   });
 
   it('should delete the row in case of empty block quote content', () => {
@@ -172,7 +230,7 @@ describe('extend block quote keymap', () => {
 
     forceKeymapFn('blockQuote', 'extendBlockQuote');
 
-    expect(getTextContent(mde)).toBe('> block\n\nparagraph');
+    expect(getTextContent(mde)).toBe('> block\n\n\nparagraph');
   });
 
   it('should not extend block quote when position is start offset', () => {
@@ -182,6 +240,20 @@ describe('extend block quote keymap', () => {
     forceKeymapFn('blockQuote', 'extendBlockQuote');
 
     expect(getTextContent(mde)).toBe('> block');
+  });
+
+  it('should undo extend the block quote properly', () => {
+    const input = '> block\nparagraph';
+    const result = '<blockquote><p>block<br>paragraph</p></blockquote>';
+
+    mde.setMarkdown(input);
+    mde.setSelection([1, 6], [1, 6]);
+
+    forceKeymapFn('blockQuote', 'extendBlockQuote');
+
+    execUndo();
+
+    expect(getPreviewHTML()).toBe(result);
   });
 });
 
@@ -288,15 +360,10 @@ describe('extend list keymap', () => {
       ]);
     });
 
-    it('should extend the bullet list on multi line selection', () => {
+    it('should not extend the bullet list on multi line selection', () => {
       const input = source`
         * bullet1
         * bullet2
-      `;
-      const result = source`
-        * bullet1
-        * b
-        * ullet2
       `;
 
       mde.setMarkdown(input);
@@ -304,7 +371,7 @@ describe('extend list keymap', () => {
 
       forceKeymapFn('listItem', 'extendList');
 
-      expect(getTextContent(mde)).toBe(result);
+      expect(getTextContent(mde)).toBe(input);
     });
 
     it('should delete the row in case of empty bullet list content', () => {
@@ -360,7 +427,31 @@ describe('extend list keymap', () => {
 
       forceKeymapFn('listItem', 'extendList');
 
-      expect(getTextContent(mde)).toBe('* bullet1\n\nparagraph');
+      expect(getTextContent(mde)).toBe('* bullet1\n\n\nparagraph');
+    });
+
+    it('should undo extend the bullet list properly', () => {
+      const input = source`
+        * bullet
+        paragraph
+      `;
+      const result = oneLineTrim`
+        <ul>
+          <li>
+            <p>bullet<br>
+            paragraph</p>
+          </li>
+        </ul>
+      `;
+
+      mde.setMarkdown(input);
+      mde.setSelection([1, 9], [1, 9]);
+
+      forceKeymapFn('listItem', 'extendList');
+
+      execUndo();
+
+      expect(getPreviewHTML()).toBe(result);
     });
   });
 
@@ -499,15 +590,10 @@ describe('extend list keymap', () => {
       ]);
     });
 
-    it('should extend the ordered list on multi line selection', () => {
+    it('should not extend the ordered list on multi line selection', () => {
       const input = source`
         1. ordered1
         2. ordered2
-      `;
-      const result = source`
-        1. ordered1
-        2. o
-        3. rdered2
       `;
 
       mde.setMarkdown(input);
@@ -515,7 +601,7 @@ describe('extend list keymap', () => {
 
       forceKeymapFn('listItem', 'extendList');
 
-      expect(getTextContent(mde)).toBe(result);
+      expect(getTextContent(mde)).toBe(input);
     });
 
     it('should extend the ordered list excluding blank line', () => {
@@ -714,9 +800,7 @@ describe('delete lines keymap', () => {
       aaaa
       bbbb
     `;
-    const result = stripIndent`
-      bbbb
-    `;
+    const result = '\nbbbb';
 
     mde.setMarkdown(input);
     mde.setSelection([1, 1], [1, 1]);
@@ -732,9 +816,7 @@ describe('delete lines keymap', () => {
       bbbb
       cccc
     `;
-    const result = stripIndent`
-      cccc
-    `;
+    const result = '\ncccc';
 
     mde.setMarkdown(input);
     mde.setSelection([1, 1], [2, 1]);
@@ -930,6 +1012,32 @@ describe('keep indentation in code block', () => {
     forceKeymapFn('codeBlock', 'keepIndentation');
 
     expect(getTextContent(mde)).toBe(input);
+  });
+
+  it('should undo extend the code block properly', () => {
+    const input = stripIndent`
+      \`\`\`js
+      console.log('line1');
+          console.log('line2');
+      \`\`\`
+    `;
+    const result = oneLineTrim`
+      <pre class="lang-js">
+        <code data-language="js">
+          console.log('line1');
+              console.log('line2');
+        </code>
+      </pre>
+    `;
+
+    mde.setMarkdown(input);
+    mde.setSelection([3, 20], [3, 20]);
+
+    forceKeymapFn('codeBlock', 'keepIndentation');
+
+    execUndo();
+
+    expect(getPreviewHTML()).toBe(result);
   });
 });
 /* eslint-enable no-irregular-whitespace */

@@ -1,37 +1,14 @@
-import { TextSelection, Transaction } from 'prosemirror-state';
-import { ProsemirrorNode, Schema, Mark, ResolvedPos } from 'prosemirror-model';
+import { TextSelection, Transaction, EditorState } from 'prosemirror-state';
+import { ProsemirrorNode, Schema, Mark, ResolvedPos, Fragment } from 'prosemirror-model';
 
 import isString from 'tui-code-snippet/type/isString';
 
-export function replaceNodes(
-  tr: Transaction,
-  from: number,
-  to: number,
-  nodes: ProsemirrorNode | ProsemirrorNode[],
-  diff: { from: number; to: number } = { from: 1, to: 1 }
-) {
-  const resolvedFrom = Math.max(from - diff.from, 0);
-  const resolvedTo = Math.min(to + diff.to, tr.doc.content.size);
-
-  return (
-    tr
-      .replaceWith(resolvedFrom, resolvedTo, nodes)
-      // To prevent incorrect calculation of the position for markdown parser
-      .setMeta('resolvedPos', [from, to])
-  );
-}
-
-export function insertNodes(
-  tr: Transaction,
-  pos: number,
-  nodes: ProsemirrorNode | ProsemirrorNode[]
-) {
-  return (
-    tr
-      .insert(pos, nodes)
-      // To prevent incorrect calculation of the position for markdown parser
-      .setMeta('resolvedPos', [pos, pos])
-  );
+interface ReplacePayload {
+  state: EditorState;
+  from: number;
+  startIndex: number;
+  endIndex: number;
+  createText: (textContent: string) => string;
 }
 
 export function createParagraph(schema: Schema, content?: string | ProsemirrorNode[]) {
@@ -43,7 +20,7 @@ export function createParagraph(schema: Schema, content?: string | ProsemirrorNo
   return paragraph.create(null, isString(content) ? schema.text(content) : content);
 }
 
-export function createText(schema: Schema, text: string, marks?: Mark[]) {
+export function createTextNode(schema: Schema, text: string, marks?: Mark[]) {
   return schema.text(text, marks);
 }
 
@@ -58,4 +35,34 @@ export function addParagraph(tr: Transaction, { pos }: ResolvedPos, schema: Sche
   tr.replaceWith(pos, pos, createParagraph(schema));
 
   return tr.setSelection(createTextSelection(tr, pos + 1));
+}
+
+export function replaceTextNode({ state, from, startIndex, endIndex, createText }: ReplacePayload) {
+  const { tr, doc, schema } = state;
+
+  for (let i = startIndex; i <= endIndex; i += 1) {
+    const { nodeSize, textContent, content } = doc.child(i);
+    const text = createText(textContent);
+    const node = text ? createTextNode(schema, text) : Fragment.empty;
+    const mappedFrom = tr.mapping.map(from);
+    const mappedTo = mappedFrom + content.size;
+
+    tr.replaceWith(mappedFrom, mappedTo, node);
+    from += nodeSize;
+  }
+  return tr;
+}
+
+export function splitAndExtendBlock(
+  tr: Transaction,
+  pos: number,
+  text: string,
+  node: ProsemirrorNode
+) {
+  const textLen = text.length;
+
+  (tr.split(pos) as Transaction)
+    .delete(pos - textLen, pos)
+    .insert(tr.mapping.map(pos), node)
+    .setSelection(createTextSelection(tr, tr.mapping.map(pos) - textLen));
 }

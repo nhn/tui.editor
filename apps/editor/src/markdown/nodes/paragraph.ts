@@ -1,17 +1,11 @@
 import { DOMOutputSpecArray, ProsemirrorNode, Schema } from 'prosemirror-model';
 import { Transaction, Selection } from 'prosemirror-state';
-import { Command, joinForward } from 'prosemirror-commands';
+import { chainCommands, Command, joinForward } from 'prosemirror-commands';
 import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Node from '@/spec/node';
 import { isOrderedListNode } from '@/utils/markdown';
-import {
-  createParagraph,
-  createText,
-  createTextSelection,
-  insertNodes,
-  replaceNodes,
-} from '@/helper/manipulation';
+import { createTextNode, createTextSelection, replaceTextNode } from '@/helper/manipulation';
 import { reBlockQuote } from '../marks/blockQuote';
 import { getRangeInfo, getNodeContentOffsetRange } from '../helper/pos';
 import { getReorderedListInfo, reList, reOrderedListGroup } from '../helper/list';
@@ -126,21 +120,27 @@ export class Paragraph extends Node {
 
     endLine = Math.max(endLine, line - 1);
 
-    const { startOffset } = getNodeContentOffsetRange(doc, startLine - 1);
-    const { endOffset } = getNodeContentOffsetRange(doc, endLine - 1);
-    const newTr = replaceNodes(tr, startOffset, endOffset, nodes);
-    const newSelection = createTextSelection(newTr, selection.from, selection.to);
+    let { startOffset } = getNodeContentOffsetRange(doc, startLine - 1);
 
-    view.dispatch!(newTr.setSelection(newSelection));
+    for (let i = startLine - 1; i <= endLine - 1; i += 1) {
+      const { nodeSize, content } = doc.child(i);
+      const mappedFrom = tr.mapping.map(startOffset);
+      const mappedTo = mappedFrom + content.size;
+
+      tr.replaceWith(mappedFrom, mappedTo, nodes[i]);
+
+      startOffset += nodeSize;
+    }
+
+    const newSelection = createTextSelection(tr, selection.from, selection.to);
+
+    view.dispatch!(tr.setSelection(newSelection));
   }
 
   private indent(tabKey = false): EditorCommand {
     return () => (state, dispatch) => {
-      const nodes: ProsemirrorNode[] = [];
-      const { schema, selection, tr, doc } = state;
-      const { from, to, startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(
-        selection
-      );
+      const { schema, selection, doc } = state;
+      const { from, to, startFromOffset, startIndex, endIndex } = getRangeInfo(selection);
 
       if (tabKey && isInTableCellNode(doc, schema, selection)) {
         return false;
@@ -152,13 +152,13 @@ export class Paragraph extends Node {
         (tabKey && isBlockUnit(from, to, startLineText)) ||
         (!tabKey && reList.test(startLineText))
       ) {
-        for (let line = startIndex; line <= endIndex; line += 1) {
-          const textContent = getTextContent(doc, line);
-
-          nodes.push(createParagraph(schema, `    ${textContent}`));
-        }
-
-        const newTr = replaceNodes(tr, startFromOffset, endToOffset, nodes);
+        const tr = replaceTextNode({
+          state,
+          from: startFromOffset,
+          startIndex,
+          endIndex,
+          createText: (textContent) => `    ${textContent}`,
+        });
         const posInfo: IndentSelectionInfo = {
           type: 'indent',
           from,
@@ -166,14 +166,13 @@ export class Paragraph extends Node {
           lineLen: endIndex - startIndex,
         };
 
-        dispatch!(newTr.setSelection(createSelection(newTr, posInfo)));
+        dispatch!(tr.setSelection(createSelection(tr, posInfo)));
 
         if (reOrderedListGroup.test(startLineText)) {
           this.reorderList(startIndex + 1, endIndex + 1);
         }
       } else if (tabKey) {
-        nodes.push(createText(schema, '    '));
-        dispatch!(insertNodes(tr, to, nodes));
+        dispatch!(state.tr.insert(to, createTextNode(schema, '    ')));
       }
 
       return true;
@@ -182,11 +181,8 @@ export class Paragraph extends Node {
 
   private outdent(tabKey = false): EditorCommand {
     return () => (state, dispatch) => {
-      const nodes: ProsemirrorNode[] = [];
-      const { selection, tr, doc, schema } = state;
-      const { from, to, startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(
-        selection
-      );
+      const { selection, doc, schema } = state;
+      const { from, to, startFromOffset, startIndex, endIndex } = getRangeInfo(selection);
 
       if (tabKey && isInTableCellNode(doc, schema, selection)) {
         return false;
@@ -199,18 +195,23 @@ export class Paragraph extends Node {
         (!tabKey && reList.test(startLineText))
       ) {
         const spaceLenList: number[] = [];
+        const tr = replaceTextNode({
+          state,
+          from: startFromOffset,
+          startIndex,
+          endIndex,
+          createText: (textContent) => {
+            const searchResult = reStartSpace.exec(textContent);
 
-        for (let line = startIndex; line <= endIndex; line += 1) {
-          const textContent = getTextContent(doc, line);
-          const searchResult = reStartSpace.exec(textContent);
+            spaceLenList.push(searchResult ? searchResult[1].length : 0);
 
-          spaceLenList.push(searchResult ? searchResult[1].length : 0);
-          nodes.push(createParagraph(schema, textContent.replace(reStartSpace, '$2')));
-        }
-        const newTr = replaceNodes(tr, startFromOffset, endToOffset, nodes);
+            return textContent.replace(reStartSpace, '$2');
+          },
+        });
+
         const posInfo: OutdentSelectionInfo = { type: 'outdent', from, to, spaceLenList };
 
-        dispatch!(newTr.setSelection(createSelection(newTr, posInfo)));
+        dispatch!(tr.setSelection(createSelection(tr, posInfo)));
 
         if (reOrderedListGroup.test(startLineText)) {
           this.reorderList(startIndex + 1, endIndex + 1);
@@ -220,7 +221,7 @@ export class Paragraph extends Node {
         const startTextWithoutSpace = startText.replace(/\s{1,4}$/, '');
         const deletStart = to - (startText.length - startTextWithoutSpace.length);
 
-        dispatch!(tr.delete(deletStart, to));
+        dispatch!(state.tr.delete(deletStart, to));
       }
 
       return true;
@@ -232,34 +233,30 @@ export class Paragraph extends Node {
       const { view } = this.context;
       const { startFromOffset, endToOffset } = getRangeInfo(state.selection);
 
-      dispatch!(state.tr.deleteRange(startFromOffset, endToOffset));
-      joinForward(view.state, dispatch, view);
+      const deleteRange: Command = () => {
+        dispatch!(state.tr.deleteRange(startFromOffset, endToOffset));
 
-      return true;
+        return true;
+      };
+
+      return chainCommands(deleteRange, joinForward)(state, dispatch, view);
     };
   }
 
   private moveDown(): Command {
     return (state, dispatch) => {
-      const { doc, tr, selection } = state;
-      const { from, to, startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(
-        selection
-      );
+      const { doc, tr, selection, schema } = state;
+      const { startFromOffset, endToOffset, endIndex } = getRangeInfo(selection);
 
       if (endIndex < doc.content.childCount - 1) {
-        const bottomNode = doc.child(endIndex + 1);
-        const size = bottomNode.nodeSize;
-        const nodes = [bottomNode];
+        const { nodeSize, textContent } = doc.child(endIndex + 1);
 
-        for (let i = startIndex; i <= endIndex; i += 1) {
-          nodes.push(doc.child(i));
-        }
+        tr.delete(endToOffset, endToOffset + nodeSize)
+          .split(startFromOffset)
+          // subtract 2(start, end tag length) to insert prev line
+          .insert(tr.mapping.map(startFromOffset) - 2, createTextNode(schema, textContent));
 
-        const newTr = replaceNodes(tr, startFromOffset, endToOffset + size, nodes);
-
-        newTr.setSelection(createTextSelection(newTr, from + size, to + size));
-        dispatch!(newTr);
-
+        dispatch!(tr);
         return true;
       }
       return false;
@@ -268,25 +265,17 @@ export class Paragraph extends Node {
 
   private moveUp(): Command {
     return (state, dispatch) => {
-      const { tr, doc, selection } = state;
-      const { from, to, startFromOffset, endToOffset, startIndex, endIndex } = getRangeInfo(
-        selection
-      );
+      const { tr, doc, selection, schema } = state;
+      const { startFromOffset, endToOffset, startIndex } = getRangeInfo(selection);
 
       if (startIndex > 0) {
-        const topNode = doc.child(startIndex - 1);
-        const size = topNode.nodeSize;
-        const nodes = [];
+        const { nodeSize, textContent } = doc.child(startIndex - 1);
 
-        for (let i = startIndex; i <= endIndex; i += 1) {
-          nodes.push(doc.child(i));
-        }
-        nodes.push(topNode);
+        tr.delete(startFromOffset - nodeSize, startFromOffset)
+          .split(tr.mapping.map(endToOffset))
+          .insert(tr.mapping.map(endToOffset), createTextNode(schema, textContent));
 
-        const newTr = replaceNodes(tr, startFromOffset - size, endToOffset, nodes);
-
-        newTr.setSelection(createTextSelection(newTr, from - size, to - size));
-        dispatch!(newTr);
+        dispatch!(tr);
 
         return true;
       }

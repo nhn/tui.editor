@@ -1,4 +1,5 @@
 import { HTMLConvertorMap } from '@toast-ui/toastmark';
+import { history } from 'prosemirror-history';
 import MarkdownEditor from '@/markdown/mdEditor';
 
 export function getTextContent(editor: MarkdownEditor) {
@@ -44,4 +45,10 @@ export function createHTMLrenderer() {
   };
 
   return customHTMLRenderer;
+}
+
+export class TestEditorWithNoneDelayHistory extends MarkdownEditor {
+  get defaultPlugins() {
+    return [...this.keymaps, history({ newGroupDelay: -1 })];
+  }
 }

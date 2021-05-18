@@ -1,7 +1,7 @@
 import { ProsemirrorNode, Schema } from 'prosemirror-model';
 import { ListItemMdNode, MdNode, ToastMark } from '@toast-ui/toastmark';
 import { findClosestNode, isListNode, isOrderedListNode } from '@/utils/markdown';
-import { createParagraph } from '@/helper/manipulation';
+import { createTextNode } from '@/helper/manipulation';
 import { getTextByMdLine } from './query';
 
 export interface ToListContext<T = ListItemMdNode> {
@@ -296,7 +296,7 @@ export function getReorderedListInfo(
     const indentLength = indent.length;
 
     if (indentLength === prevIndentLength) {
-      nodes.push(createParagraph(schema, `${indent}${ordinalNum}${delimiter}${text}`));
+      nodes.push(createTextNode(schema, `${indent}${ordinalNum}${delimiter}${text}`));
       ordinalNum += 1;
       line += 1;
     } else if (indentLength > prevIndentLength) {

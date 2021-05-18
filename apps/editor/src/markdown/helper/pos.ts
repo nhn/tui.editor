@@ -2,7 +2,6 @@ import { AllSelection, Selection } from 'prosemirror-state';
 import { ProsemirrorNode } from 'prosemirror-model';
 import { Sourcepos, MdPos } from '@toast-ui/toastmark';
 import { isWidgetNode } from '@/widget/widgetNode';
-import { getTextByMdLine } from './query';
 
 export function resolveSelectionPos(selection: Selection) {
   const { from, to } = selection;
@@ -27,19 +26,6 @@ export function getEditorToMdLine(
   return [startLine, endLine];
 }
 
-function getEndOffsetWithBlankLine(doc: ProsemirrorNode, to: number, lineRange: [number, number]) {
-  let blankLineTagOffset = 0;
-  const [start, end] = lineRange;
-
-  for (let line = start; line < end; line += 1) {
-    if (!getTextByMdLine(doc, line)) {
-      blankLineTagOffset += 1;
-    }
-  }
-
-  return Math.min(doc.content.size, to + blankLineTagOffset);
-}
-
 export function getWidgetNodePos(node: ProsemirrorNode, chPos: number, direction: 1 | -1 = 1) {
   let additionalPos = 0;
 
@@ -62,17 +48,8 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
   let endOffset = startOffset;
 
   if (!collapsed) {
-    // resolve the end offset for blank line
-    if (lineRange[1] - lineRange[0] === 1) {
-      to = getEndOffsetWithBlankLine(doc, to, lineRange);
-    }
-
-    let endResolvedPos = doc.resolve(to);
-
     // prevent the end offset from pointing to the root document position
-    if (to === doc.content.size) {
-      endResolvedPos = doc.resolve(to - 1);
-    }
+    const endResolvedPos = doc.resolve(to === doc.content.size ? to - 1 : to);
 
     endOffset = endResolvedPos.start();
 

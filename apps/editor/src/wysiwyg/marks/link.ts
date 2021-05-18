@@ -5,7 +5,7 @@ import { ToDOMAdaptor } from '@t/convertor';
 import Mark from '@/spec/mark';
 import { decodeURIGraceful, encodeMarkdownText } from '@/utils/encoder';
 import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
-import { createText } from '@/helper/manipulation';
+import { createTextNode } from '@/helper/manipulation';
 
 import { EditorCommand } from '@t/spec';
 import { LinkAttributes } from '@t/editor';
@@ -70,7 +70,7 @@ export class Link extends Mark {
         const mark = schema.mark('link', attrs);
 
         if (empty && linkText) {
-          const node = createText(schema, linkText, mark);
+          const node = createTextNode(schema, linkText, mark);
 
           tr.replaceRangeWith(from, to, node);
         } else {
