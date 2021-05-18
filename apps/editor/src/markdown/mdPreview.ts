@@ -2,12 +2,12 @@ import off from 'tui-code-snippet/domEvent/off';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import on from 'tui-code-snippet/domEvent/on';
+import css from 'tui-code-snippet/domUtil/css';
 import { EditResult, HTMLConvertorMap, MdNode, MdPos, Renderer } from '@toast-ui/toastmark';
 
 import { Emitter } from '@t/event';
 import { LinkAttributes } from '@t/editor';
-import Preview from '@/preview';
-import { cls, removeNode, toggleClass } from '@/utils/dom';
+import { cls, createElementWith, removeNode, toggleClass } from '@/utils/dom';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
 import { findAdjacentElementToScrollTop } from './scroll/dom';
@@ -50,20 +50,28 @@ interface Options {
  *
  * @ignore
  */
-class MarkdownPreview extends Preview {
+class MarkdownPreview {
+  el: HTMLElement | null;
+
+  previewContent!: HTMLElement;
+
+  private eventEmitter: Emitter;
+
+  private isViewer: boolean;
+
   private cursorNodeId!: number | null;
 
   private renderer: Renderer;
-
-  private customHTMLRenderer: HTMLConvertorMap;
 
   private sanitizer: Sanitizer;
 
   constructor(eventEmitter: Emitter, options: Options) {
     const el = document.createElement('div');
 
-    super(el, eventEmitter, options.isViewer);
     this.el = el;
+    this.eventEmitter = eventEmitter;
+    this.isViewer = !!options.isViewer;
+
     this.el.className = cls('md-preview');
 
     const { linkAttributes, customHTMLRenderer, sanitizer, highlight = false } = options;
@@ -76,9 +84,16 @@ class MarkdownPreview extends Preview {
 
     this.cursorNodeId = null;
     this.sanitizer = sanitizer;
-    this.customHTMLRenderer = customHTMLRenderer;
 
     this.initEvent(highlight);
+    this.initContentSection();
+  }
+
+  private initContentSection() {
+    this.previewContent = createElementWith(
+      `<div class="${cls('contents')}"></div>`
+    ) as HTMLElement;
+    this.el!.appendChild(this.previewContent);
   }
 
   private toggleActive(active: boolean) {
@@ -206,6 +221,22 @@ class MarkdownPreview extends Preview {
 
   getElement() {
     return this.el;
+  }
+
+  getHTML() {
+    return this.previewContent.innerHTML;
+  }
+
+  setHTML(html: string) {
+    this.previewContent.innerHTML = html;
+  }
+
+  setHeight(height: number) {
+    css(this.el!, { height: `${height}px` });
+  }
+
+  setMinHeight(minHeight: number) {
+    css(this.el!, { minHeight: `${minHeight}px` });
   }
 }
 
