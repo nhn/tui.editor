@@ -1,9 +1,11 @@
-import { source, stripIndent } from 'common-tags';
+import { oneLineTrim, source, stripIndent } from 'common-tags';
 import { undo } from 'prosemirror-history';
 import { Sourcepos, ToastMark } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdown/mdEditor';
+import MarkdownPreview from '@/markdown/mdPreview';
 import EventEmitter from '@/event/eventEmitter';
-import { getTextContent, TestEditorWithNoneDelayHistory } from './util';
+import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
+import { getTextContent, TestEditorWithNoneDelayHistory, trailingDataAttr } from './util';
 
 // @TODO: all tests should move to e2e test
 
@@ -16,7 +18,11 @@ function forceKeymapFn(type: string, methodName: string, args: any[] = []) {
   keymapFn[methodName](...args)(view.state, view.dispatch);
 }
 
-let mde: MarkdownEditor, em: EventEmitter;
+let mde: MarkdownEditor, em: EventEmitter, preview: MarkdownPreview;
+
+function getPreviewHTML() {
+  return oneLineTrim`${trailingDataAttr(preview.getHTML())}`;
+}
 
 function assertSelection(mdPos: Sourcepos) {
   expect(mde.getSelection()).toEqual(mdPos);
@@ -31,6 +37,16 @@ function execUndo() {
 beforeEach(() => {
   em = new EventEmitter();
   mde = new TestEditorWithNoneDelayHistory(em, { toastMark: new ToastMark() });
+
+  const options = {
+    linkAttributes: null,
+    customHTMLRenderer: {},
+    isViewer: false,
+    highlight: false,
+    sanitizer: sanitizeHTML,
+  };
+
+  preview = new MarkdownPreview(em, options);
 });
 
 // @TODO: should add test case after developing the markdown editor API
@@ -128,13 +144,26 @@ describe('extend table keymap', () => {
       | row2 | row2 |
       text
     `;
-    const result = source`
-      | head1 | head2 |
-      | --- | --- |
-      | row1 | row1 |
-      | row2 | row2 |
-      |  |  |
-      text
+    const result = oneLineTrim`
+      <table>
+        <thead>
+          <tr>
+            <th>head1</th>
+            <th>head2</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>row1</td>
+            <td>row1</td>
+          </tr>
+          <tr>
+            <td>row2</td>
+            <td>row2</td>
+          </tr>
+        </tbody>
+      </table>
+      <p>text</p>
     `;
 
     mde.setMarkdown(input);
@@ -142,11 +171,9 @@ describe('extend table keymap', () => {
 
     forceKeymapFn('table', 'extendTable');
 
-    expect(getTextContent(mde)).toBe(result);
-
     execUndo();
 
-    expect(getTextContent(mde)).toBe(input);
+    expect(getPreviewHTML()).toBe(result);
   });
 });
 
@@ -217,17 +244,16 @@ describe('extend block quote keymap', () => {
 
   it('should undo extend the block quote properly', () => {
     const input = '> block\nparagraph';
+    const result = '<blockquote><p>block<br>paragraph</p></blockquote>';
 
     mde.setMarkdown(input);
     mde.setSelection([1, 6], [1, 6]);
 
     forceKeymapFn('blockQuote', 'extendBlockQuote');
 
-    expect(getTextContent(mde)).toBe('> blo\n> ck\nparagraph');
-
     execUndo();
 
-    expect(getTextContent(mde)).toBe(input);
+    expect(getPreviewHTML()).toBe(result);
   });
 });
 
@@ -409,10 +435,13 @@ describe('extend list keymap', () => {
         * bullet
         paragraph
       `;
-      const result = source`
-        * bullet
-        * 
-        paragraph
+      const result = oneLineTrim`
+        <ul>
+          <li>
+            <p>bullet<br>
+            paragraph</p>
+          </li>
+        </ul>
       `;
 
       mde.setMarkdown(input);
@@ -420,11 +449,9 @@ describe('extend list keymap', () => {
 
       forceKeymapFn('listItem', 'extendList');
 
-      expect(getTextContent(mde)).toBe(result);
-
       execUndo();
 
-      expect(getTextContent(mde)).toBe(input);
+      expect(getPreviewHTML()).toBe(result);
     });
   });
 
@@ -998,12 +1025,13 @@ describe('keep indentation in code block', () => {
           console.log('line2');
       \`\`\`
     `;
-    const result = stripIndent`
-      \`\`\`js
-      console.log('line1');
-          console.log('li
-          ne2');
-      \`\`\`
+    const result = oneLineTrim`
+      <pre class="lang-js">
+        <code data-language="js">
+          console.log('line1');
+              console.log('line2');
+        </code>
+      </pre>
     `;
 
     mde.setMarkdown(input);
@@ -1011,11 +1039,9 @@ describe('keep indentation in code block', () => {
 
     forceKeymapFn('codeBlock', 'keepIndentation');
 
-    expect(getTextContent(mde)).toBe(result);
-
     execUndo();
 
-    expect(getTextContent(mde)).toBe(input);
+    expect(getPreviewHTML()).toBe(result);
   });
 });
 /* eslint-enable no-irregular-whitespace */

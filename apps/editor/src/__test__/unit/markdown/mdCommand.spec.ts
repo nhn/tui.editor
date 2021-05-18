@@ -1,12 +1,14 @@
-import { source, stripIndent } from 'common-tags';
+import { oneLineTrim, source, stripIndent } from 'common-tags';
 import { undo } from 'prosemirror-history';
 import { ToastMark } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdown/mdEditor';
+import MarkdownPreview from '@/markdown/mdPreview';
 import EventEmitter from '@/event/eventEmitter';
+import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 import CommandManager from '@/commands/commandManager';
-import { getTextContent, TestEditorWithNoneDelayHistory } from './util';
+import { getTextContent, TestEditorWithNoneDelayHistory, trailingDataAttr } from './util';
 
-let mde: MarkdownEditor, em: EventEmitter, cmd: CommandManager;
+let mde: MarkdownEditor, em: EventEmitter, cmd: CommandManager, preview: MarkdownPreview;
 
 function execUndo() {
   const { state, dispatch } = mde.view;
@@ -14,14 +16,29 @@ function execUndo() {
   undo(state, dispatch);
 }
 
+function getPreviewHTML() {
+  return oneLineTrim`${trailingDataAttr(preview.getHTML())}`;
+}
+
 beforeEach(() => {
   em = new EventEmitter();
   mde = new TestEditorWithNoneDelayHistory(em, { toastMark: new ToastMark() });
   cmd = new CommandManager(em, mde.commands, {}, () => 'markdown');
+
+  const options = {
+    linkAttributes: null,
+    customHTMLRenderer: {},
+    isViewer: false,
+    highlight: false,
+    sanitizer: sanitizeHTML,
+  };
+
+  preview = new MarkdownPreview(em, options);
 });
 
 afterEach(() => {
   mde.destroy();
+  preview.destroy();
 });
 
 describe('bold command', () => {
@@ -207,17 +224,16 @@ describe('blockQuote command', () => {
 
   it('should undo blockQuote command properly', () => {
     const input = 'test\nparagraph';
+    const result = '<p>test<br>paragraph</p>';
 
     mde.setMarkdown(input);
 
     mde.setSelection([1, 1], [1, 1]);
     cmd.exec('blockQuote');
 
-    expect(getTextContent(mde)).toBe('> test\nparagraph');
-
     execUndo();
 
-    expect(getTextContent(mde)).toBe(input);
+    expect(getPreviewHTML()).toBe(result);
   });
 });
 
@@ -239,17 +255,16 @@ describe('hr command', () => {
 
   it('should undo hr command properly', () => {
     const input = 'test\nparagraph';
+    const result = '<p>test<br>paragraph</p>';
 
     mde.setMarkdown(input);
 
     mde.setSelection([1, 5], [1, 5]);
     cmd.exec('hr');
 
-    expect(getTextContent(mde)).toBe('test\n***\n\nparagraph');
-
     execUndo();
 
-    expect(getTextContent(mde)).toBe(input);
+    expect(getPreviewHTML()).toBe(result);
   });
 });
 
@@ -475,12 +490,18 @@ describe('bulletList command', () => {
          1. sub1
          2. sub2
     `;
-    const result = source`
-      * ordered1
-      * ordered2
-      * ordered3
-         1. sub1
-         2. sub2
+    const result = oneLineTrim`
+      <ol>
+        <li><p>ordered1</p></li>
+        <li><p>ordered2</p></li>
+        <li>
+          <p>ordered3</p>
+          <ol>
+            <li><p>sub1</p></li>
+            <li><p>sub2</p></li>
+          </ol>
+        </li>
+      </ol>
     `;
 
     mde.setMarkdown(input);
@@ -488,11 +509,9 @@ describe('bulletList command', () => {
     mde.setSelection([1, 2], [1, 2]);
     cmd.exec('bulletList');
 
-    expect(getTextContent(mde)).toBe(result);
-
     execUndo();
 
-    expect(getTextContent(mde)).toBe(input);
+    expect(getPreviewHTML()).toBe(result);
   });
 });
 
@@ -667,13 +686,19 @@ describe('orderedList command', () => {
          * bullet5
       * bullet6
     `;
-    const result = source`
-      1. bullet1
-      2. bullet2
-      3. bullet3
-         * bullet4
-         * bullet5
-      4. bullet6
+    const result = oneLineTrim`
+      <ul>
+        <li><p>bullet1</p></li>
+        <li><p>bullet2</p></li>
+        <li>
+          <p>bullet3</p>
+          <ul>
+            <li><p>bullet4</p></li>
+            <li><p>bullet5</p></li>
+          </ul>
+        </li>
+        <li><p>bullet6</p></li>
+      </ul>
     `;
 
     mde.setMarkdown(input);
@@ -681,11 +706,9 @@ describe('orderedList command', () => {
     mde.setSelection([1, 2], [1, 2]);
     cmd.exec('orderedList');
 
-    expect(getTextContent(mde)).toBe(result);
-
     execUndo();
 
-    expect(getTextContent(mde)).toBe(input);
+    expect(getPreviewHTML()).toBe(result);
   });
 });
 
@@ -827,24 +850,14 @@ describe('addTable command', () => {
   });
 
   it('should undo table command properly', () => {
-    const result = source`
-      text
-      |  |  |
-      | --- | --- |
-      |  |  |
-      |  |  |
-    `;
-
     mde.setMarkdown('text');
 
     cmd.exec('selectAll');
     cmd.exec('addTable', { columnCount: 2, rowCount: 3 });
 
-    expect(getTextContent(mde)).toBe(result);
-
     execUndo();
 
-    expect(getTextContent(mde)).toBe('text');
+    expect(getPreviewHTML()).toBe('<p>text</p>');
   });
 });
 
@@ -887,11 +900,13 @@ describe('indent command', () => {
       * line3
       * line4
     `;
-    const result = stripIndent`
-      * line1
-          * line2
-          * line3
-      * line4
+    const result = oneLineTrim`
+      <ul>
+        <li><p>line1</p></li>
+        <li><p>line2</p></li>
+        <li><p>line3</p></li>
+        <li><p>line4</p></li>
+      </ul>
     `;
 
     mde.setMarkdown(input);
@@ -899,11 +914,9 @@ describe('indent command', () => {
 
     cmd.exec('indent');
 
-    expect(getTextContent(mde)).toBe(result);
-
     execUndo();
 
-    expect(getTextContent(mde)).toBe(input);
+    expect(getPreviewHTML()).toBe(result);
   });
 
   describe('ordered list', () => {
@@ -1014,11 +1027,17 @@ describe('outdent command', () => {
           * line3
       * line4
     `;
-    const result = source`
-      * line1
-      * line2
-      * line3
-      * line4
+    const result = oneLineTrim`
+      <ul>
+        <li>
+          <p>line1</p>
+          <ul>
+            <li><p>line2</p></li>
+            <li><p>line3</p></li>
+          </ul>
+        </li>
+        <li><p>line4</p></li>
+      </ul>
     `;
 
     mde.setMarkdown(input);
@@ -1026,11 +1045,9 @@ describe('outdent command', () => {
 
     cmd.exec('outdent');
 
-    expect(getTextContent(mde)).toBe(result);
-
     execUndo();
 
-    expect(getTextContent(mde)).toBe(input);
+    expect(getPreviewHTML()).toBe(result);
   });
 
   describe('ordered list', () => {
