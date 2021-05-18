@@ -23,7 +23,7 @@ describe('image processor', () => {
     const file = new File([new ArrayBuffer(1)], 'file.jpg');
 
     em.listen('addImageBlobHook', spy);
-    emitImageBlobHook(em, 'markdown', file, 'drop');
+    emitImageBlobHook(em, file, 'drop');
 
     expect(spy).toHaveBeenCalledWith(file, expect.any(Function), 'drop');
   });
@@ -36,11 +36,8 @@ describe('image processor', () => {
     const file = new File([new ArrayBuffer(1)], 'file.jpg');
 
     em.listen('command', spy);
-    emitImageBlobHook(em, 'markdown', file, 'drop');
+    emitImageBlobHook(em, file, 'drop');
 
-    expect(spy).toHaveBeenCalledWith(
-      { type: 'markdown', command: 'addImage' },
-      { altText: 'file.jpg', imageUrl: '/file.jpg' }
-    );
+    expect(spy).toHaveBeenCalledWith('addImage', { altText: 'file.jpg', imageUrl: '/file.jpg' });
   });
 });
