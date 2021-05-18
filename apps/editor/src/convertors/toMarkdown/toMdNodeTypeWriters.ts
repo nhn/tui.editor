@@ -125,18 +125,18 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
   },
 
   bulletList(state, { node }, { delim }) {
-    state.convertList(node, '  ', () => `${delim} `);
+    // soft-tab(4)
+    state.convertList(node, repeat(' ', 4), () => `${delim} `);
   },
 
   orderedList(state, { node }) {
     const start = node.attrs.order || 1;
-    const maxWidth = String(start + node.childCount - 1).length;
-    const space = repeat('  ', maxWidth + 2);
 
-    state.convertList(node, space, (index: number) => {
-      const numStr = String(start + index);
+    // soft-tab(4)
+    state.convertList(node, repeat(' ', 4), (index: number) => {
+      const orderedNum = String(start + index);
 
-      return `${repeat(' ', maxWidth - numStr.length)}${numStr}. `;
+      return `${orderedNum}. `;
     });
   },
 
