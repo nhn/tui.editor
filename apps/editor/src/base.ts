@@ -151,6 +151,7 @@ export default abstract class EditorBase implements Base {
 
   focus() {
     this.view.focus();
+    this.view.dispatch(this.view.state.tr.scrollIntoView());
   }
 
   blur() {
@@ -181,11 +182,11 @@ export default abstract class EditorBase implements Base {
   }
 
   setScrollTop(top: number) {
-    this.el.scrollTop = top;
+    this.view.dom.scrollTop = top;
   }
 
   getScrollTop() {
-    return this.el.scrollTop;
+    return this.view.dom.scrollTop;
   }
 
   setPlaceholder(text: string) {
