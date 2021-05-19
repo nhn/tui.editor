@@ -2,7 +2,7 @@ import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 import { setBlockType, Command } from 'prosemirror-commands';
 
 import { addParagraph } from '@/helper/manipulation';
-import { between } from '@/utils/common';
+import { between, last } from '@/utils/common';
 import NodeSchema from '@/spec/node';
 
 import { EditorCommand } from '@t/spec';
@@ -61,7 +61,7 @@ export class CodeBlock extends NodeSchema {
         const range =
           direction === 'up'
             ? [offset, lines[0].length + offset]
-            : [offset - lines[lines.length - 1].length, offset];
+            : [offset - last(lines).length, offset];
         const pos = doc.resolve(direction === 'up' ? $from.before() : $from.after());
         const node = direction === 'up' ? pos.nodeBefore : pos.nodeAfter;
 
