@@ -153,7 +153,7 @@ export default class WysiwygEditor extends EditorBase {
         const { state } = this.view.state.applyTransaction(tr);
 
         this.view.updateState(state);
-        this.emitChangeEvent(tr);
+        this.emitChangeEvent(tr.scrollIntoView());
       },
       transformPastedHTML: changePastedHTML,
       transformPasted: (slice: Slice) => changePastedSlice(slice, this.schema),
