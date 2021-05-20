@@ -1,8 +1,12 @@
 import '@/i18n/en-us';
 import { oneLineTrim, stripIndents } from 'common-tags';
+import type { OpenTagToken } from '@toast-ui/toastmark';
 import i18n from '@/i18n/i18n';
 import Editor from '@/editor';
 import Viewer from '@/Viewer';
+import * as commonUtil from '@/utils/common';
+import { EditorOptions } from '@t/editor';
+import { createHTMLrenderer } from './markdown/util';
 
 describe('editor', () => {
   let container: HTMLElement,
@@ -18,39 +22,39 @@ describe('editor', () => {
       .trim();
   }
 
-  beforeEach(() => {
-    container = document.createElement('div');
-    editor = new Editor({
-      el: container,
-      previewHighlight: false,
-      widgetRules: [
-        {
-          rule: /@\S+/,
-          toDOM(text) {
-            const span = document.createElement('span');
+  describe('instance API', () => {
+    beforeEach(() => {
+      container = document.createElement('div');
+      editor = new Editor({
+        el: container,
+        previewHighlight: false,
+        widgetRules: [
+          {
+            rule: /@\S+/,
+            toDOM(text) {
+              const span = document.createElement('span');
 
-            span.innerHTML = `<a href="www.google.com">${text}</a>`;
-            return span;
+              span.innerHTML = `<a href="www.google.com">${text}</a>`;
+              return span;
+            },
           },
-        },
-      ],
+        ],
+      });
+
+      const elements = editor.getEditorElements();
+
+      mdEditor = elements.mdEditor;
+      mdPreview = elements.mdPreview!;
+      wwEditor = elements.wwEditor!;
+
+      document.body.appendChild(container);
     });
 
-    const elements = editor.getEditorElements();
+    afterEach(() => {
+      editor.destroy();
+      document.body.removeChild(container);
+    });
 
-    mdEditor = elements.mdEditor;
-    mdPreview = elements.mdPreview!;
-    wwEditor = elements.wwEditor!;
-
-    document.body.appendChild(container);
-  });
-
-  afterEach(() => {
-    editor.destroy();
-    document.body.removeChild(container);
-  });
-
-  describe('instance API', () => {
     it('setPlaceholder()', () => {
       editor.setPlaceholder('Please input text');
 
@@ -458,15 +462,33 @@ describe('editor', () => {
   });
 
   describe('options', () => {
+    beforeEach(() => {
+      container = document.createElement('div');
+
+      document.body.appendChild(container);
+    });
+
+    afterEach(() => {
+      editor.destroy();
+      document.body.removeChild(container);
+    });
+
+    function createEditor(options: EditorOptions) {
+      editor = new Editor(options);
+
+      const elements = editor.getEditorElements();
+
+      mdEditor = elements.mdEditor;
+      mdPreview = elements.mdPreview!;
+      wwEditor = elements.wwEditor!;
+    }
+
     describe('plugins', () => {
       it('should invoke plugin functions', () => {
         const fooPlugin = jest.fn().mockReturnValue({});
         const barPlugin = jest.fn().mockReturnValue({});
 
-        editor = new Editor({
-          el: container,
-          plugins: [fooPlugin, barPlugin],
-        });
+        createEditor({ el: container, plugins: [fooPlugin, barPlugin] });
 
         // @ts-ignore
         const { eventEmitter } = editor;
@@ -479,10 +501,7 @@ describe('editor', () => {
         const plugin = jest.fn().mockReturnValue({});
         const options = {};
 
-        editor = new Editor({
-          el: container,
-          plugins: [[plugin, options]],
-        });
+        createEditor({ el: container, plugins: [[plugin, options]] });
 
         // @ts-ignore
         const { eventEmitter } = editor;
@@ -506,10 +525,8 @@ describe('editor', () => {
           };
         };
 
-        editor = new Editor({
-          el: container,
-          plugins: [plugin],
-        });
+        createEditor({ el: container, plugins: [plugin] });
+
         editor.exec('foo');
 
         expect(spy).toHaveBeenCalled();
@@ -528,10 +545,8 @@ describe('editor', () => {
           };
         };
 
-        editor = new Editor({
-          el: container,
-          plugins: [plugin],
-        });
+        createEditor({ el: container, plugins: [plugin] });
+
         editor.changeMode('wysiwyg');
         editor.exec('foo');
 
@@ -550,14 +565,245 @@ describe('editor', () => {
           };
         };
 
-        editor = new Editor({
-          el: container,
-          plugins: [plugin],
-        });
+        createEditor({ el: container, plugins: [plugin] });
 
         const toolbar = document.querySelector('.toastui-editor-toolbar-icons.color');
 
         expect(toolbar).toBeInTheDocument();
+      });
+    });
+
+    describe('usageStatistics', () => {
+      it('should send request hostname in payload by default', () => {
+        spyOn(commonUtil, 'sendHostName');
+
+        createEditor({ el: container });
+
+        expect(commonUtil.sendHostName).toHaveBeenCalled();
+      });
+
+      it('should not send request if the option is set to false', () => {
+        spyOn(commonUtil, 'sendHostName');
+
+        createEditor({ el: container, usageStatistics: false });
+
+        expect(commonUtil.sendHostName).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('hideModeSwitch', () => {
+      it('should hide mode switch if the option value is true', () => {
+        createEditor({ el: container, hideModeSwitch: true });
+
+        const modeSwitch = document.querySelector('.toastui-editor-mode-switch');
+
+        expect(modeSwitch).not.toBeInTheDocument();
+      });
+    });
+
+    describe('extendedAutolinks option', () => {
+      it('should convert url-like strings to anchor tags', () => {
+        createEditor({
+          el: container,
+          initialValue: 'http://nhn.com',
+          extendedAutolinks: true,
+          previewHighlight: false,
+        });
+
+        expect(getPreviewHTML()).toBe('<p><a href="http://nhn.com">http://nhn.com</a></p>');
+      });
+    });
+
+    describe('disallowDeepHeading internal parsing option', () => {
+      it('should disallow the nested seTextHeading in list', () => {
+        createEditor({
+          el: container,
+          initialValue: '- item1\n\t-',
+          previewHighlight: false,
+        });
+
+        const result = oneLineTrim`
+          <ul>
+            <li>
+              <p>item1<br>
+              -</p>
+            </li>
+          </ul>
+        `;
+
+        expect(getPreviewHTML()).toBe(result);
+      });
+
+      it('should disallow the nested atxHeading in list', () => {
+        createEditor({
+          el: container,
+          initialValue: '- # item1',
+          previewHighlight: false,
+        });
+
+        const result = oneLineTrim`
+          <ul>
+            <li>
+              <p># item1</p>
+            </li>
+          </ul>
+        `;
+
+        expect(getPreviewHTML()).toBe(result);
+      });
+
+      it('should disallow the nested seTextHeading in blockquote', () => {
+        createEditor({
+          el: container,
+          initialValue: '> item1\n> -',
+          previewHighlight: false,
+        });
+
+        const result = oneLineTrim`
+          <blockquote>
+            <p>item1<br>
+            -</p>
+          </blockquote>
+        `;
+
+        expect(getPreviewHTML()).toBe(result);
+      });
+
+      it('should disallow the nested atxHeading in blockquote', () => {
+        createEditor({
+          el: container,
+          initialValue: '> # item1',
+          previewHighlight: false,
+        });
+
+        const result = oneLineTrim`
+          <blockquote>
+            <p># item1</p>
+          </blockquote>
+        `;
+
+        expect(getPreviewHTML()).toBe(result);
+      });
+    });
+
+    describe('frontMatter option', () => {
+      it('should parse the front matter as the paragraph in WYSIWYG', () => {
+        createEditor({
+          el: container,
+          frontMatter: true,
+          initialValue: '---\ntitle: front matter\n---',
+          initialEditType: 'wysiwyg',
+        });
+
+        const result = stripIndents`
+          <div data-front-matter="true">---
+          title: front matter
+          ---</div>
+        `;
+
+        expect(wwEditor).toContainHTML(result);
+      });
+
+      it('should keep the front matter after changing the mode', () => {
+        createEditor({
+          el: container,
+          frontMatter: true,
+          initialEditType: 'wysiwyg',
+          initialValue: '---\ntitle: front matter\n---',
+        });
+
+        editor.changeMode('markdown');
+
+        expect(editor.getMarkdown()).toBe('---\ntitle: front matter\n---');
+      });
+    });
+
+    describe('customHTMLSanitizer option', () => {
+      it('should replace default sanitizer with custom sanitizer', () => {
+        const customHTMLSanitizer = jest.fn();
+
+        createEditor({ el: container, customHTMLSanitizer });
+
+        editor.changeMode('wysiwyg');
+
+        expect(customHTMLSanitizer).toHaveBeenCalled();
+      });
+    });
+
+    describe('customHTMLRenderer', () => {
+      it('should pass customHTMLRender option for creating convertor instance', () => {
+        createEditor({
+          el: container,
+          initialValue: 'Hello World',
+          previewHighlight: false,
+          customHTMLRenderer: {
+            paragraph(_, { entering, origin }) {
+              const result = origin!() as OpenTagToken;
+
+              if (entering) {
+                result.classNames = ['my-class'];
+              }
+
+              return result;
+            },
+          },
+        });
+
+        expect(getPreviewHTML()).toBe('<p class="my-class">Hello World</p>');
+      });
+
+      it('linkAttributes option should be applied to original renderer', () => {
+        createEditor({
+          el: container,
+          initialValue: '[Hello](nhn.com)',
+          linkAttributes: { target: '_blank' },
+          previewHighlight: false,
+          customHTMLRenderer: {
+            link(_, { origin }) {
+              return origin!();
+            },
+          },
+        });
+
+        expect(getPreviewHTML()).toBe('<p><a href="nhn.com" target="_blank">Hello</a></p>');
+      });
+
+      it('should render html block node regardless of the sanitizer', () => {
+        createEditor({
+          el: container,
+          initialValue:
+            '<iframe width="420" height="315" src="https://www.youtube.com/embed/XyenY12fzAk"></iframe>\n\ntest',
+          previewHighlight: false,
+          // add iframe html block renderer
+          customHTMLRenderer: createHTMLrenderer(),
+        });
+
+        const result = oneLineTrim`
+          <iframe width="420" height="315" src="https://www.youtube.com/embed/XyenY12fzAk"></iframe>
+          <p>test</p>
+        `;
+
+        expect(getPreviewHTML()).toBe(result);
+      });
+
+      it('should keep the html block node after changing the mode', () => {
+        createEditor({
+          el: container,
+          initialValue:
+            '<iframe width="420" height="315" src="https://www.youtube.com/embed/XyenY12fzAk"></iframe>\n\ntest',
+          previewHighlight: false,
+          // add iframe html block renderer
+          customHTMLRenderer: createHTMLrenderer(),
+        });
+
+        editor.changeMode('wysiwyg');
+
+        const result = oneLineTrim`
+          <iframe width="420" height="315" src="https://www.youtube.com/embed/XyenY12fzAk" class="html-block"></iframe>
+          <p>test</p>
+        `;
+
+        expect(wwEditor.innerHTML).toContain(result);
       });
     });
   });
