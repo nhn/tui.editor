@@ -211,7 +211,7 @@ export default class MdEditor extends EditorBase {
 
           this.eventEmitter.emit('updatePreview', editResult);
 
-          tr.setMeta('editResult', editResult);
+          tr.setMeta('editResult', editResult).scrollIntoView();
         }
       });
     }
