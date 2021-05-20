@@ -126,13 +126,25 @@ function code({ tickCount }: CodeMdNode, start: MdPos, end: MdPos) {
 }
 
 function lineBackground(parent: MdNode, start: MdPos, end: MdPos, prefix: string) {
+  const defaultBackground = {
+    start,
+    end,
+    spec: { attrs: { className: `${prefix}-line-background`, codeStart: start, codeEnd: end } },
+    lineBackground: true,
+  };
+
   return parent!.type !== 'item' && parent!.type !== 'blockQuote'
-    ? {
-        start,
-        end,
-        spec: { attrs: { className: `${prefix}-line-background`, codeStart: start, codeEnd: end } },
-        lineBackground: true,
-      }
+    ? [
+        {
+          ...defaultBackground,
+          end: start,
+          spec: { attrs: { className: `${prefix}-line-background start` } },
+        },
+        {
+          ...defaultBackground,
+          start: [Math.min(start[0] + 1, end[0]), start[1]] as MdPos,
+        },
+      ]
     : null;
 }
 
