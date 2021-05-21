@@ -60,7 +60,19 @@ var onCut = function ( event ) {
         // parents up to root if selection across blocks
         startBlock = getStartBlockOfRange( range, root );
         endBlock = getEndBlockOfRange( range, root );
-        copyRoot = ( ( startBlock === endBlock ) && startBlock ) || root;
+
+        var isListAndInsideTableCell =
+            ['UL', 'OL'].indexOf(range.commonAncestorContainer.nodeName) > -1 &&
+            range.commonAncestorContainer.parentNode &&
+            range.commonAncestorContainer.parentNode.nodeName === 'TD';
+
+        if (range.commonAncestorContainer.nodeName === 'TD') {
+            copyRoot = range.commonAncestorContainer;
+        } else if (isListAndInsideTableCell) {
+            copyRoot = range.commonAncestorContainer.parentNode;
+        } else {
+            copyRoot = (startBlock === endBlock && startBlock) || root;
+        }
         // Extract the contents
         contents = deleteContentsOfRange( range, root );
         // Add any other parents not in extracted content, up to copy root
@@ -107,7 +119,20 @@ var onCopy = function ( event ) {
         // parents up to root if selection across blocks
         startBlock = getStartBlockOfRange( range, root );
         endBlock = getEndBlockOfRange( range, root );
-        copyRoot = ( ( startBlock === endBlock ) && startBlock ) || root;
+
+        var isListAndInsideTableCell =
+            ['UL', 'OL'].indexOf(range.commonAncestorContainer.nodeName) > -1 &&
+            range.commonAncestorContainer.parentNode &&
+            range.commonAncestorContainer.parentNode.nodeName === 'TD';
+
+        if (range.commonAncestorContainer.nodeName === 'TD') {
+            copyRoot = range.commonAncestorContainer;
+        } else if (isListAndInsideTableCell) {
+            copyRoot = range.commonAncestorContainer.parentNode;
+        } else {
+            copyRoot = (startBlock === endBlock && startBlock) || root;
+        }
+
         // Clone range to mutate, then move up as high as possible without
         // passing the copy root node.
         range = range.cloneRange();
