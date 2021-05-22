@@ -80,7 +80,6 @@
 
 .toastui-editor-main .toastui-editor-md-tab-style > .toastui-editor,
 .toastui-editor-main .toastui-editor-md-tab-style > .toastui-editor-md-preview {
-  float: left;
   width: 100%;
   display: none;
 }
@@ -98,20 +97,15 @@
 }
 
 .toastui-editor-main .toastui-editor-md-vertical-style .toastui-editor {
-  float: left;
   width: 50%;
 }
 
 .toastui-editor-main .toastui-editor-md-vertical-style .toastui-editor-md-preview {
-  float: left;
   width: 50%;
 }
 
 .toastui-editor-main .toastui-editor-md-splitter {
   display: none;
-  position: absolute;
-  left: 50%;
-  top: 0;
   height: 100%;
   width: 1px;
   background-color: #ebedf2;
@@ -149,6 +143,11 @@
 .toastui-editor-ww-mode .toastui-editor-ww-container {
   display: block;
   z-index: 100;
+}
+
+.toastui-editor-md-mode .toastui-editor-md-vertical-style {
+  display: -ms-flexbox;
+  display: flex;
 }
 
 .toastui-editor-main.hidden,
@@ -282,22 +281,21 @@
 
 /* toolbar */
 .toastui-editor-defaultUI-toolbar {
+  display: -ms-flexbox;
+  display: flex;
   padding: 0 25px;
   height: 45px;
   background-color: #f7f9fc;
   border-bottom: 1px solid #ebedf2;
-  overflow: hidden;
   border-radius: 3px 3px 0 0;
 }
 
 .toastui-editor-toolbar {
   height: 46px;
   box-sizing: border-box;
-  position: relative;
 }
 
 .toastui-editor-toolbar-divider {
-  float: left;
   display: inline-block;
   width: 1px;
   height: 18px;
@@ -305,8 +303,12 @@
   margin: 14px 12px;
 }
 
+.toastui-editor-toolbar-group {
+  display: -ms-flexbox;
+  display: flex;
+}
+
 .toastui-editor-defaultUI-toolbar button {
-  float: left;
   box-sizing: border-box;
   cursor: pointer;
   width: 32px;
@@ -389,18 +391,17 @@
 
 .toastui-editor-dropdown-toolbar {
   position: absolute;
-  width: auto;
   height: 46px;
   z-index: 101;
-  margin-right: auto;
   border-radius: 2px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
   border: 1px solid #dadde6;
   background-color: #f7f9fc;
+  display: -ms-flexbox;
+  display: flex;
 }
 
 .tui-toolbar-item-wrapper {
-  float: left;
   margin: 7px 5px;
   height: 32px;
   line-height: 32px;

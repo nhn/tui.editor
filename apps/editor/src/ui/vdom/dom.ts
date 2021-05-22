@@ -78,7 +78,7 @@ function setStyleProps(node: HTMLElement, prevStyleProps: Props | null, stylePro
   if (prevStyleProps) {
     Object.keys(prevStyleProps).forEach((styleProp) => {
       // @ts-ignore
-      node.style[styleProp] = null;
+      node.style[styleProp] = '';
     });
   }
 
