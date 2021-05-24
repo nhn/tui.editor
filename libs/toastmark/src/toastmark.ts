@@ -200,11 +200,11 @@ export class ToastMark implements ToastMarkParser {
     // extends ending range if the following node can be a fenced code block or a continued list item
     let nextNode = endNode ? endNode.next : this.root.firstChild;
     const { lastChild } = root;
-    const isLastChildCodeBlock = lastChild && isCodeBlock(lastChild);
+    const isOpenedLastChildCodeBlock = lastChild && isCodeBlock(lastChild) && lastChild.open;
     const isLastChildList = lastChild && isList(lastChild);
 
     while (
-      (isLastChildCodeBlock && nextNode) ||
+      (isOpenedLastChildCodeBlock && nextNode) ||
       (isLastChildList && nextNode && (nextNode.type === 'list' || nextNode.sourcepos![0][1] >= 2))
     ) {
       const newEndLine = this.extendEndLine(nextNode.sourcepos![1][0]);

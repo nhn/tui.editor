@@ -44,8 +44,10 @@ export function syntaxHighlight({ schema, toastMark }: MdContext) {
               }
             }
           } else if (removedNodeRange) {
-            const startIndex = Math.max(removedNodeRange.line[0] - 1, 1);
-            const endIndex = Math.min(startIndex + 1, newTr.doc.childCount - 1);
+            const maxIndex = newTr.doc.childCount - 1;
+            const [startLine, endLine] = removedNodeRange.line;
+            const startIndex = Math.min(startLine, maxIndex);
+            const endIndex = Math.min(endLine, maxIndex);
 
             // cache the index to remove code block, custom block background when there are no adding nodes
             for (let i = startIndex; i <= endIndex; i += 1) {

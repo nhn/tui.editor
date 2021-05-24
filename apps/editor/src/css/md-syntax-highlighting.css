@@ -107,6 +107,11 @@
   background-color: #f5f7f8;
 }
 
+.toastui-editor-md-code-block-line-background.start,
+.toastui-editor-md-custom-block-line-background.start {
+  margin-top: 2px;
+}
+
 .toastui-editor-md-code,
 .toastui-editor-md-code-block {
   font-family: Consolas, Courier, 'Lucida Grande', '나눔바른고딕', 'Nanum Barun Gothic', '맑은고딕',
