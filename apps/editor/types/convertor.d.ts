@@ -1,12 +1,5 @@
-import {
-  NodeType,
-  MarkType,
-  Schema,
-  Node as ProsemirrorNode,
-  Mark,
-  DOMOutputSpecArray,
-} from 'prosemirror-model';
-import { MdNode, MdNodeType } from '@toast-ui/toastmark';
+import { NodeType, MarkType, Schema, Node as ProsemirrorNode, Mark } from 'prosemirror-model';
+import { MdNode, MdNodeType, RendererOptions } from '@toast-ui/toastmark';
 import { WwNodeType, WwMarkType } from './wysiwyg';
 
 export type Attrs = { [name: string]: any } | null;
@@ -37,7 +30,11 @@ type ToWwConvertor = (
   context: {
     entering: boolean;
     skipChildren: () => void;
-  }
+    leaf: boolean;
+    options: Omit<RendererOptions, 'convertors'>;
+    getChildrenText: (mdNode: MdNode) => string;
+  },
+  customAttrs?: { htmlAttrs?: Record<string, any>; classNames?: string[] }
 ) => void;
 
 export type ToWwConvertorMap = Partial<Record<string, ToWwConvertor>>;
@@ -61,7 +58,6 @@ export interface ToMdConvertorState {
 }
 
 export interface ToDOMAdaptor {
-  getToDOM(type: string): ((node: ProsemirrorNode | Mark) => DOMOutputSpecArray) | null;
   getToDOMNode(type: string): ((node: ProsemirrorNode | Mark) => Node) | null;
 }
 

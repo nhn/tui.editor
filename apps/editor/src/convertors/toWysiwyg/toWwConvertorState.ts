@@ -3,6 +3,7 @@ import { MdNode } from '@toast-ui/toastmark';
 
 import { ToWwConvertorMap, StackItem, Attrs } from '@t/convertor';
 import { last } from '@/utils/common';
+import { isContainer, getChildrenText } from '@/utils/markdown';
 
 export function mergeMarkText(a: Node, b: Node) {
   if (a.isText && b.isText && Mark.sameSet(a.marks, b.marks)) {
@@ -108,6 +109,9 @@ export default class ToWwConvertorState {
       if (convertor) {
         const context = {
           entering,
+          leaf: !isContainer(node),
+          getChildrenText,
+          options: { gfm: true, nodeId: false, tagFilter: false, softbreak: '\n' },
           skipChildren: () => {
             skipped = true;
           },

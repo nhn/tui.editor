@@ -38,13 +38,18 @@ export default class ToMdConvertorState {
     this.inTable = false;
   }
 
+  private getMarkConvertor(mark: Mark) {
+    const type = mark.attrs.htmlInline ? 'html' : (mark.type.name as WwMarkType);
+
+    return this.markTypeConvertors[type];
+  }
+
   private isInBlank() {
     return /(^|\n)$/.test(this.result);
   }
 
   private markText(mark: Mark, entering: boolean, parent: Node, index: number) {
-    const type = mark.type.name as WwMarkType;
-    const convertor = this.markTypeConvertors[type];
+    const convertor = this.getMarkConvertor(mark);
 
     if (convertor) {
       const { delim, rawHTML } = convertor({ node: mark, parent, index }, entering);
@@ -134,7 +139,7 @@ export default class ToMdConvertorState {
     const convertor = this.nodeTypeConvertors[type];
     const nodeInfo = { node, parent, index };
 
-    if (node.attrs.htmlAttrs) {
+    if (node.attrs.htmlBlock) {
       this.nodeTypeConvertors.html!(this, nodeInfo);
     } else if (convertor) {
       convertor(this, nodeInfo);
@@ -157,7 +162,7 @@ export default class ToMdConvertorState {
         node &&
         node.isText &&
         marks.some((mark: Mark) => {
-          const markConvertor = this.markTypeConvertors[mark.type.name as WwMarkType];
+          const markConvertor = this.getMarkConvertor(mark);
           const info = markConvertor && markConvertor();
 
           return info && info.removedEnclosingWhitespace;
@@ -181,7 +186,7 @@ export default class ToMdConvertorState {
       }
 
       const lastMark = marks.length && last(marks);
-      const markConvertor = lastMark && this.markTypeConvertors[lastMark.type.name as WwMarkType];
+      const markConvertor = lastMark && this.getMarkConvertor(lastMark);
       const markType = markConvertor && markConvertor();
 
       const noEscape = markType && markType.escape === false;

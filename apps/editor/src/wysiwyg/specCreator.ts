@@ -25,34 +25,33 @@ import { Link } from './marks/link';
 import { Code } from './marks/code';
 import { CustomBlock } from './nodes/customBlock';
 import { FrontMatter } from './nodes/frontMatter';
-import { ToDOMAdaptor } from '@t/convertor';
 import { LinkAttributes } from '@t/editor';
 import { Widget } from '@/widget/widgetNode';
 
-export function createSpecs(toDOMAdaptor: ToDOMAdaptor, linkAttributes: LinkAttributes) {
+export function createSpecs(linkAttributes: LinkAttributes) {
   return new SpecManager([
     new Doc(),
-    new Paragraph(toDOMAdaptor),
+    new Paragraph(),
     new Text(),
-    new Heading(toDOMAdaptor),
-    new CodeBlock(toDOMAdaptor),
-    new BulletList(toDOMAdaptor),
-    new OrderedList(toDOMAdaptor),
-    new ListItem(toDOMAdaptor),
-    new BlockQuote(toDOMAdaptor),
-    new Table(toDOMAdaptor),
-    new TableHead(toDOMAdaptor),
-    new TableBody(toDOMAdaptor),
-    new TableRow(toDOMAdaptor),
-    new TableHeadCell(toDOMAdaptor),
-    new TableBodyCell(toDOMAdaptor),
-    new Image(toDOMAdaptor),
+    new Heading(),
+    new CodeBlock(),
+    new BulletList(),
+    new OrderedList(),
+    new ListItem(),
+    new BlockQuote(),
+    new Table(),
+    new TableHead(),
+    new TableBody(),
+    new TableRow(),
+    new TableHeadCell(),
+    new TableBodyCell(),
+    new Image(),
     new ThematicBreak(),
-    new Strong(toDOMAdaptor),
-    new Emph(toDOMAdaptor),
-    new Strike(toDOMAdaptor),
-    new Link(toDOMAdaptor, linkAttributes),
-    new Code(toDOMAdaptor),
+    new Strong(),
+    new Emph(),
+    new Strike(),
+    new Link(linkAttributes),
+    new Code(),
     new CustomBlock(),
     new FrontMatter(),
     new Widget(),

@@ -1,13 +1,13 @@
 import { Node as ProsemirrorNode, Schema } from 'prosemirror-model';
-import { MdNode } from '@toast-ui/toastmark';
+import { HTMLConvertorMap, MdNode } from '@toast-ui/toastmark';
 
 import { ToWwConvertorMap, ToMdConvertors, ToMdConvertorMap } from '@t/convertor';
 import { Emitter } from '@t/event';
 
-import { toWwConvertors } from './toWysiwyg/toWwConvertors';
+import { createWwConvertors } from './toWysiwyg/toWwConvertors';
 import ToWwConvertorState from './toWysiwyg/toWwConvertorState';
 
-import { createConvertors } from './toMarkdown/toMdConvertors';
+import { createMdConvertors } from './toMarkdown/toMdConvertors';
 import ToMdConvertorState from './toMarkdown/toMdConvertorState';
 
 export default class Convertor {
@@ -19,11 +19,16 @@ export default class Convertor {
 
   private readonly eventEmitter: Emitter;
 
-  constructor(schema: Schema, toMdCustomConvertors: ToMdConvertorMap, eventEmitter: Emitter) {
+  constructor(
+    schema: Schema,
+    toMdConvertors: ToMdConvertorMap,
+    toHTMLConvertors: HTMLConvertorMap,
+    eventEmitter: Emitter
+  ) {
     this.schema = schema;
-    this.toWwConvertors = toWwConvertors;
     this.eventEmitter = eventEmitter;
-    this.toMdConvertors = createConvertors(toMdCustomConvertors || {});
+    this.toWwConvertors = createWwConvertors(toHTMLConvertors);
+    this.toMdConvertors = createMdConvertors(toMdConvertors || {});
   }
 
   toWysiwygModel(mdNode: MdNode) {

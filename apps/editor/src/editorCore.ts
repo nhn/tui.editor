@@ -245,6 +245,7 @@ class ToastUIEditor {
     this.convertor = new Convertor(
       this.wwEditor.getSchema(),
       { ...toMarkdownRenderers, ...customMarkdownRenderer },
+      rendererOptions.customHTMLRenderer,
       this.eventEmitter
     );
 
