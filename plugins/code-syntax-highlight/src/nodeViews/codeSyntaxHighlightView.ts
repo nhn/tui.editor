@@ -81,7 +81,9 @@ class CodeSyntaxHighlightView implements NodeView {
     }
 
     Object.keys(attrs).forEach((attrName) => {
-      pre.setAttribute(attrName, attrs[attrName]);
+      if (attrs[attrName]) {
+        pre.setAttribute(attrName, attrs[attrName]);
+      }
     });
 
     pre.appendChild(code);
