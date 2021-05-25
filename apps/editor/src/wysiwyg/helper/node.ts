@@ -3,6 +3,11 @@ import { includes } from '@/utils/common';
 
 type NodeAttrs = Record<string, any>;
 
+interface CustomAttrs {
+  htmlAttrs: { default: any };
+  classNames: { default: null | string[] };
+}
+
 export function findNodeBy(
   pos: ResolvedPos,
   condition: (node: ProsemirrorNode, depth: number) => boolean
@@ -89,4 +94,17 @@ export function createParsedCellDOM(tag: string) {
       }, {});
     },
   };
+}
+
+export function getDefaultCustomAttrs(): CustomAttrs {
+  return {
+    htmlAttrs: { default: null },
+    classNames: { default: null },
+  };
+}
+
+export function getCustomAttrs(attrs: Record<string, any>) {
+  const { htmlAttrs, classNames } = attrs;
+
+  return { ...htmlAttrs, class: classNames ? classNames.join(' ') : null };
 }

@@ -160,3 +160,44 @@ export function getInlineMarkdownText(mdNode: MdNode) {
       return null;
   }
 }
+
+export function isContainer(node: MdNode) {
+  switch (node.type) {
+    case 'document':
+    case 'blockQuote':
+    case 'list':
+    case 'item':
+    case 'paragraph':
+    case 'heading':
+    case 'emph':
+    case 'strong':
+    case 'strike':
+    case 'link':
+    case 'image':
+    case 'table':
+    case 'tableHead':
+    case 'tableBody':
+    case 'tableRow':
+    case 'tableCell':
+    case 'tableDelimRow':
+    case 'customInline':
+      return true;
+    default:
+      return false;
+  }
+}
+
+export function getChildrenText(node: MdNode) {
+  const buffer: string[] = [];
+  const walker = node.walker();
+  let event: ReturnType<typeof walker.next> = null;
+
+  while ((event = walker.next())) {
+    const { node: childNode } = event;
+
+    if (childNode.type === 'text') {
+      buffer.push(childNode.literal!);
+    }
+  }
+  return buffer.join('');
+}

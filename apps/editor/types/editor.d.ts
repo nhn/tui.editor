@@ -322,4 +322,8 @@ export interface Base {
   getRangeInfoOfNode(pos?: EditorPos): NodeRangeInfo;
 }
 
-export type SchemaMap = Record<string, NodeSpec>;
+export type SchemaMap = Record<string, NodeSpec | MarkSpec>;
+export interface HTMLSchemaMap {
+  nodes: SchemaMap;
+  marks: SchemaMap;
+}

@@ -6,13 +6,14 @@ import {
   CodeBlockMdNode,
   CustomInlineMdNode,
   OpenTagToken,
+  Context,
 } from '@toast-ui/toastmark';
 import { LinkAttributes } from '@t/editor';
-import { MdLikeNode } from '@t/markdown';
+import { HTMLMdNode } from '@t/markdown';
 import { reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 import { getWidgetContent, widgetToDOM } from '@/widget/rules';
 import { getChildrenHTML, getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
-import { Context } from 'vm';
+import { includes } from '@/utils/common';
 
 type TokenAttrs = Record<string, any>;
 
@@ -154,7 +155,7 @@ export function getHTMLRenderConvertors(
           newContext.origin = () => orgConvertor(node, context);
           return customConvertor(node, newContext);
         };
-      } else if (['htmlBlock', 'htmlInline'].includes(nodeType)) {
+      } else if (includes(['htmlBlock', 'htmlInline'], nodeType)) {
         convertors[nodeType] = (node, context) => {
           const matched = node.literal!.match(reHTMLTag);
 
@@ -167,7 +168,7 @@ export function getHTMLRenderConvertors(
 
             if (htmlConvertor) {
               // copy for preventing to overwrite the originial property
-              const newNode: MdLikeNode = { ...node };
+              const newNode: HTMLMdNode = { ...node };
 
               newNode.attrs = getHTMLAttrsByHTMLString(rootHTML);
               newNode.childrenHTML = childrenHTML;
