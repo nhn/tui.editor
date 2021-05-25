@@ -1,8 +1,12 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
 import { getWwCommands } from '@/commands/wwCommands';
-import { createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
+import {
+  createDOMInfoParsedRawHTML,
+  getCustomAttrs,
+  getDefaultCustomAttrs,
+} from '@/wysiwyg/helper/node';
 import { changeList, toggleTask } from '@/wysiwyg/command/list';
 
 import { Command } from 'prosemirror-commands';
@@ -12,16 +16,17 @@ export class BulletList extends NodeSchema {
     return 'bulletList';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       content: 'listItem+',
       group: 'block listGroup',
       attrs: {
         rawHTML: { default: null },
+        ...getDefaultCustomAttrs(),
       },
       parseDOM: [createDOMInfoParsedRawHTML('ul')],
-      toDOM(): DOMOutputSpecArray {
-        return ['ul', 0];
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+        return ['ul', getCustomAttrs(attrs), 0];
       },
     };
   }

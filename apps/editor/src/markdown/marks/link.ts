@@ -20,7 +20,7 @@ export class Link extends Mark {
     return 'link';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       attrs: {
         url: { default: false },

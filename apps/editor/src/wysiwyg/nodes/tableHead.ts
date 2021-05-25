@@ -1,22 +1,27 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
-import { createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
+import {
+  createDOMInfoParsedRawHTML,
+  getCustomAttrs,
+  getDefaultCustomAttrs,
+} from '@/wysiwyg/helper/node';
 
 export class TableHead extends NodeSchema {
   get name() {
     return 'tableHead';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       content: 'tableRow{1}',
       attrs: {
         rawHTML: { default: null },
+        ...getDefaultCustomAttrs(),
       },
       parseDOM: [createDOMInfoParsedRawHTML('thead')],
-      toDOM(): DOMOutputSpecArray {
-        return ['thead', 0];
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+        return ['thead', getCustomAttrs(attrs), 0];
       },
     };
   }

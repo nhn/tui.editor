@@ -1,17 +1,19 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
+import { getDefaultCustomAttrs, getCustomAttrs } from '@/wysiwyg/helper/node';
 
 export class TableRow extends NodeSchema {
   get name() {
     return 'tableRow';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       content: '(tableHeadCell | tableBodyCell)*',
       attrs: {
         rawHTML: { default: null },
+        ...getDefaultCustomAttrs(),
       },
       parseDOM: [
         {
@@ -28,8 +30,8 @@ export class TableRow extends NodeSchema {
           },
         },
       ],
-      toDOM(): DOMOutputSpecArray {
-        return ['tr', 0];
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+        return ['tr', getCustomAttrs(attrs), 0];
       },
     };
   }

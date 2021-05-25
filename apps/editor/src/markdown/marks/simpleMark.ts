@@ -7,7 +7,7 @@ export class TaskDelimiter extends Mark {
     return 'taskDelimiter';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: clsWithMdPrefix('delimiter', 'list-item') }, 0];
@@ -21,7 +21,7 @@ export class Delimiter extends Mark {
     return 'delimiter';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: clsWithMdPrefix('delimiter') }, 0];
@@ -35,7 +35,7 @@ export class Meta extends Mark {
     return 'meta';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: clsWithMdPrefix('meta') }, 0];
@@ -49,7 +49,7 @@ export class MarkedText extends Mark {
     return 'markedText';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: clsWithMdPrefix('marked-text') }, 0];
@@ -63,7 +63,7 @@ export class TableCell extends Mark {
     return 'tableCell';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: clsWithMdPrefix('table-cell') }, 0];

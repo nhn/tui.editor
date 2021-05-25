@@ -1,8 +1,14 @@
-import { Node as ProsemirrorNode, DOMOutputSpecArray, NodeSpec } from 'prosemirror-model';
+import {
+  Node as ProsemirrorNode,
+  Mark as ProsemirrorMark,
+  DOMOutputSpecArray,
+  NodeSpec,
+  MarkSpec,
+} from 'prosemirror-model';
 import { HTMLConvertorMap, MdNode } from '@toast-ui/toastmark';
 import toArray from 'tui-code-snippet/collection/toArray';
+import { Sanitizer, HTMLSchemaMap } from '@t/editor';
 import { ToDOMAdaptor } from '@t/convertor';
-import { SchemaMap, Sanitizer } from '@t/editor';
 import { ATTRIBUTE, reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 import { registerTagWhitelistIfPossible } from '@/sanitizer/htmlSanitizer';
 
@@ -29,7 +35,7 @@ export function getHTMLAttrsByHTMLString(html: string) {
     : {};
 }
 
-export function getHTMLAttrs(dom: HTMLElement) {
+function getHTMLAttrs(dom: HTMLElement) {
   return toArray(dom.attributes).reduce<Record<string, string | null>>((acc, attr) => {
     acc[attr.nodeName] = attr.nodeValue;
     return acc;
@@ -37,7 +43,7 @@ export function getHTMLAttrs(dom: HTMLElement) {
 }
 
 export function sanitizeDOM(
-  node: ProsemirrorNode,
+  node: ProsemirrorNode | ProsemirrorMark,
   typeName: string,
   sanitizer: Sanitizer,
   wwToDOMAdaptor: ToDOMAdaptor
@@ -63,6 +69,7 @@ const schemaFactory = {
       attrs: {
         htmlAttrs: { default: {} },
         childrenHTML: { default: '' },
+        htmlBlock: { default: true },
       },
       parseDOM: [
         {
@@ -84,14 +91,11 @@ const schemaFactory = {
       },
     };
   },
-  htmlInline(typeName: string, sanitizeHTML: Sanitizer, wwToDOMAdaptor: ToDOMAdaptor): NodeSpec {
+  htmlInline(typeName: string, sanitizeHTML: Sanitizer, wwToDOMAdaptor: ToDOMAdaptor): MarkSpec {
     return {
-      inline: true,
-      content: 'inline*',
-      group: 'inline',
       attrs: {
         htmlAttrs: { default: {} },
-        inline: { default: true },
+        htmlInline: { default: true },
       },
       parseDOM: [
         {
@@ -103,7 +107,7 @@ const schemaFactory = {
           },
         },
       ],
-      toDOM(node: ProsemirrorNode): DOMOutputSpecArray {
+      toDOM(node: ProsemirrorMark): DOMOutputSpecArray {
         const { htmlAttrs } = sanitizeDOM(node, typeName, sanitizeHTML, wwToDOMAdaptor);
 
         return [typeName, htmlAttrs, 0];
@@ -113,18 +117,24 @@ const schemaFactory = {
 };
 
 export function createHTMLSchemaMap(
-  renderer: HTMLConvertorMap,
+  convertorMap: HTMLConvertorMap,
   sanitizeHTML: Sanitizer,
   wwToDOMAdaptor: ToDOMAdaptor
-) {
-  const htmlSchemaMap: SchemaMap = {};
+): HTMLSchemaMap {
+  const htmlSchemaMap: HTMLSchemaMap = { nodes: {}, marks: {} };
 
   (['htmlBlock', 'htmlInline'] as const).forEach((htmlType) => {
-    if (renderer[htmlType]) {
-      Object.keys(renderer[htmlType]!).forEach((type) => {
+    if (convertorMap[htmlType]) {
+      Object.keys(convertorMap[htmlType]!).forEach((type) => {
+        const targetType = htmlType === 'htmlBlock' ? 'nodes' : 'marks';
+
         // register tag white list for preventing to remove the html in sanitizer
         registerTagWhitelistIfPossible(type);
-        htmlSchemaMap[type] = schemaFactory[htmlType](type, sanitizeHTML, wwToDOMAdaptor);
+        htmlSchemaMap[targetType][type] = schemaFactory[htmlType](
+          type,
+          sanitizeHTML,
+          wwToDOMAdaptor
+        );
       });
     }
   });

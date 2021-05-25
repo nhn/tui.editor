@@ -1,14 +1,19 @@
 import { DOMOutputSpecArray, Node as ProsemirrorNode } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
-import { createCellAttrs, createParsedCellDOM } from '@/wysiwyg/helper/node';
+import {
+  createCellAttrs,
+  createParsedCellDOM,
+  getCustomAttrs,
+  getDefaultCustomAttrs,
+} from '@/wysiwyg/helper/node';
 
 export class TableBodyCell extends NodeSchema {
   get name() {
     return 'tableBodyCell';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       content: '(paragraph | bulletList | orderedList)+',
       attrs: {
@@ -18,13 +23,14 @@ export class TableBodyCell extends NodeSchema {
         colspan: { default: null },
         rowspan: { default: null },
         extended: { default: null },
+        ...getDefaultCustomAttrs(),
       },
       isolating: true,
       parseDOM: [createParsedCellDOM('td')],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
         const cellAttrs = createCellAttrs(attrs);
 
-        return ['td', cellAttrs, 0];
+        return ['td', { ...cellAttrs, ...getCustomAttrs(attrs) }, 0];
       },
     };
   }

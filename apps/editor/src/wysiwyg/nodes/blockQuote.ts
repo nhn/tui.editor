@@ -1,8 +1,12 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
 import { wrapIn } from 'prosemirror-commands';
 
 import NodeSchema from '@/spec/node';
-import { createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
+import {
+  createDOMInfoParsedRawHTML,
+  getCustomAttrs,
+  getDefaultCustomAttrs,
+} from '@/wysiwyg/helper/node';
 
 import { EditorCommand } from '@t/spec';
 
@@ -11,16 +15,17 @@ export class BlockQuote extends NodeSchema {
     return 'blockQuote';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       attrs: {
         rawHTML: { default: null },
+        ...getDefaultCustomAttrs(),
       },
       content: 'block+',
       group: 'block',
       parseDOM: [createDOMInfoParsedRawHTML('blockquote')],
-      toDOM(): DOMOutputSpecArray {
-        return ['blockquote', 0];
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+        return ['blockquote', getCustomAttrs(attrs), 0];
       },
     };
   }

@@ -21,7 +21,7 @@ export class Widget extends SpecNode {
     return 'widget';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       attrs: {
         info: { default: null },

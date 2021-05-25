@@ -1,11 +1,11 @@
 import { Mark as ProsemirrorMark, DOMOutputSpecArray } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
-import { ToDOMAdaptor } from '@t/convertor';
 
 import Mark from '@/spec/mark';
 import { decodeURIGraceful, encodeMarkdownText } from '@/utils/encoder';
 import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
 import { createTextNode } from '@/helper/manipulation';
+import { getCustomAttrs, getDefaultCustomAttrs } from '@/wysiwyg/helper/node';
 
 import { EditorCommand } from '@t/spec';
 import { LinkAttributes } from '@t/editor';
@@ -13,9 +13,8 @@ import { LinkAttributes } from '@t/editor';
 export class Link extends Mark {
   private linkAttributes: LinkAttributes;
 
-  constructor(toDOMAdaptor: ToDOMAdaptor, linkAttributes: LinkAttributes) {
-    super(toDOMAdaptor);
-
+  constructor(linkAttributes: LinkAttributes) {
+    super();
     this.linkAttributes = linkAttributes;
   }
 
@@ -23,12 +22,13 @@ export class Link extends Mark {
     return 'link';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       attrs: {
         linkUrl: { default: '' },
         linkText: { default: null },
         rawHTML: { default: null },
+        ...getDefaultCustomAttrs(),
       },
       inclusive: false,
       parseDOM: [
@@ -51,6 +51,7 @@ export class Link extends Mark {
         {
           href: attrs.linkUrl,
           ...(this.linkAttributes as DOMOutputSpecArray),
+          ...getCustomAttrs(attrs),
         },
       ],
     };

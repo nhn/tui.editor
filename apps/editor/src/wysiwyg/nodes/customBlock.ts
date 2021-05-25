@@ -6,7 +6,7 @@ export class CustomBlock extends NodeSchema {
     return 'customBlock';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       content: 'text*',
       group: 'block',

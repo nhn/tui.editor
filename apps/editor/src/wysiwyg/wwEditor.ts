@@ -23,7 +23,7 @@ import { createSpecs } from './specCreator';
 
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
-import { LinkAttributes, SchemaMap, WidgetStyle } from '@t/editor';
+import { HTMLSchemaMap, LinkAttributes, WidgetStyle } from '@t/editor';
 import { createNodesWithWidget } from '@/widget/rules';
 import { widgetNodeView } from '@/widget/widgetNode';
 import { cls } from '@/utils/dom';
@@ -37,7 +37,7 @@ interface WindowWithClipboard extends Window {
 interface WysiwygOptions {
   toDOMAdaptor: ToDOMAdaptor;
   useCommandShortcut?: boolean;
-  htmlSchemaMap?: SchemaMap;
+  htmlSchemaMap?: HTMLSchemaMap;
   linkAttributes?: LinkAttributes | null;
   wwPlugins?: PluginProp[];
   wwNodeViews?: NodeViewPropMap;
@@ -63,7 +63,7 @@ export default class WysiwygEditor extends EditorBase {
 
     const {
       toDOMAdaptor,
-      htmlSchemaMap = {},
+      htmlSchemaMap = {} as HTMLSchemaMap,
       linkAttributes = {},
       useCommandShortcut = true,
       wwPlugins = [],
@@ -87,7 +87,7 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createSpecs() {
-    return createSpecs(this.toDOMAdaptor, this.linkAttributes);
+    return createSpecs(this.linkAttributes);
   }
 
   createContext() {
@@ -97,10 +97,10 @@ export default class WysiwygEditor extends EditorBase {
     };
   }
 
-  createSchema(htmlSchemaMap?: SchemaMap) {
+  createSchema(htmlSchemaMap?: HTMLSchemaMap) {
     return new Schema({
-      nodes: { ...this.specs.nodes, ...htmlSchemaMap },
-      marks: this.specs.marks,
+      nodes: { ...this.specs.nodes, ...htmlSchemaMap!.nodes },
+      marks: { ...this.specs.marks, ...htmlSchemaMap!.marks },
     });
   }
 

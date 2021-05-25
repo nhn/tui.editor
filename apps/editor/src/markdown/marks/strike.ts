@@ -12,7 +12,7 @@ export class Strike extends Mark {
     return 'strike';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: clsWithMdPrefix('strike') }, 0];

@@ -10,7 +10,7 @@ export class ListItem extends NodeSchema {
     return 'listItem';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       content: 'paragraph listGroup*',
       attrs: {
