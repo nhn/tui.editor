@@ -4,7 +4,7 @@ import { Node } from 'prosemirror-model';
 
 import { HTMLConvertorMap, CustomParserMap } from '@toast-ui/toastmark';
 import { Emitter } from './event';
-import { ToDOMAdaptor, ToMdConvertorMap } from './convertor';
+import { ToMdConvertorMap } from './convertor';
 import { Dispatch, Payload, DefaultPayload } from './spec';
 import { ToolbarItemOptions } from './ui';
 
@@ -14,8 +14,7 @@ export type PluginNodeViews = (
   node: Node,
   view: EditorView,
   getPos: () => number,
-  eventEmitter: Emitter,
-  toDOMAdaptor: ToDOMAdaptor
+  eventEmitter: Emitter
 ) => NodeView;
 
 type NodeViewPropMap = Record<string, PluginNodeViews>;

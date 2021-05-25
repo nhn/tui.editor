@@ -4,9 +4,9 @@ import { Node as ProsemirrorNode } from 'prosemirror-model';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import css from 'tui-code-snippet/domUtil/css';
 
-import { removeNode } from '@/utils/dom';
+import { removeNode, setAttributes } from '@/utils/dom';
+import { getCustomAttrs } from '@/wysiwyg/helper/node';
 
-import { ToDOMAdaptor } from '@t/convertor';
 import { Emitter } from '@t/event';
 
 type GetPos = (() => number) | boolean;
@@ -30,23 +30,14 @@ export class CodeBlockView implements NodeView {
 
   private getPos: GetPos;
 
-  private toDOMAdaptor: ToDOMAdaptor;
-
   private eventEmitter: Emitter;
 
   private input: HTMLElement | null = null;
 
-  constructor(
-    node: ProsemirrorNode,
-    view: EditorView,
-    getPos: GetPos,
-    toDOMAdaptor: ToDOMAdaptor,
-    eventEmitter: Emitter
-  ) {
+  constructor(node: ProsemirrorNode, view: EditorView, getPos: GetPos, eventEmitter: Emitter) {
     this.node = node;
     this.view = view;
     this.getPos = getPos;
-    this.toDOMAdaptor = toDOMAdaptor;
     this.eventEmitter = eventEmitter;
 
     this.createElement();
@@ -71,19 +62,16 @@ export class CodeBlockView implements NodeView {
   }
 
   private createCodeBlockElement() {
-    const toDOMNode = this.toDOMAdaptor.getToDOMNode('codeBlock');
-
-    if (toDOMNode) {
-      return toDOMNode(this.node);
-    }
-
     const pre = document.createElement('pre');
     const code = document.createElement('code');
     const { language } = this.node.attrs;
+    const attrs = getCustomAttrs(this.node.attrs);
 
     if (language) {
       code.setAttribute('data-language', language);
     }
+    setAttributes(attrs, pre);
+
     pre.appendChild(code);
 
     return pre;

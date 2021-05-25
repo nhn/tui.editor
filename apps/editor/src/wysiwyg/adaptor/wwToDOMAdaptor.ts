@@ -15,6 +15,7 @@ import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { ToDOMAdaptor } from '@t/convertor';
 import { includes, last } from '@/utils/common';
 import { LinkAttributes } from '@t/editor';
+import { setAttributes } from '@/utils/dom';
 import { createMdLikeNode, isContainer, isPmNode } from './mdLikeNode';
 
 interface TokenToDOM<T> {
@@ -36,9 +37,7 @@ const tokenToDOMNode: TokenToDOM<HTMLElement> = {
     if (attributes) {
       attrs = { ...attrs, ...attributes };
     }
-    Object.keys(attrs).forEach((attr) => {
-      el.setAttribute(attr, attrs[attr]);
-    });
+    setAttributes(attrs, el);
 
     stack.push(el);
   },

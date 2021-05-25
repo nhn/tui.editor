@@ -115,13 +115,13 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   createPluginNodeViews() {
-    const { eventEmitter, toDOMAdaptor, pluginNodeViews } = this;
+    const { eventEmitter, pluginNodeViews } = this;
     const pluginNodeViewMap: PluginNodeViews = {};
 
     if (pluginNodeViews) {
       Object.keys(pluginNodeViews).forEach((key) => {
         pluginNodeViewMap[key] = (node, view, getPos) =>
-          pluginNodeViews[key](node, view, getPos, eventEmitter, toDOMAdaptor);
+          pluginNodeViews[key](node, view, getPos, eventEmitter);
       });
     }
 
@@ -141,10 +141,10 @@ export default class WysiwygEditor extends EditorBase {
           return new CustomBlockView(node, view, getPos, toDOMAdaptor);
         },
         image(node, view, getPos) {
-          return new ImageView(node, view, getPos, toDOMAdaptor, eventEmitter);
+          return new ImageView(node, view, getPos, eventEmitter);
         },
         codeBlock(node, view, getPos) {
-          return new CodeBlockView(node, view, getPos, toDOMAdaptor, eventEmitter);
+          return new CodeBlockView(node, view, getPos, eventEmitter);
         },
         widget: widgetNodeView,
         ...this.createPluginNodeViews(),

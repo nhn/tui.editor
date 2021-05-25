@@ -209,3 +209,9 @@ export function prependNode(node: Element, appended: string | ArrayLike<Element>
     }
   }
 }
+
+export function setAttributes(attributes: Record<string, any>, element: HTMLElement) {
+  Object.keys(attributes).forEach((attrName) => {
+    element.setAttribute(attrName, attributes[attrName]);
+  });
+}
