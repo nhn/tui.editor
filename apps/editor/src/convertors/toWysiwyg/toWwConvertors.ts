@@ -366,21 +366,20 @@ const toWwConvertors: ToWwConvertorMap = {
 
 export function createWwConvertors(customConvertors: HTMLConvertorMap) {
   const customConvertorTypes = Object.keys(customConvertors);
+  const convertors = { ...toWwConvertors };
 
   customConvertorTypes.forEach((type) => {
     const orgConvertor = toWwConvertors[type];
 
-    if (orgConvertor) {
-      if (!includes(['htmlBlock', 'htmlInline'], type)) {
-        toWwConvertors[type] = (state, node, context) => {
-          const tokens = customConvertors[type]!(node, context) as OpenTagToken;
-          const { attributes: htmlAttrs, classNames } = Array.isArray(tokens) ? tokens[0] : tokens;
+    if (orgConvertor && !includes(['htmlBlock', 'htmlInline'], type)) {
+      convertors[type] = (state, node, context) => {
+        const tokens = customConvertors[type]!(node, context) as OpenTagToken;
+        const { attributes: htmlAttrs, classNames } = Array.isArray(tokens) ? tokens[0] : tokens;
 
-          orgConvertor(state, node, context, { htmlAttrs, classNames });
-        };
-      }
+        orgConvertor(state, node, context, { htmlAttrs, classNames });
+      };
     }
   });
 
-  return toWwConvertors;
+  return convertors;
 }

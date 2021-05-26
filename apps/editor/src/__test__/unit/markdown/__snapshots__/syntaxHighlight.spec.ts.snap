@@ -56,7 +56,7 @@ exports[`markdown editor syntax highlight bulletList 1`] = `
 `;
 
 exports[`markdown editor syntax highlight code block 1`] = `
-<div class="toastui-editor-md-code-block-line-background">
+<div class="toastui-editor-md-code-block-line-background start">
   <span class="toastui-editor-md-code-block">
     <span class="toastui-editor-md-delimiter">
       \`\`\`
@@ -126,7 +126,7 @@ exports[`markdown editor syntax highlight code block within list 1`] = `
 `;
 
 exports[`markdown editor syntax highlight custom block 1`] = `
-<div class="toastui-editor-md-custom-block-line-background">
+<div class="toastui-editor-md-custom-block-line-background start">
   <span class="toastui-editor-md-custom-block">
     <span class="toastui-editor-md-delimiter">
       $$
