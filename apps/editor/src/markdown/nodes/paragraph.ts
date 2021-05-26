@@ -127,7 +127,7 @@ export class Paragraph extends Node {
       const mappedFrom = tr.mapping.map(startOffset);
       const mappedTo = mappedFrom + content.size;
 
-      tr.replaceWith(mappedFrom, mappedTo, nodes[i]);
+      tr.replaceWith(mappedFrom, mappedTo, nodes[i - startLine + 1]);
 
       startOffset += nodeSize;
     }
