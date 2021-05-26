@@ -4,10 +4,10 @@ import { Node as ProsemirrorNode, Mark } from 'prosemirror-model';
 import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import isFunction from 'tui-code-snippet/type/isFunction';
 
-import { isPositionInBox } from '@/utils/dom';
+import { isPositionInBox, setAttributes } from '@/utils/dom';
 import { createTextSelection } from '@/helper/manipulation';
+import { getCustomAttrs } from '@/wysiwyg/helper/node';
 
-import { ToDOMAdaptor } from '@t/convertor';
 import { Emitter } from '@t/event';
 
 type GetPos = (() => number) | boolean;
@@ -23,23 +23,14 @@ export class ImageView implements NodeView {
 
   private getPos: GetPos;
 
-  private toDOMAdaptor: ToDOMAdaptor;
-
   private eventEmitter: Emitter;
 
   private imageLink: Mark | null;
 
-  constructor(
-    node: ProsemirrorNode,
-    view: EditorView,
-    getPos: GetPos,
-    toDOMAdaptor: ToDOMAdaptor,
-    eventEmitter: Emitter
-  ) {
+  constructor(node: ProsemirrorNode, view: EditorView, getPos: GetPos, eventEmitter: Emitter) {
     this.node = node;
     this.view = view;
     this.getPos = getPos;
-    this.toDOMAdaptor = toDOMAdaptor;
     this.eventEmitter = eventEmitter;
     this.imageLink = node.marks.filter(({ type }) => type.name === 'link')[0] ?? null;
     this.dom = this.createElement();
@@ -63,20 +54,16 @@ export class ImageView implements NodeView {
   }
 
   private createImageElement(node: ProsemirrorNode) {
-    const toDOMNode = this.toDOMAdaptor.getToDOMNode('image');
-
-    if (toDOMNode) {
-      return toDOMNode(node) as HTMLElement;
-    }
-
     const image = document.createElement('img');
     const { imageUrl, altText } = node.attrs;
+    const attrs = getCustomAttrs(node.attrs);
 
     image.src = imageUrl;
 
     if (altText) {
       image.alt = altText;
     }
+    setAttributes(attrs, image);
 
     return image;
   }

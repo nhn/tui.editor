@@ -31,16 +31,15 @@ export function getTextWithoutTrailingNewline(text: string) {
   return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
 }
 
-export function isCustomHTMLInlineNode(state: ToWwConvertorState, node: MdNode) {
+export function isCustomHTMLInlineNode({ schema }: ToWwConvertorState, node: MdNode) {
   const html = node.literal!;
   const matched = html.match(reHTMLTag);
 
   if (matched) {
     const [, openTagName, , closeTagName] = matched;
     const typeName = (openTagName || closeTagName).toLowerCase();
-    const nodeType = state.schema.nodes[typeName];
 
-    return node.type === 'htmlInline' && nodeType?.spec.attrs!.htmlAttrs;
+    return node.type === 'htmlInline' && !!(schema.marks[typeName] || schema.nodes[typeName]);
   }
   return false;
 }

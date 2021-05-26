@@ -5,19 +5,21 @@ import { decodeURIGraceful, encodeMarkdownText } from '@/utils/encoder';
 import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
 
 import { EditorCommand } from '@t/spec';
+import { getCustomAttrs, getDefaultCustomAttrs } from '../helper/node';
 
 export class Image extends NodeSchema {
   get name() {
     return 'image';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       inline: true,
       attrs: {
         imageUrl: { default: '' },
         altText: { default: null },
         rawHTML: { default: null },
+        ...getDefaultCustomAttrs(),
       },
       group: 'inline',
       selectable: false,
@@ -42,6 +44,7 @@ export class Image extends NodeSchema {
           {
             src: attrs.imageUrl,
             ...(attrs.altText && { alt: attrs.altText }),
+            ...getCustomAttrs(attrs),
           },
         ];
       },

@@ -15,8 +15,7 @@ import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 import { createHTMLrenderer } from './markdown/util';
 
 function createSchema() {
-  const adaptor = new WwToDOMAdaptor({}, {});
-  const specs = createSpecs(adaptor, {});
+  const specs = createSpecs({});
 
   return new Schema({
     nodes: specs.nodes,
@@ -43,7 +42,7 @@ describe('Convertor', () => {
 
   beforeEach(() => {
     schema = createSchema();
-    convertor = new Convertor(schema, {}, new EventEmitter());
+    convertor = new Convertor(schema, {}, {}, new EventEmitter());
   });
 
   describe('should convert between markdown and wysiwyg node to', () => {
@@ -681,7 +680,7 @@ describe('Convertor', () => {
   describe('should custom convertor when converting from wysiwyg to markdown', () => {
     function createCustomConvertor(customConvertor: ToMdConvertorMap) {
       schema = createSchema();
-      convertor = new Convertor(schema, customConvertor, new EventEmitter());
+      convertor = new Convertor(schema, customConvertor, {}, new EventEmitter());
     }
 
     it('should change delimeter', () => {
@@ -809,13 +808,13 @@ describe('Convertor', () => {
       const customHTMLRenderer = createHTMLrenderer();
       const adaptor = new WwToDOMAdaptor({}, customHTMLRenderer);
       const htmlSchemaMap = createHTMLSchemaMap(customHTMLRenderer, sanitizeHTML, adaptor);
-      const specs = createSpecs(adaptor, {});
+      const specs = createSpecs({});
 
       schema = new Schema({
-        nodes: { ...specs.nodes, ...htmlSchemaMap },
-        marks: specs.marks,
+        nodes: { ...specs.nodes, ...htmlSchemaMap.nodes },
+        marks: { ...specs.marks, ...htmlSchemaMap.marks },
       });
-      convertor = new Convertor(schema, {}, new EventEmitter());
+      convertor = new Convertor(schema, {}, {}, new EventEmitter());
     }
 
     beforeEach(() => {

@@ -3,7 +3,13 @@ import { TextSelection, Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 
 import NodeSchema from '@/spec/node';
-import { isInTableNode, findNodeBy, createDOMInfoParsedRawHTML } from '@/wysiwyg/helper/node';
+import {
+  isInTableNode,
+  findNodeBy,
+  createDOMInfoParsedRawHTML,
+  getCustomAttrs,
+  getDefaultCustomAttrs,
+} from '@/wysiwyg/helper/node';
 
 import {
   createTableHeadRow,
@@ -83,16 +89,17 @@ export class Table extends NodeSchema {
     return 'table';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       content: 'tableHead{1} tableBody{1}',
       group: 'block',
       attrs: {
         rawHTML: { default: null },
+        ...getDefaultCustomAttrs(),
       },
       parseDOM: [createDOMInfoParsedRawHTML('table')],
-      toDOM(): DOMOutputSpecArray {
-        return ['table', 0];
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+        return ['table', getCustomAttrs(attrs), 0];
       },
     };
   }

@@ -270,10 +270,7 @@ export const toMdConvertors: ToMdConvertorMap = {
   },
 
   // html inline node, html block node
-  html({ node }) {
-    const content = node.attrs.inline
-      ? (node as ProsemirrorNode).textContent
-      : node.attrs.childrenHTML;
+  html({ node }, { entering }) {
     const tagName = node.type.name;
     const attrs = node.attrs.htmlAttrs;
     let openTag = `<${tagName}`;
@@ -284,8 +281,14 @@ export const toMdConvertors: ToMdConvertorMap = {
     });
     openTag += '>';
 
+    if (node.attrs.htmlInline) {
+      return {
+        rawHTML: entering ? openTag : closeTag,
+      };
+    }
+
     return {
-      text: `${openTag}${content}${closeTag}`,
+      text: `${openTag}${node.attrs.childrenHTML}${closeTag}`,
     };
   },
 };
@@ -311,6 +314,8 @@ const markTypeOptions: ToMdMarkTypeOptions = {
   },
 
   link: null,
+
+  html: null,
 };
 
 function createNodeTypeConvertors(convertors: ToMdConvertorMap) {
@@ -372,7 +377,7 @@ function createMarkTypeConvertors(convertors: ToMdConvertorMap) {
 //         created in Step 1 with `markTypeOptions`.
 // Step 4: The created node type converter and mark type converter are injected
 //         when creating an instance of the`toMdConverterState` class.
-export function createConvertors(customConvertors: ToMdConvertorMap) {
+export function createMdConvertors(customConvertors: ToMdConvertorMap) {
   const customConvertorTypes = Object.keys(customConvertors) as (WwNodeType | WwMarkType)[];
 
   customConvertorTypes.forEach((type) => {

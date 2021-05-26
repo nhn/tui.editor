@@ -76,7 +76,7 @@ export class Paragraph extends Node {
     return 'paragraph';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       content: 'inline*',
       attrs: {

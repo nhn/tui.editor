@@ -10,7 +10,7 @@ export class FrontMatter extends NodeSchema {
     return 'frontMatter';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       content: 'text*',
       group: 'block',

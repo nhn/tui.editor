@@ -17,7 +17,7 @@ export class CodeBlock extends Mark {
     return 'codeBlock';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: clsWithMdPrefix('code-block') }, 0];

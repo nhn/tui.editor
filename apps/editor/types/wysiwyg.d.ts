@@ -25,7 +25,7 @@ export type WwNodeType =
   | 'widget'
   | 'html';
 
-export type WwMarkType = 'strong' | 'emph' | 'strike' | 'link' | 'code';
+export type WwMarkType = 'strong' | 'emph' | 'strike' | 'link' | 'code' | 'html';
 
 export interface CellSelection extends Selection {
   startCell: ResolvedPos;

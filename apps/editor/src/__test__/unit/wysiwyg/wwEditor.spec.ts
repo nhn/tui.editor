@@ -174,7 +174,7 @@ describe('WysiwygEditor', () => {
   it('should display html inline element properly', () => {
     setContent('<big class="my-inline">text</big>');
 
-    expect(wwe.getHTML()).toBe('<p><big class="my-inline">text</big><br></p>');
+    expect(wwe.getHTML()).toBe('<p><big class="my-inline">text</big></p>');
   });
 
   it('should sanitize html element', () => {

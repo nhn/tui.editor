@@ -2,6 +2,7 @@ import { Mark as ProsemirrorMark, DOMOutputSpecArray } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 
 import Mark from '@/spec/mark';
+import { getCustomAttrs, getDefaultCustomAttrs } from '@/wysiwyg/helper/node';
 
 import { EditorCommand } from '@t/spec';
 
@@ -10,7 +11,7 @@ export class Strike extends Mark {
     return 'strike';
   }
 
-  get defaultSchema() {
+  get schema() {
     const parseDOM = ['s', 'del'].map((tag) => {
       return {
         tag,
@@ -27,10 +28,11 @@ export class Strike extends Mark {
     return {
       attrs: {
         rawHTML: { default: null },
+        ...getDefaultCustomAttrs(),
       },
       parseDOM,
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
-        return [attrs.rawHTML || 'del'];
+        return [attrs.rawHTML || 'del', getCustomAttrs(attrs)];
       },
     };
   }

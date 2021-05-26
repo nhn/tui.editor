@@ -34,3 +34,10 @@ export interface MdLikeNode {
   attrs?: Record<string, string | null>;
   childrenHTML?: string;
 }
+
+export interface HTMLMdNode extends MdNode {
+  type: string;
+  literal: string | null;
+  attrs?: Record<string, string | null>;
+  childrenHTML?: string;
+}

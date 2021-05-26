@@ -4,23 +4,66 @@ import {
   HTMLToken,
   MdNode,
   MdNodeType,
+  OpenTagToken,
+  RawHTMLToken,
   Renderer,
+  TextToken,
 } from '@toast-ui/toastmark';
-import { DOMOutputSpecArray, Node as ProsemirrorNode, Mark } from 'prosemirror-model';
+import { Node as ProsemirrorNode, Mark } from 'prosemirror-model';
 import isArray from 'tui-code-snippet/type/isArray';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { ToDOMAdaptor } from '@t/convertor';
-import { includes } from '@/utils/common';
+import { includes, last } from '@/utils/common';
 import { LinkAttributes } from '@t/editor';
+import { setAttributes } from '@/utils/dom';
 import { createMdLikeNode, isContainer, isPmNode } from './mdLikeNode';
-import { SpecArray, tokenToDOMNode, tokenToPmDOM } from './tokenToDOM';
+
+interface TokenToDOM<T> {
+  openTag: (token: HTMLToken, stack: T[]) => void;
+  closeTag: (token: HTMLToken, stack: T[]) => void;
+  html: (token: HTMLToken, stack: T[]) => void;
+  text: (token: HTMLToken, stack: T[]) => void;
+}
+
+const tokenToDOMNode: TokenToDOM<HTMLElement> = {
+  openTag(token, stack) {
+    const { tagName, classNames, attributes } = token as OpenTagToken;
+    const el = document.createElement(tagName);
+    let attrs: Record<string, any> = {};
+
+    if (classNames) {
+      el.className = classNames.join(' ');
+    }
+    if (attributes) {
+      attrs = { ...attrs, ...attributes };
+    }
+    setAttributes(attrs, el);
+
+    stack.push(el);
+  },
+  closeTag(_, stack) {
+    if (stack.length > 1) {
+      const el = stack.pop();
+
+      last(stack).appendChild(el!);
+    }
+  },
+  html(token, stack) {
+    last(stack).insertAdjacentHTML('beforeend', (token as RawHTMLToken).content);
+  },
+  text(token, stack) {
+    const textNode = document.createTextNode((token as TextToken).content);
+
+    last(stack).appendChild(textNode);
+  },
+};
 
 export class WwToDOMAdaptor implements ToDOMAdaptor {
   private customConvertorKeys: string[];
 
-  public renderer: Renderer;
+  renderer: Renderer;
 
-  public convertors: HTMLConvertorMap;
+  convertors: HTMLConvertorMap;
 
   constructor(linkAttributes: LinkAttributes | null, customRenderer: HTMLConvertorMap) {
     const convertors = getHTMLRenderConvertors(linkAttributes, customRenderer);
@@ -49,7 +92,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
     const converted = convertor(mdLikeNode as MdNode, context, this.convertors)!;
     let tokens: HTMLToken[] = isArray(converted) ? converted : [converted];
 
-    if (isContainer(node.type.name) || node.attrs.inline) {
+    if (isContainer(node.type.name) || node.attrs.htmlInline) {
       context.entering = false;
 
       tokens.push({ type: 'text', content: isPmNode(node) ? node.textContent : '' });
@@ -59,17 +102,6 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
     return tokens;
   }
 
-  private toDOM(node: ProsemirrorNode | Mark) {
-    const tokens = this.generateTokens(node);
-    const stack: SpecArray[] = [];
-
-    tokens.forEach((token) => {
-      tokenToPmDOM[token.type](token, stack);
-    });
-
-    return stack[0] as DOMOutputSpecArray;
-  }
-
   private toDOMNode(node: ProsemirrorNode | Mark) {
     const tokens = this.generateTokens(node);
     const stack: HTMLElement[] = [];
@@ -77,13 +109,6 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
     tokens.forEach((token) => tokenToDOMNode[token.type](token, stack));
 
     return stack[0];
-  }
-
-  getToDOM(name: string) {
-    if (includes(this.customConvertorKeys, name)) {
-      return this.toDOM.bind(this);
-    }
-    return null;
   }
 
   getToDOMNode(name: string) {

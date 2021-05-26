@@ -13,7 +13,7 @@ export class ThematicBreak extends Mark {
     return 'thematicBreak';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: clsWithMdPrefix('thematic-break') }, 0];

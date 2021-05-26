@@ -8,6 +8,8 @@ import {
   CustomBlockMdNode,
   CustomInlineMdNode,
   TableMdNode,
+  HTMLConvertorMap,
+  OpenTagToken,
 } from '@toast-ui/toastmark';
 import toArray from 'tui-code-snippet/collection/toArray';
 
@@ -24,6 +26,7 @@ import {
 import { ToWwConvertorMap } from '@t/convertor';
 import { createWidgetContent, getWidgetContent } from '@/widget/rules';
 import { getChildrenHTML, getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
+import { includes } from '@/utils/common';
 
 function isBRTag(node: MdNode) {
   return node.type === 'htmlInline' && /<br ?\/?>/.test(node.literal!);
@@ -43,63 +46,63 @@ function addRawHTMLAttributeToDOM(parent: Node) {
   });
 }
 
-export const toWwConvertors: ToWwConvertorMap = {
+const toWwConvertors: ToWwConvertorMap = {
   text(state, node) {
     state.addText(node.literal || '');
   },
 
-  paragraph(state, node, { entering }) {
+  paragraph(state, node, { entering }, customAttrs) {
     if (entering) {
       const { paragraph } = state.schema.nodes;
 
       // The `\n\n` entered in markdown separates the paragraph.
       // When changing to wysiwyg, a newline is added between the two paragraphs.
       if (node.prev?.type === 'paragraph') {
-        state.openNode(paragraph);
+        state.openNode(paragraph, customAttrs);
         state.closeNode();
       }
 
-      state.openNode(paragraph);
+      state.openNode(paragraph, customAttrs);
     } else {
       state.closeNode();
     }
   },
 
-  heading(state, node, { entering }) {
+  heading(state, node, { entering }, customAttrs) {
     if (entering) {
       const { level, headingType } = node as HeadingMdNode;
 
-      state.openNode(state.schema.nodes.heading, { level, headingType });
+      state.openNode(state.schema.nodes.heading, { level, headingType, ...customAttrs });
     } else {
       state.closeNode();
     }
   },
 
-  codeBlock(state, node) {
+  codeBlock(state, node, customAttrs) {
     const { codeBlock } = state.schema.nodes;
     const { info, literal } = node as CodeBlockMdNode;
 
-    state.openNode(codeBlock, { language: info });
+    state.openNode(codeBlock, { language: info, ...customAttrs });
     state.addText(getTextWithoutTrailingNewline(literal || ''));
     state.closeNode();
   },
 
-  list(state, node, { entering }) {
+  list(state, node, { entering }, customAttrs) {
     if (entering) {
       const { bulletList, orderedList } = state.schema.nodes;
       const { type, start } = (node as ListItemMdNode).listData;
 
       if (type === 'bullet') {
-        state.openNode(bulletList);
+        state.openNode(bulletList, customAttrs);
       } else {
-        state.openNode(orderedList, { order: start });
+        state.openNode(orderedList, { order: start, ...customAttrs });
       }
     } else {
       state.closeNode();
     }
   },
 
-  item(state, node, { entering }) {
+  item(state, node, { entering }, customAttrs) {
     const { listItem } = state.schema.nodes;
     const { task, checked } = (node as ListItemMdNode).listData;
 
@@ -107,6 +110,7 @@ export const toWwConvertors: ToWwConvertorMap = {
       const attrs = {
         ...(task && { task }),
         ...(checked && { checked }),
+        ...customAttrs,
       };
 
       state.openNode(listItem, attrs);
@@ -115,15 +119,15 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
-  blockQuote(state, _, { entering }) {
+  blockQuote(state, _, { entering }, customAttrs) {
     if (entering) {
-      state.openNode(state.schema.nodes.blockQuote);
+      state.openNode(state.schema.nodes.blockQuote, customAttrs);
     } else {
       state.closeNode();
     }
   },
 
-  image(state, node, { entering, skipChildren }) {
+  image(state, node, { entering, skipChildren }, customAttrs) {
     const { image } = state.schema.nodes;
     const { destination, firstChild } = node as LinkMdNode;
 
@@ -134,34 +138,35 @@ export const toWwConvertors: ToWwConvertorMap = {
     state.addNode(image, {
       imageUrl: destination,
       ...(firstChild && { altText: firstChild.literal }),
+      ...customAttrs,
     });
   },
 
-  thematicBreak(state) {
-    state.addNode(state.schema.nodes.thematicBreak);
+  thematicBreak(state, node, _, customAttrs) {
+    state.addNode(state.schema.nodes.thematicBreak, customAttrs);
   },
 
-  strong(state, _, { entering }) {
+  strong(state, _, { entering }, customAttrs) {
     const { strong } = state.schema.marks;
 
     if (entering) {
-      state.openMark(strong.create());
+      state.openMark(strong.create(customAttrs));
     } else {
       state.closeMark(strong);
     }
   },
 
-  emph(state, _, { entering }) {
+  emph(state, _, { entering }, customAttrs) {
     const { emph } = state.schema.marks;
 
     if (entering) {
-      state.openMark(emph.create());
+      state.openMark(emph.create(customAttrs));
     } else {
       state.closeMark(emph);
     }
   },
 
-  link(state, node, { entering }) {
+  link(state, node, { entering }, customAttrs) {
     const { link } = state.schema.marks;
     const { destination, title } = node as LinkMdNode;
 
@@ -169,6 +174,7 @@ export const toWwConvertors: ToWwConvertorMap = {
       const attrs = {
         linkUrl: destination,
         ...(title && { linkText: title }),
+        ...customAttrs,
       };
 
       state.openMark(link.create(attrs));
@@ -192,39 +198,39 @@ export const toWwConvertors: ToWwConvertorMap = {
   },
 
   // GFM specifications node
-  table(state, _, { entering }) {
+  table(state, _, { entering }, customAttrs) {
     if (entering) {
-      state.openNode(state.schema.nodes.table);
+      state.openNode(state.schema.nodes.table, customAttrs);
     } else {
       state.closeNode();
     }
   },
 
-  tableHead(state, _, { entering }) {
+  tableHead(state, _, { entering }, customAttrs) {
     if (entering) {
-      state.openNode(state.schema.nodes.tableHead);
+      state.openNode(state.schema.nodes.tableHead, customAttrs);
     } else {
       state.closeNode();
     }
   },
 
-  tableBody(state, _, { entering }) {
+  tableBody(state, _, { entering }, customAttrs) {
     if (entering) {
-      state.openNode(state.schema.nodes.tableBody);
+      state.openNode(state.schema.nodes.tableBody, customAttrs);
     } else {
       state.closeNode();
     }
   },
 
-  tableRow(state, _, { entering }) {
+  tableRow(state, _, { entering }, customAttrs) {
     if (entering) {
-      state.openNode(state.schema.nodes.tableRow);
+      state.openNode(state.schema.nodes.tableRow, customAttrs);
     } else {
       state.closeNode();
     }
   },
 
-  tableCell(state, node, { entering }) {
+  tableCell(state, node, { entering }, customAttrs) {
     if (!(node as TableCellMdNode).ignored) {
       const hasParaNode = (childNode: MdNode | null) =>
         childNode && (isInlineNode(childNode) || isCustomHTMLInlineNode(state, childNode));
@@ -242,7 +248,7 @@ export const toWwConvertors: ToWwConvertorMap = {
           attrs.align = align;
         }
 
-        state.openNode(cell, attrs);
+        state.openNode(cell, { ...attrs, ...customAttrs });
 
         if (hasParaNode(node.firstChild)) {
           state.openNode(paragraph);
@@ -257,20 +263,20 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
-  strike(state, _, { entering }) {
+  strike(state, _, { entering }, customAttrs) {
     const { strike } = state.schema.marks;
 
     if (entering) {
-      state.openMark(strike.create());
+      state.openMark(strike.create(customAttrs));
     } else {
       state.closeMark(strike);
     }
   },
 
-  code(state, node) {
+  code(state, node, _, customAttrs) {
     const { code } = state.schema.marks;
 
-    state.openMark(code.create());
+    state.openMark(code.create(customAttrs));
     state.addText(getTextWithoutTrailingNewline(node.literal || ''));
     state.closeMark(code);
   },
@@ -300,16 +306,16 @@ export const toWwConvertors: ToWwConvertorMap = {
     const matched = html.match(reHTMLTag)!;
     const [, openTagName, , closeTagName] = matched;
     const typeName = (openTagName || closeTagName).toLowerCase();
-    const nodeType = state.schema.nodes[typeName];
+    const markType = state.schema.marks[typeName];
 
     // for user defined html schema
-    if (nodeType?.spec.attrs!.htmlAttrs) {
+    if (markType?.spec.attrs!.htmlInline) {
       if (openTagName) {
         const htmlAttrs = getHTMLAttrsByHTMLString(html);
 
-        state.openNode(nodeType, { htmlAttrs });
+        state.openMark(markType.create({ htmlAttrs }));
       } else {
-        state.closeNode();
+        state.closeMark(markType);
       }
     } else {
       const htmlToWwConvertor = htmlToWwConvertors[typeName];
@@ -329,7 +335,7 @@ export const toWwConvertors: ToWwConvertorMap = {
     const nodeType = state.schema.nodes[typeName];
 
     // for user defined html schema
-    if (nodeType?.spec.attrs!.htmlAttrs) {
+    if (nodeType?.spec.attrs!.htmlBlock) {
       const htmlAttrs = getHTMLAttrsByHTMLString(html);
       const childrenHTML = getChildrenHTML(node, typeName);
 
@@ -357,3 +363,23 @@ export const toWwConvertors: ToWwConvertorMap = {
     }
   },
 };
+
+export function createWwConvertors(customConvertors: HTMLConvertorMap) {
+  const customConvertorTypes = Object.keys(customConvertors);
+  const convertors = { ...toWwConvertors };
+
+  customConvertorTypes.forEach((type) => {
+    const orgConvertor = toWwConvertors[type];
+
+    if (orgConvertor && !includes(['htmlBlock', 'htmlInline'], type)) {
+      convertors[type] = (state, node, context) => {
+        const tokens = customConvertors[type]!(node, context) as OpenTagToken;
+        const { attributes: htmlAttrs, classNames } = Array.isArray(tokens) ? tokens[0] : tokens;
+
+        orgConvertor(state, node, context, { htmlAttrs, classNames });
+      };
+    }
+  });
+
+  return convertors;
+}

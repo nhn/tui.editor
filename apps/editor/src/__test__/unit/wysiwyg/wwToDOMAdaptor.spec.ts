@@ -235,81 +235,14 @@ describe('mdLikeNode', () => {
   });
 
   it('html inline should be changed to markdown-like-node', () => {
-    const bigNode = createMdLikeNode(createNode('big', { htmlAttrs: { class: 'my-big' } }));
+    const bigNode = createMdLikeNode(createMark('big', { htmlAttrs: { class: 'my-big' } }));
 
     expect(bigNode).toEqual({
       type: 'big',
-      literal: '',
       wysiwygNode: true,
+      literal: null,
       attrs: { class: 'my-big' },
     });
-  });
-});
-
-describe('wysiwyg adaptor toDOM using custom renderer', () => {
-  it('toDOM should be parsed with renderer tokens for wysiwyg node schema', () => {
-    const toDOM = toDOMAdaptor.getToDOM('heading')!;
-    const headingNode = createNode('heading', { level: 2 });
-
-    expect(toDOM(headingNode)).toEqual([
-      'h2',
-      { class: 'custom-heading', 'data-custom': 'customAttr' },
-      0,
-    ]);
-  });
-
-  it('toDOM should be parsed with renderer tokens for wysiwyg mark schema', () => {
-    const toDOM = toDOMAdaptor.getToDOM('emph')!;
-    const emphNode = createMark('emph');
-
-    expect(toDOM(emphNode)).toEqual([
-      'em',
-      { class: 'custom-emph', 'data-custom': 'customAttr' },
-      0,
-    ]);
-  });
-
-  it('toDOM should be parsed with the nested renderer tokens', () => {
-    const toDOM = toDOMAdaptor.getToDOM('codeBlock')!;
-    const codeBlockNode = createNode('codeBlock', { language: 'myLan' });
-
-    expect(toDOM(codeBlockNode)).toEqual([
-      'pre',
-      { class: 'custom-pre', 'data-custom': 'myLan' },
-      ['code', { class: 'custom-code' }, ['span', 0]],
-    ]);
-  });
-
-  it('html token should be ignored', () => {
-    const toDOM = toDOMAdaptor.getToDOM('code')!;
-    const codeNode = createMark('code');
-
-    expect(toDOM(codeNode)).toEqual(['code', 0]);
-  });
-
-  it('should get toDOM for only registered renderer', () => {
-    const toDOM = toDOMAdaptor.getToDOM('blockQuote');
-
-    expect(toDOM).toBe(null);
-  });
-
-  it('toDOM should be parsed with the html block renderer tokens', () => {
-    const toDOM = toDOMAdaptor.getToDOM('nav')!;
-    const navNode = createNode('nav', {
-      htmlAttrs: { class: 'my-nav' },
-      childrenHTML: 'text',
-    });
-
-    expect(toDOM(navNode)).toEqual(['nav', { class: 'my-nav' }, 0]);
-  });
-
-  it('toDOM should be parsed with the html inline renderer tokens', () => {
-    const toDOM = toDOMAdaptor.getToDOM('big')!;
-    const navNode = createNode('big', {
-      htmlAttrs: { class: 'my-big', 'data-my-attr': 'my-attr' },
-    });
-
-    expect(toDOM(navNode)).toEqual(['big', { class: 'my-big' }, 0]);
   });
 });
 
@@ -382,16 +315,12 @@ describe('wysiwyg adaptor toDOMNode using custom renderer', () => {
 
   it('toDOMNode should be parsed with the html inline renderer tokens', () => {
     const toDOMNode = toDOMAdaptor.getToDOMNode('big')!;
-    const bigNode = createNode(
-      'big',
-      {
-        htmlAttrs: { class: 'my-big', 'data-my-attr': 'my-attr' },
-      },
-      createText('text')
-    );
+    const bigNode = createMark('big', {
+      htmlAttrs: { class: 'my-big', 'data-my-attr': 'my-attr' },
+    });
 
     const expected = oneLineTrim`
-      <big class="my-big">text</big>
+      <big class="my-big"></big>
     `;
 
     expect(getHTML(toDOMNode(bigNode))).toBe(expected);

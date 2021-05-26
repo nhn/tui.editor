@@ -6,13 +6,19 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 
 import { cls } from '@/utils/dom';
 import { LanguageSelectBox } from '@/nodeViews/languageSelectBox';
-import type { Emitter, ToDOMAdaptor } from '@toast-ui/editor';
+import type { Emitter } from '@toast-ui/editor';
 
 type GetPos = (() => number) | boolean;
 
 type CodeBlockPos = { top: number; right: number };
 
 const WRAPPER_CLASS_NAME = 'ww-code-block-highlighting';
+
+function getCustomAttrs(attrs: Record<string, any>) {
+  const { htmlAttrs, classNames } = attrs;
+
+  return { ...htmlAttrs, class: classNames ? classNames.join(' ') : null };
+}
 
 class CodeSyntaxHighlightView implements NodeView {
   dom: HTMLElement | null = null;
@@ -29,14 +35,12 @@ class CodeSyntaxHighlightView implements NodeView {
     private view: EditorView,
     private getPos: GetPos,
     private eventEmitter: Emitter,
-    private toDOMAdaptor: ToDOMAdaptor,
     private languages: string[]
   ) {
     this.node = node;
     this.view = view;
     this.getPos = getPos;
     this.eventEmitter = eventEmitter;
-    this.toDOMAdaptor = toDOMAdaptor;
     this.languageEditing = false;
     this.languages = languages;
 
@@ -67,9 +71,24 @@ class CodeSyntaxHighlightView implements NodeView {
   }
 
   private createCodeBlockElement() {
-    const toDOMNode = this.toDOMAdaptor.getToDOMNode('codeBlock');
+    const pre = document.createElement('pre');
+    const code = document.createElement('code');
+    const { language } = this.node.attrs;
+    const attrs = getCustomAttrs(this.node.attrs);
 
-    return toDOMNode!(this.node) as HTMLPreElement;
+    if (language) {
+      code.setAttribute('data-language', language);
+    }
+
+    Object.keys(attrs).forEach((attrName) => {
+      if (attrs[attrName]) {
+        pre.setAttribute(attrName, attrs[attrName]);
+      }
+    });
+
+    pre.appendChild(code);
+
+    return pre;
   }
 
   private bindDOMEvent() {
@@ -167,11 +186,6 @@ class CodeSyntaxHighlightView implements NodeView {
 }
 
 export function createCodeSyntaxHighlightView(languages: string[]) {
-  return (
-    node: ProsemirrorNode,
-    view: EditorView,
-    getPos: GetPos,
-    emitter: Emitter,
-    toDOMAdaptor: ToDOMAdaptor
-  ) => new CodeSyntaxHighlightView(node, view, getPos, emitter, toDOMAdaptor, languages);
+  return (node: ProsemirrorNode, view: EditorView, getPos: GetPos, emitter: Emitter) =>
+    new CodeSyntaxHighlightView(node, view, getPos, emitter, languages);
 }

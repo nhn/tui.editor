@@ -5,19 +5,21 @@ import { getWwCommands } from '@/commands/wwCommands';
 import { changeList } from '@/wysiwyg/command/list';
 
 import { EditorCommand } from '@t/spec';
+import { getDefaultCustomAttrs, getCustomAttrs } from '@/wysiwyg/helper/node';
 
 export class OrderedList extends NodeSchema {
   get name() {
     return 'orderedList';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       content: 'listItem+',
       group: 'block listGroup',
       attrs: {
         order: { default: 1 },
         rawHTML: { default: null },
+        ...getDefaultCustomAttrs(),
       },
       parseDOM: [
         {
@@ -36,9 +38,7 @@ export class OrderedList extends NodeSchema {
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
         return [
           attrs.rawHTML || 'ol',
-          {
-            start: attrs.order === 1 ? null : attrs.order,
-          },
+          { start: attrs.order === 1 ? null : attrs.order, ...getCustomAttrs(attrs) },
           0,
         ];
       },

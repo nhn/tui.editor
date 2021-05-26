@@ -7,7 +7,7 @@ export class Html extends Mark {
     return 'html';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: clsWithMdPrefix('html') }, 0];

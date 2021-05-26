@@ -5,7 +5,7 @@ export class Doc extends Node {
     return 'doc';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       content: 'block+',
     };

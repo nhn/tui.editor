@@ -7,7 +7,7 @@ export class CustomBlock extends Mark {
     return 'customBlock';
   }
 
-  get defaultSchema() {
+  get schema() {
     return {
       toDOM(): DOMOutputSpecArray {
         return ['span', { class: clsWithMdPrefix('custom-block') }, 0];
