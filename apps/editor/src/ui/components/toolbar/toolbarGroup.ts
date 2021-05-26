@@ -33,8 +33,8 @@ interface Props {
 export class ToolbarGroup extends Component<Props> {
   render() {
     const { group, hiddenDivider } = this.props;
-    const groupStyle = { display: group.hidden ? 'none' : 'inline-block' };
-    const dividerStyle = { display: hiddenDivider ? 'none' : null };
+    const groupStyle = group.hidden ? { display: 'none' } : null;
+    const dividerStyle = hiddenDivider ? { display: 'none' } : null;
 
     return html`
       <div class="${cls('toolbar-group')}" style=${groupStyle}>

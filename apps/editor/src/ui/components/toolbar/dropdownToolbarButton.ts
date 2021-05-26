@@ -1,6 +1,5 @@
 import {
   ExecCommand,
-  Pos,
   SetPopupInfo,
   ToolbarItemInfo,
   GetBound,
@@ -9,7 +8,7 @@ import {
   ToolbarButtonInfo,
 } from '@t/ui';
 import { Emitter } from '@t/event';
-import { findNodes, closest, cls } from '@/utils/dom';
+import { closest, cls } from '@/utils/dom';
 import html from '@/ui/vdom/template';
 import { Component } from '@/ui/vdom/component';
 import { ToolbarGroup } from './toolbarGroup';
@@ -28,7 +27,7 @@ interface Props {
 }
 
 interface State {
-  dropdownPos: Pos | null;
+  dropdownPos: { right: number; top: number } | null;
   showDropdown: boolean;
 }
 
@@ -43,12 +42,9 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
   private getBound() {
     const rect = this.props.getBound(this.refs.el);
 
-    findNodes(this.refs.dropdownEl, `.${cls('toolbar-group')}`).forEach((el) => {
-      rect.left -= (el as HTMLElement).offsetWidth;
-    });
     rect.top += POPUP_INDENT;
 
-    return rect;
+    return { ...rect, left: null, right: 10 };
   }
 
   private handleClickDocument = ({ target }: MouseEvent) => {
@@ -81,12 +77,11 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
   render() {
     const { showDropdown, dropdownPos } = this.state;
     const { disabled, item, items, hideTooltip } = this.props;
+    const groupStyle = items.length ? null : { display: 'none' };
+    const dropdownStyle = showDropdown ? null : { display: 'none' };
 
     return html`
-      <div
-        class="${cls('toolbar-group')}"
-        style="display: ${items.length ? 'inline-block' : 'none'}"
-      >
+      <div class="${cls('toolbar-group')}" style=${groupStyle}>
         <button
           ref=${(el: HTMLElement) => (this.refs.el = el)}
           type="button"
@@ -98,7 +93,7 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
         ></button>
         <div
           class="${cls('dropdown-toolbar')}"
-          style=${{ display: showDropdown ? 'block' : 'none', ...dropdownPos }}
+          style=${{ ...dropdownStyle, ...dropdownPos }}
           ref=${(el: HTMLElement) => (this.refs.dropdownEl = el)}
         >
           ${items.length

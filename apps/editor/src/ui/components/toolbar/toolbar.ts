@@ -130,10 +130,7 @@ export class Toolbar extends Component<Props, State> {
         <span class="text"></span>
       </div>`;
 
-    this.tooltipRef.current = createElementWith(
-      tooltip,
-      document.querySelector<HTMLElement>(`.${cls('defaultUI-toolbar')}`)!
-    ) as HTMLElement;
+    this.tooltipRef.current = createElementWith(tooltip, this.refs.el) as HTMLElement;
   }
 
   private hiddenScrollSync() {
