@@ -14,7 +14,8 @@ describe('languageSelectBox', () => {
     eventEmitter: Emitter,
     wrapper: HTMLElement,
     input: HTMLInputElement,
-    list: HTMLElement;
+    list: HTMLElement,
+    wwContainer: HTMLElement;
 
   beforeEach(() => {
     eventEmitter = {
@@ -26,6 +27,10 @@ describe('languageSelectBox', () => {
       getEvents: jest.fn(),
     };
 
+    wwContainer = document.createElement('div');
+    wwContainer.className = 'toastui-editor ww-mode';
+    document.body.appendChild(wwContainer);
+
     selectBox = new LanguageSelectBox(eventEmitter, ['js', 'css', 'ts']);
 
     wrapper = document.body.querySelector(`.${cls(WRAPPER_CLASS_NAME)}`)!;
@@ -35,6 +40,7 @@ describe('languageSelectBox', () => {
 
   afterEach(() => {
     selectBox.destroy();
+    document.body.removeChild(wwContainer);
   });
 
   it('should create language select box element', () => {
@@ -57,7 +63,7 @@ describe('languageSelectBox', () => {
   it('destory() should remove element on body', () => {
     selectBox.destroy();
 
-    expect(document.body).toBeEmptyDOMElement();
+    expect(wwContainer).toBeEmptyDOMElement();
     expect(eventEmitter.removeEventHandler).toHaveBeenCalled();
   });
 

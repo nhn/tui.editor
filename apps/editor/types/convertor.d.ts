@@ -1,5 +1,5 @@
 import { NodeType, MarkType, Schema, Node as ProsemirrorNode, Mark } from 'prosemirror-model';
-import { MdNode, MdNodeType, RendererOptions } from '@toast-ui/toastmark';
+import { MdNode, MdNodeType, RendererOptions, HTMLToken } from '@toast-ui/toastmark';
 import { WwNodeType, WwMarkType } from './wysiwyg';
 
 export type Attrs = { [name: string]: any } | null;
@@ -33,6 +33,7 @@ type ToWwConvertor = (
     leaf: boolean;
     options: Omit<RendererOptions, 'convertors'>;
     getChildrenText: (mdNode: MdNode) => string;
+    origin?: () => HTMLToken | HTMLToken[] | null;
   },
   customAttrs?: { htmlAttrs?: Record<string, any>; classNames?: string[] }
 ) => void;

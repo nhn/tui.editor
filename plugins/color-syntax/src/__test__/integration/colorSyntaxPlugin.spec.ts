@@ -88,7 +88,7 @@ describe('colorSyntax', () => {
 
       editor.changeMode('wysiwyg');
 
-      assertWwEditorHTML('<p><span style="color: #f0f">text</span><br></p>');
+      assertWwEditorHTML('<p><span style="color: #f0f">text</span></p>');
     });
 
     it('should convert wysiwyg to markdown properly', () => {
@@ -119,7 +119,7 @@ describe('colorSyntax', () => {
         <table>
           <thead>
             <tr>
-              <th><p><span style="color: #f0f">foo</span><br></p></th>
+              <th><p><span style="color: #f0f">foo</span></p></th>
               <th><p><br></p></th>
             </tr>
           </thead>
@@ -203,7 +203,7 @@ describe('colorSyntax', () => {
       editor.exec('selectAll');
       editor.exec('color', { selectedColor: '#f0f' });
 
-      assertWwEditorHTML('<p><span style="color: #f0f">text</span><br></p>');
+      assertWwEditorHTML('<p><span style="color: #f0f">text</span></p>');
     });
 
     it(`don't add color if value isn't truthy in wysiwyg`, () => {
@@ -232,7 +232,7 @@ describe('colorSyntax', () => {
         <table>
           <thead>
             <tr>
-              <th><p><span style="color: #f0f">foo</span><br></p></th>
+              <th><p><span style="color: #f0f">foo</span></p></th>
               <th><p>bar</p></th>
             </tr>
           </thead>

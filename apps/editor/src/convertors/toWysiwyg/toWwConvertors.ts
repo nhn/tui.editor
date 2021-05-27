@@ -10,6 +10,7 @@ import {
   TableMdNode,
   HTMLConvertorMap,
   OpenTagToken,
+  Renderer,
 } from '@toast-ui/toastmark';
 import toArray from 'tui-code-snippet/collection/toArray';
 
@@ -230,7 +231,7 @@ const toWwConvertors: ToWwConvertorMap = {
     }
   },
 
-  tableCell(state, node, { entering }, customAttrs) {
+  tableCell(state, node, { entering }) {
     if (!(node as TableCellMdNode).ignored) {
       const hasParaNode = (childNode: MdNode | null) =>
         childNode && (isInlineNode(childNode) || isCustomHTMLInlineNode(state, childNode));
@@ -248,7 +249,7 @@ const toWwConvertors: ToWwConvertorMap = {
           attrs.align = align;
         }
 
-        state.openNode(cell, { ...attrs, ...customAttrs });
+        state.openNode(cell, attrs);
 
         if (hasParaNode(node.firstChild)) {
           state.openNode(paragraph);
@@ -367,16 +368,23 @@ const toWwConvertors: ToWwConvertorMap = {
 export function createWwConvertors(customConvertors: HTMLConvertorMap) {
   const customConvertorTypes = Object.keys(customConvertors);
   const convertors = { ...toWwConvertors };
+  const renderer = new Renderer({
+    gfm: true,
+    nodeId: true,
+    convertors: customConvertors,
+  });
+  const orgConvertors = renderer.getConvertors();
 
   customConvertorTypes.forEach((type) => {
-    const orgConvertor = toWwConvertors[type];
+    const wwConvertor = toWwConvertors[type];
 
-    if (orgConvertor && !includes(['htmlBlock', 'htmlInline'], type)) {
+    if (wwConvertor && !includes(['htmlBlock', 'htmlInline'], type)) {
       convertors[type] = (state, node, context) => {
+        context.origin = () => orgConvertors[type]!(node, context);
         const tokens = customConvertors[type]!(node, context) as OpenTagToken;
         const { attributes: htmlAttrs, classNames } = Array.isArray(tokens) ? tokens[0] : tokens;
 
-        orgConvertor(state, node, context, { htmlAttrs, classNames });
+        wwConvertor(state, node, context, { htmlAttrs, classNames });
       };
     }
   });
