@@ -38,7 +38,7 @@ exports[`codeSyntaxHighlightPlugin should render highlighted codeblock element i
 <div data-language="yaml"
      class="toastui-editor-ww-code-block-highlighting"
 >
-  <pre class="lang-yaml language-yaml">
+  <pre class="language-yaml">
     <code data-language="yaml"
           class="language-yaml"
     >
