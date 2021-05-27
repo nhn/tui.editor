@@ -92,13 +92,11 @@ export default function colorSyntaxPlugin(
     wysiwygCommands: {
       color: ({ selectedColor }, { tr, selection, schema }, dispatch) => {
         if (selectedColor) {
-          const slice = selection.content();
-          const textContent = slice.content.textBetween(0, slice.content.size, '\n');
+          const { from, to } = selection;
           const attrs = { htmlAttrs: { style: `color: ${selectedColor}` } };
-          const node = schema.nodes.span.create(attrs, schema.text(textContent));
+          const mark = schema.marks.span.create(attrs);
 
-          tr.replaceSelectionWith(node);
-
+          tr.addMark(from, to, mark);
           dispatch!(tr);
 
           return true;
