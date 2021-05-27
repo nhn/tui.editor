@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/editor-plugin-code-syntax-highlight",
-  "version": "2.0.0-alpha",
+  "version": "3.0.0-alpha.0",
   "description": "TOAST UI Editor : Code Syntax Highlight Plugin",
   "keywords": [
     "nhn",
