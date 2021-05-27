@@ -4,7 +4,7 @@ import { chainCommands, Command, joinForward } from 'prosemirror-commands';
 import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Node from '@/spec/node';
-import { isOrderedListNode } from '@/utils/markdown';
+import { isBulletListNode, isOrderedListNode } from '@/utils/markdown';
 import { createTextNode, createTextSelection, replaceTextNode } from '@/helper/manipulation';
 import { reBlockQuote } from '../marks/blockQuote';
 import { getRangeInfo, getNodeContentOffsetRange } from '../helper/pos';
@@ -102,11 +102,11 @@ export class Paragraph extends Node {
     let mdNode = toastMark.findFirstNodeAtLine(startLine);
     let topListNode = mdNode;
 
-    while (mdNode && mdNode.parent!.type !== 'document') {
+    while (mdNode && !isBulletListNode(mdNode!) && mdNode.parent!.type !== 'document') {
       mdNode = mdNode.parent!;
-
       if (isOrderedListNode(mdNode!)) {
         topListNode = mdNode;
+        break;
       }
     }
 

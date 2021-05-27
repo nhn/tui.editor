@@ -77,6 +77,10 @@ export function isOrderedListNode(mdNode: MdNode): mdNode is ListItemMdNode {
   return isListNode(mdNode) && mdNode.listData.type === 'ordered';
 }
 
+export function isBulletListNode(mdNode: MdNode): mdNode is ListItemMdNode {
+  return isListNode(mdNode) && mdNode.listData.type !== 'ordered';
+}
+
 export function isTableCellNode(mdNode: MdNode): mdNode is TableCellMdNode {
   return mdNode && (mdNode.type === 'tableCell' || mdNode.type === 'tableDelimCell');
 }

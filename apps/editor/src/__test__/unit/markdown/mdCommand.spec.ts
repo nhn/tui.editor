@@ -985,6 +985,34 @@ describe('indent command', () => {
 
       expect(getTextContent(mde)).toBe(result);
     });
+
+    it('should change ordered list to paragraph properly', () => {
+      const input = stripIndent`
+      1. ordered1
+      2. ordered2
+          * sub1
+          * sub2
+            1. sub-ordered1
+            2. sub-ordered1
+            3. sub-ordered1
+    `;
+      const result = stripIndent`
+        1. ordered1
+        2. ordered2
+            * sub1
+            * sub2
+                  1. sub-ordered1
+              2. sub-ordered1
+              3. sub-ordered1
+      `;
+
+      mde.setMarkdown(input);
+      mde.setSelection([5, 10], [5, 10]);
+
+      cmd.exec('indent');
+
+      expect(getTextContent(mde)).toBe(result);
+    });
   });
 });
 
