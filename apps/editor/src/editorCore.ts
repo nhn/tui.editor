@@ -40,6 +40,7 @@ import { setWidgetRules } from './widget/rules';
 import { cls } from './utils/dom';
 import { sanitizeHTML } from './sanitizer/htmlSanitizer';
 import { createHTMLSchemaMap } from './wysiwyg/nodes/html';
+import { getHTMLRenderConvertors } from './markdown/htmlRenderConvertors';
 
 /**
  * ToastUI Editor
@@ -245,7 +246,7 @@ class ToastUIEditor {
     this.convertor = new Convertor(
       this.wwEditor.getSchema(),
       { ...toMarkdownRenderers, ...customMarkdownRenderer },
-      rendererOptions.customHTMLRenderer,
+      getHTMLRenderConvertors(linkAttributes, rendererOptions.customHTMLRenderer),
       this.eventEmitter
     );
 
