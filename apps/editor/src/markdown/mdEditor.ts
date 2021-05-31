@@ -167,7 +167,6 @@ export default class MdEditor extends EditorBase {
         this.view.updateState(state);
         this.emitChangeEvent(tr);
       },
-      clipboardTextSerializer: (slice) => this.getChanged(slice),
       handleKeyDown: (_, ev) => {
         if ((ev.metaKey || ev.ctrlKey) && ev.key.toUpperCase() === 'V') {
           this.clipboard.focus();
@@ -176,6 +175,8 @@ export default class MdEditor extends EditorBase {
         return false;
       },
       handleDOMEvents: {
+        copy: (_, ev) => this.captureCopy(ev),
+        cut: (_, ev) => this.captureCopy(ev, 'cut'),
         scroll: () => {
           this.eventEmitter.emit('scroll', 'editor');
           return true;
@@ -193,6 +194,29 @@ export default class MdEditor extends EditorBase {
 
   createCommands() {
     return this.specs.commands(this.view);
+  }
+
+  private captureCopy(ev: ClipboardEvent, type?: string) {
+    ev.preventDefault();
+
+    const { selection, tr } = this.view.state;
+
+    if (selection.empty) {
+      return true;
+    }
+
+    const text = this.getChanged(selection.content());
+
+    if (ev.clipboardData) {
+      ev.clipboardData.setData('text/plain', text);
+    } else {
+      (window as WindowWithClipboard).clipboardData!.setData('Text', text);
+    }
+
+    if (type === 'cut') {
+      this.view.dispatch(tr.deleteSelection().scrollIntoView().setMeta('uiEvent', 'cut'));
+    }
+    return true;
   }
 
   private updateMarkdown(tr: Transaction) {
