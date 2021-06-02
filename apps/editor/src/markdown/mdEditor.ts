@@ -46,6 +46,8 @@ interface MarkdownOptions {
   mdPlugins?: PluginProp[];
 }
 
+const EVENT_TYPE = 'cut';
+
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
 
@@ -176,7 +178,7 @@ export default class MdEditor extends EditorBase {
       },
       handleDOMEvents: {
         copy: (_, ev) => this.captureCopy(ev),
-        cut: (_, ev) => this.captureCopy(ev, 'cut'),
+        cut: (_, ev) => this.captureCopy(ev, EVENT_TYPE),
         scroll: () => {
           this.eventEmitter.emit('scroll', 'editor');
           return true;
@@ -213,8 +215,8 @@ export default class MdEditor extends EditorBase {
       (window as WindowWithClipboard).clipboardData!.setData('Text', text);
     }
 
-    if (type === 'cut') {
-      this.view.dispatch(tr.deleteSelection().scrollIntoView().setMeta('uiEvent', 'cut'));
+    if (type === EVENT_TYPE) {
+      this.view.dispatch(tr.deleteSelection().scrollIntoView().setMeta('uiEvent', EVENT_TYPE));
     }
     return true;
   }
