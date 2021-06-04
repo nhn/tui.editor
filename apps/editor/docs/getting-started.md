@@ -51,8 +51,10 @@ The CDN directory has the following structure:
    │     │    ├─ toastui-editor-all.min.js
    │     │    ├─ toastui-editor-viewer.js
    │     │    ├─ toastui-editor-viewer.min.js
-   │     │    ├─ toastui-editor-editor.css
-   │     │    ├─ toastui-editor-editor.min.css
+   │     │    ├─ toastui-editor.js
+   │     │    ├─ toastui-editor.min.js
+   │     │    ├─ toastui-editor.css
+   │     │    ├─ toastui-editor.min.css
    │     │    ├─ toastui-editor-viewer.css
    │     │    └─ toastui-editor-viewer.min.css
    │     ├─ 2.0.0/
