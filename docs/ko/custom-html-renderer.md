@@ -1,6 +1,11 @@
 # Custom HTML Renderer
 
-TOAST UI Editor(이하 '에디터'라고 명시)는 마크다운 텍스트를 HTML 문자열로 변환하기 위해 `ToastMark`라는 자체 마크 다운 파서를 사용한다. `ToastMark`는 두 단계로 마크다운 텍스트를 변환한다. 먼저 첫 번째로 마크다운 텍스트를 AST(Abstract Syntax Tree)로 변환한다. 그리고 이후 변환된 AST를 순회하며 HTML 문자열을 생성한다. 첫 번째 단계에서 AST를 생성할 때 커스터마이징 옵션이나 API를 제공하는 것은 파싱 과정 자체를 사용자가 이해해야 하기 때문에 어려운 일이 될 것이다. 하지만 완성된 AST를 사용하여 HTML 문자열로 변환할 때에는 HTML 토큰화에 대해서만 이해하면 되기 때문에 사용자가 커스터마이징하기 어렵지 않다. 
+TOAST UI Editor(이하 '에디터'라고 명시)는 마크다운 텍스트를 HTML 문자열로 변환하기 위해 `ToastMark`라는 자체 마크 다운 파서를 사용한다. `ToastMark`는 두 단계로 마크다운 텍스트를 변환한다.
+
+1. 마크다운 텍스트를 AST(Abstract Syntax Tree)로 변환한다.
+2. 변환된 AST를 순회하며 HTML 문자열을 생성한다.
+
+첫 번째 단계에서 AST를 생성할 때 커스터마이징 옵션이나 API를 제공하는 것은 파싱 과정 자체를 사용자가 이해해야 하기 때문에 어려운 일이 될 것이다. 하지만 완성된 AST를 사용하여 HTML 문자열로 변환할 때에는 HTML 토큰화에 대해서만 이해하면 되기 때문에 사용자가 커스터마이징하기 어렵지 않다. 
 
 그렇기 때문에 에디터에서는 두 번째 단계(AST를 사용하여 HTML 문자열로 변환)에서 커스터마이징할 수 있는 옵션을 사용자에게 제공한다. 이 옵션은 마크다운 프리뷰뿐만 아니라 마크다운에서 위지윅 에디터로 컨버팅할 때에도 적용이 된다. 다만 아래처럼 내부적인 컨버팅 로직은 다르게 동작한다.
 
@@ -9,7 +14,7 @@ TOAST UI Editor(이하 '에디터'라고 명시)는 마크다운 텍스트를 HT
 
 ## 기본 사용 방법
 
-에디터에서는 `customHTMLRenderer` 옵션을 사용하여 HTML 문자열 변환에 사용하는 과정을 커스터마이징할 수 있다. 이 옵션은 key-value 형태의 객체이며, 객체의 키는 AST의 노드 타입, 값은 AST 노드를 HTML 토큰으로 변환하여 반환하는 함수이다.
+에디터에서는 `customHTMLRenderer` 옵션으로 HTML 문자열 변환 과정을 커스터마이징할 수 있다. 이 옵션은 key-value 형태의 객체이며, 객체의 키는 AST의 노드 타입, 값은 AST 노드를 HTML 토큰으로 변환하여 반환하는 함수이다.
 
 다음 코드는 `customHTMLRenderer` 옵션을 사용하는 기본 예시이다.
 
@@ -200,10 +205,6 @@ AST를 구성하는 각 노드의 타입은 [이 코드](https://github.com/nhn/
 에디터가 AST를 사용하여 HTML 문자열을 생성할 때에는 전위순회 방식으로 모든 노드를 탐색한다. 노드를 방문할 때마다 노드의 타입과 동일한 키 값을 가진 컨버팅 함수가 호출되며, `context` 객체는 컨버팅 함수의 두 번째 매개변수로 주어진다.
 
 ### entering
-
-Every node in an AST except leaf nodes is visited twice during a traversal. The fisrt time when the node is visited, and the second time after all the children of the node are visited. We can determine in which pace the convertor is invoked using `entering` property of the context object. 
-
-The following code is a typical example using `entering` property. 
 
 에디터에서 [이 함수](https://github.com/nhn/tui.editor/blob/master/libs/toastmark/src/commonmark/node.ts#L38)에 정의된 노드 타입들은 AST의 순회 중 두 번씩 방문한다. 첫 번째는 해당 노드로 순회를 시작할 때 방문하며, 두 번째는 모든 자식 노드들을 순회한 후 방문한다. `context` 객체의 `entering` 프로퍼티를 사용하여 컨버팅 함수가 호출되는 시점을 알 수 있다.
 
