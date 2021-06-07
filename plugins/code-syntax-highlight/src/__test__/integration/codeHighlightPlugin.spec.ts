@@ -64,4 +64,18 @@ describe('codeSyntaxHighlightPlugin', () => {
 
     expect(wwEditorHTML).toMatchSnapshot();
   });
+
+  it('should render codeblock element with no language info in markdown preview', () => {
+    const markdown = source`
+      \`\`\`
+        console.log(123);
+      \`\`\`
+    `;
+
+    editor.setMarkdown(markdown);
+
+    const previewHTML = getPreviewHTML();
+
+    expect(previewHTML).toMatchSnapshot();
+  });
 });

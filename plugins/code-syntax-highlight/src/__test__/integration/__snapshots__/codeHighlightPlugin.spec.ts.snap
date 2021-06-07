@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`codeSyntaxHighlightPlugin should render codeblock element with no language info in markdown preview 1`] = `
+<pre class="toastui-editor-md-preview-highlight">
+  <code>
+    console.log(123);
+  </code>
+</pre>
+`;
+
 exports[`codeSyntaxHighlightPlugin should render highlighted codeblock element in markdown preview 1`] = `
 <pre class="lang-yaml toastui-editor-md-preview-highlight">
   <code data-language="yaml">
