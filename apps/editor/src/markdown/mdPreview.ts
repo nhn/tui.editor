@@ -195,14 +195,14 @@ class MarkdownPreview {
         startEl.insertAdjacentHTML('beforebegin', newHtml);
         let el = startEl;
 
-        while (el !== endEl) {
+        while (el && el !== endEl) {
           const nextEl = el.nextElementSibling as HTMLElement;
 
           removeNode(el);
           removeOffsetInfoByNode(el);
           el = nextEl;
         }
-        if (el.parentNode) {
+        if (el?.parentNode) {
           removeNode(el);
           removeOffsetInfoByNode(el);
         }

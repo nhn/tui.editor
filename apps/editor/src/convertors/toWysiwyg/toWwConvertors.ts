@@ -382,9 +382,15 @@ export function createWwConvertors(customConvertors: HTMLConvertorMap) {
       convertors[type] = (state, node, context) => {
         context.origin = () => orgConvertors[type]!(node, context);
         const tokens = customConvertors[type]!(node, context) as OpenTagToken;
-        const { attributes: htmlAttrs, classNames } = Array.isArray(tokens) ? tokens[0] : tokens;
+        let attrs;
 
-        wwConvertor(state, node, context, { htmlAttrs, classNames });
+        if (tokens) {
+          const { attributes: htmlAttrs, classNames } = Array.isArray(tokens) ? tokens[0] : tokens;
+
+          attrs = { htmlAttrs, classNames };
+        }
+
+        wwConvertor(state, node, context, attrs);
       };
     }
   });
