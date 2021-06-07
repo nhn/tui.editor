@@ -16,7 +16,7 @@ export function getHTMLRenderers(prism: PrismJs) {
         codeAttrs['data-backticks'] = fenceLength;
       }
 
-      let content = '';
+      let content = node.literal!;
 
       if (infoWords.length && infoWords[0].length) {
         const [lang] = infoWords;
@@ -26,9 +26,9 @@ export function getHTMLRenderers(prism: PrismJs) {
 
         const registeredLang = prism.languages[lang];
 
-        content = registeredLang
-          ? prism.highlight(node.literal!, registeredLang, lang)
-          : node.literal!;
+        if (registeredLang) {
+          content = prism.highlight(node.literal!, registeredLang, lang);
+        }
       }
 
       return [
