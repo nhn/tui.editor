@@ -1,6 +1,6 @@
 import { source, oneLineTrim } from 'common-tags';
 
-import { Parser } from '@toast-ui/toastmark';
+import { Context, MdNode, Parser, HTMLConvertorMap } from '@toast-ui/toastmark';
 
 import { Schema } from 'prosemirror-model';
 import { createSpecs } from '@/wysiwyg/specCreator';
@@ -830,6 +830,40 @@ describe('Convertor', () => {
 
     it('should convert html inline node', () => {
       const markdown = '<big class="my-big">content</big>';
+
+      assertConverting(markdown, markdown);
+    });
+  });
+
+  describe('with custom convertor when converting from markdown to wysiwyg', () => {
+    function createCustomConvertor(customConvertor: HTMLConvertorMap) {
+      schema = createSchema();
+      convertor = new Convertor(schema, {}, customConvertor, new EventEmitter());
+    }
+
+    it('should convert markdown to wysiwyg', () => {
+      const toHTMLConvertor: HTMLConvertorMap = {
+        paragraph(_: MdNode, { entering, origin, options }: Context) {
+          if (options.nodeId) {
+            return {
+              type: entering ? 'openTag' : 'closeTag',
+              outerNewLine: true,
+              tagName: 'p',
+            };
+          }
+
+          return origin!();
+        },
+      };
+
+      createCustomConvertor(toHTMLConvertor);
+
+      const markdown = source`
+        > * Wrappers
+        >     1. [x] React
+        >     2. [x] Vue
+        >     3. [ ] Ember
+      `;
 
       assertConverting(markdown, markdown);
     });
