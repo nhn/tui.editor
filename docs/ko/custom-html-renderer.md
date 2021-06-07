@@ -5,7 +5,7 @@ TOAST UI Editor(이하 '에디터'라고 명시)는 마크다운 텍스트를 HT
 1. 마크다운 텍스트를 AST(Abstract Syntax Tree)로 변환한다.
 2. 변환된 AST를 순회하며 HTML 문자열을 생성한다.
 
-첫 번째 단계에서 AST를 생성할 때 커스터마이징 옵션이나 API를 제공하는 것은 파싱 과정 자체를 사용자가 이해해야 하기 때문에 어려운 일이 될 것이다. 하지만 완성된 AST를 사용하여 HTML 문자열로 변환할 때에는 HTML 토큰화에 대해서만 이해하면 되기 때문에 사용자가 커스터마이징하기 어렵지 않다. 
+첫 번째 단계에서 AST를 생성할 때 커스터마이징 옵션이나 API를 제공하는 것은 파싱 과정 자체를 사용자가 이해해야 하므로 어려운 일이 될 것이다. 하지만 완성된 AST를 사용하여 HTML 문자열로 변환할 때에는 HTML 토큰화에 대해서만 이해하면 되기 때문에 사용자가 커스터마이징하기 어렵지 않다. 
 
 그렇기 때문에 에디터에서는 두 번째 단계(AST를 사용하여 HTML 문자열로 변환)에서 커스터마이징할 수 있는 옵션을 사용자에게 제공한다. 이 옵션은 마크다운 프리뷰뿐만 아니라 마크다운에서 위지윅 에디터로 컨버팅할 때에도 적용이 된다. 다만 아래처럼 내부적인 컨버팅 로직은 다르게 동작한다.
 
@@ -238,7 +238,7 @@ const editor = new Editor({
 # TOAST UI
 ```
 
-`ToastMark`가 생성한 AST는 아래와 같다. (편의상 필수 프로퍼만 간략하게 나타내었다.)
+`ToastMark`가 생성한 AST는 아래와 같다. (편의상 필수 프로퍼티만 간략하게 나타내었다.)
 
 ```js
 {
@@ -331,7 +331,7 @@ const editor = new Editor({
 
 ### getChildrenText()
 
-대부분의 경우 노드의 컨버팅 함수에서 자식 노드의 텍스트가 필요하지는 않을 것이다. 하지만 종종 자식 노드의 텍스트를 가져와 속성을 설정해야 하는 경우가 있다. 이러한 경우 `context` 객체의 `getChildrenText()` 함수를 사용하면 유용하다.
+대부분의 경우 노드의 컨버팅 함수에서 자식 노드의 텍스트가 필요하진 않을 것이다. 하지만 종종 자식 노드의 텍스트를 가져와 속성을 설정해야 하는 경우가 있다. 이러한 경우 `context` 객체의 `getChildrenText()` 함수를 사용하면 유용하다.
 
 예를 들어 헤딩 요소에 자식 콘텐츠를 기준으로 `id`를 설정하고 싶다면 아래 코드처럼 `getChildrenText()` 함수를 사용할 수 있다.
 
@@ -403,7 +403,7 @@ function image(node, context) {
 ```js
 function codeBlock(node) {
   return [
-    { type: 'openTag', tagName: 'pre' classNames: ['code-block'] },
+    { type: 'openTag', tagName: 'pre', classNames: ['code-block'] },
     { type: 'openTag', tagName: 'code' },
     { type: 'text', content: node.literal },
     { type: 'closeTag', tagName: 'code' },
@@ -433,7 +433,7 @@ function codeBlock(node) {
   },
   {
     type: 'html',
-    content: '<strong>My</strong>'
+    content: '<strong>My</strong>',
     outerNewLine: true,
   },
   {
