@@ -1,4 +1,5 @@
 import { Process, BlockHandler } from '../blockHandlers';
+import { isSpaceOrTab, peek } from '../blockHelper';
 import { unescapeString } from '../common';
 import { CustomBlockNode, BlockNode } from '../node';
 
@@ -13,6 +14,12 @@ export const customBlock: BlockHandler = {
       parser.lastLineLength = match[0].length;
       parser.finalize(container as BlockNode, parser.lineNumber);
       return Process.Finished;
+    }
+    // skip optional spaces of custom block offset
+    let i = container.offset;
+    while (i > 0 && isSpaceOrTab(peek(line, parser.offset))) {
+      parser.advanceOffset(1, true);
+      i--;
     }
     return Process.Go;
   },
