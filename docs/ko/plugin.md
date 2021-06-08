@@ -354,8 +354,8 @@ return {
 
 이 옵션 객체를 사용하는 방법은 Prosemirror의 `nodeView` 정의 방법과 동일하니, [여기](https://prosemirror.net/docs/ref/#view.NodeView)를 참조 바란다.
 
-### 플러그인 함수의 `context` 파라미터
-플러그인 함수는 위에서 살펴본 다양한 프로퍼티를 정의하기 위해 필수적인 정보들을 `context` 파라미터로 사용할 수 있다. `context` 파라미터는 아래와 같은 정보들을 가지고 있다.
+### 플러그인 함수의 `context` 매개변수
+플러그인 함수는 위에서 살펴본 다양한 프로퍼티를 정의하기 위해 `context` 매개변수로 필수적인 정보들을 사용할 수 있다. `context` 매개변수는 아래와 같은 정보들을 가지고 있다.
 
 * `eventEmitter`: 에디터의 `eventEmitter`와 동일하다. 에디터와의 통신을 위해 사용한다.
 * `usageStatistics`: 해당 플러그인을 `@toast-ui/editor`의 GA로 수집할 지 결정한다.
