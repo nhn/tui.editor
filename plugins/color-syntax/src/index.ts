@@ -60,11 +60,13 @@ export default function colorSyntaxPlugin(
   const colorPicker = ColorPicker.create(colorPickerOption);
   const button = createApplyButton(i18n.get('OK'));
 
-  button.addEventListener('click', () => {
-    const selectedColor = colorPicker.getColor();
+  container.addEventListener('click', (ev) => {
+    if ((ev.target as HTMLElement).getAttribute('type') === 'button') {
+      const selectedColor = colorPicker.getColor();
 
-    eventEmitter.emit('command', 'color', { selectedColor });
-    eventEmitter.emit('closePopup');
+      eventEmitter.emit('command', 'color', { selectedColor });
+      eventEmitter.emit('closePopup');
+    }
   });
 
   colorPicker.slider.toggle(true);
