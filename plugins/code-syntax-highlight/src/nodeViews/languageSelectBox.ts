@@ -11,6 +11,7 @@ import type { Emitter } from '@toast-ui/editor';
 export const WRAPPER_CLASS_NAME = 'code-block-language';
 export const INPUT_CLASS_NANE = 'code-block-language-input';
 export const LIST_CLASS_NAME = 'code-block-language-list';
+export const LANG_ATTR = 'data-language';
 
 const CODE_BLOCK_PADDING = 10;
 
@@ -117,7 +118,7 @@ export class LanguageSelectBox {
 
   private onSelectLanguageButtons = (ev: MouseEvent) => {
     const target = ev.target as HTMLElement;
-    const language = target.getAttribute('data-language');
+    const language = target.getAttribute(LANG_ATTR);
 
     if (language) {
       this.selectLanguage(language);
@@ -196,6 +197,7 @@ export class LanguageSelectBox {
 
     if (this.buttons.length) {
       this.currentButton = this.buttons[index];
+      this.input!.value = this.currentButton.getAttribute(LANG_ATTR)!;
       addClass(this.currentButton, 'active');
       this.currentButton.scrollIntoView();
     }
@@ -242,7 +244,7 @@ export class LanguageSelectBox {
     this.prevStoredLanguage = language;
     this.input!.value = language;
 
-    const item = this.buttons.filter((button) => button.getAttribute('data-language') === language);
+    const item = this.buttons.filter((button) => button.getAttribute(LANG_ATTR) === language);
 
     if (item.length) {
       const index = inArray(item[0], this.buttons);
