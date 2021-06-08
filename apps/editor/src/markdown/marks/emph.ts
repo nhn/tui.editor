@@ -3,10 +3,8 @@ import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 import { toggleMark } from '../helper/mdCommand';
-import { reStrong } from './strong';
 
 const reEmph = /^(\*|_).*([\s\S]*)\1$/m;
-const reStrongEmph = /^(\*{3}|_{3}).*([\s\S]*)\1$/m;
 const emphSyntax = '*';
 
 export class Emph extends Mark {
@@ -23,10 +21,7 @@ export class Emph extends Mark {
   }
 
   private italic(): EditorCommand {
-    const conditionFn = (text: string) =>
-      (reEmph.test(text) && !reStrong.test(text)) || reStrongEmph.test(text);
-
-    return toggleMark(conditionFn, emphSyntax, 3);
+    return toggleMark(reEmph, emphSyntax);
   }
 
   commands() {
