@@ -77,7 +77,8 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
   render() {
     const { showDropdown, dropdownPos } = this.state;
     const { disabled, item, items, hideTooltip } = this.props;
-    const groupStyle = items.length ? null : { display: 'none' };
+    const visibleItems = items.filter((dropdownItem) => !dropdownItem.hidden);
+    const groupStyle = visibleItems.length ? null : { display: 'none' };
     const dropdownStyle = showDropdown ? null : { display: 'none' };
 
     return html`
@@ -96,13 +97,13 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
           style=${{ ...dropdownStyle, ...dropdownPos }}
           ref=${(el: HTMLElement) => (this.refs.dropdownEl = el)}
         >
-          ${items.length
-            ? items.map(
+          ${visibleItems.length
+            ? visibleItems.map(
                 (group, index) => html`
                   <${ToolbarGroup}
                     group=${group}
-                    hiddenDivider=${index === items.length - 1 ||
-                    (items as ToolbarButtonInfo[])[index + 1]?.hidden}
+                    hiddenDivider=${index === visibleItems.length - 1 ||
+                    (visibleItems as ToolbarButtonInfo[])[index + 1]?.hidden}
                     ...${this.props}
                   />
                 `
