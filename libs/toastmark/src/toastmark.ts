@@ -18,6 +18,7 @@ import {
   RefDefNode,
   isTable,
   isCodeBlock,
+  isCustomBlock,
 } from './commonmark/node';
 import {
   removeNextUntil,
@@ -201,10 +202,11 @@ export class ToastMark implements ToastMarkParser {
     let nextNode = endNode ? endNode.next : this.root.firstChild;
     const { lastChild } = root;
     const isOpenedLastChildCodeBlock = lastChild && isCodeBlock(lastChild) && lastChild.open;
+    const isOpenedLastChildCustomBlock = lastChild && isCustomBlock(lastChild) && lastChild.open;
     const isLastChildList = lastChild && isList(lastChild);
 
     while (
-      (isOpenedLastChildCodeBlock && nextNode) ||
+      ((isOpenedLastChildCodeBlock || isOpenedLastChildCustomBlock) && nextNode) ||
       (isLastChildList && nextNode && (nextNode.type === 'list' || nextNode.sourcepos![0][1] >= 2))
     ) {
       const newEndLine = this.extendEndLine(nextNode.sourcepos![1][0]);
