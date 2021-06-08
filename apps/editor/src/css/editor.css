@@ -389,6 +389,10 @@
   transform: translateX(12px);
 }
 
+.toastui-editor-dropdown-toolbar .scroll-sync {
+  margin: 0 5px;
+}
+
 .toastui-editor-dropdown-toolbar {
   position: absolute;
   height: 46px;
