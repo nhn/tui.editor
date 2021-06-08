@@ -1,3 +1,5 @@
+import removeClass from 'tui-code-snippet/domUtil/removeClass';
+import addClass from 'tui-code-snippet/domUtil/addClass';
 import { HookCallback } from '@t/editor';
 import { Emitter } from '@t/event';
 import { ExecCommand, HidePopup, TabInfo } from '@t/ui';
@@ -21,6 +23,7 @@ interface Props {
 interface State {
   activeTab: TabType;
   file: File | null;
+  fileNameElClassName: string;
 }
 
 export class ImagePopupBody extends Component<Props, State> {
@@ -28,7 +31,7 @@ export class ImagePopupBody extends Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.state = { activeTab: 'file', file: null };
+    this.state = { activeTab: 'file', file: null, fileNameElClassName: '' };
     this.tabs = [
       { name: 'file', text: 'File' },
       { name: 'url', text: 'URL' },
@@ -36,31 +39,56 @@ export class ImagePopupBody extends Component<Props, State> {
   }
 
   private initialize = (activeTab: TabType = 'file') => {
-    (this.refs.url as HTMLInputElement).value = '';
+    const urlEl = this.refs.url as HTMLInputElement;
+
+    urlEl.value = '';
     (this.refs.altText as HTMLInputElement).value = '';
     (this.refs.file as HTMLInputElement).value = '';
-    this.setState({ activeTab, file: null });
+
+    removeClass(urlEl, 'wrong');
+
+    this.setState({ activeTab, file: null, fileNameElClassName: '' });
   };
 
-  private execCommand = () => {
-    const imageUrl = (this.refs.url as HTMLInputElement).value;
-    const altText = (this.refs.altText as HTMLInputElement).value || 'image';
+  private emitAddImageBlob() {
+    const { files } = this.refs.file as HTMLInputElement;
+    const altTextEl = this.refs.altText as HTMLInputElement;
+    let fileNameElClassName = ' wrong';
+
+    if (files?.length) {
+      fileNameElClassName = '';
+      const imageFile = files.item(0)!;
+      const hookCallback: HookCallback = (url, text) =>
+        this.props.execCommand('addImage', { imageUrl: url, altText: text || altTextEl.value });
+
+      this.props.eventEmitter.emit('addImageBlobHook', imageFile, hookCallback, TYPE_UI);
+    }
+    this.setState({ fileNameElClassName });
+  }
+
+  private emitAddImage() {
+    const imageUrlEl = this.refs.url as HTMLInputElement;
+    const altTextEl = this.refs.altText as HTMLInputElement;
+    const imageUrl = imageUrlEl.value;
+    const altText = altTextEl.value || 'image';
+
+    removeClass(imageUrlEl, 'wrong');
+
+    if (!imageUrl.length) {
+      addClass(imageUrlEl, 'wrong');
+      return;
+    }
 
     if (imageUrl) {
-      this.props.execCommand('addImage', {
-        imageUrl,
-        altText,
-      });
+      this.props.execCommand('addImage', { imageUrl, altText });
+    }
+  }
+
+  private execCommand = () => {
+    if (this.state.activeTab === 'file') {
+      this.emitAddImageBlob();
     } else {
-      const { files } = this.refs.file as HTMLInputElement;
-
-      if (files?.length) {
-        const imageFile = files.item(0)!;
-        const hookCallback: HookCallback = (url, text) =>
-          this.props.execCommand('addImage', { imageUrl: url, altText: text || altText });
-
-        this.props.eventEmitter.emit('addImageBlobHook', imageFile, hookCallback, TYPE_UI);
-      }
+      this.emitAddImage();
     }
   };
 
@@ -93,7 +121,7 @@ export class ImagePopupBody extends Component<Props, State> {
   }
 
   render() {
-    const { activeTab, file } = this.state;
+    const { activeTab, file, fileNameElClassName } = this.state;
 
     return html`
       <div>
@@ -109,7 +137,7 @@ export class ImagePopupBody extends Component<Props, State> {
         <div style="display:${activeTab === 'file' ? 'block' : 'none'};position: relative;">
           <label for="toastuiImageFileInput">${i18n.get('Select image file')}</label>
           <span
-            class="${cls('file-name')}${file ? ' has-file' : ''}"
+            class="${cls('file-name')}${file ? ' has-file' : fileNameElClassName}"
             onClick=${this.showFileSelectBox}
             onSelectstart=${this.preventSelectStart}
           >
