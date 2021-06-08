@@ -330,6 +330,23 @@ describe('default toolbar', () => {
 
       expect(spy).toHaveBeenCalledWith('addImage', { altText: 'image', imageUrl: 'myImageUrl' });
     });
+
+    it('should add wrong class when url or text are not filled out', () => {
+      dispatchClick('.image');
+
+      const fileTabBtn = getElement('.toastui-editor-popup-add-image .active');
+      const urlTabBtn = fileTabBtn.nextSibling as HTMLButtonElement;
+
+      urlTabBtn.click();
+
+      const urlText = getElement(
+        '.toastui-editor-popup-add-image #toastuiImageUrlInput'
+      ) as HTMLInputElement;
+
+      dispatchClick('.toastui-editor-popup-add-image .toastui-editor-ok-button');
+
+      expect(urlText).toHaveClass('wrong');
+    });
   });
 
   describe('table button', () => {
