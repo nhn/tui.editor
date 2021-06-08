@@ -307,6 +307,14 @@ describe('editText()', () => {
       assertParseResult(doc, ['```', 'Hello', '', 'My World']);
       assertResultNodes(doc, result.nodes);
     });
+
+    it('update to custom block to the end of the document', () => {
+      const doc = new ToastMark('$\nHello\n\nMy World');
+      const result = doc.editMarkdown([1, 2], [1, 2], '$custom')[0];
+
+      assertParseResult(doc, ['$$custom', 'Hello', '', 'My World']);
+      assertResultNodes(doc, result.nodes);
+    });
   });
 
   describe('list item', () => {
