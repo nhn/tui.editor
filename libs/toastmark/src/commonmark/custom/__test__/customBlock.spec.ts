@@ -88,4 +88,24 @@ describe('customBlock', () => {
     const html = renderer.render(root);
     expect(html).toBe(`${output}\n`);
   });
+
+  it('should be rendered regardless of the white space', () => {
+    const input = source`
+      $$  myCustom
+      my custom block
+
+      should be parsed
+      $$
+    `;
+    const output = source`
+      <div class="myCustom-block">my custom block
+
+      should be parsed
+      </div>
+    `;
+
+    const root = reader.parse(input);
+    const html = renderer.render(root);
+    expect(html).toBe(`${output}\n`);
+  });
 });
