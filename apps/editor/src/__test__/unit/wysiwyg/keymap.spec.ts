@@ -6,6 +6,10 @@ import WysiwygEditor from '@/wysiwyg/wwEditor';
 import EventEmitter from '@/event/eventEmitter';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 import CellSelection from '@/wysiwyg/plugins/selection/cellSelection';
+import { cls } from '@/utils/dom';
+
+const CELL_SELECTION_CLS = cls('cell-selected');
+const CODE_BLOCK_CLS = cls('ww-code-block');
 
 describe('keymap', () => {
   let wwe: WysiwygEditor, em: EventEmitter;
@@ -284,14 +288,14 @@ describe('keymap', () => {
         <table>
           <thead>
             <tr>
-              <th class="toastui-editor-cell-selected"><p><br></p></th>
-              <th class="toastui-editor-cell-selected"><p><br></p></th>
+              <th class="${CELL_SELECTION_CLS}"><p><br></p></th>
+              <th class="${CELL_SELECTION_CLS}"><p><br></p></th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td class="toastui-editor-cell-selected"><p><br></p></td>
-              <td class="toastui-editor-cell-selected"><p><br></p></td>
+              <td class="${CELL_SELECTION_CLS}"><p><br></p></td>
+              <td class="${CELL_SELECTION_CLS}"><p><br></p></td>
             </tr>
           </tbody>
         </table>
@@ -386,7 +390,7 @@ describe('keymap', () => {
   describe('code block', () => {
     beforeEach(() => {
       html = oneLineTrim`
-        <div data-language="text" class="toastui-editor-ww-code-block">
+        <div data-language="text" class="${CODE_BLOCK_CLS}">
           <pre>
             <code>foo\nbar\nbaz</code>
           </pre>
@@ -404,7 +408,7 @@ describe('keymap', () => {
 
         const expected = oneLineTrim`
           <p><br></p>
-          <div data-language="text" class="toastui-editor-ww-code-block">
+          <div data-language="text" class="${CODE_BLOCK_CLS}">
             <pre>
               <code>foo\nbar\nbaz</code>
             </pre>
@@ -422,7 +426,7 @@ describe('keymap', () => {
         forceKeymapFn('codeBlock', 'moveCursor', ['down']);
 
         const expected = oneLineTrim`
-          <div data-language="text" class="toastui-editor-ww-code-block">
+          <div data-language="text" class="${CODE_BLOCK_CLS}">
             <pre>
               <code>foo\nbar\nbaz</code>
             </pre>

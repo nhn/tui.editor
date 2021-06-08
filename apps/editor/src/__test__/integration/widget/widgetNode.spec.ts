@@ -1,5 +1,6 @@
 import { oneLineTrim } from 'common-tags';
 import Editor from '@/editorCore';
+import { cls } from '@/utils/dom';
 import { removeDataAttr } from '@/__test__/unit/markdown/util';
 
 describe('widgetNode', () => {
@@ -10,7 +11,7 @@ describe('widgetNode', () => {
     editor: Editor;
 
   function getPreviewHTML() {
-    return removeDataAttr(mdPreview.querySelector('.toastui-editor-contents')!.innerHTML);
+    return removeDataAttr(mdPreview.querySelector(`.${cls('contents')}`)!.innerHTML);
   }
 
   beforeEach(() => {
