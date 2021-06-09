@@ -36,12 +36,13 @@ function setListNodeToolbarState(type: ToolbarStateKeys, nodeTypeState: ToolbarS
   });
 }
 
-function getMarkTypeStates(from: ResolvedPos, schema: Schema) {
+function getMarkTypeStates(from: ResolvedPos, to: ResolvedPos, schema: Schema) {
   const markTypeState = {} as ToolbarState;
 
   MARK_TYPES.forEach((type) => {
     const mark = schema.marks[type];
-    const foundMark = mark.isInSet(from.marks());
+    const marksAtPos = from.marksAcross(to) || [];
+    const foundMark = !!mark.isInSet(marksAtPos);
 
     if (foundMark) {
       markTypeState[type as ToolbarStateKeys] = true;
@@ -52,7 +53,7 @@ function getMarkTypeStates(from: ResolvedPos, schema: Schema) {
 }
 
 function getToolbarState(selection: Selection, doc: Node, schema: Schema) {
-  const { $from, from, to } = selection;
+  const { $from, $to, from, to } = selection;
   const nodeTypeState = {} as ToolbarState;
   let markTypeState = {} as ToolbarState;
 
@@ -66,7 +67,7 @@ function getToolbarState(selection: Selection, doc: Node, schema: Schema) {
     if (includes(LIST_TYPES, type)) {
       setListNodeToolbarState(type as ToolbarStateKeys, nodeTypeState);
     } else if (type === 'paragraph' || type === 'text') {
-      markTypeState = getMarkTypeStates($from, schema);
+      markTypeState = getMarkTypeStates($from, $to, schema);
     } else {
       nodeTypeState[type as ToolbarStateKeys] = true;
     }
