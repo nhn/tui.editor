@@ -26,7 +26,7 @@ const editor = new Editor({
 });
 ```
 
-`customHTMLRenderer` 옵션에 `latex` 함수 프로퍼티를 작성하였고 이 함수에서는 렌더링될 HTML을 토큰 형태로 반환한다. 마크다운 노드를 커스터마이징을 할 때와 거의 동일한 형태로 옵션을 지정하기 때문에 쉽게 사용할 수 있다. 위의 코드는 마크다운 에디터에서 다음처럼 렌더링된다.
+`customHTMLRenderer` 옵션에 `latex` 함수 프로퍼티를 작성하였고 이 함수에서는 렌더링 될 HTML을 토큰 형태로 반환한다. 마크다운 노드를 커스터마이징을 할 때와 거의 동일한 형태로 옵션을 지정하기 때문에 쉽게 사용할 수 있다. 위의 코드는 마크다운 에디터에서 다음처럼 렌더링된다.
 
 ![image](https://user-images.githubusercontent.com/37766175/120983159-65bf2b00-c7b4-11eb-84af-30c38e832585.png)
 
@@ -54,14 +54,15 @@ $$
 
 ## HTML 노드
 
-CommonMark에서는 `<`과 `>` 문자를 사용하여 기본적으로 지원하지 않는 노드를 HTML 문자열 형태로 사용할 수 있다.(https://spec.commonmark.org/0.29/#raw-html 참조)
+CommonMark에서는 `<`과 `>` 문자를 사용하여 기본적으로 지원하지 않는 노드를 HTML 문자열 형태로 사용할 수 있다.
+([CommonMark Raw HTML Spec 참조](https://spec.commonmark.org/0.29/#raw-html))
 
-에디터의 마크다운 에디터에서도 이러한 스펙을 준수하기 때문에 HTML 문자열은 마크다운 프리뷰에서 올바르게 렌더링된다.
+에디터의 마크다운 에디터에서도 이러한 스펙을 준수하기 때문에 HTML 문자열은 마크다운 프리뷰에서 올바르게 렌더링 된다.
 
 ![image](https://user-images.githubusercontent.com/37766175/120987131-44f8d480-c7b8-11eb-971f-0b4ecb59e112.png)
 
 ### 위지윅
-하지만 안타깝게도 위지윅 에디터에서는 HTML 노드를 제대로 렌더링할 수 없다. 에디터는 내부적으로 위지윅 에디터에서 기본으로 지원하는 노드를 추상화된 모델 객체로 관리하고 있다. 위지윅 에디터에서 지원하는 노드란 CommonMark와 GFM 에서 지원하는 노드(`heading`, `list`, `strike` 등) 그리고 커스텀 블록 노드를 의미한다.
+하지만 안타깝게도 위지윅 에디터에서는 HTML 노드를 제대로 렌더링할 수 없다. 에디터는 내부적으로 위지윅 에디터에서 기본으로 지원하는 노드를 추상화된 모델 객체로 관리하고 있다. 위지윅 에디터에서 지원하는 노드란 CommonMark와 GFM 에서 지원하는 노드(`heading`, `list`, `strike` 등)와 커스텀 블록 노드를 의미한다.
 
 ![image](https://user-images.githubusercontent.com/37766175/120989247-4c20e200-c7ba-11eb-8420-7ff5726592cf.gif)
 
@@ -88,7 +89,7 @@ HTML 노드는 `customHTMLRenderer.htmlBlock` 프로퍼티에 정의한다. 위�
 
 ![image](https://user-images.githubusercontent.com/37766175/120989209-40352000-c7ba-11eb-9112-047a0af4f9d6.gif)
 
-만약 인라인 HTML 노드를 사용하고 싶다면, `customHTMLRenderer.htmlInline` 프로퍼티에 정의하면 된다.
+만약 인라인 HTML 노드를 사용하고 싶다면, `customHTMLRenderer.htmlInline` 프로퍼티에 정의한다.
 
 ```js
 const editor = new Editor({

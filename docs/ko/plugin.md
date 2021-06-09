@@ -37,19 +37,19 @@ npm을 통해 설치할 경우 아래처럼 `node_modules`에 설치된다.
 
 - ES 모듈
 
-```javascript
+```js
 import pluginFn from '@toast-ui/editor-plugin-${pluginName}';
 ```
 
 - CommonJS
 
-```javascript
+```js
 const pluginFn = require('@toast-ui/editor-plugin-${pluginName}');
 ```
 
 예를 들어 `chart` 플러그인은 다음과 가져올 수 있다.
 
-```javascript
+```js
 import chart from '@toast-ui/editor-plugin-chart';
 ```
 
@@ -84,13 +84,13 @@ CDN 디렉터리의 구조는 다음과 같다.
 
 CDN을 사용해 플러그인을 가져올 때는 `toastui.Editor.plugin`에 등록된 네임스페이스를 사용한다.
 
-```javascript
+```js
 const pluginFn = toastui.Editor.plugin[${pluginName}];
 ```
 
 예를 들어 `chart` 플러그인은 다음과 같이 가져온다.
 
-```javascript
+```js
 const { chart } = toastui.Editor.plugin;
 ```
 
@@ -98,9 +98,9 @@ const { chart } = toastui.Editor.plugin;
 
 ES 모듈과 CDN에 따라 플러그인을 설치하고 가져오는 방법은 차이가 있지만, 사용하는 방법은 동일하다.
 
-가져온 플러그인을 사용하려면 에디터의 `plugins` 옵션에 플러그인 함수를  추가해야 한다. `plugins` 옵션의 타입은 `Array.<function>`이다.
+가져온 플러그인을 사용하려면 에디터의 `plugins` 옵션에 플러그인 함수를 추가해야 한다. `plugins` 옵션의 타입은 `Array.<function>`이다.
 
-```javascript
+```js
 const editor = new Editor({
   // ...
   plugins: [plugin]
@@ -110,7 +110,7 @@ const editor = new Editor({
 
 - ES 모듈
 
-```javascript
+```js
 import Editor from '@toast-ui/editor';
 import chart from '@toast-ui/editor-plugin-chart';
 import uml from '@toast-ui/editor-plugin-uml';
@@ -123,7 +123,7 @@ const editor = new Editor({
 
 - CDN
 
-```javascript
+```js
 const { Editor } = toastui;
 const { chart, uml } = Editor.plugin;
 
@@ -150,7 +150,7 @@ const editor = new Editor({
 
 기본적으로 제공되는 플러그인 외에도 사용자가 직접 플러그인 함수를 정의하여 사용할 수 있다.
 
-아래처럼 플러그인 함수를 정의하여 정해진 포맷에 맞는 객체를 반환하면 된다.
+아래처럼 플러그인 함수를 정의하여 정해진 포맷에 맞는 객체를 반환한다.
 
 ```ts
 interface PluginInfo {
@@ -185,7 +185,7 @@ const editor = new Editor({
 
 ### 플러그인 반환 객체
 
-플러그인에서 반환하는 객체의 프로퍼티에 대해 알아보겠다. 아래처럼 총 8개의 프로퍼티가 존재하며, 커스터마이징을 원하는 프로퍼티만 정의하여 반환하면 된다.
+플러그인에서 반환하는 객체의 프로퍼티에 대해 알아보겠다. 아래처럼 총 8개의 프로퍼티가 존재하며, 커스터마이징을 원하는 프로퍼티만 정의하여 반환한다.
 
 ```ts
 interface PluginInfo {
@@ -212,7 +212,7 @@ interface PluginInfo {
   * `node`: 대상 노드에 대한 정보가 담겨 있다.
   * `parent`: 대상 노드의 부모 노드 정보가 담겨 있다.
   * `index`: 대상 노드가 몇 번째 자식인지 알 수 있다.
-* `context`: 노드 정보외에 컨버팅에 필요한 정보들이 담겨있다.
+* `context`: 노드 정보 외에 컨버팅에 필요한 정보들이 담겨있다.
   * `entering`: 해당 노드에 최초 방문인지, 자식 노드의 순회를 모두 끝내고 방문하는 것인지 알 수 있다.
   * `origin`: 기존 컨버팅 함수의 동작을 실행하는 함수이다.
 
@@ -278,7 +278,7 @@ return {
 각각의 커맨드 함수는 `payload`, `state`, `dispatch` 세 개의 인자를 받으며, 이를 사용하여 [Prosemirror](https://prosemirror.net/) 기반의 에디터 내부 동작을 제어할 수 있다.
 
 * `payload`: 커맨드 실행할 때 필요한 `payload`이다.
-* `state`: 에디터의 내부 상태를 나타내는 인스턴스로 [prosemirrir-state](https://prosemirror.net/docs/ref/#state)와 동일하다.
+* `state`: 에디터의 내부 상태를 나타내는 인스턴스로 [prosemirror-state](https://prosemirror.net/docs/ref/#state)와 동일하다.
 * `dispatch`: 커맨드 실행을 통해 에디터의 콘텐츠를 변경하고 싶은 경우 `dispatch` 함수를 실행해야 한다. Prosemirror의 [dispatch](https://prosemirror.net/docs/ref/#view.EditorView.dispatch) 함수와 동일하다.
 
 만약 커맨드 함수를 실행하여 에디터의 콘텐츠에 변경 사항이 발생한다면 반드시 `true`를 반환해야 한다. 반대의 경우에는 `false`를 반환해야 한다.
@@ -333,7 +333,7 @@ return {
 
 ```js
 return {
-  wysiwygPlugins: [() => codeSyntaxHighlighting(context, prism!)],
+  wysiwygPlugins: [() => codeSyntaxHighlighting(context, prism)],
 };
 ```
 
@@ -341,7 +341,7 @@ return {
 
 #### wysiwygNodeViews
 
-마크다운 에디터는 일반 텍스트이지만, 위지윅 에디터의 콘텐츠는 특정한 노드로 구성된다. 이러한 노드들은 `customHTMLRenderer` 옵션을 사용하여 속성이나 클래스를 추가하는 커스터마이징이 가능하다. 하지만 그외에 이벤트를 등록하여 무언가를 제어하거나, 더 복잡한 상호 작용을 원하는 경우 `customHTMLRenderer` 옵션만으로는 한계가 있다. 이런 경우 플러그인의 `wysiwygNodeViews` 옵션을 사용하여 위지윅 에디터에서 렌더링되는 노드를 원하는 대로 커스터마이징할 수 있다. 
+마크다운 에디터는 일반 텍스트이지만, 위지윅 에디터의 콘텐츠는 특정한 노드로 구성된다. 이러한 노드들은 `customHTMLRenderer` 옵션을 사용하여 속성이나 클래스를 추가하는 커스터마이징이 가능하다. 하지만 그 외에 이벤트를 등록하여 무언가를 제어하거나, 더 복잡한 상호 작용을 원하는 경우 `customHTMLRenderer` 옵션만으로는 한계가 있다. 이런 경우 플러그인의 `wysiwygNodeViews` 옵션을 사용하여 위지윅 에디터에서 렌더링되는 노드를 원하는 대로 커스터마이징할 수 있다. 
 이 옵션 역시 대부분의 경우에는 필요가 없을 것이다. `wysiwygPlugins` 프로퍼티와 마찬가지로 `wysiwygNodeViews` 프로퍼티도 코드 하이라이팅 플러그인에서 사용된다.
 
 ```js
@@ -358,7 +358,7 @@ return {
 플러그인 함수는 위에서 살펴본 다양한 프로퍼티를 정의하기 위해 `context` 매개변수로 필수적인 정보들을 사용할 수 있다. `context` 매개변수는 아래와 같은 정보들을 가지고 있다.
 
 * `eventEmitter`: 에디터의 `eventEmitter`와 동일하다. 에디터와의 통신을 위해 사용한다.
-* `usageStatistics`: 해당 플러그인을 `@toast-ui/editor`의 GA로 수집할 지 결정한다.
+* `usageStatistics`: 해당 플러그인을 `@toast-ui/editor`의 GA로 수집할지 결정한다.
 * `i18n`: 다국어 추가를 위한 인스턴스이다.
 * `pmState`: [prosemirror-state](https://prosemirror.net/docs/ref/#state)의 일부 모듈을 가진 프로퍼티이다.
 * `pmView`: [prosemirror-view](https://prosemirror.net/docs/ref/#view)의 일부 모듈을 가진 프로퍼티이다.
