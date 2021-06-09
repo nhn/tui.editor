@@ -41,8 +41,8 @@ function getMarkTypeStates(from: ResolvedPos, to: ResolvedPos, schema: Schema) {
 
   MARK_TYPES.forEach((type) => {
     const mark = schema.marks[type];
-    const marksAtPos = from.marksAcross(to);
-    const foundMark = marksAtPos ? !!mark.isInSet(marksAtPos) : false;
+    const marksAtPos = from.marksAcross(to) || [];
+    const foundMark = !!mark.isInSet(marksAtPos);
 
     if (foundMark) {
       markTypeState[type as ToolbarStateKeys] = true;
