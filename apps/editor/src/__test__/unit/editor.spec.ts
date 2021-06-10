@@ -9,8 +9,8 @@ import { EditorOptions } from '@t/editor';
 import { createHTMLrenderer } from './markdown/util';
 import { cls } from '@/utils/dom';
 
-const HEADING_CLS = 'toastui-editor-md-heading toastui-editor-md-heading1';
-const DELIM_CLS = 'toastui-editor-md-delimiter';
+const HEADING_CLS = `${cls('md-heading')} ${cls('md-heading1')}`;
+const DELIM_CLS = cls('md-delimiter');
 
 describe('editor', () => {
   let container: HTMLElement,

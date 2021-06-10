@@ -6,7 +6,7 @@ import EventEmitter from '@/event/eventEmitter';
 import { cls } from '@/utils/dom';
 import '@/i18n/en-us';
 
-const EDITOR_CLS = 'toastui-editor';
+const EDITOR_CLASS = 'toastui-editor';
 
 function getElement(selector: string) {
   return document.querySelector<HTMLElement>(selector)!;
@@ -21,7 +21,7 @@ function getEditorMain() {
 }
 
 function getMdEditor() {
-  return getElement(`.${cls('md-container')} .${EDITOR_CLS}`)!;
+  return getElement(`.${cls('md-container')} .${EDITOR_CLASS}`)!;
 }
 
 function getMdPreview() {
@@ -29,7 +29,7 @@ function getMdPreview() {
 }
 
 function getWwEditor() {
-  return getElement(`.${cls('ww-container')} .${EDITOR_CLS}`)!;
+  return getElement(`.${cls('ww-container')} .${EDITOR_CLASS}`)!;
 }
 
 function getMdSwitch() {
@@ -80,9 +80,9 @@ describe('layout component', () => {
     const mdPreview = document.createElement('div');
     const wwEditor = document.createElement('div');
 
-    mdEditor.className = EDITOR_CLS;
+    mdEditor.className = EDITOR_CLASS;
     mdPreview.className = cls('md-preview');
-    wwEditor.className = EDITOR_CLS;
+    wwEditor.className = EDITOR_CLASS;
 
     const dummySlot = {
       mdEditor,
