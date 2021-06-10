@@ -81,8 +81,7 @@ export default function colorSyntaxPlugin(
   const button = createApplyButton(i18n.get('OK'));
 
   eventEmitter.listen('focus', (editType) => {
-    const containerClassName =
-      editType === 'markdown' ? `${PREFIX}md-container` : `${PREFIX}ww-container`;
+    const containerClassName = `${PREFIX}${editType === 'markdown' ? 'md' : 'ww'}-container`;
 
     currentEditorEl = document.querySelector<HTMLElement>(`.${containerClassName} .ProseMirror`)!;
   });
