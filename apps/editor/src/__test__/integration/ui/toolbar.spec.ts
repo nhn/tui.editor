@@ -4,6 +4,7 @@ import EventEmitter from '@/event/eventEmitter';
 import html from '@/ui/vdom/template';
 import { render } from '@/ui/vdom/renderer';
 import { Toolbar } from '@/ui/components/toolbar/toolbar';
+import { cls } from '@/utils/dom';
 import '@/i18n/en-us';
 
 function getElement(selector: string) {
@@ -131,7 +132,7 @@ describe('default toolbar', () => {
   it('should show tooltip when mouseover on toolbar button', () => {
     dispatchMouseover('.bold');
 
-    const tooltip = getElement('.toastui-editor-tooltip');
+    const tooltip = getElement(`.${cls('tooltip')}`);
 
     expect(tooltip).toHaveStyle({ display: 'block' });
   });
@@ -150,8 +151,8 @@ describe('default toolbar', () => {
   it('should hide the popup when clicking X button on popup', () => {
     dispatchClick('.link');
 
-    const linkPopup = getElement('.toastui-editor-popup-add-link');
-    const closeBtn = getElement('.toastui-editor-popup-add-link .toastui-editor-close-button');
+    const linkPopup = getElement(`.${cls('popup-add-link')}`);
+    const closeBtn = getElement(`.${cls('popup-add-link')} .${cls('close-button')}`);
 
     closeBtn.click();
 
@@ -188,7 +189,7 @@ describe('default toolbar', () => {
     it('should show the popup when clicking heading button', () => {
       dispatchClick('.heading');
 
-      const headingPopup = getElement('.toastui-editor-popup-add-heading');
+      const headingPopup = getElement(`.${cls('popup-add-heading')}`);
 
       expect(headingPopup).toHaveStyle({ display: 'block' });
     });
@@ -199,7 +200,7 @@ describe('default toolbar', () => {
       em.listen('command', spy);
 
       dispatchClick('.heading');
-      dispatchClick('.toastui-editor-popup-add-heading [data-level="2"]');
+      dispatchClick(`.${cls('popup-add-heading [data-level="2"]')}`);
 
       expect(spy).toHaveBeenCalledWith('heading', { level: 2 });
     });
@@ -209,16 +210,16 @@ describe('default toolbar', () => {
     it('should show the popup when clicking link button', () => {
       dispatchClick('.link');
 
-      const linkPopup = getElement('.toastui-editor-popup-add-link');
+      const linkPopup = getElement(`.${cls('popup-add-link')}`);
 
       expect(linkPopup).toHaveStyle({ display: 'block' });
     });
 
     it('should hide popup when clicking Cancel button', () => {
       dispatchClick('.link');
-      dispatchClick('.toastui-editor-popup-add-link .toastui-editor-close-button');
+      dispatchClick(`.${cls('popup-add-link')} .${cls('close-button')}`);
 
-      const linkPopup = getElement('.toastui-editor-popup-add-link');
+      const linkPopup = getElement(`.${cls('popup-add-link')}`);
 
       expect(linkPopup).toHaveStyle({ display: 'none' });
     });
@@ -231,16 +232,16 @@ describe('default toolbar', () => {
       dispatchClick('.link');
 
       const urlText = getElement(
-        '.toastui-editor-popup-add-link #toastuiLinkUrlInput'
+        `.${cls('popup-add-link #toastuiLinkUrlInput')}`
       ) as HTMLInputElement;
       const linkText = getElement(
-        '.toastui-editor-popup-add-link #toastuiLinkTextInput'
+        `.${cls('popup-add-link #toastuiLinkTextInput')}`
       ) as HTMLInputElement;
 
       urlText.value = 'https://ui.toast.com';
       linkText.value = 'toastui';
 
-      dispatchClick('.toastui-editor-popup-add-link .toastui-editor-ok-button');
+      dispatchClick(`.${cls('popup-add-link')} .${cls('ok-button')}`);
 
       expect(spy).toHaveBeenCalledWith('addLink', {
         linkText: 'toastui',
@@ -252,18 +253,18 @@ describe('default toolbar', () => {
       dispatchClick('.link');
 
       const urlText = getElement(
-        '.toastui-editor-popup-add-link #toastuiLinkUrlInput'
+        `.${cls('popup-add-link #toastuiLinkUrlInput')}`
       ) as HTMLInputElement;
       const linkText = getElement(
-        '.toastui-editor-popup-add-link #toastuiLinkTextInput'
+        `.${cls('popup-add-link #toastuiLinkTextInput')}`
       ) as HTMLInputElement;
 
-      dispatchClick('.toastui-editor-popup-add-link .toastui-editor-ok-button');
+      dispatchClick(`.${cls('popup-add-link')} .${cls('ok-button')}`);
 
       expect(urlText).toHaveClass('wrong');
 
       urlText.value = 'https://ui.toast.com';
-      dispatchClick('.toastui-editor-popup-add-link .toastui-editor-ok-button');
+      dispatchClick(`.${cls('popup-add-link')} .${cls('ok-button')}`);
 
       expect(linkText).toHaveClass('wrong');
     });
@@ -273,16 +274,16 @@ describe('default toolbar', () => {
     it('should show the popup when clicking image button', () => {
       dispatchClick('.image');
 
-      const imagePopup = getElement('.toastui-editor-popup-add-image');
+      const imagePopup = getElement(`.${cls('popup-add-image')}`);
 
       expect(imagePopup).toHaveStyle({ display: 'block' });
     });
 
     it('should hide popup when clicking Cancel button', () => {
       dispatchClick('.image');
-      dispatchClick('.toastui-editor-popup-add-image .toastui-editor-close-button');
+      dispatchClick(`.${cls('popup-add-image')} .${cls('close-button')}`);
 
-      const imagePopup = getElement('.toastui-editor-popup-add-image');
+      const imagePopup = getElement(`.${cls('popup-add-image')}`);
 
       expect(imagePopup).toHaveStyle({ display: 'none' });
     });
@@ -290,7 +291,7 @@ describe('default toolbar', () => {
     it('should toggle tab when clicking the file or url tab', () => {
       dispatchClick('.image');
 
-      const fileTabBtn = getElement('.toastui-editor-popup-add-image .active');
+      const fileTabBtn = getElement(`.${cls('popup-add-image .active')}`);
       const urlTabBtn = fileTabBtn.nextSibling as HTMLButtonElement;
 
       urlTabBtn.click();
@@ -311,13 +312,13 @@ describe('default toolbar', () => {
 
       dispatchClick('.image');
 
-      const fileTabBtn = getElement('.toastui-editor-popup-add-image .active');
+      const fileTabBtn = getElement(`.${cls('popup-add-image .active')}`);
       const urlTabBtn = fileTabBtn.nextSibling as HTMLButtonElement;
       const urlText = getElement(
-        '.toastui-editor-popup-add-image #toastuiImageUrlInput'
+        `.${cls('popup-add-image #toastuiImageUrlInput')}`
       ) as HTMLInputElement;
       const descriptionText = getElement(
-        '.toastui-editor-popup-add-image #toastuiAltTextInput'
+        `.${cls('popup-add-image #toastuiAltTextInput')}`
       ) as HTMLInputElement;
 
       urlTabBtn.click();
@@ -325,7 +326,7 @@ describe('default toolbar', () => {
       urlText.value = 'myImageUrl';
       descriptionText.value = 'image';
 
-      dispatchClick('.toastui-editor-popup-add-image .toastui-editor-ok-button');
+      dispatchClick(`.${cls('popup-add-image')} .${cls('ok-button')}`);
 
       expect(spy).toHaveBeenCalledWith('addImage', { altText: 'image', imageUrl: 'myImageUrl' });
     });
@@ -335,7 +336,7 @@ describe('default toolbar', () => {
     it('should show the popup when clicking table button', () => {
       dispatchClick('.table');
 
-      const tablePopup = getElement('.toastui-editor-popup-add-table');
+      const tablePopup = getElement(`.${cls('popup-add-table')}`);
 
       expect(tablePopup).toHaveStyle({ display: 'block' });
     });
@@ -347,8 +348,8 @@ describe('default toolbar', () => {
 
       dispatchClick('.table');
 
-      dispatchMousemove('.toastui-editor-table-selection', 100, 60);
-      dispatchClick('.toastui-editor-table-selection');
+      dispatchMousemove(`.${cls('table-selection')}`, 100, 60);
+      dispatchClick(`.${cls('table-selection')}`);
 
       expect(spy).toHaveBeenCalledWith('addTable', { columnCount: 6, rowCount: 4 });
     });
@@ -436,7 +437,7 @@ describe('custom button toolbar', () => {
   it('should show tooltip when mouseover on toolbar button', () => {
     dispatchMouseover('.my-toolbar');
 
-    const tooltip = getElement('.toastui-editor-tooltip');
+    const tooltip = getElement(`.${cls('tooltip')}`);
 
     expect(tooltip).toHaveStyle({ display: 'block' });
   });
@@ -562,7 +563,7 @@ describe('custom toolbar element', () => {
   it('should show tooltip when mouseover on toolbar button', () => {
     dispatchMouseover('.my-toolbar');
 
-    const tooltip = getElement('.toastui-editor-tooltip');
+    const tooltip = getElement(`.${cls('tooltip')}`);
 
     expect(tooltip).toHaveStyle({ display: 'block' });
   });
@@ -593,7 +594,7 @@ describe('API', () => {
   let ref: Toolbar | null;
 
   function getToolbarItems() {
-    return getElement('.toastui-editor-defaultUI-toolbar').querySelectorAll('button:not(.more)');
+    return getElement(`.${cls('defaultUI-toolbar')}`).querySelectorAll('button:not(.more)');
   }
 
   beforeEach(() => {
@@ -617,7 +618,7 @@ describe('API', () => {
       ` as VNode
     );
     jest
-      .spyOn(getElement('.toastui-editor-defaultUI-toolbar'), 'clientWidth', 'get')
+      .spyOn(getElement(`.${cls('defaultUI-toolbar')}`), 'clientWidth', 'get')
       .mockImplementation(() => 500);
   });
 
@@ -716,7 +717,7 @@ describe('event', () => {
     it('should open popup corresponding to name', () => {
       em.emit('openPopup', 'image');
 
-      const imagePopup = getElement('.toastui-editor-popup-add-image');
+      const imagePopup = getElement(`.${cls('popup-add-image')}`);
 
       expect(imagePopup).toHaveStyle({ display: 'block' });
     });
@@ -727,10 +728,10 @@ describe('event', () => {
       em.emit('openPopup', 'link', initialValues);
 
       const urlText = getElement(
-        '.toastui-editor-popup-add-link #toastuiLinkUrlInput'
+        `.${cls('popup-add-link #toastuiLinkUrlInput')}`
       ) as HTMLInputElement;
       const linkText = getElement(
-        '.toastui-editor-popup-add-link #toastuiLinkTextInput'
+        `.${cls('popup-add-link #toastuiLinkTextInput')}`
       ) as HTMLInputElement;
 
       expect(urlText).toHaveValue('http://test.com');

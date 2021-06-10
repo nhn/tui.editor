@@ -7,6 +7,10 @@ import Viewer from '@/Viewer';
 import * as commonUtil from '@/utils/common';
 import { EditorOptions } from '@t/editor';
 import { createHTMLrenderer } from './markdown/util';
+import { cls } from '@/utils/dom';
+
+const HEADING_CLS = `${cls('md-heading')} ${cls('md-heading1')}`;
+const DELIM_CLS = cls('md-delimiter');
 
 describe('editor', () => {
   let container: HTMLElement,
@@ -17,7 +21,7 @@ describe('editor', () => {
 
   function getPreviewHTML() {
     return mdPreview
-      .querySelector('.toastui-editor-contents')!
+      .querySelector(`.${cls('contents')}`)!
       .innerHTML.replace(/\sdata-nodeid="\d+"|\n/g, '')
       .trim();
   }
@@ -109,7 +113,7 @@ describe('editor', () => {
       editor.setMarkdown('# heading');
 
       expect(mdEditor).toContainHTML(
-        '<div><span class="toastui-editor-md-heading toastui-editor-md-heading1"><span class="toastui-editor-md-delimiter">#</span> heading</span></div>'
+        `<div><span class="${HEADING_CLS}"><span class="${DELIM_CLS}">#</span> heading</span></div>`
       );
       expect(getPreviewHTML()).toBe('<h1>heading</h1>');
     });
@@ -118,7 +122,7 @@ describe('editor', () => {
       editor.setHTML('<h1>heading</h1>');
 
       expect(mdEditor).toContainHTML(
-        '<div><span class="toastui-editor-md-heading toastui-editor-md-heading1"><span class="toastui-editor-md-delimiter">#</span> heading</span></div>'
+        `<div><span class="${HEADING_CLS}"><span class="${DELIM_CLS}">#</span> heading</span></div>`
       );
       expect(getPreviewHTML()).toBe('<h1>heading</h1>');
     });
@@ -128,7 +132,7 @@ describe('editor', () => {
       editor.reset();
 
       expect(mdEditor).not.toContainHTML(
-        '<div><span class="toastui-editor-md-heading toastui-editor-md-heading1"><span class="toastui-editor-md-delimiter">#</span> heading</span></div>'
+        `<div><span class="${HEADING_CLS}"><span class="${DELIM_CLS}">#</span> heading</span></div>`
       );
       expect(getPreviewHTML()).toBe('');
     });
@@ -567,7 +571,7 @@ describe('editor', () => {
 
         createEditor({ el: container, plugins: [plugin] });
 
-        const toolbar = document.querySelector('.toastui-editor-toolbar-icons.color');
+        const toolbar = document.querySelector(`.${cls('toolbar-icons.color')}`);
 
         expect(toolbar).toBeInTheDocument();
       });
@@ -595,7 +599,7 @@ describe('editor', () => {
       it('should hide mode switch if the option value is true', () => {
         createEditor({ el: container, hideModeSwitch: true });
 
-        const modeSwitch = document.querySelector('.toastui-editor-mode-switch');
+        const modeSwitch = document.querySelector(`.${cls('mode-switch')}`);
 
         expect(modeSwitch).not.toBeInTheDocument();
       });

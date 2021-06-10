@@ -190,8 +190,8 @@ export const baseConvertors: HTMLConvertorMap = {
   },
 
   customBlock(node, context, convertors) {
-    const info = (node as CustomBlockNode).info!;
-    const customConvertor = convertors![info.toLowerCase()];
+    const info = (node as CustomBlockNode).info!.trim().toLowerCase();
+    const customConvertor = convertors![info];
 
     if (customConvertor) {
       try {
@@ -223,7 +223,7 @@ export const baseConvertors: HTMLConvertorMap = {
   },
 
   customInline(node, context, convertors) {
-    const info = (node as CustomBlockNode).info!;
+    const info = (node as CustomBlockNode).info!.trim().toLowerCase();
     const customConvertor = convertors![info];
 
     if (customConvertor) {

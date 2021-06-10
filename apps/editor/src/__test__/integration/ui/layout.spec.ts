@@ -3,7 +3,10 @@ import { render } from '@/ui/vdom/renderer';
 import { VNode } from '@/ui/vdom/vnode';
 import html from '@/ui/vdom/template';
 import EventEmitter from '@/event/eventEmitter';
+import { cls } from '@/utils/dom';
 import '@/i18n/en-us';
+
+const EDITOR_CLASS = 'toastui-editor';
 
 function getElement(selector: string) {
   return document.querySelector<HTMLElement>(selector)!;
@@ -14,27 +17,27 @@ function getElements(selector: string) {
 }
 
 function getEditorMain() {
-  return getElement('.toastui-editor-main')!;
+  return getElement(`.${cls('main')}`)!;
 }
 
 function getMdEditor() {
-  return getElement('.toastui-editor-md-container .toastui-editor')!;
+  return getElement(`.${cls('md-container')} .${EDITOR_CLASS}`)!;
 }
 
 function getMdPreview() {
-  return getElement('.toastui-editor-md-container .toastui-editor-md-preview')!;
+  return getElement(`.${cls('md-container')} .${cls('md-preview')}`)!;
 }
 
 function getWwEditor() {
-  return getElement('.toastui-editor-ww-container .toastui-editor')!;
+  return getElement(`.${cls('ww-container')} .${EDITOR_CLASS}`)!;
 }
 
 function getMdSwitch() {
-  return getElements('.toastui-editor-mode-switch .tab-item')![0];
+  return getElements(`.${cls('mode-switch')} .tab-item`)![0];
 }
 
 function getWwSwitch() {
-  return getElements('.toastui-editor-mode-switch .tab-item')![1];
+  return getElements(`.${cls('mode-switch')} .tab-item`)![1];
 }
 
 function clickMdSwitch() {
@@ -46,11 +49,11 @@ function clickWwSwitch() {
 }
 
 function getMdWriteTab() {
-  return getElement('.toastui-editor-md-tab-container .tab-item')!;
+  return getElement(`.${cls('md-tab-container')} .tab-item`)!;
 }
 
 function getMdPreviewTab() {
-  return document.querySelectorAll<HTMLElement>('.toastui-editor-md-tab-container .tab-item')[1];
+  return document.querySelectorAll<HTMLElement>(`.${cls('md-tab-container')} .tab-item`)[1];
 }
 
 function getScrollSyncWrapper() {
@@ -77,9 +80,9 @@ describe('layout component', () => {
     const mdPreview = document.createElement('div');
     const wwEditor = document.createElement('div');
 
-    mdEditor.className = 'toastui-editor';
-    mdPreview.className = 'toastui-editor-md-preview';
-    wwEditor.className = 'toastui-editor';
+    mdEditor.className = EDITOR_CLASS;
+    mdPreview.className = cls('md-preview');
+    wwEditor.className = EDITOR_CLASS;
 
     const dummySlot = {
       mdEditor,
@@ -121,7 +124,7 @@ describe('layout component', () => {
   });
 
   it('show/hide editor', () => {
-    const layout = getElement('.toastui-editor-defaultUI');
+    const layout = getElement(`.${cls('defaultUI')}`);
 
     em.emit('hide');
 
@@ -154,13 +157,13 @@ describe('layout component', () => {
 
       em.emit('changeMode', 'wysiwyg');
 
-      expect(editorArea).toHaveClass('toastui-editor-ww-mode');
+      expect(editorArea).toHaveClass(cls('ww-mode'));
       expect(wwSwitch).toHaveClass('active');
       expect(mdSwitch).not.toHaveClass('active');
 
       em.emit('changeMode', 'markdown');
 
-      expect(editorArea).toHaveClass('toastui-editor-md-mode');
+      expect(editorArea).toHaveClass(cls('md-mode'));
       expect(mdSwitch).toHaveClass('active');
       expect(wwSwitch).not.toHaveClass('active');
     });
@@ -183,17 +186,18 @@ describe('layout component', () => {
 
       em.emit('changeMode', 'wysiwyg');
 
-      expect(scrollSyncWrapper).toHaveStyle({ display: 'none' });
+      expect(getElement('.scroll-sync')).toBeNull();
     });
 
     it('should show scrollSync when previewStyle is changed on only markdown mode', () => {
       em.emit('changeMode', 'wysiwyg');
       em.emit('changePreviewStyle', 'vertical');
-      const scrollSyncWrapper = getScrollSyncWrapper();
 
-      expect(scrollSyncWrapper).toHaveStyle({ display: 'none' });
+      expect(getElement('.scroll-sync')).toBeNull();
 
       em.emit('changeMode', 'markdown');
+
+      const scrollSyncWrapper = getScrollSyncWrapper();
 
       expect(scrollSyncWrapper).toHaveStyle({ display: 'inline-block' });
     });
@@ -201,7 +205,7 @@ describe('layout component', () => {
 
   describe('changing preview style', () => {
     it('should hide markdown tab when changePreviewStyle is triggered', () => {
-      const tabSection = getElement('.toastui-editor-md-tab-container')!;
+      const tabSection = getElement(`.${cls('md-tab-container')}`)!;
 
       expect(tabSection).toHaveStyle({ display: 'block' });
 
@@ -211,7 +215,7 @@ describe('layout component', () => {
     });
 
     it('should hide markdown tab when changeMode is triggered', () => {
-      const tabSection = getElement('.toastui-editor-md-tab-container')!;
+      const tabSection = getElement(`.${cls('md-tab-container')}`)!;
 
       expect(tabSection).toHaveStyle({ display: 'block' });
 
@@ -252,12 +256,12 @@ describe('layout component', () => {
       clickMdPreviewTab();
 
       expect(scrollSyncWrapper).toHaveStyle({ display: 'none' });
-      expect(getElement('.toastui-editor-toolbar-icons')).toBeDisabled();
+      expect(getElement(`.${cls('toolbar-icons')}`)).toBeDisabled();
 
       clickMdWriteTab();
 
       expect(scrollSyncWrapper).toHaveStyle({ display: 'none' });
-      expect(getElement('.toastui-editor-toolbar-icons')).not.toBeDisabled();
+      expect(getElement(`.${cls('toolbar-icons')}`)).not.toBeDisabled();
     });
 
     it('should enable the toolbar items when changeMode is triggered', () => {
@@ -265,11 +269,11 @@ describe('layout component', () => {
 
       em.emit('changeMode', 'wysiwyg');
 
-      expect(getElement('.toastui-editor-toolbar-icons')).not.toBeDisabled();
+      expect(getElement(`.${cls('toolbar-icons')}`)).not.toBeDisabled();
 
       em.emit('changeMode', 'markdown');
 
-      expect(getElement('.toastui-editor-toolbar-icons')).not.toBeDisabled();
+      expect(getElement(`.${cls('toolbar-icons')}`)).not.toBeDisabled();
       expect(getMdWriteTab()).toHaveClass('active');
     });
 
@@ -278,13 +282,13 @@ describe('layout component', () => {
 
       em.emit('changePreviewStyle', 'vertical');
 
-      expect(getElement('.toastui-editor-toolbar-icons')).not.toBeDisabled();
+      expect(getElement(`.${cls('toolbar-icons')}`)).not.toBeDisabled();
     });
   });
 
   describe('context menu', () => {
     it('should be displayed when contextmenu event is triggered', () => {
-      const contextMenu = getElement('.toastui-editor-context-menu');
+      const contextMenu = getElement(`.${cls('context-menu')}`);
 
       expect(contextMenu).toHaveStyle({ display: 'none' });
 

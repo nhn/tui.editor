@@ -38,7 +38,7 @@ function assertResultNodes(doc: ToastMark, nodes: Node[], startIdx = 0) {
 }
 
 describe('findNodeAtPosition()', () => {
-  it('returns a node at the given position', () => {
+  it('should return a node at the given position', () => {
     const doc = new ToastMark('# Hello *World*\n\n- Item 1\n- Item **2**');
 
     expect(doc.findNodeAtPosition([1, 1])).toMatchObject({
@@ -88,7 +88,7 @@ describe('findNodeAtPosition()', () => {
     expect(doc.findNodeAtPosition([5, 1])).toBeNull();
   });
 
-  it('returns null if matched node does not exist', () => {
+  it('should return null if matched node does not exist', () => {
     const doc = new ToastMark('# Hello\n\nWorld');
 
     // position in between two node (blank line)
@@ -110,7 +110,7 @@ describe('findFirstNodeAtLine()', () => {
     'Paragraph',
   ].join('\n');
 
-  it('returns the first node at the given line', () => {
+  it('should return the first node at the given line', () => {
     const doc = new ToastMark(markdown);
 
     expect(doc.findFirstNodeAtLine(1)).toMatchObject({ type: 'heading' });
@@ -134,7 +134,7 @@ describe('findFirstNodeAtLine()', () => {
     expect(doc.findFirstNodeAtLine(8)).toMatchObject({ type: 'paragraph' });
   });
 
-  it('returns null if nothing mathces', () => {
+  it('should return null if nothing mathces', () => {
     const doc = new ToastMark('\n\n');
 
     expect(doc.findFirstNodeAtLine(0)).toBeNull();
@@ -146,7 +146,7 @@ describe('findFirstNodeAtLine()', () => {
 
 describe('editText()', () => {
   describe('single paragraph', () => {
-    it('insert character within a line', () => {
+    it('should insert character within a line', () => {
       const doc = new ToastMark('Hello World');
       const result = doc.editMarkdown([1, 6], [1, 6], ',')[0];
 
@@ -154,7 +154,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('remove entire text', () => {
+    it('should remove entire text', () => {
       const doc = new ToastMark('Hello World');
       const result = doc.editMarkdown([1, 1], [1, 12], '')[0];
 
@@ -162,7 +162,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('remove preceding newline', () => {
+    it('should remove preceding newline', () => {
       const doc = new ToastMark('\nHello World');
       const result = doc.editMarkdown([1, 1], [2, 1], '')[0];
 
@@ -170,7 +170,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('remove last newline', () => {
+    it('should remove last newline', () => {
       const doc = new ToastMark('Hello World\n');
       const result = doc.editMarkdown([1, 12], [2, 1], '')[0];
 
@@ -178,7 +178,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('insert characters and newlines', () => {
+    it('should insert characters and newlines', () => {
       const doc = new ToastMark('Hello World');
       const result = doc.editMarkdown([1, 6], [1, 7], '!\n\nMy ')[0];
 
@@ -186,7 +186,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('replace multiline text with characters', () => {
+    it('should replace multiline text with characters', () => {
       const doc = new ToastMark('Hello\nMy\nWorld');
       const result = doc.editMarkdown([1, 5], [3, 3], 'ooo Wooo')[0];
 
@@ -194,7 +194,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('prepend characters', () => {
+    it('should prepend characters', () => {
       const doc = new ToastMark('Hello World');
       const result = doc.editMarkdown([1, 1], [1, 1], 'Hi, ')[0];
 
@@ -202,7 +202,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('append character', () => {
+    it('should append character', () => {
       const doc = new ToastMark('Hello World');
       const result = doc.editMarkdown([1, 12], [1, 12], '!!')[0];
 
@@ -210,7 +210,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('prepend newlines', () => {
+    it('should prepend newlines', () => {
       const doc = new ToastMark('Hello World');
       const result = doc.editMarkdown([1, 1], [1, 1], '\n\n\n')[0];
 
@@ -218,7 +218,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('prepend characters (unmatched position)', () => {
+    it('should prepend characters (unmatched position)', () => {
       const doc = new ToastMark('  Hello World');
       const result = doc.editMarkdown([1, 1], [1, 1], 'Hi,')[0];
 
@@ -226,7 +226,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('insert newlines into preceding empty line of first paragraph', () => {
+    it('should insert newlines into preceding empty line of first paragraph', () => {
       const doc = new ToastMark('\nHello World');
       const result = doc.editMarkdown([1, 1], [1, 1], '\n')[0];
 
@@ -234,7 +234,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('append characters with newline', () => {
+    it('should append characters with newline', () => {
       const doc = new ToastMark('Hello World\n');
       const result = doc.editMarkdown([2, 1], [2, 1], '\nHi')[0];
 
@@ -242,7 +242,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('remove lines with top blank line', () => {
+    it('should remove lines with top blank line', () => {
       const doc = new ToastMark('\n\nabove linebreak\n\nHello World');
       const result = doc.editMarkdown([1, 1], [5, 12], '')[0];
 
@@ -250,7 +250,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('parse the table with including prev line', () => {
+    it('should parse the table with including prev line', () => {
       const doc = new ToastMark('| a | b\n--| ---\n c');
       const result = doc.editMarkdown([3, 1], [3, 3], '|c|')[0];
 
@@ -260,7 +260,7 @@ describe('editText()', () => {
   });
 
   describe('multiple paragraph', () => {
-    it('insert paragraphs within multiple paragraphs', () => {
+    it('should insert paragraphs within multiple paragraphs', () => {
       const doc = new ToastMark('Hello\n\nMy\n\nWorld');
       const result = doc.editMarkdown([1, 6], [5, 1], ',\n\nMy ')[0];
 
@@ -268,7 +268,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('replace multiple paragraphs with a heading', () => {
+    it('should replace multiple paragraphs with a heading', () => {
       const doc = new ToastMark('Hello\n\nMy\n\nWorld');
       const result = doc.editMarkdown([1, 1], [5, 1], '# Hello ')[0];
 
@@ -276,7 +276,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('remove last block with newlines', () => {
+    it('should remove last block with newlines', () => {
       const doc = new ToastMark('Hello\n\nWorld\n');
       const result = doc.editMarkdown([3, 1], [4, 1], '')[0];
 
@@ -284,7 +284,7 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('insert a characters in between paragraphs', () => {
+    it('should insert a characters in between paragraphs', () => {
       const doc = new ToastMark('Hello\n\nWorld');
       const result = doc.editMarkdown([2, 1], [2, 1], 'My')[0];
 
@@ -300,11 +300,19 @@ describe('editText()', () => {
       assertResultNodes(doc, result.nodes);
     });
 
-    it('update to fenced code blocks to the end of the document', () => {
+    it('should update to fenced code blocks to the end of the document', () => {
       const doc = new ToastMark('``\nHello\n\nMy World');
       const result = doc.editMarkdown([1, 3], [1, 3], '`')[0];
 
       assertParseResult(doc, ['```', 'Hello', '', 'My World']);
+      assertResultNodes(doc, result.nodes);
+    });
+
+    it('should update to custom block to the end of the document', () => {
+      const doc = new ToastMark('$\nHello\n\nMy World');
+      const result = doc.editMarkdown([1, 2], [1, 2], '$custom')[0];
+
+      assertParseResult(doc, ['$$custom', 'Hello', '', 'My World']);
       assertResultNodes(doc, result.nodes);
     });
   });

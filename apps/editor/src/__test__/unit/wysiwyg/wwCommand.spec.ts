@@ -6,6 +6,9 @@ import WysiwygEditor from '@/wysiwyg/wwEditor';
 import EventEmitter from '@/event/eventEmitter';
 import CommandManager from '@/commands/commandManager';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
+import { cls } from '@/utils/dom';
+
+const CODE_BLOCK_CLS = cls('ww-code-block');
 
 describe('wysiwyg commands', () => {
   let wwe: WysiwygEditor, em: EventEmitter, cmd: CommandManager;
@@ -167,7 +170,7 @@ describe('wysiwyg commands', () => {
       cmd.exec('codeBlock');
 
       expect(wwe.getHTML()).toBe(oneLineTrim`
-        <div data-language="text" class="toastui-editor-ww-code-block">
+        <div data-language="text" class="${CODE_BLOCK_CLS}">
           <pre>
             <code><br></code>
           </pre>
@@ -182,7 +185,7 @@ describe('wysiwyg commands', () => {
       cmd.exec('codeBlock');
 
       expect(wwe.getHTML()).toBe(oneLineTrim`
-        <div data-language="text" class="toastui-editor-ww-code-block">
+        <div data-language="text" class="${CODE_BLOCK_CLS}">
           <pre>
             <code>foo</code>
           </pre>
