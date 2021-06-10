@@ -81,12 +81,12 @@ describe('italic command', () => {
   });
 
   it('should remove italic syntax', () => {
-    mde.setMarkdown('*italic*');
-    mde.setSelection([1, 2], [1, 8]);
+    mde.setMarkdown('ab*italic*cd');
+    mde.setSelection([1, 4], [1, 10]);
 
     cmd.exec('italic');
 
-    expect(getTextContent(mde)).toBe('italic');
+    expect(getTextContent(mde)).toBe('abitaliccd');
   });
 
   it('should remove italic syntax with empty text', () => {

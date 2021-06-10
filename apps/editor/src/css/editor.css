@@ -470,7 +470,8 @@
   left: 0;
 }
 
-.toastui-editor-popup-body input.wrong {
+.toastui-editor-popup-body input.wrong,
+.toastui-editor-popup-body span.wrong {
   border-color: #fa2828;
 }
 

@@ -6,11 +6,7 @@ import { resolveSelectionPos } from './pos';
 type ConditionFn = (text: string) => boolean;
 type Condition = RegExp | ConditionFn;
 
-export function toggleMark(
-  condition: Condition,
-  syntax: string,
-  extensionRange?: number
-): EditorCommand {
+export function toggleMark(condition: Condition, syntax: string): EditorCommand {
   return () => ({ tr, selection }, dispatch) => {
     const conditionFn: ConditionFn = !isFunction(condition)
       ? (text) => condition.test(text)
@@ -18,11 +14,9 @@ export function toggleMark(
     const syntaxLen = syntax.length;
     const { doc } = tr;
 
-    extensionRange = extensionRange ?? syntaxLen;
-
     const [from, to] = resolveSelectionPos(selection);
-    const prevPos = Math.max(from - extensionRange, 1);
-    const nextPos = Math.min(to + extensionRange, doc.content.size - 1);
+    const prevPos = Math.max(from - syntaxLen, 1);
+    const nextPos = Math.min(to + syntaxLen, doc.content.size - 1);
     const slice = selection.content();
 
     let textContent = slice.content.textBetween(0, slice.content.size, '\n');
