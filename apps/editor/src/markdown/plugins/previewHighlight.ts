@@ -69,6 +69,7 @@ export function previewHighlight({ toastMark, eventEmitter }: MdContext) {
             mdNode,
             toolbarState,
           });
+          eventEmitter.emit('setFocusedNode', mdNode);
         },
       };
     },

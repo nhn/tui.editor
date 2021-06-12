@@ -1,7 +1,7 @@
 import { Schema, Node, NodeType, Mark, MarkType, DOMParser } from 'prosemirror-model';
 import { MdNode } from '@toast-ui/toastmark';
 
-import { ToWwConvertorMap, StackItem, Attrs } from '@t/convertor';
+import { ToWwConvertorMap, StackItem, Attrs, FocusedNodeInfo } from '@t/convertor';
 import { last } from '@/utils/common';
 import { isContainer, getChildrenText } from '@/utils/markdown';
 
@@ -96,7 +96,7 @@ export default class ToWwConvertorState {
     doc.content.forEach((node) => this.push(node));
   }
 
-  private convert(mdNode: MdNode) {
+  private convert(mdNode: MdNode, focusedNodeInfo?: FocusedNodeInfo) {
     const walker = mdNode.walker();
     let event = walker.next();
 
@@ -118,6 +118,18 @@ export default class ToWwConvertorState {
         };
 
         convertor(this, node, context);
+
+        if (focusedNodeInfo?.node === node) {
+          const pos =
+            this.stack.reduce(
+              (nodeSize, stackItem) =>
+                nodeSize +
+                stackItem.content.reduce((contentSize, pmNode) => contentSize + pmNode.nodeSize, 0),
+              0
+            ) + 1;
+
+          focusedNodeInfo.setFocusedPos(pos);
+        }
       }
 
       if (skipped) {
@@ -129,8 +141,8 @@ export default class ToWwConvertorState {
     }
   }
 
-  convertNode(mdNode: MdNode) {
-    this.convert(mdNode);
+  convertNode(mdNode: MdNode, focusedNodeInfo: FocusedNodeInfo) {
+    this.convert(mdNode, focusedNodeInfo);
 
     if (this.stack.length) {
       return this.closeNode();

@@ -154,6 +154,7 @@ export default class WysiwygEditor extends EditorBase {
 
         this.view.updateState(state);
         this.emitChangeEvent(tr.scrollIntoView());
+        this.eventEmitter.emit('setFocusedNode', state.selection.$from.node(1));
       },
       transformPastedHTML: changePastedHTML,
       transformPasted: (slice: Slice) => changePastedSlice(slice, this.schema),
@@ -258,11 +259,11 @@ export default class WysiwygEditor extends EditorBase {
     }
   }
 
-  setSelection(start: number, end: number) {
+  setSelection(start: number, end = start) {
     const { tr } = this.view.state;
     const selection = createTextSelection(tr, start, end);
 
-    this.view.dispatch(tr.setSelection(selection));
+    this.view.dispatch(tr.setSelection(selection).scrollIntoView());
   }
 
   addWidget(node: Node, style: WidgetStyle, pos?: number) {
