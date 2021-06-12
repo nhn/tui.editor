@@ -186,7 +186,7 @@ export class EditorCore {
 
   insertText(text: string): void;
 
-  setSelection(start: EditorPos, end: EditorPos): void;
+  setSelection(start: EditorPos, end?: EditorPos): void;
 
   replaceSelection(text: string, start?: EditorPos, end?: EditorPos): void;
 
@@ -305,7 +305,7 @@ export interface Base {
 
   getElement(): HTMLElement;
 
-  setSelection(start: EditorPos, end: EditorPos): void;
+  setSelection(start: EditorPos, end?: EditorPos): void;
 
   replaceWithWidget(start: EditorPos, end: EditorPos, text: string): void;
 

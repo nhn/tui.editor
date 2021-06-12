@@ -1,5 +1,5 @@
 import { NodeType, MarkType, Schema, Node as ProsemirrorNode, Mark } from 'prosemirror-model';
-import { MdNode, MdNodeType, RendererOptions, HTMLToken } from '@toast-ui/toastmark';
+import { MdNode, MdNodeType, RendererOptions, HTMLToken, MdPos } from '@toast-ui/toastmark';
 import { WwNodeType, WwMarkType } from './wysiwyg';
 
 export type Attrs = { [name: string]: any } | null;
@@ -20,7 +20,7 @@ export interface ToWwConvertorState {
   addNode(type: NodeType, attrs?: Attrs, content?: ProsemirrorNode[]): ProsemirrorNode | null;
   openNode(type: NodeType, attrs?: Attrs): void;
   closeNode(): ProsemirrorNode | null;
-  convertNode(mdNode: MdNode): ProsemirrorNode | null;
+  convertNode(mdNode: MdNode, focusedNodeInfo: FocusedNodeInfo): ProsemirrorNode | null;
   convertByDOMParser(root: HTMLElement): void;
 }
 
@@ -51,11 +51,16 @@ export interface ToMdConvertorState {
   write(content?: string): void;
   closeBlock(node: ProsemirrorNode): void;
   text(text: string, escaped?: boolean): void;
-  convertBlock(node: ProsemirrorNode, parent: ProsemirrorNode, index: number): void;
+  convertBlock(
+    node: ProsemirrorNode,
+    parent: ProsemirrorNode,
+    index: number,
+    focusedNodeInfo?: FocusedNodeInfo
+  ): void;
   convertInline(parent: ProsemirrorNode): void;
   convertList(node: ProsemirrorNode, delim: string, firstDelimFn: FirstDelimFn): void;
   convertTableCell(node: ProsemirrorNode): void;
-  convertNode(parent: ProsemirrorNode): string;
+  convertNode(parent: ProsemirrorNode, focusedNodeInfo?: FocusedNodeInfo): string;
 }
 
 export interface ToDOMAdaptor {
@@ -132,4 +137,9 @@ export type ToMdConvertorMap = Partial<Record<WwNodeType | MdNodeType, ToMdConve
 export interface ToMdConvertors {
   nodeTypeConvertors: ToMdNodeTypeConvertorMap;
   markTypeConvertors: ToMdMarkTypeConvertorMap;
+}
+
+export interface FocusedNodeInfo {
+  node: MdNode | ProsemirrorNode;
+  setFocusedPos: (pos: MdPos | number) => void;
 }
