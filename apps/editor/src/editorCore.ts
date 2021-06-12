@@ -693,13 +693,14 @@ class ToastUIEditor {
     if (!withoutFocus) {
       const pos = this.convertor.getFocusedPos();
 
+      this.focus();
+
       if (this.isWysiwygMode() && isNumber(pos)) {
         this.wwEditor.setSelection(pos);
       } else if (Array.isArray(pos)) {
         this.mdEditor.setSelection(pos);
       }
       this.convertor.resetFocusedNodeInfo();
-      this.focus();
     }
   }
 
