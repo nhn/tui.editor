@@ -33,7 +33,7 @@ import Viewer from './viewer';
 import i18n, { I18n } from './i18n/i18n';
 import { getPluginInfo } from './helper/plugin';
 
-import { MdPos, ToastMark } from '@toast-ui/toastmark';
+import { ToastMark } from '@toast-ui/toastmark';
 import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
 import { ScrollSync } from './markdown/scroll/scrollSync';
 import { addDefaultImageBlobHook } from './helper/image';
