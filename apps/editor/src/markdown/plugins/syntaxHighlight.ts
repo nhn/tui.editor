@@ -8,8 +8,15 @@ import { getStartPosListPerLine, getWidgetNodePos } from '@/markdown/helper/pos'
 import { getMarkInfo, MarkInfo } from './helper/markInfo';
 
 interface CodeBlockPos {
-  codeStart: MdPos;
-  codeEnd: MdPos;
+  codeStart: number;
+  codeEnd: number;
+}
+
+interface BlockPosInfo {
+  from: number;
+  to: number;
+  startIndex: number;
+  endIndex: number;
 }
 
 let removingBackgroundIndexMap: Record<number, boolean> = {};
@@ -62,6 +69,31 @@ export function syntaxHighlight({ schema, toastMark }: MdContext) {
   });
 }
 
+function isDifferentBlock(doc: ProsemirrorNode, index: number, attrs: Record<string, any>) {
+  return Object.keys(attrs).some((name) => attrs[name] !== doc.child(index).attrs[name]);
+}
+
+function addLineBackground(
+  tr: Transaction,
+  doc: ProsemirrorNode,
+  paragraph: NodeType,
+  blockPosInfo: BlockPosInfo,
+  attrs: Record<string, any> = {}
+) {
+  const { startIndex, endIndex, from, to } = blockPosInfo;
+  let shouldChangeBlockType = false;
+
+  for (let i = startIndex; i <= endIndex; i += 1) {
+    // prevent to remove background of the node that need to have background
+    delete removingBackgroundIndexMap[i];
+    shouldChangeBlockType = isDifferentBlock(doc, i, attrs);
+  }
+
+  if (shouldChangeBlockType) {
+    tr.setBlockType(from, to, paragraph, attrs);
+  }
+}
+
 function appendMarkTr(tr: Transaction, schema: Schema, marks: MarkInfo[]) {
   const { doc } = tr;
   const { paragraph } = schema.nodes;
@@ -85,11 +117,9 @@ function appendMarkTr(tr: Transaction, schema: Schema, marks: MarkInfo[]) {
 
     if (spec) {
       if (lineBackground) {
-        // prevent to remove background of the node that need to have background
-        for (let i = startIndex; i <= endIndex; i += 1) {
-          delete removingBackgroundIndexMap[i];
-        }
-        tr.setBlockType(from, to, paragraph, spec.attrs);
+        const posInfo = { from, to, startIndex, endIndex };
+
+        addLineBackground(tr, doc, paragraph, posInfo, spec.attrs);
       } else {
         tr.addMark(from, to, schema.mark(spec.type!, spec.attrs));
       }
@@ -130,15 +160,16 @@ function cacheIndexToRemoveBackground(doc: ProsemirrorNode, start: MdPos, end: M
 
   for (let i = start[0] - 1; i < end[0]; i += 1) {
     const node = doc.child(i);
-    const { codeStart, codeEnd } = node.attrs as CodeBlockPos;
+    // eslint-disable-next-line prefer-const
+    let { codeStart, codeEnd } = node.attrs as CodeBlockPos;
 
-    if (codeStart && codeEnd && !includes(skipLines, codeStart[0])) {
-      skipLines.push(codeStart[0]);
-      codeEnd[0] = Math.min(codeEnd[0], doc.childCount);
+    if (codeStart && codeEnd && !includes(skipLines, codeStart)) {
+      skipLines.push(codeStart);
+      codeEnd = Math.min(codeEnd, doc.childCount);
 
       // should subtract '1' to markdown line position
       // because markdown parser has '1'(not zero) as the start number
-      const startIndex = codeStart[0] - 1;
+      const startIndex = codeStart - 1;
       const [endIndex] = end;
 
       for (let index = startIndex; index < endIndex; index += 1) {
