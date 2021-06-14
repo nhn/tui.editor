@@ -259,11 +259,11 @@ export default class MdEditor extends EditorBase {
     return changed;
   }
 
-  setSelection(start: MdPos, end: MdPos) {
+  setSelection(start: MdPos, end = start) {
     const { tr } = this.view.state;
     const [from, to] = getMdToEditorPos(tr.doc, start, end);
 
-    this.view.dispatch(tr.setSelection(createTextSelection(tr, from, to)));
+    this.view.dispatch(tr.setSelection(createTextSelection(tr, from, to)).scrollIntoView());
   }
 
   replaceSelection(text: string, start?: MdPos, end?: MdPos) {

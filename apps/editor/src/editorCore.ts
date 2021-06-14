@@ -5,6 +5,7 @@ import css from 'tui-code-snippet/domUtil/css';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import isString from 'tui-code-snippet/type/isString';
+import isNumber from 'tui-code-snippet/type/isNumber';
 
 import { Emitter, Handler } from '@t/event';
 import {
@@ -282,7 +283,7 @@ class ToastUIEditor {
     this.eventEmitter.emit('load', this);
     // prevent the error for IE11
     setTimeout(() => {
-      this.focus();
+      this.moveCursorToStart();
     });
   }
 
@@ -503,7 +504,7 @@ class ToastUIEditor {
    * @param {number|Array.<number>} start - start position
    * @param {number|Array.<number>} end - end position
    */
-  setSelection(start: EditorPos, end: EditorPos) {
+  setSelection(start: EditorPos, end?: EditorPos) {
     this.getCurrentModeEditor().setSelection(start, end);
   }
 
@@ -690,7 +691,16 @@ class ToastUIEditor {
     this.eventEmitter.emit('changeMode', mode);
 
     if (!withoutFocus) {
+      const pos = this.convertor.getFocusedPos();
+
       this.focus();
+
+      if (this.isWysiwygMode() && isNumber(pos)) {
+        this.wwEditor.setSelection(pos);
+      } else if (Array.isArray(pos)) {
+        this.mdEditor.setSelection(pos);
+      }
+      this.convertor.resetFocusedNodeInfo();
     }
   }
 
