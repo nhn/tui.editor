@@ -1,9 +1,8 @@
-import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import type { Command } from 'prosemirror-commands';
+import type { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
 import { splitListItem } from '@/wysiwyg/command/list';
-
-import { EditorCommand } from '@t/spec';
 
 export class ListItem extends NodeSchema {
   get name() {
@@ -59,13 +58,44 @@ export class ListItem extends NodeSchema {
     };
   }
 
-  commands(): EditorCommand {
-    return () => (state, dispatch) => splitListItem(state.schema.nodes.listItem)(state, dispatch);
+  private liftToPrevListItem(): Command {
+    return (state, dispatch) => {
+      const { selection, tr, schema } = state;
+      const { $from, empty } = selection;
+      const { listItem } = schema.nodes;
+      const { parent } = $from;
+      const listItemParent = $from.node(-1);
+
+      if (empty && !parent.childCount && listItemParent.type === listItem) {
+        // move to previous sibling list item when the current list item is not top list item
+        if ($from.index(-2) >= 1) {
+          // should subtract '1' for considering tag length(<li>)
+          tr.delete($from.start(-1) - 1, $from.end(-1));
+          dispatch!(tr);
+          return true;
+        }
+
+        const grandParentListItem = $from.node(-3);
+
+        // move to parent list item when the current list item is top list item
+        if (grandParentListItem.type === listItem) {
+          // should subtract '1' for considering tag length(<ul>)
+          tr.delete($from.start(-2) - 1, $from.end(-1));
+          dispatch!(tr);
+          return true;
+        }
+      }
+      return false;
+    };
   }
 
   keymaps() {
+    const split: Command = (state, dispatch) =>
+      splitListItem(state.schema.nodes.listItem)(state, dispatch);
+
     return {
-      Enter: this.commands()(),
+      Backspace: this.liftToPrevListItem(),
+      Enter: split,
     };
   }
 }

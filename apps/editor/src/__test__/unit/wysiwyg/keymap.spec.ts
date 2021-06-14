@@ -1,6 +1,12 @@
 import { oneLineTrim } from 'common-tags';
 
 import { DOMParser } from 'prosemirror-model';
+import {
+  chainCommands,
+  deleteSelection,
+  joinBackward,
+  selectNodeBackward,
+} from 'prosemirror-commands';
 
 import WysiwygEditor from '@/wysiwyg/wwEditor';
 import EventEmitter from '@/event/eventEmitter';
@@ -436,6 +442,67 @@ describe('keymap', () => {
 
         expect(wwe.getHTML()).toBe(expected);
       });
+    });
+  });
+
+  describe('list item', () => {
+    function forceBackspaceKeymap() {
+      const { view } = wwe;
+      const { state, dispatch } = view;
+
+      chainCommands(deleteSelection, joinBackward, selectNodeBackward)(state, dispatch, view);
+    }
+
+    it('should remove list item and lift up to previous list item by backspace keymap ', () => {
+      html = oneLineTrim`
+        <ul>
+          <li>item1</li>
+          <li></li>
+        </ul>
+      `;
+
+      setContent(html);
+      wwe.setSelection(9, 10); // in second list item
+
+      forceBackspaceKeymap();
+      forceKeymapFn('listItem', 'liftToPrevListItem');
+
+      const expected = oneLineTrim`
+        <ul>
+          <li><p>item1</p></li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should remove list item and lift up to parent list item by backspace keymap ', () => {
+      html = oneLineTrim`
+        <ul>
+          <li>item1</li>
+          <li>
+            item2
+            <ul>
+              <li></li>
+            </ul>
+          </li>
+        </ul>
+      `;
+
+      setContent(html);
+      wwe.setSelection(19, 20); // in nested last child list item
+
+      forceBackspaceKeymap();
+      forceKeymapFn('listItem', 'liftToPrevListItem');
+
+      const expected = oneLineTrim`
+        <ul>
+          <li><p>item1</p></li>
+          <li><p>item2</p></li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
     });
   });
 });
