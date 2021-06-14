@@ -4,7 +4,7 @@
 
 [![npm version](https://img.shields.io/npm/v/@toast-ui/editor-plugin-uml.svg)](https://www.npmjs.com/package/@toast-ui/editor-plugin-uml)
 
-![uml](https://user-images.githubusercontent.com/18183560/76829637-f5eb1a80-6866-11ea-95cf-99e07c92031d.png)
+![uml](https://user-images.githubusercontent.com/37766175/121813437-01fe9b80-cca7-11eb-966b-598333c8ec14.png)
 
 ## 🚩 Table of Contents
 
@@ -40,7 +40,7 @@ The bundle files include all dependencies of this plugin.
 
 To use the plugin, [`@toast-ui/editor`](https://github.com/nhn/tui.editor/tree/master/apps/editor) must be installed.
 
-> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
+> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/docs/getting-started.md)
 
 ### Install
 
