@@ -453,7 +453,7 @@ describe('keymap', () => {
       chainCommands(deleteSelection, joinBackward, selectNodeBackward)(state, dispatch, view);
     }
 
-    it('should remove list item and lift up to previous list item by backspcae keymap ', () => {
+    it('should remove list item and lift up to previous list item by backspace keymap ', () => {
       html = oneLineTrim`
         <ul>
           <li>item1</li>
@@ -476,7 +476,7 @@ describe('keymap', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
 
-    it('should remove list item and lift up to parent list item by backspcae keymap ', () => {
+    it('should remove list item and lift up to parent list item by backspace keymap ', () => {
       html = oneLineTrim`
         <ul>
           <li>item1</li>
