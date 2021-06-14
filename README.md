@@ -105,10 +105,10 @@ You can merge columns of the table header and body area.
 
 * [Basic](https://nhn.github.io/tui.editor/latest/tutorial-example01-editor-basic)
 * [Viewer](https://nhn.github.io/tui.editor/latest/tutorial-example04-viewer)
-* [Using All Plugins](https://nhn.github.io/tui.editor/latest/tutorial-example15-editor-with-all-plugins)
-* [Creating the User's Plugin](https://nhn.github.io/tui.editor/latest/tutorial-example17-creating-plugin)
-* [Customizing the Toobar Buttons](https://nhn.github.io/tui.editor/latest/tutorial-example19-customizing-toolbar-buttons)
-* [Internationalization (i18n)](https://nhn.github.io/tui.editor/latest/tutorial-example20-i18n)
+* [Using All Plugins](https://nhn.github.io/tui.editor/latest/tutorial-example12-editor-with-all-plugins)
+* [Creating the User's Plugin](https://nhn.github.io/tui.editor/latest/tutorial-example13-creating-plugin)
+* [Customizing the Toobar Buttons](https://nhn.github.io/tui.editor/latest/tutorial-example15-customizing-toolbar-buttons)
+* [Internationalization (i18n)](https://nhn.github.io/tui.editor/latest/tutorial-example16-i18n)
 
 Here are more [examples](https://nhn.github.io/tui.editor/latest/tutorial-example01-editor-basic) and play with TOAST UI Editor!
 
@@ -126,13 +126,15 @@ TOAST UI products are open source, so you can create a pull request(PR) after yo
 
 ### Setup
 
-Fork `master` branch into your personal repository. Clone it to local computer. Install node modules. Before starting development, you should check to haveany errors.
+Fork `main` branch into your personal repository. Clone it to local computer. Install node modules. Before starting development, you should check to haveany errors.
 
 ```sh
 $ git clone https://github.com/{your-personal-repo}/tui.editor.git
 $ npm install
 $ npm run test editor
 ```
+
+> TOAST UI Editor uses [npm workspace](https://docs.npmjs.com/cli/v7/using-npm/workspaces/), so you need to set the environment based on [npm7](https://github.blog/2021-02-02-npm-7-is-now-generally-available/). If subversion is used, dependencies must be installed by moving direct paths per package.
 
 ### Develop
 
