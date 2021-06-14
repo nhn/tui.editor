@@ -10,7 +10,7 @@ assignees: ''
   To make it easier for us to help you, please include as much useful information as possible.
 
   Useful Links:
-  - tutorial: https://github.com/nhn/tui.editor/tree/master/docs
+  - tutorial: https://github.com/nhn/tui.editor/tree/main/docs
   - API/Example: https://nhn.github.io/tui.editor/latest/
 
   Before opening a new issue, please search existing issues https://github.com/nhn/tui.editor/issues

@@ -1,6 +1,6 @@
 # TOAST UI Editor : Code Syntax Highlight Plugin
 
-> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/master/apps/editor) to highlight code syntax.
+> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/main/apps/editor) to highlight code syntax.
 
 [![npm version](https://img.shields.io/npm/v/@toast-ui/editor-plugin-code-syntax-highlight.svg)](https://www.npmjs.com/package/@toast-ui/editor-plugin-code-syntax-highlight)
 
@@ -44,9 +44,9 @@
 
 ## 📦 Usage npm
 
-To use the plugin, [`@toast-ui/editor`](https://github.com/nhn/tui.editor/tree/master/apps/editor) must be installed.
+To use the plugin, [`@toast-ui/editor`](https://github.com/nhn/tui.editor/tree/main/apps/editor) must be installed.
 
-> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/docs/en/getting-started.md)
+> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/main/docs/en/getting-started.md)
 
 ### Install
 

@@ -1,4 +1,4 @@
-# Custom HTML Renderer
+# 🎨 Custom HTML Renderer
 
 TOAST UI Editor(이하 '에디터'라고 명시)는 마크다운 텍스트를 HTML 문자열로 변환하기 위해 `ToastMark`라는 자체 마크 다운 파서를 사용한다. `ToastMark`는 두 단계로 마크다운 텍스트를 변환한다.
 
@@ -198,7 +198,7 @@ World
 }
 ```
 
-AST를 구성하는 각 노드의 타입은 [이 코드](https://github.com/nhn/tui.editor/blob/master/libs/toastmark/src/commonmark/node.ts)에서 확인할 수 있다.
+AST를 구성하는 각 노드의 타입은 [이 코드](https://github.com/nhn/tui.editor/blob/main/libs/toastmark/src/commonmark/node.ts)에서 확인할 수 있다.
 
 ## Context
 
@@ -206,7 +206,7 @@ AST를 구성하는 각 노드의 타입은 [이 코드](https://github.com/nhn/
 
 ### entering
 
-에디터에서 [이 함수](https://github.com/nhn/tui.editor/blob/master/libs/toastmark/src/commonmark/node.ts#L38)에 정의된 노드 타입들은 AST의 순회 중 두 번씩 방문한다. 첫 번째는 해당 노드로 순회를 시작할 때 방문하며, 두 번째는 모든 자식 노드들을 순회한 후 방문한다. `context` 객체의 `entering` 프로퍼티를 사용하여 컨버팅 함수가 호출되는 시점을 알 수 있다.
+에디터에서 [이 함수](https://github.com/nhn/tui.editor/blob/main/libs/toastmark/src/commonmark/node.ts#L38)에 정의된 노드 타입들은 AST의 순회 중 두 번씩 방문한다. 첫 번째는 해당 노드로 순회를 시작할 때 방문하며, 두 번째는 모든 자식 노드들을 순회한 후 방문한다. `context` 객체의 `entering` 프로퍼티를 사용하여 컨버팅 함수가 호출되는 시점을 알 수 있다.
 
 다음 코드는 `entering` 프로퍼티를 사용하는 예시이다.
 
