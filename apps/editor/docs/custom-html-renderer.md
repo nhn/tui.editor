@@ -326,7 +326,7 @@ const editor = new Editor({
 
 ### getChildrenText()
 
-In a normal situation, a node doesn't need to care about it's children as their content will be handled by thier own convertor functions. However, sometimes a node needs to get the children content to set the value of it's attribute. For this use case, a `context` object provides the `getChildrenText()` function.
+In a normal situation, a node doesn't need to care about it's children as their content will be handled by their own convertor functions. However, sometimes a node needs to get the children content to set the value of it's attribute. For this use case, a `context` object provides the `getChildrenText()` function.
 
 For example, if a heading element wants to set it's `id` based on its children content, we can use the `getChildrenText()` function like the code below.
 
@@ -411,7 +411,7 @@ function codeBlock(node) {
 
 ### Controlling Newlines
 
-In a normal situation, we don't need to care about formatting of converted HTML string. However, as the ToastMark support [CommonMark Spec](https://spec.commonmark.org/0.29/), the renderer supports an option to controll new-lines to pass the [official test cases](https://spec.commonmark.org/0.29/spec.json).
+In a normal situation, we don't need to care about formatting of converted HTML string. However, as the ToastMark support [CommonMark Spec](https://spec.commonmark.org/0.29/), the renderer supports an option to control new-lines to pass the [official test cases](https://spec.commonmark.org/0.29/spec.json).
 
 The `outerNewline` and `innerNewline` property can be added to token objects to control white spaces. The following example will help you understand how to use these properties.
 
@@ -456,4 +456,4 @@ Hello
 World
 ```
 
-As you can see in the exmaple above, `outerNewLine` of `openTag` adds `\n` before the tag string, whereas one of `closeTag` adds `\n` after the tag string. In contrast, `innerNewLine` of `openTag` adds `\n` after the tag string, whereas one of `closeTag` adds `\n` before the tag string. In addition, consecutive newlines are merged into one newline to prevent duplication.
+As you can see in the example above, `outerNewLine` of `openTag` adds `\n` before the tag string, whereas one of `closeTag` adds `\n` after the tag string. In contrast, `innerNewLine` of `openTag` adds `\n` after the tag string, whereas one of `closeTag` adds `\n` before the tag string. In addition, consecutive newlines are merged into one newline to prevent duplication.
