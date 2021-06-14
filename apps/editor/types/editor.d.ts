@@ -65,6 +65,7 @@ export interface ViewerOptions {
   customHTMLSanitizer?: Sanitizer;
   frontMatter?: boolean;
   usageStatistics?: boolean;
+  theme?: string;
 }
 
 export class Viewer {
