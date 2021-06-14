@@ -129,7 +129,9 @@ function lineBackground(parent: MdNode, start: MdPos, end: MdPos, prefix: string
   const defaultBackground = {
     start,
     end,
-    spec: { attrs: { className: `${prefix}-line-background`, codeStart: start, codeEnd: end } },
+    spec: {
+      attrs: { className: `${prefix}-line-background`, codeStart: start[0], codeEnd: end[0] },
+    },
     lineBackground: true,
   };
 
