@@ -151,6 +151,8 @@ interface Slots {
 export class EditorCore {
   constructor(options: EditorOptions);
 
+  public eventEmitter: Emitter;
+
   public static factory(options: EditorOptions): EditorCore | Viewer;
 
   public static setLanguage(code: string, data: Record<string, string>): void;

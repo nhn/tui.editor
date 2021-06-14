@@ -110,7 +110,7 @@ class ToastUIEditor {
 
   private scrollSync: ScrollSync;
 
-  protected eventEmitter: Emitter;
+  eventEmitter: Emitter;
 
   protected options: Required<EditorOptions>;
 
