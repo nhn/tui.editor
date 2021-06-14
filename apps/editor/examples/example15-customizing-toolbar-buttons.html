@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>15. Customizing Toolbar Buttons</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/cdn/toastui-editor.css" />
+    <!-- Customizing Button's Style in Example -->
+    <style type="text/css">
+      .toastui-editor-defaultUI button.first {
+        color: red;
+      }
+
+      .toastui-editor-defaultUI button.last {
+        color: orange;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="tui-doc-description">
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+    </div>
+    <div class="code-html tui-doc-contents">
+      <div id="editor"></div>
+    </div>
+    <!-- Added to check demo page in Internet Explorer -->
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <!-- Editor -->
+    <script src="../dist/cdn/toastui-editor-all.js"></script>
+    <script type="text/babel" class="code-js">
+      function createLastButton() {
+        const button = document.createElement('button');
+
+        button.className = 'toastui-editor-toolbar-icons last';
+        button.style.backgroundImage = 'none';
+        button.style.margin = '0';
+        button.innerHTML = `<i>B</i>`;
+        button.addEventListener('click', () => {
+          editor.exec('bold');
+        });
+
+        return button;
+      }
+
+      const editor = new toastui.Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: 'The first and last buttons are customized.',
+        toolbarItems: [
+          ['heading', 'bold', 'italic', 'strike'],
+          ['hr', 'quote'],
+          ['ul', 'ol', 'task', 'indent', 'outdent'],
+          ['table', 'image', 'link'],
+          ['code', 'codeblock'],
+          // Using Option: Customize the last button
+          [{
+            el: createLastButton(),
+            command: 'bold',
+            tooltip: 'Custom Bold'
+          }]
+        ]
+      });
+
+      editor.getDefaultUI().insertToolbarItem({ groupIndex: 0, itemIndex: 0 }, {
+        name: 'myItem',
+        tooltip: 'Custom Button',
+        command: 'bold',
+        text: '@',
+        className: 'toastui-editor-toolbar-icons first',
+        style: { backgroundImage: 'none' }
+      });
+    </script>
+  </body>
+</html>

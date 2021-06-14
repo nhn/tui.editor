@@ -2,30 +2,19 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8" />
-    <title>11. Editor with Table Merged Cell Plugin</title>
+    <title>6. Editor with Dark Theme</title>
     <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
-    <!-- Editor's Dependencies -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css"
-    />
     <!-- Editor -->
     <link rel="stylesheet" href="../dist/cdn/toastui-editor.css" />
+    <!-- Dark theme -->
+    <link rel="stylesheet" href="../dist/cdn/theme/toastui-editor-dark.css" />
   </head>
-  <body>
+  <body style="background: #111">
     <div class="tui-doc-description">
       <strong
         >The example code can be slower than your environment because the code is transpiled by
         babel-standalone in runtime.</strong
       >
-      <br />
-      You can see the tutorial
-      <a
-        href="https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/plugins.md"
-        rel="noopener noreferrer"
-        target="_blank"
-        >here</a
-      >.
     </div>
     <div class="code-html tui-doc-contents">
       <!-- Editor -->
@@ -37,29 +26,26 @@
     </div>
     <!-- Added to check demo page in Internet Explorer -->
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
-    <script src="./data/md-plugins.js"></script>
+    <script src="./data/md-default.js"></script>
     <!-- Editor -->
     <script src="../dist/cdn/toastui-editor-all.js"></script>
-    <!-- Editor's Plugin -->
-    <script src="https://uicdn.toast.com/editor-plugin-table-merged-cell/1.1.1/toastui-editor-plugin-table-merged-cell.min.js"></script>
     <script type="text/babel" class="code-js">
       const { Editor } = toastui;
-      const { tableMergedCell } = Editor.plugin;
 
       const editor = new Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
-        initialValue: tableContent,
-        plugins: [tableMergedCell]
+        initialValue: content,
+        theme: 'dark'
       });
 
       const viewer = Editor.factory({
         el: document.querySelector('#viewer'),
         viewer: true,
         height: '500px',
-        initialValue: tableContent,
-        plugins: [tableMergedCell]
+        initialValue: content,
+        theme: 'dark'
       });
     </script>
   </body>
