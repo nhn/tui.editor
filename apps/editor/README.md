@@ -27,7 +27,7 @@ const editor = new Editor(options);
 
 ## 📙 Documents
 
-- [Getting Started](https://github.com/nhn/tui.editor/blob/master/docs/getting-started.md)
+- [Getting Started](https://github.com/nhn/tui.editor/blob/master/docs/en/getting-started.md)
 - [APIs](https://nhn.github.io/tui.editor/latest/)
 - v3.0 Migration Guide
   - [English](https://github.com/nhn/tui.editor/blob/master/docs/v3.0-migration-guide.md)

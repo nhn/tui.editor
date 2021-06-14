@@ -16,7 +16,7 @@ TOAST UI Editor (henceforth referred to as 'Editor') provides a plugin. Plugin i
 
 To use the plugin, you must first have [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/master/apps/editor) installed.
 
-> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
+> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/docs/en/getting-started.md)
 
 ### Install
 
