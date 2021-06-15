@@ -691,7 +691,7 @@ class ToastUIEditor {
     this.eventEmitter.emit('changeMode', mode);
 
     if (!withoutFocus) {
-      const pos = this.convertor.getFocusedPos();
+      const pos = this.convertor.getMappedPos();
 
       this.focus();
 
@@ -700,7 +700,6 @@ class ToastUIEditor {
       } else if (Array.isArray(pos)) {
         this.mdEditor.setSelection(pos);
       }
-      this.convertor.resetFocusedNodeInfo();
     }
   }
 
