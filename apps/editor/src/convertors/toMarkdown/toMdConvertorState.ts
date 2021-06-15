@@ -8,7 +8,7 @@ import {
   ToMdNodeTypeConvertorMap,
   ToMdMarkTypeConvertorMap,
   FirstDelimFn,
-  FocusedNodeInfo,
+  InfoForPosSync,
 } from '@t/convertor';
 
 export default class ToMdConvertorState {
@@ -334,14 +334,14 @@ export default class ToMdConvertorState {
     this.inTable = false;
   }
 
-  convertNode(parent: Node, focusedNodeInfo: FocusedNodeInfo) {
+  convertNode(parent: Node, infoForPosSync?: InfoForPosSync | null) {
     parent.forEach((node, _, index) => {
       this.convertBlock(node, parent, index);
 
-      if (focusedNodeInfo?.node === node) {
+      if (infoForPosSync?.node === node) {
         const lineTexts = this.result.split('\n');
 
-        focusedNodeInfo.setFocusedPos([lineTexts.length, last(lineTexts).length + 1]);
+        infoForPosSync.setMappedPos([lineTexts.length, last(lineTexts).length + 1]);
       }
     });
 

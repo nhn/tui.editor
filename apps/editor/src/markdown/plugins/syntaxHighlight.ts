@@ -160,8 +160,8 @@ function cacheIndexToRemoveBackground(doc: ProsemirrorNode, start: MdPos, end: M
 
   for (let i = start[0] - 1; i < end[0]; i += 1) {
     const node = doc.child(i);
-    // eslint-disable-next-line prefer-const
-    let { codeStart, codeEnd } = node.attrs as CodeBlockPos;
+    let { codeEnd } = node.attrs as CodeBlockPos;
+    const { codeStart } = node.attrs as CodeBlockPos;
 
     if (codeStart && codeEnd && !includes(skipLines, codeStart)) {
       skipLines.push(codeStart);

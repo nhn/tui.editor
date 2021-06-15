@@ -1,19 +1,24 @@
-import { source } from 'common-tags';
+import { source, stripIndent } from 'common-tags';
 import { Parser } from '../../blocks';
 import { Renderer } from '../../../html/renderer';
 
 const reader = new Parser({ frontMatter: true });
 const renderer = new Renderer();
 
-describe('front matter parsing', () => {
-  it('basic', () => {
-    const root = reader.parse('---\ntitle: front matter\n---');
+describe('front matter', () => {
+  it('should be parsed with YAML(`---`)', () => {
+    const frontMatterText = stripIndent`
+      ---
+      title: front matter
+      ---
+    `;
+    const root = reader.parse(frontMatterText);
 
     expect(root).toMatchObject({
       type: 'document',
       firstChild: {
         type: 'frontMatter',
-        literal: '---\ntitle: front matter\n---',
+        literal: frontMatterText,
         sourcepos: [
           [1, 1],
           [3, 3],
@@ -22,14 +27,65 @@ describe('front matter parsing', () => {
     });
   });
 
-  it('front matter includes empty line', () => {
-    const root = reader.parse('---\n\ntitle: front matter\n\ndescription: with empty line\n\n---');
+  it('should be parsed with TOML(`+++`)', () => {
+    const frontMatterText = stripIndent`
+      +++
+      title: front matter
+      +++
+    `;
+    const root = reader.parse(frontMatterText);
 
     expect(root).toMatchObject({
       type: 'document',
       firstChild: {
         type: 'frontMatter',
-        literal: '---\n\ntitle: front matter\n\ndescription: with empty line\n\n---',
+        literal: frontMatterText,
+        sourcepos: [
+          [1, 1],
+          [3, 3],
+        ],
+      },
+    });
+  });
+
+  it('should be parsed with JSON(`;;;`)', () => {
+    const frontMatterText = stripIndent`
+      ;;;
+      title: front matter
+      ;;;
+    `;
+    const root = reader.parse(frontMatterText);
+
+    expect(root).toMatchObject({
+      type: 'document',
+      firstChild: {
+        type: 'frontMatter',
+        literal: frontMatterText,
+        sourcepos: [
+          [1, 1],
+          [3, 3],
+        ],
+      },
+    });
+  });
+
+  it('should be parsed with the empty line', () => {
+    const markdownText = stripIndent`
+      ---
+
+      title: front matter
+
+      description: with empty line
+
+      ---
+    `;
+    const root = reader.parse(markdownText);
+
+    expect(root).toMatchObject({
+      type: 'document',
+      firstChild: {
+        type: 'frontMatter',
+        literal: markdownText,
         sourcepos: [
           [1, 1],
           [7, 3],
@@ -38,23 +94,7 @@ describe('front matter parsing', () => {
     });
   });
 
-  it('top empty line with front matter', () => {
-    const root = reader.parse('\n---\ntitle: front matter\n---');
-
-    expect(root).toMatchObject({
-      type: 'document',
-      firstChild: {
-        type: 'frontMatter',
-        literal: '---\ntitle: front matter\n---',
-        sourcepos: [
-          [2, 1],
-          [4, 3],
-        ],
-      },
-    });
-  });
-
-  it('front matter with following paragraph', () => {
+  it('should be parsed with following paragraph', () => {
     const root = reader.parse('---\ntitle: front matter\n---\npara');
 
     expect(root).toMatchObject({
@@ -79,6 +119,40 @@ describe('front matter parsing', () => {
           sourcepos: [
             [4, 1],
             [4, 4],
+          ],
+        },
+      },
+    });
+  });
+
+  it('should be parsed only once from the top.', () => {
+    const frontMatterText = stripIndent`
+      ---
+
+      title: front matter
+
+      description: with empty line
+
+      ---
+    `;
+    const markdownText = `${frontMatterText}\n---`;
+    const root = reader.parse(markdownText);
+
+    expect(root).toMatchObject({
+      type: 'document',
+      firstChild: {
+        type: 'frontMatter',
+        literal: frontMatterText,
+        sourcepos: [
+          [1, 1],
+          [7, 3],
+        ],
+        next: {
+          type: 'thematicBreak',
+          literal: null,
+          sourcepos: [
+            [8, 1],
+            [8, 3],
           ],
         },
       },

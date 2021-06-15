@@ -139,7 +139,7 @@ export interface ToMdConvertors {
   markTypeConvertors: ToMdMarkTypeConvertorMap;
 }
 
-export interface FocusedNodeInfo {
-  node: MdNode | ProsemirrorNode;
-  setFocusedPos: (pos: MdPos | number) => void;
+export interface InfoForPosSync {
+  node: MdNode | ProsemirrorNode | null;
+  setMappedPos: (pos: MdPos | number) => void;
 }

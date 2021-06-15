@@ -10,11 +10,6 @@ import ToWwConvertorState from './toWysiwyg/toWwConvertorState';
 import { createMdConvertors } from './toMarkdown/toMdConvertors';
 import ToMdConvertorState from './toMarkdown/toMdConvertorState';
 
-interface FocusedNodeInfo {
-  node: ProsemirrorNode | MdNode;
-  pos: number | MdPos;
-}
-
 export default class Convertor {
   private readonly schema: Schema;
 
@@ -24,7 +19,9 @@ export default class Convertor {
 
   private readonly eventEmitter: Emitter;
 
-  private focusedNodeInfo: FocusedNodeInfo;
+  private focusedNode: ProsemirrorNode | MdNode | null;
+
+  private mappedPosWhenConverting: number | MdPos | null;
 
   constructor(
     schema: Schema,
@@ -34,41 +31,38 @@ export default class Convertor {
   ) {
     this.schema = schema;
     this.eventEmitter = eventEmitter;
-    this.focusedNodeInfo = {} as FocusedNodeInfo;
+    this.focusedNode = null;
+    this.mappedPosWhenConverting = null;
     this.toWwConvertors = createWwConvertors(toHTMLConvertors);
     this.toMdConvertors = createMdConvertors(toMdConvertors || {});
 
     this.eventEmitter.listen(
       'setFocusedNode',
-      (node: ProsemirrorNode | MdNode) => (this.focusedNodeInfo.node = node)
+      (node: ProsemirrorNode | MdNode) => (this.focusedNode = node)
     );
   }
 
-  resetFocusedNodeInfo() {
-    this.focusedNodeInfo = {} as FocusedNodeInfo;
+  getMappedPos() {
+    return this.mappedPosWhenConverting;
   }
 
-  getFocusedPos() {
-    return this.focusedNodeInfo.pos;
-  }
-
-  setFocusedPos = (pos: number | MdPos) => {
-    this.focusedNodeInfo.pos = pos;
+  setMappedPos = (pos: number | MdPos) => {
+    this.mappedPosWhenConverting = pos;
   };
 
-  private getFocusedInfo() {
-    return { node: this.focusedNodeInfo.node, setFocusedPos: this.setFocusedPos };
+  private getInfoForPosSync() {
+    return { node: this.focusedNode, setMappedPos: this.setMappedPos };
   }
 
   toWysiwygModel(mdNode: MdNode) {
     const state = new ToWwConvertorState(this.schema, this.toWwConvertors);
 
-    return state.convertNode(mdNode, this.getFocusedInfo());
+    return state.convertNode(mdNode, this.getInfoForPosSync());
   }
 
   toMarkdownText(wwNode: ProsemirrorNode) {
     const state = new ToMdConvertorState(this.toMdConvertors);
-    let markdownText = state.convertNode(wwNode, this.getFocusedInfo());
+    let markdownText = state.convertNode(wwNode, this.getInfoForPosSync());
 
     markdownText = this.eventEmitter.emitReduce('beforeConvertWysiwygToMarkdown', markdownText);
 
