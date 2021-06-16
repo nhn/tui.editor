@@ -14,7 +14,7 @@
     <!-- Editor's Plugin -->
     <link
       rel="stylesheet"
-      href="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/3.0.0/toastui-editor-plugin-code-syntax-highlight.min.css"
+      href="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/3.0.0-alpha.1/toastui-editor-plugin-code-syntax-highlight.min.css"
     />
   </head>
   <body>
@@ -42,12 +42,10 @@
     <!-- Added to check demo page in Internet Explorer -->
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
     <script src="./data/md-plugins.js"></script>
-    <!-- Prism.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
     <!-- Editor -->
     <script src="../dist/cdn/toastui-editor-all.js"></script>
     <!-- Editor's Plugin -->
-    <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/3.0.0/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/3.0.0-alpha.1/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
     <script type="text/babel" class="code-js">
       const { Editor } = toastui;
       const { codeSyntaxHighlight } = Editor.plugin;
@@ -65,7 +63,7 @@
         viewer: true,
         height: '500px',
         initialValue: codeContent,
-        plugins: [codeSyntaxHighlight]
+        plugins: [[codeSyntaxHighlight, { highlighter: Prism }]]
       });
     </script>
   </body>

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-var */
 var chartContent = [
-  '```chart',
+  '$$chart',
   ',category1,category2',
   'Jan,21,23',
   'Feb,31,17',
@@ -13,7 +13,7 @@ var chartContent = [
   'y.min: 1',
   'y.max: 40',
   'y.suffix: $',
-  '```',
+  '$$',
 ].join('\n');
 
 var codeContent = [
@@ -37,7 +37,7 @@ var codeContent = [
 var tableContent = ['| @cols=2:merged |', '| --- | --- |', '| table | table2 |'].join('\n');
 
 var umlContent = [
-  '```uml',
+  '$$uml',
   'partition Conductor {',
   '  (*) --> "Climbs on Platform"',
   '  --> === S1 ===',
@@ -58,7 +58,7 @@ var umlContent = [
   '  WavesArmes --> Introduction',
   '  --> "Play music"',
   '}',
-  '```',
+  '$$',
 ].join('\n');
 
 var allPluginsContent = [chartContent, codeContent, tableContent, umlContent].join('\n');
