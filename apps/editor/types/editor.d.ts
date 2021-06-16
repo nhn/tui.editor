@@ -241,7 +241,9 @@ export class EditorCore {
 }
 
 export class Editor extends EditorCore {
-  getDefaultUI(): DefaultUI;
+  insertToolbarItem({ groupIndex, itemIndex }: IndexList, item: string | ToolbarItemOptions): void;
+
+  removeToolbarItem(itemName: string): void;
 }
 
 export type SelectionPos = Sourcepos | [from: number, to: number];

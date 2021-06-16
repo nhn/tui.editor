@@ -5,7 +5,7 @@
       "linkUrl": "/"
     },
     "title": {
-      "text": "repo",
+      "text": "github",
       "linkUrl": "https://github.com/nhn/tui.editor"
     },
     "version": true
@@ -24,7 +24,11 @@
     "filePath": "README.md"
   },
   "api": {
-    "filePath": ["tmpdoc/src/editorCore.js"],
+    "filePath": [
+      "tmpdoc/editorCore.js",
+      "tmpdoc/editor.js",
+      "tmpdoc/viewer.js"
+    ],
     "permalink": false
   },
   "examples": {
@@ -36,17 +40,17 @@
       "example04-viewer": "4. Viewer",
       "example05-viewer-using-editor-factory": "5. Viewer Using Editor's Factory",
       "example06-dark-theme": "6. Editor with Dark Theme",
-      "example06-editor-with-chart-plugin": "7. Editor with Chart Plugin",
+      "example07-editor-with-chart-plugin": "7. Editor with Chart Plugin",
       "example08-editor-with-code-syntax-highlight-plugin": "8. Editor with Code Syntax Highlight Plugin",
-      "example10-editor-with-color-syntax-plugin": "9. Editor with Color Syntax Plugin",
-      "example11-editor-with-table-merged-cell-plugin": "10. Editor with Table Merged Cell Plugin",
-      "example13-editor-with-uml-plugin": "11. Editor with UML Plugin",
-      "example15-editor-with-all-plugins": "12. Editor with All Plugins",
-      "example17-creating-plugin": "13. Creating Plugin",
-      "example18-using-command": "14. Using Command",
-      "example19-customizing-toolbar-buttons": "15. Customizing Toolbar Buttons",
-      "example20-i18n": "16. Internationalization (i18n)",
-      "example21-placeholder": "17. Placeholder",
+      "example09-editor-with-color-syntax-plugin": "9. Editor with Color Syntax Plugin",
+      "example10-editor-with-table-merged-cell-plugin": "10. Editor with Table Merged Cell Plugin",
+      "example11-editor-with-uml-plugin": "11. Editor with UML Plugin",
+      "example12-editor-with-all-plugins": "12. Editor with All Plugins",
+      "example13-creating-plugin": "13. Creating Plugin",
+      "example14-using-command": "14. Using Command",
+      "example15-customizing-toolbar-buttons": "15. Customizing Toolbar Buttons",
+      "example16-i18n": "16. Internationalization (i18n)",
+      "example17-placeholder": "17. Placeholder"
     },
     "globalErrorLogVariable": true
   },

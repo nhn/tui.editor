@@ -44,7 +44,7 @@ import { createHTMLSchemaMap } from './wysiwyg/nodes/html';
 import { getHTMLRenderConvertors } from './markdown/htmlRenderConvertors';
 
 /**
- * ToastUI Editor
+ * ToastUIEditorCore
  * @param {Object} options Option object
  *     @param {HTMLElement} options.el - container element
  *     @param {string} [options.height='300px'] - Editor's height style value. Height is applied as border-box ex) '300px', '100%', 'auto'
@@ -83,7 +83,7 @@ import { getHTMLRenderConvertors } from './markdown/htmlRenderConvertors';
  *     @param {Array.<object>} [options.widgetRules=[]] - The rules for replacing the text with widget node
  *     @param {string} [options.theme] - The theme to style the editor with. The default is included in toastui-editor.css.
  */
-class ToastUIEditor {
+class ToastUIEditorCore {
   private initialHtml: string;
 
   private toastMark: ToastMark;
@@ -314,10 +314,10 @@ class ToastUIEditor {
   /**
    * Factory method for Editor
    * @param {object} options Option for initialize TUIEditor
-   * @returns {object} ToastUIEditor or ToastUIEditorViewer
+   * @returns {object} ToastUIEditorCore or ToastUIEditorViewer
    */
   static factory(options: (EditorOptions | ViewerOptions) & { viewer?: boolean }) {
-    return options.viewer ? new Viewer(options) : new ToastUIEditor(options as EditorOptions);
+    return options.viewer ? new Viewer(options) : new ToastUIEditorCore(options as EditorOptions);
   }
 
   /**
@@ -796,4 +796,4 @@ class ToastUIEditor {
 // // Create a function converting markdown to HTML using the internal parser and renderer.
 // ToastUIEditor._createMarkdownToHTML = createMarkdownToHTML;
 
-export default ToastUIEditor;
+export default ToastUIEditorCore;

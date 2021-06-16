@@ -67,7 +67,9 @@
     "test:types": "node ./scripts/pkg-script.js --script test:types --type $type",
     "serve": "node ./scripts/pkg-script.js --script serve --type $type",
     "serve:ie": "node ./scripts/pkg-script.js --script serve:ie --type $type",
-    "build": "node ./scripts/pkg-script.js --script build --type $type"
+    "build": "node ./scripts/pkg-script.js --script build --type $type",
+    "doc:dev": "node ./scripts/pkg-script.js --script doc:dev --type editor",
+    "doc": "node ./scripts/pkg-script.js --script doc --type editor"
   },
   "workspaces": [
     "apps/*",
