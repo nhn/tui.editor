@@ -40,7 +40,6 @@
     "mini-css-extract-plugin": "^1.3.9",
     "prettier": "^2.1.2",
     "snowpack": "^3.0.13",
-    "snowpack-plugin-rollup-bundle": "^0.4.4",
     "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^5.1.1",
     "ts-jest": "^26.5.3",
