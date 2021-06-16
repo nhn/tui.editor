@@ -14,7 +14,16 @@
     "gfm"
   ],
   "main": "dist/toastui-editor.js",
-  "module": "dist/esm/index.js",
+  "module": "dist/esm/",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.js",
+      "require": "./dist/toastui-editor.js"
+    },
+    "./viewer": {
+      "import": "./dist/esm/viewer.js"
+    }
+  },
   "types": "types/index.d.ts",
   "files": [
     "dist/*.js",
@@ -45,23 +54,24 @@
     "build:i18n": "cross-env webpack --config scripts/webpack.config.i18n.js && webpack --config scripts/webpack.config.i18n.js --env minify",
     "build:prod": "cross-env webpack build && webpack build --env minify && node tsBannerGenerator.js",
     "build": "npm run build:esm && npm run build:i18n && npm run build:prod",
-    "build:esm": "snowpack build --config=./snowpack.build.config.js && rm ./dist/esm/manifest.json",
+    "build:esm": "rollup -c",
     "note": "tui-note --tag=$(git describe --tags)",
     "doc:serve": "tuidoc --serv",
     "doc": "tuidoc"
   },
   "devDependencies": {
     "@toast-ui/release-notes": "^2.0.1",
-    "cross-env": "^6.0.3"
+    "cross-env": "^6.0.3",
+    "rollup": "2.52.0",
+    "@rollup/plugin-typescript": "8.2.1"
   },
   "dependencies": {
-    "htm": "^3.0.4",
-    "prosemirror-commands": "^1.1.4",
+    "prosemirror-commands": "^1.1.9",
     "prosemirror-history": "^1.1.3",
     "prosemirror-inputrules": "^1.1.3",
     "prosemirror-keymap": "^1.1.4",
-    "prosemirror-model": "^1.11.0",
-    "prosemirror-state": "^1.3.3",
-    "prosemirror-view": "^1.15.6"
+    "prosemirror-model": "^1.14.1",
+    "prosemirror-state": "^1.3.4",
+    "prosemirror-view": "^1.18.7"
   }
 }
