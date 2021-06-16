@@ -82,8 +82,8 @@ const editor = new Editor({
 | 이름 | 타입 | 설명 |
 | --- | --- | --- |
 | `body` | HTMLElement | 렌더링 될 팝업 DOM 노드를 정의한다. | 
-| `className` | string | 옵셔널 값이며, 툴바 요소에 적용할 class를 정의한다. | 
-| `style` | Object | 옵셔널 값이며, 툴바 요소에 적용할 style을 정의한다. | 
+| `className` | string | 옵셔널 값이며, 팝업 요소에 적용할 class를 정의한다. | 
+| `style` | Object | 옵셔널 값이며, 팝업 요소에 적용할 style을 정의한다. | 
 
 옵션으로 설정한 팝업 노드는 툴바를 클릭하였을 때 자동으로 화면에 나타나며, 다른 영역을 클릭했을 경우 자동으로 사라진다.
 
@@ -96,8 +96,8 @@ const button = createApplyButton(i18n.get('OK'));
 
 button.addEventListener('click', () => {
   // ...
-  editor.emit('command', 'color', { selectedColor });
-  editor.emit('closePopup');
+  eventEmitter.emit('command', 'color', { selectedColor });
+  eventEmitter.emit('closePopup');
 });
 
 container.appendChild(button);

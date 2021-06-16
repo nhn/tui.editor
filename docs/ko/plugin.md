@@ -76,7 +76,7 @@ CDN 디렉터리의 구조는 다음과 같다.
    │     ├─ latest/
    │     │    ├─ toastui-editor-plugin-${pluginName}.js
    │     │    └─ ...
-   │     ├─ 2.0.0/
+   │     ├─ 3.0.0/
    │     │    └─ ...
 ```
 
@@ -206,7 +206,7 @@ interface PluginInfo {
 
 **toMarkdownRenderers**
 
-`toMarkdownRenderers` 객체는 위지윅 에디터에서 마크다운 에디터로 컨버팅될 때 변환되는 마크다운 텍스트를 재정의할 수 있다. `toMarkdownRenderers` 객체에 정의하는 함수는 `nodeInfo`와 `context` 두 가지 인자를 받는다.
+`toMarkdownRenderers` 객체는 위지윅 에디터에서 마크다운 에디터로 컨버팅될 때 변환되는 마크다운 텍스트를 재정의할 수 있다. `toMarkdownRenderers` 객체에 정의하는 함수는 `nodeInfo`와 `context` 두 가지 매개변수를 가진다.
 
 * `nodeInfo`: 컨버팅 대상이 되는 위지윅 노드의 정보이다.
   * `node`: 대상 노드에 대한 정보가 담겨 있다.
@@ -275,7 +275,7 @@ return {
 
 플러그인에서는 `markdownCommands`, `wysiwygCommands` 옵션을 사용하여 마크다운, 위지윅 커맨드를 등록할 수 있다.
 
-각각의 커맨드 함수는 `payload`, `state`, `dispatch` 세 개의 인자를 받으며, 이를 사용하여 [Prosemirror](https://prosemirror.net/) 기반의 에디터 내부 동작을 제어할 수 있다.
+각각의 커맨드 함수는 `payload`, `state`, `dispatch` 세 개의 매개변수를 가지며, 이를 사용하여 [Prosemirror](https://prosemirror.net/) 기반의 에디터 내부 동작을 제어할 수 있다.
 
 * `payload`: 커맨드 실행할 때 필요한 `payload`이다.
 * `state`: 에디터의 내부 상태를 나타내는 인스턴스로 [prosemirror-state](https://prosemirror.net/docs/ref/#state)와 동일하다.
