@@ -89,8 +89,6 @@ The main bundle file of `Prism.js` contains just several language pack it suppor
 
 ```js
 // ...
-import Prism from 'prismjs';
-
 import Editor from '@toast-ui/editor';
 import codeSyntaxHighlight from '@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js';
 
@@ -198,8 +196,6 @@ By including the **all** version of the plugin, all languages ​​of `Prism.js
 </head>
 <body>
   ...
-  <!-- Prism.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
   <!-- Editor -->
   <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
   <!-- Editor's Plugin -->
