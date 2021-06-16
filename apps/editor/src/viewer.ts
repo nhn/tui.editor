@@ -10,7 +10,7 @@ import MarkdownPreview from './markdown/mdPreview';
 import { getPluginInfo } from './helper/plugin';
 import { last, sanitizeLinkAttribute } from './utils/common';
 import EventEmitter from './event/eventEmitter';
-import { isPositionInBox, toggleClass } from './utils/dom';
+import { cls, isPositionInBox, toggleClass } from './utils/dom';
 import { sanitizeHTML } from './sanitizer/htmlSanitizer';
 
 const TASK_ATTR_NAME = 'data-task';
@@ -35,6 +35,7 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
  *     @param {boolean} [options.referenceDefinition=false] - whether use the specification of link reference definition
  *     @param {function} [options.customHTMLSanitizer=null] - custom HTML sanitizer
  *     @param {boolean} [options.frontMatter=false] - whether use the front matter
+ *     @param {string} [options.theme] - The theme to style the viewer with. The default is included in toastui-editor.css.
  */
 class ToastUIEditorViewer {
   private options: Required<ViewerOptions>;
@@ -55,6 +56,7 @@ class ToastUIEditorViewer {
         customHTMLSanitizer: null,
         frontMatter: false,
         usageStatistics: true,
+        theme: 'light',
       },
       options
     );
@@ -86,9 +88,12 @@ class ToastUIEditorViewer {
       });
     }
 
-    const { el, initialValue } = this.options;
+    const { el, initialValue, theme } = this.options;
     const existingHTML = el.innerHTML;
 
+    if (theme !== 'light') {
+      el.classList.add(cls(theme));
+    }
     el.innerHTML = '';
 
     this.toastMark = new ToastMark('', {

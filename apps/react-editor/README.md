@@ -1,6 +1,6 @@
 # TOAST UI Editor for React
 
-> This is a [React](https://reactjs.org/) component wrapping [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/master/apps/editor).
+> This is a [React](https://reactjs.org/) component wrapping [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/main/apps/editor).
 
 [![npm version](https://img.shields.io/npm/v/@toast-ui/react-editor.svg)](https://www.npmjs.com/package/@toast-ui/react-editor)
 
@@ -33,12 +33,11 @@ npm install --save @toast-ui/react-editor
 
 ### Import
 
-You can use TOAST UI Editor for React as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `toastui-editor.css` from `@toast-ui/editor` and `codemirror.css` from `CodeMirror` in the script.
+You can use TOAST UI Editor for React as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `toastui-editor.css` from `@toast-ui/editor` in the script.
 
 - ES Modules
 
 ```js
-import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 
 import { Editor } from '@toast-ui/react-editor';
@@ -47,7 +46,6 @@ import { Editor } from '@toast-ui/react-editor';
 - CommonJS
 
 ```js
-require('codemirror/lib/codemirror.css');
 require('@toast-ui/editor/dist/toastui-editor.css');
 
 const { Editor } = require('@toast-ui/react-editor');
@@ -58,7 +56,6 @@ const { Editor } = require('@toast-ui/react-editor');
 [All the options of the TOAST UI Editor](https://nhn.github.io/tui.editor/latest/ToastUIEditor) are supported in the form of props.
 
 ```js
-import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 
 import { Editor } from '@toast-ui/react-editor';
@@ -79,7 +76,6 @@ const MyComponent = () => (
 For using [instance methods of TOAST UI Editor](https://nhn.github.io/tui.editor/latest/ToastUIEditor#addHook), first thing to do is creating Refs of wrapper component using [`createRef()`](https://reactjs.org/docs/refs-and-the-dom.html#creating-refs). But the wrapper component does not provide a way to call instance methods of TOAST UI Editor directly. Instead, you can call `getInstance()` method of the wrapper component to get the instance, and call the methods on it.
 
 ```js
-import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 
 import { Editor } from '@toast-ui/react-editor';
@@ -113,7 +109,6 @@ class MyComponent extends React.Component {
 An instance of the wrapper component also provides a handy method for getting the root element. If you want to manipulate the root element directly, you can call `getRootElement` to get the element.
 
 ```js
-import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 
 import { Editor } from '@toast-ui/react-editor';
@@ -147,7 +142,6 @@ class MyComponent extends React.Component {
 [All the events of TOAST UI Editor](https://nhn.github.io/tui.editor/latest/ToastUIEditor#focus) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `focus` event you can use `onFocus` prop like the example below.
 
 ```js
-import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 
 import { Editor } from '@toast-ui/react-editor';

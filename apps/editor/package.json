@@ -19,6 +19,7 @@
   "files": [
     "dist/*.js",
     "dist/*.css",
+    "dist/theme",
     "dist/esm",
     "dist/i18n",
     "types"

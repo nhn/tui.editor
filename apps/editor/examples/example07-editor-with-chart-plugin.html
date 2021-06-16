@@ -2,12 +2,12 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8" />
-    <title>7. Viewer with Chart Plugin</title>
+    <title>7. Editor with Chart Plugin</title>
     <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
-    <!-- Viewer -->
-    <link rel="stylesheet" href="../dist/cdn/toastui-editor-viewer.css" />
-    <!-- Editor's Plugin -->
-    <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/v3.7.0/tui-chart.css" />
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/cdn/toastui-editor.css" />
+    <!-- Chart -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/chart/v4.3.4/toastui-chart.css" />
   </head>
   <body>
     <div class="tui-doc-description">
@@ -18,24 +18,31 @@
       <br />
       You can see the tutorial
       <a
-        href="https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/plugins.md"
+        href="https://github.com/nhn/tui.editor/blob/main/docs/en/plugins.md"
         rel="noopener noreferrer" target="_blank"
         >here</a
       >.
     </div>
     <div class="code-html tui-doc-contents">
+      <!-- Editor -->
+      <h2>Editor</h2>
+      <div id="editor"></div>
+      <!-- Viewer Using Editor -->
+      <h2>Viewer</h2>
       <div id="viewer"></div>
     </div>
     <!-- Added to check demo page in Internet Explorer -->
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
     <script src="./data/md-plugins.js"></script>
     <!-- Editor -->
-    <script src="../dist/cdn/toastui-editor-viewer.js"></script>
+    <script src="../dist/cdn/toastui-editor-all.js"></script>
+    <!-- Chart -->
+    <script src="https://uicdn.toast.com/chart/v4.3.4/toastui-chart.js"></script>
     <!-- Editor's Plugin -->
-    <script src="https://uicdn.toast.com/editor-plugin-chart/1.0.0/toastui-editor-plugin-chart.min.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-chart/3.0.0/toastui-editor-plugin-chart.min.js"></script>
     <script type="text/babel" class="code-js">
-      const Viewer = toastui.Editor;
-      const { chart } = Viewer.plugin;
+      const { Editor } = toastui;
+      const { chart } = Editor.plugin;
 
       const chartOptions = {
         minWidth: 100,
@@ -44,8 +51,18 @@
         maxHeight: 300
       };
 
-      const viewer = new Viewer({
+      const editor = new Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: chartContent,
+        plugins: [chart, chartOptions]
+      });
+
+      const viewer = Editor.factory({
         el: document.querySelector('#viewer'),
+        viewer: true,
+        height: '500px',
         initialValue: chartContent,
         plugins: [[chart, chartOptions]]
       });

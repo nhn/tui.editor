@@ -1,10 +1,10 @@
 # TOAST UI Editor : Color Syntax Plugin
 
-> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/master/apps/editor) to color editing text.
+> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/main/apps/editor) to color editing text.
 
 [![npm version](https://img.shields.io/npm/v/@toast-ui/editor-plugin-color-syntax.svg)](https://www.npmjs.com/package/@toast-ui/editor-plugin-color-syntax)
 
-![color-syntax](https://user-images.githubusercontent.com/18183560/76829634-f4b9ed80-6866-11ea-8fae-04572aa2f9c7.png)
+![color-syntax](https://user-images.githubusercontent.com/37766175/121813686-28710680-cca8-11eb-87c6-1dc9625369b0.png)
 
 ## 🚩 Table of Contents
 
@@ -22,6 +22,7 @@
     - editor-plugin-color-syntax/
       - dist/
         - toastui-editor-plugin-color-syntax.js
+        - toastui-editor-plugin-color-syntax.css
 ```
 
 ### Files Distributed on CDN
@@ -34,13 +35,15 @@ The bundle files include all dependencies of this plugin.
     - latest/
       - toastui-editor-plugin-color-syntax.js
       - toastui-editor-plugin-color-syntax.min.js
+      - toastui-editor-plugin-color-syntax.css
+      - toastui-editor-plugin-color-syntax.min.css
 ```
 
 ## 📦 Usage npm
 
-To use the plugin, [`@toast-ui/editor`](https://github.com/nhn/tui.editor/tree/master/apps/editor) must be installed.
+To use the plugin, [`@toast-ui/editor`](https://github.com/nhn/tui.editor/tree/main/apps/editor) must be installed.
 
-> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
+> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/main/docs/en/getting-started.md)
 
 ### Install
 
@@ -56,6 +59,7 @@ Along with the plugin, the plugin's dependency style must be imported. The `colo
 
 ```js
 import 'tui-color-picker/dist/tui-color-picker.css';
+import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
 
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 ```
@@ -64,6 +68,7 @@ import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 
 ```js
 require('tui-color-picker/dist/tui-color-picker.css');
+require('@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css');
 
 const colorSyntax = require('@toast-ui/editor-plugin-color-syntax');
 ```
@@ -75,6 +80,7 @@ const colorSyntax = require('@toast-ui/editor-plugin-color-syntax');
 ```js
 // ...
 import 'tui-color-picker/dist/tui-color-picker.css';
+import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
 
 import Editor from '@toast-ui/editor';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
@@ -98,6 +104,10 @@ To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be incl
   <link
     rel="stylesheet"
     href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.css"
   />
   ...
 </head>
@@ -131,23 +141,21 @@ const editor = new Editor({
 The `color-syntax` plugin can set options when used. Just add the plugin function and options related to the plugin to the array(`[pluginFn, pluginOptions]`) and push them to the `plugins` option of the editor.
 
 The following options are available in the `color-syntax` plugin.
-The `useCustomSyntax` option is `false` by default, applying color syntax using the `span` tag. (e.g. `<span style="color:#ff00ff">foo</span>`) If enabled, it will use custom syntax instead of the `span` tag. (e.g. `{color:# ff00ff}test{color}`)
 
 | Name              | Type             | Default Value | Description                      |
 | ----------------- | ---------------- | ------------- | -------------------------------- |
 | `preset`          | `Array.<string>` |               | Preset for color palette         |
-| `useCustomSyntax` | `boolean`        | `false`       | Whether use custom syntax or not |
 
 ```js
 // ...
 import 'tui-color-picker/dist/tui-color-picker.css';
+import '@toast-ui/editor-plugin-color-syntax/dist/toastui-editor-plugin-color-syntax.css';
 
 import Editor from '@toast-ui/editor';
 import colorSyntax from '@toast-ui/editor-plugin-color-syntax';
 
 const colorSyntaxOptions = {
-  preset: ['#181818', '#292929', '#393939'],
-  useCustomSyntax: true
+  preset: ['#181818', '#292929', '#393939']
 };
 
 const editor = new Editor({

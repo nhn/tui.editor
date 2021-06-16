@@ -1,10 +1,10 @@
 # TOAST UI Editor : Chart Plugin
 
-> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/master/apps/editor) to render chart.
+> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/main/apps/editor) to render chart.
 
 [![npm version](https://img.shields.io/npm/v/@toast-ui/editor-plugin-chart.svg)](https://www.npmjs.com/package/@toast-ui/editor-plugin-chart)
 
-![chart](https://user-images.githubusercontent.com/18183560/76829631-f2f02a00-6866-11ea-8bb0-c3c923d70399.png)
+![chart](https://user-images.githubusercontent.com/37766175/121808323-d8d41000-cc92-11eb-9117-b92a435c9b43.png)
 
 ## 🚩 Table of Contents
 
@@ -38,9 +38,9 @@ The bundle files include all dependencies of this plugin.
 
 ## 📦 Usage npm
 
-To use the plugin, [`@toast-ui/editor`](https://github.com/nhn/tui.editor/tree/master/apps/editor) must be installed.
+To use the plugin, [`@toast-ui/editor`](https://github.com/nhn/tui.editor/tree/main/apps/editor) must be installed.
 
-> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
+> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/main/docs/en/getting-started.md)
 
 ### Install
 
@@ -55,7 +55,7 @@ Along with the plugin, the plugin's dependency style must be imported. The `char
 #### ES Modules
 
 ```js
-import 'tui-chart/dist/tui-chart.css';
+import '@toast-ui/chart/dist/toastui-chart.css';
 
 import chart from '@toast-ui/editor-plugin-chart';
 ```
@@ -63,7 +63,7 @@ import chart from '@toast-ui/editor-plugin-chart';
 #### CommonJS
 
 ```js
-require('tui-chart/dist/tui-chart.css');
+require('@toast-ui/chart/dist/toastui-chart.css');
 
 const chart = require('@toast-ui/editor-plugin-chart');
 ```
@@ -74,7 +74,7 @@ const chart = require('@toast-ui/editor-plugin-chart');
 
 ```js
 // ...
-import 'tui-chart/dist/tui-chart.css';
+import '@toast-ui/chart/dist/toastui-chart.css';
 
 import Editor from '@toast-ui/editor';
 import chart from '@toast-ui/editor-plugin-chart';
@@ -89,7 +89,7 @@ const editor = new Editor({
 
 ```js
 // ...
-import 'tui-chart/dist/tui-chart.css';
+import '@toast-ui/chart/dist/toastui-chart.css';
 
 import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
 import chart from '@toast-ui/editor-plugin-chart';
@@ -104,7 +104,7 @@ or
 
 ```js
 // ...
-import 'tui-chart/dist/tui-chart.css';
+import '@toast-ui/chart/dist/toastui-chart.css';
 
 import Editor from '@toast-ui/editor';
 import chart from '@toast-ui/editor-plugin-chart';
@@ -126,7 +126,7 @@ To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be incl
 ...
 <head>
   ...
-  <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/latest/tui-chart.min.css" />
+  <link rel="stylesheet" href="https://uicdn.toast.com/chart/latest/toastui-chart.min.css" />
   ...
 </head>
 <body>
@@ -196,7 +196,7 @@ These options are used to set the dimensions of the chart drawn in the editor.
 
 ```js
 // ...
-import 'tui-chart/dist/tui-chart.css';
+import '@toast-ui/chart/dist/toastui-chart.css';
 
 import Editor from '@toast-ui/editor';
 import chart from '@toast-ui/editor-plugin-chart';

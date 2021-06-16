@@ -3,7 +3,7 @@ import ColorPicker from 'tui-color-picker';
 import type { Context } from '@toast-ui/toastmark';
 import type { PluginContext, PluginInfo, MdLikeNode } from '@toast-ui/editor';
 import type { Transaction, Selection, TextSelection } from 'prosemirror-state';
-import { PluginOptions } from './types/index';
+import { PluginOptions } from '@t/index';
 
 import './css/plugin.css';
 

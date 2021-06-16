@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>13. Creating Plugin</title>
+    <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css"
+      integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X"
+      crossorigin="anonymous"
+    />
+    <!-- Editor -->
+    <link rel="stylesheet" href="../dist/cdn/toastui-editor.css" />
+  </head>
+  <body>
+    <div class="tui-doc-description">
+      <strong
+        >The example code can be slower than your environment because the code is transpiled by
+        babel-standalone in runtime.</strong
+      >
+      <br />
+      You can see the tutorial
+      <a
+        href="https://github.com/nhn/tui.editor/blob/main/docs/en/plugins.md"
+        rel="noopener noreferrer" target="_blank"
+        >here</a
+      > and 
+      <a
+        href="https://github.com/nhn/tui.editor/blob/main/docs/en/custom-block.md"
+        rel="noopener noreferrer" target="_blank"
+        >here</a
+      >.
+    </div>
+    <div class="code-html tui-doc-contents">
+      <div id="editor"></div>
+    </div>
+    <!-- Added to check demo page in Internet Explorer -->
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/latex.js/dist/latex.js"></script>
+    <!-- Editor -->
+    <script src="../dist/cdn/toastui-editor-all.js"></script>
+    <script type="text/babel" class="code-js">
+      const { Editor } = toastui;
+
+      // Step 1: Define the user plugin function
+      function latexPlugin() {
+        const toHTMLRenderers = {
+          latex(node) {
+            const generator = new latexjs.HtmlGenerator({ hyphenate: false });
+            const { body } = latexjs.parse(node.literal, { generator }).htmlDocument();
+
+            return [
+              { type: 'openTag', tagName: 'div', outerNewLine: true },
+              { type: 'html', content: body.innerHTML },
+              { type: 'closeTag', tagName: 'div', outerNewLine: true }
+            ];
+          },
+        }
+
+        return { toHTMLRenderers }
+      }
+
+      const content = [
+        '$$latex',
+        '\\documentclass{article}',
+        '\\begin{document}',
+        '',
+        '$',
+        'f(x) = \\int_{-\\infty}^\\infty \\hat f(\\xi)\,e^{2 \\pi i \\xi x} \, d\\xi',
+        '$',
+        '\\end{document}',
+        '$$'
+      ].join('\n');
+
+      const editor = new Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: content,
+        // Step 2: Set the defined plugin function as an option value
+        plugins: [latexPlugin]
+      });
+    </script>
+  </body>
+</html>

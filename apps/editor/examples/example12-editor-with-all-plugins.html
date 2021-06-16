@@ -2,25 +2,32 @@
 <html>
   <head lang="en">
     <meta charset="UTF-8" />
-    <title>15. Editor with All Plugins</title>
+    <title>12. Editor with All Plugins</title>
     <link rel="stylesheet" href="./css/tuidoc-example-style.css" />
-    <!-- Editor's Dependencies -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.css"
-    />
     <!-- Editor -->
     <link rel="stylesheet" href="../dist/cdn/toastui-editor.css" />
-    <!-- Editor's Plugin -->
-    <link rel="stylesheet" href="https://uicdn.toast.com/tui.chart/v3.7.0/tui-chart.css" />
+    <!-- Chart -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/chart/v4.3.4/toastui-chart.css" />
+    <!-- Code Highlight -->
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/3.0.0/toastui-editor-plugin-code-syntax-highlight.min.css"
+    />
+    <!-- Color syntax -->
     <link
       rel="stylesheet"
       href="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.css"
     />
+    <link
+      rel="stylesheet"
+      href="https://uicdn.toast.com/editor-plugin-color-syntax/3.0.0/toastui-editor-plugin-color-syntax.min.css"
+    />
+    <!-- Merged Table -->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor-plugin-table-merged-cell/3.0.0/toastui-editor-plugin-table-merged-cell.min.css" />
   </head>
   <body>
     <div class="tui-doc-description">
@@ -31,7 +38,7 @@
       <br />
       You can see the tutorial
       <a
-        href="https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/plugins.md"
+        href="https://github.com/nhn/tui.editor/blob/main/docs/en/plugins.md"
         rel="noopener noreferrer"
         target="_blank"
         >here</a
@@ -48,14 +55,16 @@
     <!-- Added to check demo page in Internet Explorer -->
     <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
     <script src="./data/md-plugins.js"></script>
+    <!-- Prism.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
     <!-- Editor -->
     <script src="../dist/cdn/toastui-editor-all.js"></script>
     <!-- Editor's Plugin -->
-    <script src="https://uicdn.toast.com/editor-plugin-chart/1.0.0/toastui-editor-plugin-chart.min.js"></script>
-    <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/1.0.0/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
-    <script src="https://uicdn.toast.com/editor-plugin-color-syntax/1.0.0/toastui-editor-plugin-color-syntax.min.js"></script>
-    <script src="https://uicdn.toast.com/editor-plugin-table-merged-cell/1.1.1/toastui-editor-plugin-table-merged-cell.min.js"></script>
-    <script src="https://uicdn.toast.com/editor-plugin-uml/1.0.0/toastui-editor-plugin-uml.min.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-chart/3.0.0/toastui-editor-plugin-chart.min.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/3.0.0/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-color-syntax/3.0.0/toastui-editor-plugin-color-syntax.min.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-table-merged-cell/3.0.0/toastui-editor-plugin-table-merged-cell.min.js"></script>
+    <script src="https://uicdn.toast.com/editor-plugin-uml/3.0.0/toastui-editor-plugin-uml.min.js"></script>
     <script type="text/babel" class="code-js">
       const { Editor } = toastui;
       const { chart, codeSyntaxHighlight, colorSyntax, tableMergedCell, uml } = Editor.plugin;
@@ -72,7 +81,7 @@
         previewStyle: 'vertical',
         height: '500px',
         initialValue: allPluginsContent,
-        plugins: [[chart, chartOptions], codeSyntaxHighlight, colorSyntax, tableMergedCell, uml]
+        plugins: [[chart, chartOptions], [codeSyntaxHighlight, { highlighter: Prism }], colorSyntax, tableMergedCell, uml]
       });
 
       const viewer = Editor.factory({
@@ -80,7 +89,7 @@
         viewer: true,
         height: '500px',
         initialValue: allPluginsContent,
-        plugins: [[chart, chartOptions], codeSyntaxHighlight, tableMergedCell, uml]
+        plugins: [[chart, chartOptions], [codeSyntaxHighlight, { highlighter: Prism }], tableMergedCell, uml]
       });
     </script>
   </body>

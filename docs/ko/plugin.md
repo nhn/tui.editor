@@ -1,14 +1,14 @@
-# 플러그인
+# 🧩 플러그인
 
 TOAST UI Editor(이하 '에디터'라고 명시)는 기본으로 지원하지 않는 기능들을 플러그인으로 제공한다. 에디터에서 제공하는 플러그인은 현재 5개이며, 추후 자주 사용되는 기능은 더 추가될 수 있다.
 
 | 플러그인 명 | 패키지 명 | 설명 |
 | --- | --- | --- |
-| [`chart`](https://github.com/nhn/tui.editor/tree/master/plugins/chart) | [`@toast-ui/editor-plugin-chart`](https://www.npmjs.com/package/@toast-ui/editor-plugin-chart) | 차트를 렌더링하기 위한 플러그인 |
-| [`code-syntax-highlight`](https://github.com/nhn/tui.editor/tree/master/plugins/code-syntax-highlight) | [`@toast-ui/editor-plugin-code-syntax-highlight`](https://www.npmjs.com/package/@toast-ui/editor-plugin-code-syntax-highlight) | 코드 하이라이팅을 위한 플러그인 |
-| [`color-syntax`](https://github.com/nhn/tui.editor/tree/master/plugins/color-syntax) | [`@toast-ui/editor-plugin-color-syntax`](https://www.npmjs.com/package/@toast-ui/editor-plugin-color-syntax) | 컬러피커 사용을 위한 플러그인 |
-| [`table-merged-cell`](https://github.com/nhn/tui.editor/tree/master/plugins/table-merged-cell) | [`@toast-ui/editor-plugin-table-merged-cell`](https://www.npmjs.com/package/@toast-ui/editor-plugin-table-merged-cell) | 병합 테이블 셀을 사용하기 위한 플러그인 |
-| [`uml`](https://github.com/nhn/tui.editor/tree/master/plugins/uml) | [`@toast-ui/editor-plugin-uml`](https://www.npmjs.com/package/@toast-ui/editor-plugin-uml) | UML 사용을 위한 플러그인 |
+| [`chart`](https://github.com/nhn/tui.editor/tree/main/plugins/chart) | [`@toast-ui/editor-plugin-chart`](https://www.npmjs.com/package/@toast-ui/editor-plugin-chart) | 차트를 렌더링하기 위한 플러그인 |
+| [`code-syntax-highlight`](https://github.com/nhn/tui.editor/tree/main/plugins/code-syntax-highlight) | [`@toast-ui/editor-plugin-code-syntax-highlight`](https://www.npmjs.com/package/@toast-ui/editor-plugin-code-syntax-highlight) | 코드 하이라이팅을 위한 플러그인 |
+| [`color-syntax`](https://github.com/nhn/tui.editor/tree/main/plugins/color-syntax) | [`@toast-ui/editor-plugin-color-syntax`](https://www.npmjs.com/package/@toast-ui/editor-plugin-color-syntax) | 컬러피커 사용을 위한 플러그인 |
+| [`table-merged-cell`](https://github.com/nhn/tui.editor/tree/main/plugins/table-merged-cell) | [`@toast-ui/editor-plugin-table-merged-cell`](https://www.npmjs.com/package/@toast-ui/editor-plugin-table-merged-cell) | 병합 테이블 셀을 사용하기 위한 플러그인 |
+| [`uml`](https://github.com/nhn/tui.editor/tree/main/plugins/uml) | [`@toast-ui/editor-plugin-uml`](https://www.npmjs.com/package/@toast-ui/editor-plugin-uml) | UML 사용을 위한 플러그인 |
 
 ## 플러그인 설치 및 사용
 
@@ -202,7 +202,7 @@ interface PluginInfo {
 
 #### toHTMLRenderers, toMarkdownRenderers
 
-`toHTMLRenderers` 객체는 에디터의 마크다운 프리뷰에서 렌더링될 때 또는 마크다운 에디터에서 위지윅 에디터로 컨버팅될 때 요소의 렌더링 결과를 변경할 수 있다. 에디터의 [customHTMLRenderer](https://github.com/nhn/tui.editor/blob/master/docs/ko/custom-html-renderer.md) 옵션과 동일하다.
+`toHTMLRenderers` 객체는 에디터의 마크다운 프리뷰에서 렌더링될 때 또는 마크다운 에디터에서 위지윅 에디터로 컨버팅될 때 요소의 렌더링 결과를 변경할 수 있다. 에디터의 [customHTMLRenderer](https://github.com/nhn/tui.editor/blob/main/docs/ko/custom-html-renderer.md) 옵션과 동일하다.
 
 **toMarkdownRenderers**
 
@@ -323,7 +323,7 @@ return {
 
 * `groupIndex`: 툴바 아이템을 추가할 그룹의 인덱스를 지정한다.
 * `itemIndex`: 지정한 그룹 내에서 몇 번째로 추가할지 인덱스를 지정한다.
-* `item`: 추가할 툴바 아이템 요소를 지정한다. [툴바](https://github.com/nhn/tui.editor/blob/master/docs/ko/toolbar.md)의 툴바 커스터마이징에서 사용되는 객체와 동일한 형태이다.
+* `item`: 추가할 툴바 아이템 요소를 지정한다. [툴바](https://github.com/nhn/tui.editor/blob/main/docs/ko/toolbar.md)의 툴바 커스터마이징에서 사용되는 객체와 동일한 형태이다.
 
 만약 예제 코드처럼 `toolbarItems` 옵션을 설정한다면, 1번째 툴바 그룹의 4번째 인덱스로 툴바 아이템을 등록할 것이다.
 

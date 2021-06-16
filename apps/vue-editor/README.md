@@ -1,6 +1,6 @@
 # TOAST UI Editor for Vue
 
-> This is [Vue](https://vuejs.org/) component wrapping [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/master/apps/editor).
+> This is [Vue](https://vuejs.org/) component wrapping [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/main/apps/editor).
 
 [![npm version](https://img.shields.io/npm/v/@toast-ui/vue-editor.svg)](https://www.npmjs.com/package/@toast-ui/vue-editor)
 
@@ -34,12 +34,11 @@ npm install --save @toast-ui/vue-editor
 
 ### Import
 
-You can use Toast UI Editor for Vue as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `toastui-editor.css` from `@toast-ui/editor` and `codemirror.css` from `CodeMirror` in the script.
+You can use Toast UI Editor for Vue as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `toastui-editor.css` from `@toast-ui/editor` in the script.
 
 - ES Modules
 
 ```js
-import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 
 import { Editor } from '@toast-ui/vue-editor';
@@ -48,7 +47,6 @@ import { Editor } from '@toast-ui/vue-editor';
 - CommonJS
 
 ```js
-require('codemirror/lib/codemirror.css');
 require('@toast-ui/editor/dist/toastui-editor.css');
 
 const { Editor } = require('@toast-ui/vue-editor');
@@ -67,7 +65,6 @@ First implement `<editor/>` in the template.
 And then add `Editor` to the `components` in your component or Vue instance like this:
 
 ```js
-import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 
 import { Editor } from '@toast-ui/vue-editor';
@@ -82,7 +79,6 @@ export default {
 or
 
 ```js
-import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 
 import { Editor } from '@toast-ui/vue-editor';
@@ -110,30 +106,15 @@ const defaultOptions = {
   minHeight: '200px',
   language: 'en-US',
   useCommandShortcut: true,
-  useDefaultHTMLSanitizer: true,
   usageStatistics: true,
   hideModeSwitch: false,
   toolbarItems: [
-    'heading',
-    'bold',
-    'italic',
-    'strike',
-    'divider',
-    'hr',
-    'quote',
-    'divider',
-    'ul',
-    'ol',
-    'task',
-    'indent',
-    'outdent',
-    'divider',
-    'table',
-    'image',
-    'link',
-    'divider',
-    'code',
-    'codeblock'
+    ['heading', 'bold', 'italic', 'strike'],
+    ['hr', 'quote'],
+    ['ul', 'ol', 'task', 'indent', 'outdent'],
+    ['table', 'image', 'link'],
+    ['code', 'codeblock'],
+    ['scrollSync'],
   ]
 };
 ```
@@ -149,7 +130,6 @@ const defaultOptions = {
   />
 </template>
 <script>
-  import 'codemirror/lib/codemirror.css';
   import '@toast-ui/editor/dist/toastui-editor.css';
 
   import { Editor } from '@toast-ui/vue-editor';
@@ -181,7 +161,6 @@ First, you need to assign `ref` attribute of `<editor/>` and then you can use `i
   <editor ref="toastuiEditor" />
 </template>
 <script>
-  import 'codemirror/lib/codemirror.css';
   import '@toast-ui/editor/dist/toastui-editor.css';
 
   import { Editor } from '@toast-ui/vue-editor';
@@ -192,13 +171,13 @@ First, you need to assign `ref` attribute of `<editor/>` and then you can use `i
     },
     methods: {
       scroll() {
-        this.$refs.toastuiEditor.invoke('scrollTop', 10);
+        this.$refs.toastuiEditor.invoke('setScrollTop', 10);
       },
       moveTop() {
         this.$refs.toastuiEditor.invoke('moveCursorToStart');
       },
-      getHtml() {
-        let html = this.$refs.toastuiEditor.invoke('getHtml');
+      getHTML() {
+        let html = this.$refs.toastuiEditor.invoke('getHTML');
       }
     }
   };
@@ -209,7 +188,7 @@ First, you need to assign `ref` attribute of `<editor/>` and then you can use `i
 
 - load : It would be emitted when editor fully load
 - change : It would be emitted when content changed
-- stateChange : It would be emitted when format change by cursor position
+- caretChange : It would be emitted when format change by cursor position
 - focus : It would be emitted when editor get focus
 - blur : It would be emitted when editor loose focus
 
@@ -220,7 +199,7 @@ First, you need to assign `ref` attribute of `<editor/>` and then you can use `i
     @focus="onEditorFocus"
     @blur="onEditorBlur"
     @change="onEditorChange"
-    @stateChange="onEditorStateChange"
+    @caretChange="onEditorCaretChange"
   />
 </template>
 <script>
@@ -243,7 +222,7 @@ First, you need to assign `ref` attribute of `<editor/>` and then you can use `i
       onEditorChange() {
         // implement your code
       },
-      onEditorStateChange() {
+      onEditorCaretChange() {
         // implement your code
       }
     }
@@ -336,54 +315,5 @@ new Vue({
       };
     }
   };
-</script>
-```
-
-### Events
-
-- load : It would be emitted when editor fully load
-- change : It would be emitted when content changed
-- stateChange : It would be emitted when format change by cursor position
-- focus : It would be emitted when editor get focus
-- blur : It would be emitted when editor loose focus
-
-```html
-<template>
-  <viewer
-    @load="onEditorLoad"
-    @focus="onEditorFocus"
-    @blur="onEditorBlur"
-    @change="onEditorChange"
-    @stateChange="onEditorStateChange"
-  />
-</template>
-
-<script>
-import '@toast-ui/editor/dist/toastui-editor-viewer.css';
-
-import { Viewer } from '@toast-ui/vue-editor';
-
-export default {
-    components: {
-        viewer: Viewer
-    },
-    methods: {
-        onEditorLoad() {
-            // implement your code
-        },
-        onEditorFocus() {
-            // implement your code
-        },
-        onEditorBlur() {
-            // implement your code
-        },
-        onEditorChange() {
-            // implement your code
-        },
-        onEditorStateChange() {
-            // implement your code
-        },
-    }
-};
 </script>
 ```

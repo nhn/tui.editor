@@ -65,6 +65,7 @@ export interface ViewerOptions {
   customHTMLSanitizer?: Sanitizer;
   frontMatter?: boolean;
   usageStatistics?: boolean;
+  theme?: string;
 }
 
 export class Viewer {
@@ -149,6 +150,8 @@ interface Slots {
 
 export class EditorCore {
   constructor(options: EditorOptions);
+
+  public eventEmitter: Emitter;
 
   public static factory(options: EditorOptions): EditorCore | Viewer;
 

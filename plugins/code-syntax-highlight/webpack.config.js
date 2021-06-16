@@ -46,7 +46,7 @@ function getOutputConfig(isProduction, isCDN, isAll, minify) {
       type: 'commonjs2',
     },
     path: path.resolve(__dirname, 'dist'),
-    filename: `${filename}.js`,
+    filename: `${filename}${isAll ? '-all' : ''}.js`,
   };
 }
 

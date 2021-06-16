@@ -14,15 +14,15 @@
     <!-- Editor -->
     <script type="module">
       import { Editor } from 'http://localhost:8080/dist/index.js';
-      import codeSyntaxHighlightPlugin from '/dist/index.js';
-
+      
       import Prism from 'prismjs';
-
+      
       // method 1: import selected languages
+      import codeSyntaxHighlightPlugin from '/dist/index.js';
       import 'prismjs/components/prism-clojure.js';
 
       // method 2: import all languages
-      // import '/dist/prismjs-langs.js';
+      // import codeSyntaxHighlightPlugin from '/dist/indexAll.js';
 
       const content = [
         '```js',

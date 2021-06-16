@@ -27,11 +27,11 @@ const editor = new Editor(options);
 
 ## 📙 Documents
 
-- [Getting Started](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/getting-started.md)
+- [Getting Started](https://github.com/nhn/tui.editor/blob/main/docs/en/getting-started.md)
 - [APIs](https://nhn.github.io/tui.editor/latest/)
-- v2.0 Migration Guide
-  - [English](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/v2.0-migration-guide.md)
-  - [한국어](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/v2.0-migration-guide-ko.md)
+- v3.0 Migration Guide
+  - [English](https://github.com/nhn/tui.editor/blob/main/docs/v3.0-migration-guide.md)
+  - [한국어](https://github.com/nhn/tui.editor/blob/main/docs/v3.0-migration-guide-ko.md)
 
 You can also see the older versions of API page on the [releases page](https://github.com/nhn/tui.editor/releases).
 
@@ -82,14 +82,15 @@ The CDN directory has the following structure:
    │     │    ├─ toastui-editor-viewer.css
    │     │    ├─ toastui-editor-viewer.min.css
    │     │    ├─ toastui-editor-only.css
-   │     │    └─ toastui-editor-only.min.css
+   │     │    ├─ toastui-editor-only.min.css
+   │     │    └─ theme/
+   │     │         ├─ toastui-editor-dark.css
+   │     │         └─ toastui-editor-dark.min.css
+   │     │    └─ i18n/
+   │     │         └─ ...
    │     ├─ 2.0.0/
    │     │    └─ ...
 ```
-
-### Download Source Files
-
-- [Download all sources for each version](https://github.com/nhn/tui.editor/releases)
 
 ## 🔨 Usage
 
@@ -125,12 +126,11 @@ const Editor = require('@toast-ui/editor');
 const Editor = toastui.Editor;
 ```
 
-Then, you need to add the CSS files needed for the Editor. Import CSS files in node environment, and add it to html file when using CDN. When using the markdown editor, you need to add a style for the [CodeMirror](https://codemirror.net/).
+Then, you need to add the CSS files needed for the Editor. Import CSS files in node environment, and add it to html file when using CDN.
 
 ### Using in Node Environment
 
 ```javascript
-import 'codemirror/lib/codemirror.css'; // Editor's Dependency Style
 import '@toast-ui/editor/dist/toastui-editor.css'; // Editor's Style
 ```
 
@@ -140,11 +140,6 @@ import '@toast-ui/editor/dist/toastui-editor.css'; // Editor's Style
 ...
 <head>
   ...
-  <!-- Editor's Dependecy Style -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.48.4/codemirror.min.css"
-  />
   <!-- Editor's Style -->
   <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" />
 </head>
@@ -161,7 +156,7 @@ const editor = new Editor({
   previewStyle: 'vertical'
 });
 
-editor.getHtml();
+editor.getMarkdown();
 ```
 
 ### Default Options
@@ -176,6 +171,6 @@ Find out more options [here](https://nhn.github.io/tui.editor/latest/ToastUIEdit
 
 ## 🦄 Tutorials
 
-- [Viewer](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/viewer.md)
-- [Plugins](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/plugins.md)
-- [Internationalization (i18n)](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/i18n.md)
+- [Viewer](https://github.com/nhn/tui.editor/blob/main/apps/editor/docs/viewer.md)
+- [Plugins](https://github.com/nhn/tui.editor/blob/main/apps/editor/docs/plugins.md)
+- [Internationalization (i18n)](https://github.com/nhn/tui.editor/blob/main/apps/editor/docs/i18n.md)

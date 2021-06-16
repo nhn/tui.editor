@@ -1,4 +1,4 @@
-# 툴바
+# 🛠 툴바
 일반적으로 에디터에서는 단축키나 툴바를 사용하여 특정 텍스트나 노드를 입력할 수 있다. 특히 마크다운처럼 특정한 텍스트 문법이 존재하지 않는 위지윅 에디터에서는 대부분의 동작이 툴바를 통해 이뤄지기 때문에 툴바의 역할이 중요하다. TOAST UI Editor(이하 '에디터'라고 명시) 역시 기본 UI로 툴바를 제공하며 커스터마이징을 위한 옵션과 API도 제공한다.
 
 ## 툴바 옵션
@@ -151,3 +151,7 @@ const editor = new Editor({
 위의 예제 코드를 실행하면 아래와 같이 동작한다.
 
 ![iamge](https://user-images.githubusercontent.com/37766175/120915883-3e4b5e00-c6e1-11eb-8f44-95e6d31f41e7.gif)
+
+## 예제
+
+예제는 [여기](https://nhn.github.io/tui.editor/latest/tutorial-example15-customizing-toolbar-buttons)서 확인할 수 있다.
