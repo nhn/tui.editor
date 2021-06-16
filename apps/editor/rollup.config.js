@@ -8,10 +8,10 @@ export default [
     output: {
       dir: 'dist/esm',
       format: 'es',
+      sourcemap: false,
     },
     plugins: [typescript(), commonjs(), nodeResolve()],
     external: [/^prosemirror/],
-    sourcemap: false,
   },
   {
     input: 'src/esm/indexViewer.ts',

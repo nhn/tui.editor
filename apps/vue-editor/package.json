@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/vue-editor",
-  "version": "2.4.0",
+  "version": "3.0.0-alpha.1",
   "description": "TOAST UI Editor for Vue",
   "main": "dist/toastui-vue-editor.js",
   "files": [
@@ -31,5 +31,8 @@
   },
   "peerDependencies": {
     "vue": "^2.5.0"
+  },
+  "dependencies": {
+    "@toast-ui/editor": "^3.0.0-alpha.1"
   }
 }
