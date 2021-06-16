@@ -21,7 +21,7 @@
       "require": "./dist/toastui-editor.js"
     },
     "./viewer": {
-      "import": "./dist/esm/viewer.js"
+      "import": "./dist/esm/indexViewer.js"
     }
   },
   "types": "types/index.d.ts",
