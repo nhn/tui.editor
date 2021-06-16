@@ -8,7 +8,7 @@ TOAST UI Editor (henceforth referred to as 'Editor') provides the **viewer** in 
 
 The method of creating the Viewer is similar to that of the Editor.
 
-> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/main/docs/en/getting-started.md)
+> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/docs/en/getting-started.md)
 
 ### Adding Wrapper Element
 
