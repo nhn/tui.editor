@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/editor",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0",
   "description": "GFM  Markdown Wysiwyg Editor - Productive and Extensible",
   "keywords": [
     "nhn",
@@ -24,6 +24,7 @@
       "import": "./dist/esm/indexViewer.js",
       "require": "./dist/toastui-editor-viewer.js"
     },
+    "./dist/toastui-editor-viewer": "./dist/toastui-editor-viewer.js",
     "./dist/toastui-editor.css": "./dist/toastui-editor.css",
     "./dist/toastui-editor-viewer.css": "./dist/toastui-editor-viewer.css",
     "./dist/theme/toastui-editor-dark.css": "./dist/theme/toastui-editor-dark.css",
