@@ -33,7 +33,7 @@ export {
   HeadingMdNode,
   CodeMdNode,
   HTMLConvertorMap as ToHTMLConvertorMap,
-} from '@toast-ui/toastmark';
+} from './toastmark';
 export { ToMdConvertorMap } from './convertor';
 export { Emitter, Handler } from './event';
 export {
@@ -60,8 +60,4 @@ export default Editor;
 
 export declare namespace toastui {
   export { EditorCore, Editor, Viewer };
-}
-
-export declare module '@toast-ui/editor/dist/toastui-editor-viewer' {
-  export default Viewer;
 }

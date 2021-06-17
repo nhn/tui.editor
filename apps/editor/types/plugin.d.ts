@@ -2,7 +2,7 @@ import { Plugin, EditorState } from 'prosemirror-state';
 import { EditorView, NodeView } from 'prosemirror-view';
 import { Node } from 'prosemirror-model';
 
-import { HTMLConvertorMap, CustomParserMap } from '@toast-ui/toastmark';
+import { HTMLConvertorMap, CustomParserMap } from './toastmark';
 import { Emitter } from './event';
 import { ToMdConvertorMap } from './convertor';
 import { Dispatch, Payload, DefaultPayload } from './spec';

@@ -1,6 +1,6 @@
 # TOAST UI Editor : Code Syntax Highlight Plugin
 
-> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/main/apps/editor) to highlight code syntax.
+> This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/master/apps/editor) to highlight code syntax.
 
 [![npm version](https://img.shields.io/npm/v/@toast-ui/editor-plugin-code-syntax-highlight.svg)](https://www.npmjs.com/package/@toast-ui/editor-plugin-code-syntax-highlight)
 
@@ -44,9 +44,9 @@
 
 ## 📦 Usage npm
 
-To use the plugin, [`@toast-ui/editor`](https://github.com/nhn/tui.editor/tree/main/apps/editor) must be installed.
+To use the plugin, [`@toast-ui/editor`](https://github.com/nhn/tui.editor/tree/master/apps/editor) must be installed.
 
-> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/main/docs/en/getting-started.md)
+> Ref. [Getting Started](https://github.com/nhn/tui.editor/blob/master/docs/en/getting-started.md)
 
 ### Install
 
@@ -89,8 +89,6 @@ The main bundle file of `Prism.js` contains just several language pack it suppor
 
 ```js
 // ...
-import Prism from 'prismjs';
-
 import Editor from '@toast-ui/editor';
 import codeSyntaxHighlight from '@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js';
 
@@ -198,8 +196,6 @@ By including the **all** version of the plugin, all languages ​​of `Prism.js
 </head>
 <body>
   ...
-  <!-- Prism.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
   <!-- Editor -->
   <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
   <!-- Editor's Plugin -->

@@ -1,11 +1,11 @@
-import { Schema, NodeSpec, Fragment } from 'prosemirror-model';
+import { Schema, NodeSpec, MarkSpec, Fragment } from 'prosemirror-model';
 import { EditorView, Decoration, DecorationSet } from 'prosemirror-view';
 import { EditorState, Plugin, Selection, TextSelection } from 'prosemirror-state';
-import { HTMLConvertorMap, MdPos, Sourcepos } from '@toast-ui/toastmark';
+import { HTMLConvertorMap, MdPos, Sourcepos } from './toastmark';
 import { Emitter, Handler } from './event';
 import { Context, EditorAllCommandMap, EditorCommandFn, SpecManager } from './spec';
 import { ToMdConvertorMap } from './convertor';
-import { DefaultUI, ToolbarItemOptions } from './ui';
+import { ToolbarItemOptions, IndexList } from './ui';
 import { CommandFn, PluginInfo } from './plugin';
 
 export type PreviewStyle = 'tab' | 'vertical';
@@ -111,8 +111,8 @@ export interface PluginContext {
   pmModel: { Fragment: typeof Fragment };
 }
 
-export type PluginFn = (context: PluginContext, options?: Record<string, any>) => PluginInfo | null;
-export type EditorPlugin = PluginFn | [PluginFn, Record<string, any>];
+export type PluginFn = (context: PluginContext, options?: any) => PluginInfo | null;
+export type EditorPlugin = PluginFn | [PluginFn, any];
 
 export interface EditorOptions {
   el: HTMLElement;
@@ -241,7 +241,9 @@ export class EditorCore {
 }
 
 export class Editor extends EditorCore {
-  getDefaultUI(): DefaultUI;
+  insertToolbarItem({ groupIndex, itemIndex }: IndexList, item: string | ToolbarItemOptions): void;
+
+  removeToolbarItem(itemName: string): void;
 }
 
 export type SelectionPos = Sourcepos | [from: number, to: number];

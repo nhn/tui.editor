@@ -2,7 +2,7 @@ import { Schema } from 'prosemirror-model';
 import { Transaction, Plugin } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Command } from 'prosemirror-commands';
-import { ToastMark } from '@toast-ui/toastmark';
+import { ToastMark } from './toastmark';
 import { Emitter } from './event';
 
 export interface Context {

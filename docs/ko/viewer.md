@@ -8,7 +8,7 @@ TOASE UI Editor(이하 'Editor'라고 명시)는 에디터를 로딩하지 않�
 
 뷰어를 사용하는 방법은 에디터와 유사하다.
 
-> 참고. [Getting Started](https://github.com/nhn/tui.editor/blob/main/docs/ko/getting-started.md)
+> 참고. [Getting Started](https://github.com/nhn/tui.editor/blob/master/docs/ko/getting-started.md)
 
 ### 컨테이너 요소 추가
 

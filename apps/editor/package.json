@@ -21,8 +21,15 @@
       "require": "./dist/toastui-editor.js"
     },
     "./viewer": {
-      "import": "./dist/esm/indexViewer.js"
-    }
+      "import": "./dist/esm/indexViewer.js",
+      "require": "./dist/toastui-editor-viewer.js"
+    },
+    "./dist/toastui-editor.css": "./dist/toastui-editor.css",
+    "./dist/toastui-editor-viewer.css": "./dist/toastui-editor-viewer.css",
+    "./dist/theme/toastui-editor-dark.css": "./dist/theme/toastui-editor-dark.css",
+    "./toastui-editor.css": "./dist/toastui-editor.css",
+    "./toastui-editor-viewer.css": "./dist/toastui-editor-viewer.css",
+    "./toastui-editor-dark.css": "./dist/theme/toastui-editor-dark.css"
   },
   "types": "types/index.d.ts",
   "files": [
@@ -56,8 +63,9 @@
     "build": "npm run build:esm && npm run build:i18n && npm run build:prod",
     "build:esm": "rollup -c",
     "note": "tui-note --tag=$(git describe --tags)",
-    "doc:serve": "tuidoc --serv",
-    "doc": "tuidoc"
+    "ts2js": "tsc --outDir tmpdoc --sourceMap false --target ES2015 --noEmit false",
+    "doc:dev": "npm run ts2js && tuidoc --serv",
+    "doc": "npm run ts2js && tuidoc"
   },
   "devDependencies": {
     "@toast-ui/release-notes": "^2.0.1",

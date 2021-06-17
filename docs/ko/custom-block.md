@@ -54,7 +54,7 @@ $$
 
 ## HTML 노드
 
-CommonMark에서는 `<`과 `>` 문자를 사용하여 기본적으로 지원하지 않는 노드를 HTML 문자열 형태로 사용할 수 있다.
+CommonMark에서는 `<`과 `>` 문자를 사용하여 기본적으로 지원하지 않는 노드를 HTML 문자열 형태로 작성할 수 있다.
 ([CommonMark Raw HTML Spec 참조](https://spec.commonmark.org/0.29/#raw-html))
 
 에디터의 마크다운 에디터에서도 이러한 스펙을 준수하기 때문에 HTML 문자열은 마크다운 프리뷰에서 올바르게 렌더링 된다.

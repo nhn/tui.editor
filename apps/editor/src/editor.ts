@@ -1,12 +1,16 @@
 import { EditorOptions, ViewerOptions } from '@t/editor';
-import { DefaultUI, VNode } from '@t/ui';
+import { DefaultUI, VNode, IndexList, ToolbarItemOptions } from '@t/ui';
 import EditorCore from './editorCore';
 import Viewer from './viewer';
 import html from './ui/vdom/template';
 import { Layout } from './ui/components/layout';
 import { render } from './ui/vdom/renderer';
 
-class Editor extends EditorCore {
+/**
+ * ToastUI Editor
+ * @extends ToastUIEditorCore
+ */
+class ToastUIEditor extends EditorCore {
   private defaultUI!: DefaultUI;
 
   constructor(options: EditorOptions) {
@@ -44,18 +48,39 @@ class Editor extends EditorCore {
     });
   }
 
+  /**
+   * Factory method for Editor
+   * @param {object} options Option for initialize TUIEditor
+   * @returns {object} ToastUIEditor or ToastUIEditorViewer
+   */
   static factory(options: (EditorOptions | ViewerOptions) & { viewer?: boolean }) {
-    return options.viewer ? new Viewer(options) : new Editor(options as EditorOptions);
+    return options.viewer ? new Viewer(options) : new ToastUIEditor(options as EditorOptions);
   }
 
-  getDefaultUI() {
-    return this.defaultUI;
+  /**
+   * add toolbar item
+   * @param {Object} indexInfo group index and item index of the toolbar item
+   * @param {string|Object} item toolbar item
+   */
+  insertToolbarItem(indexInfo: IndexList, item: string | ToolbarItemOptions) {
+    this.defaultUI.insertToolbarItem(indexInfo, item);
   }
 
+  /**
+   * Remove toolbar item
+   * @param {string} itemName toolbar item name
+   */
+  removeToolbarItem(itemName: string) {
+    this.defaultUI.removeToolbarItem(itemName);
+  }
+
+  /**
+   * Destroy TUIEditor from document
+   */
   destroy() {
     super.destroy();
     this.defaultUI.destroy();
   }
 }
 
-export default Editor;
+export default ToastUIEditor;
