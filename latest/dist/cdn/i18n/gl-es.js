@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Editor : i18n
- * @version 2.5.2
+ * @version 3.0.0
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -13,162 +13,150 @@
 		var a = typeof exports === 'object' ? factory(require("@toast-ui/editor")) : factory(root["toastui"]["Editor"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(window, function(__WEBPACK_EXTERNAL_MODULE__0__) {
-return /******/ (function(modules) { // webpackBootstrap
+})(self, function(__WEBPACK_EXTERNAL_MODULE__974__) {
+return /******/ (function() { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ 974:
+/***/ (function(module) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__974__;
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
 /******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
-/******/
 /******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
 /******/ 		}
 /******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/
+/******/ 	
 /******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// define __esModule on exports
-/******/ 	__webpack_require__.r = function(exports) {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
-/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/
-/******/ 	// create a fake namespace object
-/******/ 	// mode & 1: value is a module id, require it
-/******/ 	// mode & 2: merge all properties of value into the ns
-/******/ 	// mode & 4: return value when already ns object
-/******/ 	// mode & 8|1: behave like require
-/******/ 	__webpack_require__.t = function(value, mode) {
-/******/ 		if(mode & 1) value = __webpack_require__(value);
-/******/ 		if(mode & 8) return value;
-/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-/******/ 		var ns = Object.create(null);
-/******/ 		__webpack_require__.r(ns);
-/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
-/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-/******/ 		return ns;
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 7);
-/******/ })
+/******/ 	
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__0__;
-
-/***/ }),
-
-/***/ 7:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	!function() {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = function(module) {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				function() { return module['default']; } :
+/******/ 				function() { return module; };
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	!function() {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = function(exports, definition) {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	!function() {
+/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
+/******/ 	}();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	!function() {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = function(exports) {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	}();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+!function() {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _editor__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
-/* harmony import */ var _editor__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_editor__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _editorCore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(974);
+/* harmony import */ var _editorCore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_editorCore__WEBPACK_IMPORTED_MODULE_0__);
 /**
  * @fileoverview I18N for Spanish
  * @author Aida Vidal <avidal@emapic.es>
  */
 
-_editor__WEBPACK_IMPORTED_MODULE_0___default.a.setLanguage(['gl', 'gl-ES'], {
-  Markdown: 'Markdown',
-  WYSIWYG: 'WYSIWYG',
-  Write: 'Escribir',
-  Preview: 'Vista previa',
-  Headings: 'Encabezados',
-  Paragraph: 'Parágrafo',
-  Bold: 'Negriña',
-  Italic: 'Cursiva',
-  Strike: 'Riscado',
-  Code: 'Código',
-  Line: 'Liña',
-  Blockquote: 'Cita',
-  'Unordered list': 'Lista desordenada',
-  'Ordered list': 'Lista ordenada',
-  Task: 'Tarefa',
-  Indent: 'Sangría',
-  Outdent: 'Anular sangría',
-  'Insert link': 'Inserir enlace',
-  'Insert CodeBlock': 'Inserir bloque de código',
-  'Insert table': 'Inserir táboa',
-  'Insert image': 'Inserir imaxe',
-  Heading: 'Encabezado',
-  'Image URL': 'URL da imaxe',
-  'Select image file': 'Seleccionar arquivo da imaxe',
-  Description: 'Descrición',
-  OK: 'Aceptar',
-  More: 'Máis',
-  Cancel: 'Cancelar',
-  File: 'Arquivo',
-  URL: 'URL',
-  'Link text': 'Texto do enlace',
-  'Add row': 'Agregar fila',
-  'Add col': 'Agregar columna',
-  'Remove row': 'Eliminar fila',
-  'Remove col': 'Eliminar columna',
-  'Align left': 'Aliñar á esquerda',
-  'Align center': 'Centrar',
-  'Align right': 'Aliñar á dereita',
-  'Remove table': 'Eliminar táboa',
-  'Would you like to paste as table?': 'Desexa pegar como táboa?',
-  'Text color': 'Cor do texto',
-  'Auto scroll enabled': 'Desprazamento automático habilitado',
-  'Auto scroll disabled': 'Desprazamento automático deshabilitado',
-  'Choose language': 'Elixir idioma'
+_editorCore__WEBPACK_IMPORTED_MODULE_0___default().setLanguage(['gl', 'gl-ES'], {
+    Markdown: 'Markdown',
+    WYSIWYG: 'WYSIWYG',
+    Write: 'Escribir',
+    Preview: 'Vista previa',
+    Headings: 'Encabezados',
+    Paragraph: 'Parágrafo',
+    Bold: 'Negriña',
+    Italic: 'Cursiva',
+    Strike: 'Riscado',
+    Code: 'Código',
+    Line: 'Liña',
+    Blockquote: 'Cita',
+    'Unordered list': 'Lista desordenada',
+    'Ordered list': 'Lista ordenada',
+    Task: 'Tarefa',
+    Indent: 'Sangría',
+    Outdent: 'Anular sangría',
+    'Insert link': 'Inserir enlace',
+    'Insert CodeBlock': 'Inserir bloque de código',
+    'Insert table': 'Inserir táboa',
+    'Insert image': 'Inserir imaxe',
+    Heading: 'Encabezado',
+    'Image URL': 'URL da imaxe',
+    'Select image file': 'Seleccionar arquivo da imaxe',
+    'Choose a file': 'Escoge un archivo',
+    'No file': 'Ningún archivo',
+    Description: 'Descrición',
+    OK: 'Aceptar',
+    More: 'Máis',
+    Cancel: 'Cancelar',
+    File: 'Arquivo',
+    URL: 'URL',
+    'Link text': 'Texto do enlace',
+    'Add row to up': 'Engade fila para arriba',
+    'Add row to down': 'Engade fila para abaixo',
+    'Add column to left': 'Engade columna á esquerda',
+    'Add column to right': 'Engade columna á dereita',
+    'Remove row': 'Eliminar fila',
+    'Remove column': 'Eliminar columna',
+    'Align column to left': 'Aliñar á esquerda',
+    'Align column to center': 'Centrar',
+    'Align column to right': 'Aliñar á dereita',
+    'Remove table': 'Eliminar táboa',
+    'Would you like to paste as table?': 'Desexa pegar como táboa?',
+    'Text color': 'Cor do texto',
+    'Auto scroll enabled': 'Desprazamento automático habilitado',
+    'Auto scroll disabled': 'Desprazamento automático deshabilitado',
+    'Choose language': 'Elixir idioma',
 });
 
-/***/ })
-
-/******/ });
+}();
+/******/ 	return __webpack_exports__;
+/******/ })()
+;
 });
