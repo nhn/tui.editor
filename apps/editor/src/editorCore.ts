@@ -281,10 +281,7 @@ class ToastUIEditorCore {
     this.addInitCommand(mdCommands, wwCommands);
 
     this.eventEmitter.emit('load', this);
-    // prevent the error for IE11
-    setTimeout(() => {
-      this.moveCursorToStart();
-    });
+    this.moveCursorToStart();
   }
 
   private addInitEvent() {
