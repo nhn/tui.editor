@@ -61,7 +61,3 @@ export default Editor;
 export declare namespace toastui {
   export { EditorCore, Editor, Viewer };
 }
-
-export declare module '@toast-ui/editor/dist/toastui-editor-viewer' {
-  export default Viewer;
-}
