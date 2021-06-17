@@ -1,4 +1,4 @@
-import { MdNode, TableMdNode } from './toastmark';
+import { MdNode, TableMdNode, Sourcepos, NodeWalker } from './toastmark';
 
 export interface TableRowMdNode extends MdNode {
   parent: TableBodyMdNode | TableHeadMdNode;
@@ -35,8 +35,26 @@ export interface MdLikeNode {
   childrenHTML?: string;
 }
 
-export interface HTMLMdNode extends MdNode {
+export interface HTMLMdNode {
+  type: string;
+  id: number;
+  parent: MdNode | null;
+  prev: MdNode | null;
+  next: MdNode | null;
+  sourcepos?: Sourcepos;
+  firstChild: MdNode | null;
+  lastChild: MdNode | null;
   literal: string | null;
+
+  isContainer(): boolean;
+  unlink(): void;
+  replaceWith(node: MdNode): void;
+  insertAfter(node: MdNode): void;
+  insertBefore(node: MdNode): void;
+  appendChild(child: MdNode): void;
+  prependChild(child: MdNode): void;
+  walker(): NodeWalker;
+
   attrs?: Record<string, string | null>;
   childrenHTML?: string;
 }

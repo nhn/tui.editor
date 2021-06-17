@@ -150,8 +150,11 @@ export default abstract class EditorBase implements Base {
   }
 
   focus() {
-    this.view.focus();
-    this.view.dispatch(this.view.state.tr.scrollIntoView());
+    // prevent the error for IE11
+    setTimeout(() => {
+      this.view.focus();
+      this.view.dispatch(this.view.state.tr.scrollIntoView());
+    });
   }
 
   blur() {
@@ -178,6 +181,7 @@ export default abstract class EditorBase implements Base {
     this.view.dispatch(
       tr.setSelection(createTextSelection(tr, tr.doc.content.size - 1)).scrollIntoView()
     );
+
     this.focus();
   }
 
