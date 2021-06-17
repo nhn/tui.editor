@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/editor-plugin-uml",
-  "version": "3.0.0-alpha.1",
+  "version": "3.0.0",
   "description": "TOAST UI Editor : UML Plugin",
   "keywords": [
     "nhn",
