@@ -33,7 +33,7 @@ export {
   HeadingMdNode,
   CodeMdNode,
   HTMLConvertorMap as ToHTMLConvertorMap,
-} from '@toast-ui/toastmark';
+} from './toastmark';
 export { ToMdConvertorMap } from './convertor';
 export { Emitter, Handler } from './event';
 export {

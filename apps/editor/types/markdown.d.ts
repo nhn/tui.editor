@@ -1,4 +1,4 @@
-import { MdNode, TableMdNode } from '@toast-ui/toastmark';
+import { MdNode, TableMdNode } from './toastmark';
 
 export interface TableRowMdNode extends MdNode {
   parent: TableBodyMdNode | TableHeadMdNode;
@@ -36,7 +36,6 @@ export interface MdLikeNode {
 }
 
 export interface HTMLMdNode extends MdNode {
-  type: string;
   literal: string | null;
   attrs?: Record<string, string | null>;
   childrenHTML?: string;
