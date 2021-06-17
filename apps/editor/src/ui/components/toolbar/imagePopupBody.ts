@@ -143,7 +143,7 @@ export class ImagePopupBody extends Component<Props, State> {
           >
             ${file ? file.name : i18n.get('No file')}
           </span>
-          <button class="${cls('file-select-button')}" onClick=${this.showFileSelectBox}>
+          <button type="button" class="${cls('file-select-button')}" onClick=${this.showFileSelectBox}>
             ${i18n.get('Choose a file')}
           </button>
           <input
