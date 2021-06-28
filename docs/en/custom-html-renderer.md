@@ -18,7 +18,7 @@ const editor = new Editor({
       return {
         type: context.entering ? 'openTag' : 'closeTag',
         tagName: 'div',
-        classNames: [`heading-'${node.level}`]
+        classNames: [`heading-${node.level}`]
       };
     },
     text(node, context) {
@@ -50,7 +50,7 @@ World
 The final HTML content will be like below.
 
 ```html
-<div class="heading2">HEADING</div>
+<div class="heading-2">HEADING</div>
 <p>Hello<br /><br />World</p>
 ```
 
