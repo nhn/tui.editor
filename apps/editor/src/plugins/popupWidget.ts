@@ -20,6 +20,7 @@ class PopupWidget {
   constructor(eventEmitter: Emitter) {
     this.eventEmitter = eventEmitter;
     this.eventEmitter.listen('blur', this.removeWidget);
+    this.eventEmitter.listen('removePopupWidget', this.removeWidget);
   }
 
   private removeWidget = () => {
