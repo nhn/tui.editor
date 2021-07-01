@@ -11,6 +11,8 @@ function getEditorHTML(editor: MarkdownEditor) {
   return editor.view.dom.innerHTML;
 }
 
+jest.useFakeTimers();
+
 describe('MarkdownEditor', () => {
   let mde: MarkdownEditor, em: EventEmitter, el: HTMLElement;
 
@@ -22,6 +24,8 @@ describe('MarkdownEditor', () => {
   });
 
   afterEach(() => {
+    jest.clearAllTimers();
+
     mde.destroy();
     document.body.removeChild(el);
   });
@@ -53,6 +57,9 @@ describe('MarkdownEditor', () => {
   it('setSelection API', () => {
     mde.setMarkdown('# myText');
     mde.setSelection([1, 1], [1, 2]);
+
+    // run setTimeout function when focusing the editor
+    jest.runAllTimers();
 
     expect(getSelectedText()).toBe('#');
   });
@@ -88,6 +95,9 @@ describe('MarkdownEditor', () => {
 
   it('focus API', () => {
     mde.focus();
+
+    // run setTimeout function when focusing the editor
+    jest.runAllTimers();
 
     expect(document.activeElement).toEqual(mde.view.dom);
   });
