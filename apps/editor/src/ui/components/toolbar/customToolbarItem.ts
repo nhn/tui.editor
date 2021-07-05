@@ -10,7 +10,7 @@ import {
 import { Emitter } from '@t/event';
 import html from '@/ui/vdom/template';
 import { Component } from '@/ui/vdom/component';
-import { getOuterWidth } from '@/utils/dom';
+import { cls, getOuterWidth } from '@/utils/dom';
 import { createPopupInfo } from '@/ui/toolbarItemFactory';
 import { connectHOC } from './buttonHoc';
 
@@ -18,6 +18,7 @@ interface Props {
   disabled: boolean;
   eventEmitter: Emitter;
   item: ToolbarCustomOptions;
+  active: boolean;
   execCommand: ExecCommand;
   setPopupInfo: SetPopupInfo;
   showTooltip: ShowTooltip;
@@ -42,6 +43,16 @@ class CustomToolbarItemComp extends Component<Props> {
     }
   }
 
+  updated(prevProps: Props) {
+    const { item, active, disabled } = this.props;
+
+    if (item.onUpdated) {
+      if (prevProps.active !== active || prevProps.disabled !== disabled) {
+        item.onUpdated({ active, disabled });
+      }
+    }
+  }
+
   private showTooltip = () => {
     this.props.showTooltip(this.refs.el);
   };
@@ -59,16 +70,19 @@ class CustomToolbarItemComp extends Component<Props> {
   };
 
   render() {
-    const style = { display: this.props.item.hidden ? 'none' : 'inline-block' };
+    const { disabled, item } = this.props;
+    const style = { display: item.hidden ? 'none' : 'inline-block' };
+    const classNames = cls('toolbar-item-wrapper');
+    const getListener = (listener: Function) => (disabled ? null : listener);
 
     return html`
       <div
         ref=${(el: HTMLElement) => (this.refs.el = el)}
         style=${style}
-        class="tui-toolbar-item-wrapper"
-        onClick=${this.showPopup}
-        onMouseover=${this.showTooltip}
-        onMouseout=${this.props.hideTooltip}
+        class=${classNames}
+        onClick=${getListener(this.showPopup)}
+        onMouseover=${getListener(this.showTooltip)}
+        onMouseout=${getListener(this.props.hideTooltip)}
       ></div>
     `;
   }
