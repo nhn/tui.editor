@@ -205,6 +205,14 @@ describe('eventEmitter', () => {
   describe('hold event', () => {
     let handler: jest.Mock;
 
+    function triggerEvent(apiName: 'emit' | 'emitReduce') {
+      if (apiName === 'emit') {
+        emitter.emit('myEvent');
+      } else {
+        emitter.emitReduce('myEvent', 0);
+      }
+    }
+
     beforeEach(() => {
       handler = jest.fn();
 
@@ -213,22 +221,24 @@ describe('eventEmitter', () => {
       emitter.listen('myEvent', handler);
     });
 
-    it('should not call the holding event', () => {
-      emitter.holdEventInvoke(() => {
-        emitter.emit('myEvent');
+    (['emit', 'emitReduce'] as const).forEach((apiName) => {
+      it(`should not call the holding event with ${apiName} API`, () => {
+        emitter.holdEventInvoke(() => {
+          triggerEvent(apiName);
+        });
+
+        expect(handler).not.toHaveBeenCalled();
       });
 
-      expect(handler).not.toHaveBeenCalled();
-    });
+      it(`should call the event after holding the event with ${apiName} API`, () => {
+        emitter.holdEventInvoke(() => {
+          triggerEvent(apiName);
+        });
 
-    it('should call the event after holding the event', () => {
-      emitter.holdEventInvoke(() => {
-        emitter.emit('myEvent');
+        triggerEvent(apiName);
+
+        expect(handler).toHaveBeenCalledTimes(1);
       });
-
-      emitter.emit('myEvent');
-
-      expect(handler).toHaveBeenCalledTimes(1);
     });
   });
 });
