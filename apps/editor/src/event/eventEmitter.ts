@@ -47,11 +47,14 @@ class EventEmitter implements Emitter {
 
   private eventTypes: Record<string, string>;
 
+  private hold: boolean;
+
   constructor() {
     this.events = new Map();
     this.eventTypes = eventTypeList.reduce((types, type) => {
       return { ...types, type };
     }, {});
+    this.hold = false;
 
     eventTypeList.forEach((eventType) => {
       this.addEventType(eventType);
@@ -90,7 +93,7 @@ class EventEmitter implements Emitter {
     const eventHandlers = this.events.get(typeInfo.type);
     const results: any[] = [];
 
-    if (eventHandlers) {
+    if (!this.hold && eventHandlers) {
       eventHandlers.forEach((handler) => {
         const result = handler(...args);
 
@@ -112,7 +115,7 @@ class EventEmitter implements Emitter {
   emitReduce(type: string, source: any, ...args: any[]) {
     const eventHandlers = this.events.get(type);
 
-    if (eventHandlers) {
+    if (!this.hold && eventHandlers) {
       eventHandlers.forEach((handler) => {
         const result = handler(source, ...args);
 
@@ -228,6 +231,12 @@ class EventEmitter implements Emitter {
 
   getEvents() {
     return this.events;
+  }
+
+  holdEventInvoke(fn: Function) {
+    this.hold = true;
+    fn();
+    this.hold = false;
   }
 }
 
