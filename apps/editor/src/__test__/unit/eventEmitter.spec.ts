@@ -201,4 +201,34 @@ describe('eventEmitter', () => {
       expect(handlerBeRemoved).not.toHaveBeenCalled();
     });
   });
+
+  describe('hold event', () => {
+    let handler: jest.Mock;
+
+    beforeEach(() => {
+      handler = jest.fn();
+
+      emitter.addEventType('myEvent');
+
+      emitter.listen('myEvent', handler);
+    });
+
+    it('should not call the holding event', () => {
+      emitter.holdEventInvoke(() => {
+        emitter.emit('myEvent');
+      });
+
+      expect(handler).not.toHaveBeenCalled();
+    });
+
+    it('should call the event after holding the event', () => {
+      emitter.holdEventInvoke(() => {
+        emitter.emit('myEvent');
+      });
+
+      emitter.emit('myEvent');
+
+      expect(handler).toHaveBeenCalledTimes(1);
+    });
+  });
 });
