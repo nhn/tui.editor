@@ -475,9 +475,11 @@ class ToastUIEditorCore {
    * @returns {string} html string
    */
   getHTML() {
-    if (this.isWysiwygMode()) {
-      this.mdEditor.setMarkdown(this.convertor.toMarkdownText(this.wwEditor.getModel()));
-    }
+    this.eventEmitter.holdEventInvoke(() => {
+      if (this.isWysiwygMode()) {
+        this.mdEditor.setMarkdown(this.convertor.toMarkdownText(this.wwEditor.getModel()));
+      }
+    });
 
     const mdNode = this.toastMark.getRootNode();
     const mdRenderer = this.preview.getRenderer();
