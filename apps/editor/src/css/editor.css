@@ -405,7 +405,7 @@
   display: flex;
 }
 
-.tui-toolbar-item-wrapper {
+.toastui-editor-toolbar-item-wrapper {
   margin: 7px 5px;
   height: 32px;
   line-height: 32px;
