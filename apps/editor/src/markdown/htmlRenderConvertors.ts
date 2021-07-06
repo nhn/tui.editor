@@ -12,10 +12,10 @@ import {
 } from '@t/toastmark';
 import { LinkAttributes, CustomHTMLRenderer } from '@t/editor';
 import { HTMLMdNode } from '@t/markdown';
-import { reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 import { getWidgetContent, widgetToDOM } from '@/widget/rules';
 import { getChildrenHTML, getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
 import { includes } from '@/utils/common';
+import { reHTMLTag } from '@/utils/constants';
 
 type TokenAttrs = Record<string, any>;
 
