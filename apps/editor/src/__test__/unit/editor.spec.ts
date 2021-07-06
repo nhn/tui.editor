@@ -1,13 +1,15 @@
 import '@/i18n/en-us';
 import { oneLineTrim, stripIndents } from 'common-tags';
+import { Emitter } from '@t/event';
+import { EditorOptions } from '@t/editor';
 import type { OpenTagToken } from '@toast-ui/toastmark';
 import i18n from '@/i18n/i18n';
 import Editor from '@/editor';
 import Viewer from '@/Viewer';
 import * as commonUtil from '@/utils/common';
-import { EditorOptions } from '@t/editor';
 import { createHTMLrenderer } from './markdown/util';
 import { cls } from '@/utils/dom';
+import * as imageHelper from '@/helper/image';
 
 const HEADING_CLS = `${cls('md-heading')} ${cls('md-heading1')}`;
 const DELIM_CLS = cls('md-delimiter');
@@ -238,6 +240,20 @@ describe('editor', () => {
 
       expect(spy).toHaveBeenCalledWith({ prop: 'prop' }, state, dispatch, view);
       expect(spy).toHaveBeenCalled();
+    });
+
+    it('should be triggered only once when the event registered by addHook()', () => {
+      const spy = jest.fn();
+      const { eventEmitter } = editor;
+
+      eventEmitter.addEventType('custom');
+
+      editor.addHook('custom', spy);
+      editor.addHook('custom', spy);
+
+      eventEmitter.emit('custom');
+
+      expect(spy).toHaveBeenCalledTimes(1);
     });
 
     describe('insertText()', () => {
@@ -808,6 +824,38 @@ describe('editor', () => {
         `;
 
         expect(wwEditor.innerHTML).toContain(result);
+      });
+    });
+
+    describe('hooks option', () => {
+      const defaultImageBlobHookSpy = jest.fn();
+
+      function mockDefaultImageBlobHook() {
+        defaultImageBlobHookSpy.mockReset();
+
+        jest
+          .spyOn(imageHelper, 'addDefaultImageBlobHook')
+          .mockImplementation((emitter: Emitter) => {
+            emitter.listen('addImageBlobHook', defaultImageBlobHookSpy);
+          });
+      }
+
+      it('should remove default `addImageBlobHook` event handler after registering hook', () => {
+        const spy = jest.fn();
+
+        mockDefaultImageBlobHook();
+
+        createEditor({
+          el: container,
+          hooks: {
+            addImageBlobHook: spy,
+          },
+        });
+
+        editor.eventEmitter.emit('addImageBlobHook');
+
+        expect(spy).toHaveBeenCalled();
+        expect(defaultImageBlobHookSpy).not.toHaveBeenCalled();
       });
     });
   });

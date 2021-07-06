@@ -36,6 +36,7 @@ export type EventTypes =
   | 'toggleScrollSync'
   | 'mixinTableOffsetMapPrototype'
   | 'setFocusedNode'
+  | 'removePopupWidget'
   // provide event for user
   | 'openPopup'
   | 'closePopup'

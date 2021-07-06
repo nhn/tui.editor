@@ -9,6 +9,8 @@ import { createHTMLSchemaMap } from '@/wysiwyg/nodes/html';
 import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 import { createHTMLrenderer } from '../markdown/util';
 
+jest.useFakeTimers();
+
 describe('WysiwygEditor', () => {
   let wwe: WysiwygEditor, em: EventEmitter, el: HTMLElement;
 
@@ -34,6 +36,7 @@ describe('WysiwygEditor', () => {
   });
 
   afterEach(() => {
+    jest.clearAllTimers();
     if (Object.keys(wwe).length) {
       wwe.destroy();
     }
@@ -49,6 +52,9 @@ describe('WysiwygEditor', () => {
 
     it(`focus() enable editor's dom selection state`, () => {
       wwe.focus();
+
+      // run setTimeout function when focusing the editor
+      jest.runAllTimers();
 
       expect(document.activeElement).toEqual(wwe.view.dom);
     });

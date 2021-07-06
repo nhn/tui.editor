@@ -21,6 +21,7 @@ const eventTypeList: EventTypes[] = [
   'toggleScrollSync',
   'mixinTableOffsetMapPrototype',
   'setFocusedNode',
+  'removePopupWidget',
   // provide event for user
   'openPopup',
   'closePopup',

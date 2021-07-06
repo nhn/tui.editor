@@ -197,14 +197,6 @@ class ToastUIEditorCore {
       sanitizer: customHTMLSanitizer || sanitizeHTML,
     };
     const wwToDOMAdaptor = new WwToDOMAdaptor(linkAttributes, rendererOptions.customHTMLRenderer);
-
-    if (this.options.hooks) {
-      forEachOwnProperties(this.options.hooks, (fn, key) => this.addHook(key, fn));
-    }
-
-    if (this.options.events) {
-      forEachOwnProperties(this.options.events, (fn, key) => this.on(key, fn));
-    }
     const htmlSchemaMap = createHTMLSchemaMap(
       rendererOptions.customHTMLRenderer,
       rendererOptions.sanitizer,
@@ -279,6 +271,14 @@ class ToastUIEditorCore {
     this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
     this.addInitEvent();
     this.addInitCommand(mdCommands, wwCommands);
+
+    if (this.options.hooks) {
+      forEachOwnProperties(this.options.hooks, (fn, key) => this.addHook(key, fn));
+    }
+
+    if (this.options.events) {
+      forEachOwnProperties(this.options.events, (fn, key) => this.on(key, fn));
+    }
 
     this.eventEmitter.emit('load', this);
     this.moveCursorToStart();
@@ -685,6 +685,7 @@ class ToastUIEditorCore {
       this.mdEditor.setMarkdown(this.convertor.toMarkdownText(wwNode), !withoutFocus);
     }
 
+    this.eventEmitter.emit('removePopupWidget');
     this.eventEmitter.emit('changeMode', mode);
 
     if (!withoutFocus) {
