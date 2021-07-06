@@ -20,8 +20,24 @@ export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, off
 
 const CLS_PREFIX = 'toastui-editor-';
 
-export function cls(...names: string[]) {
-  return names.map((className) => `${CLS_PREFIX}${className}`).join(' ');
+export function cls(...names: (string | [boolean, string])[]) {
+  const result = [];
+
+  for (const name of names) {
+    let className: string | null;
+
+    if (Array.isArray(name)) {
+      className = name[0] ? name[1] : null;
+    } else {
+      className = name;
+    }
+
+    if (className) {
+      result.push(`${CLS_PREFIX}${className}`);
+    }
+  }
+
+  return result.join(' ');
 }
 
 export function clsWithMdPrefix(...names: string[]) {

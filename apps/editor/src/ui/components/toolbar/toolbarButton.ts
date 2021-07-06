@@ -1,7 +1,6 @@
 import {
   ExecCommand,
   SetPopupInfo,
-  ToolbarState,
   SetItemWidth,
   GetBound,
   HideTooltip,
@@ -15,14 +14,11 @@ import { createPopupInfo } from '@/ui/toolbarItemFactory';
 import { getOuterWidth } from '@/utils/dom';
 import { connectHOC } from './buttonHoc';
 
-interface Payload {
-  toolbarState: ToolbarState;
-}
-
 interface Props {
   disabled: boolean;
   eventEmitter: Emitter;
   item: ToolbarButtonInfo;
+  active: boolean;
   execCommand: ExecCommand;
   setPopupInfo: SetPopupInfo;
   showTooltip: ShowTooltip;
@@ -31,29 +27,9 @@ interface Props {
   setItemWidth?: SetItemWidth;
 }
 
-interface State {
-  active: boolean;
-}
-
 const DEFAULT_WIDTH = 80;
 
-export class ToolbarButtonComp extends Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-    this.state = { active: false };
-    this.addEvent();
-  }
-
-  addEvent() {
-    if (this.props.item.state) {
-      this.props.eventEmitter.listen('changeToolbarState', ({ toolbarState }: Payload) => {
-        const active = !!toolbarState[this.props.item.state!];
-
-        this.setState({ active });
-      });
-    }
-  }
-
+export class ToolbarButtonComp extends Component<Props> {
   mounted() {
     this.setItemWidth();
   }
@@ -98,9 +74,9 @@ export class ToolbarButtonComp extends Component<Props, State> {
   };
 
   render() {
-    const { hideTooltip, disabled, item } = this.props;
+    const { hideTooltip, disabled, item, active } = this.props;
     const style = { display: item.hidden ? 'none' : null, ...item.style };
-    const classNames = `${item.className || ''}${this.state.active ? ' active' : ''}`;
+    const classNames = `${item.className || ''}${active ? ' active' : ''}`;
 
     return html`
       <button

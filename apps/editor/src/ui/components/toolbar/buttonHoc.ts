@@ -6,6 +6,7 @@ import {
   SetItemWidth,
   ComponentClass,
   ToolbarButtonInfo,
+  ToolbarState,
 } from '@t/ui';
 import { Emitter } from '@t/event';
 import html from '@/ui/vdom/template';
@@ -22,10 +23,36 @@ interface Props {
   setItemWidth?: SetItemWidth;
 }
 
+interface Payload {
+  toolbarState: ToolbarState;
+}
+
+interface State {
+  active: boolean;
+}
+
 const TOOLTIP_INDENT = 6;
 
 export function connectHOC(WrappedComponent: ComponentClass) {
-  return class ButtonHOC extends Component<Props> {
+  return class ButtonHOC extends Component<Props, State> {
+    constructor(props: Props) {
+      super(props);
+      this.state = { active: false };
+      this.addEvent();
+    }
+
+    private addEvent() {
+      const { item, eventEmitter } = this.props;
+
+      if (item.state) {
+        eventEmitter.listen('changeToolbarState', ({ toolbarState }: Payload) => {
+          const active = !!toolbarState[item.state!];
+
+          this.setState({ active });
+        });
+      }
+    }
+
     private getBound(el: HTMLElement) {
       const { offsetLeft, offsetTop } = getTotalOffset(
         el,
@@ -56,6 +83,7 @@ export function connectHOC(WrappedComponent: ComponentClass) {
       return html`
         <${WrappedComponent}
           ...${this.props}
+          active=${this.state.active}
           showTooltip=${this.showTooltip}
           hideTooltip=${this.hideTooltip}
           getBound=${this.getBound}

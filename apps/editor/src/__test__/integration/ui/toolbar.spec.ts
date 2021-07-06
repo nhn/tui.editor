@@ -493,6 +493,8 @@ describe('custom button toolbar', () => {
 });
 
 describe('custom toolbar element', () => {
+  const onUpdatedSpy = jest.fn();
+
   function createCustomItem() {
     const el = document.createElement('div');
 
@@ -503,6 +505,8 @@ describe('custom toolbar element', () => {
       el,
       name: 'myToolbar',
       tooltip: 'custom1!',
+      state: 'strong',
+      onUpdated: onUpdatedSpy,
     };
   }
 
@@ -541,6 +545,14 @@ describe('custom toolbar element', () => {
     };
   }
 
+  function clickMarkdownWriteTab() {
+    document.querySelectorAll<HTMLElement>('.tab-item')![0].click();
+  }
+
+  function clickMarkdownPreviewTab() {
+    document.querySelectorAll<HTMLElement>('.tab-item')![1].click();
+  }
+
   const customItem = createCustomItem();
   const customItemWithPopup = createCustomItemWithPopup();
 
@@ -550,6 +562,7 @@ describe('custom toolbar element', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
+    onUpdatedSpy.mockReset();
     em = new EventEmitter();
 
     destroy = render(
@@ -557,7 +570,7 @@ describe('custom toolbar element', () => {
       html`
         <${Toolbar}
           eventEmitter=${em}
-          previewStyle="vertical"
+          previewStyle="tab"
           toolbarItems=${toolbarItems}
           editorType="markdown"
         />
@@ -604,6 +617,30 @@ describe('custom toolbar element', () => {
     dispatchSelectChange('select', '3');
 
     expect(spy).toHaveBeenCalledWith('heading', { level: 3 });
+  });
+
+  it('should toggle active state properly when toolbar state is changed', () => {
+    em.emit('changeToolbarState', { toolbarState: { strong: true } });
+
+    expect(onUpdatedSpy).toHaveBeenCalledWith(expect.objectContaining({ active: true }));
+
+    em.emit('changeToolbarState', { toolbarState: { strong: false } });
+
+    expect(onUpdatedSpy).toHaveBeenCalledWith(expect.objectContaining({ active: false }));
+  });
+
+  it('should toggle disabled state when changing markdown tab mode', () => {
+    em.emit('changePreviewStyle', 'tab');
+
+    // change markdown tab mode to preview tab
+    clickMarkdownPreviewTab();
+
+    expect(onUpdatedSpy).toHaveBeenCalledWith(expect.objectContaining({ disabled: true }));
+
+    // change markdown tab mode to write tab
+    clickMarkdownWriteTab();
+
+    expect(onUpdatedSpy).toHaveBeenCalledWith(expect.objectContaining({ disabled: false }));
   });
 });
 

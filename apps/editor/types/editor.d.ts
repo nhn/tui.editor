@@ -126,7 +126,7 @@ export interface EditorOptions {
   language?: string;
   useCommandShortcut?: boolean;
   usageStatistics?: boolean;
-  toolbarItems?: (string | ToolbarItemOptions)[];
+  toolbarItems?: (string | ToolbarItemOptions)[][];
   hideModeSwitch?: boolean;
   plugins?: EditorPlugin[];
   extendedAutolinks?: ExtendedAutolinks;

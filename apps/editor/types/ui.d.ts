@@ -12,6 +12,12 @@ export interface ToolbarButtonOptions {
   text?: string;
   style?: Record<string, any>;
   popup?: PopupOptions;
+  state?: ToolbarStateKeys;
+}
+
+interface ToolbarCustomItemState {
+  active: boolean;
+  disabled: boolean;
 }
 
 export interface ToolbarCustomOptions {
@@ -20,11 +26,12 @@ export interface ToolbarCustomOptions {
   el?: HTMLElement;
   popup?: PopupOptions;
   hidden?: boolean;
+  state?: ToolbarStateKeys;
   onMounted?: (execCommand: ExecCommand) => void;
+  onUpdated?: (toolbarState: ToolbarCustomItemState) => void;
 }
 
 export type ToolbarButtonInfo = {
-  state?: ToolbarStateKeys;
   hidden?: boolean;
 } & ToolbarButtonOptions;
 
