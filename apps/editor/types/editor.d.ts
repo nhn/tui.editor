@@ -1,12 +1,13 @@
 import { Schema, NodeSpec, MarkSpec, Fragment } from 'prosemirror-model';
 import { EditorView, Decoration, DecorationSet } from 'prosemirror-view';
 import { EditorState, Plugin, Selection, TextSelection } from 'prosemirror-state';
-import { HTMLConvertorMap, MdPos, Sourcepos } from './toastmark';
+import { HTMLConvertor, MdPos, Sourcepos, Context as MdContext } from './toastmark';
 import { Emitter, Handler } from './event';
 import { Context, EditorAllCommandMap, EditorCommandFn, SpecManager } from './spec';
 import { ToMdConvertorMap } from './convertor';
 import { ToolbarItemOptions, IndexList } from './ui';
 import { CommandFn, PluginInfo } from './plugin';
+import { HTMLMdNode } from './markdown';
 
 export type PreviewStyle = 'tab' | 'vertical';
 export type EditorType = 'markdown' | 'wysiwyg';
@@ -53,6 +54,16 @@ export type LinkAttributes = Partial<Record<LinkAttributeNames, string>>;
 
 export type Sanitizer = (content: string) => string;
 
+export type HTMLMdNodeConvertor = (
+  node: HTMLMdNode,
+  context: MdContext,
+  convertors?: HTMLConvertorMap
+) => HTMLToken | HTMLToken[] | null;
+
+export type HTMLMdNodeConvertorMap = Record<string, HTMLMdNodeConvertor>;
+
+export type CustomHTMLRenderer = Partial<Record<string, HTMLConvertor | HTMLMdNodeConvertorMap>>;
+
 export interface ViewerOptions {
   el: HTMLElement;
   initialValue?: string;
@@ -60,7 +71,7 @@ export interface ViewerOptions {
   plugins?: EditorPlugin[];
   extendedAutolinks?: ExtendedAutolinks;
   linkAttributes?: LinkAttributes;
-  customHTMLRenderer?: HTMLConvertorMap;
+  customHTMLRenderer?: CustomHTMLRenderer;
   referenceDefinition?: boolean;
   customHTMLSanitizer?: Sanitizer;
   frontMatter?: boolean;
@@ -132,7 +143,7 @@ export interface EditorOptions {
   extendedAutolinks?: ExtendedAutolinks;
   placeholder?: string;
   linkAttributes?: LinkAttributes;
-  customHTMLRenderer?: HTMLConvertorMap;
+  customHTMLRenderer?: CustomHTMLRenderer;
   customMarkdownRenderer?: ToMdConvertorMap;
   referenceDefinition?: boolean;
   customHTMLSanitizer?: Sanitizer;

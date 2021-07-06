@@ -1,3 +1,4 @@
+import isFunction from 'tui-code-snippet/type/isFunction';
 import {
   HTMLConvertorMap,
   MdNode,
@@ -7,8 +8,9 @@ import {
   CustomInlineMdNode,
   OpenTagToken,
   Context,
-} from '@toast-ui/toastmark';
-import { LinkAttributes } from '@t/editor';
+  HTMLConvertor,
+} from '@t/toastmark';
+import { LinkAttributes, CustomHTMLRenderer } from '@t/editor';
 import { HTMLMdNode } from '@t/markdown';
 import { reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 import { getWidgetContent, widgetToDOM } from '@/widget/rules';
@@ -125,7 +127,7 @@ const baseConvertors: HTMLConvertorMap = {
 
 export function getHTMLRenderConvertors(
   linkAttributes: LinkAttributes | null,
-  customConvertors: HTMLConvertorMap
+  customConvertors: CustomHTMLRenderer
 ) {
   const convertors = { ...baseConvertors };
 
@@ -148,22 +150,21 @@ export function getHTMLRenderConvertors(
       const orgConvertor = convertors[nodeType];
       const customConvertor = customConvertors[nodeType]!;
 
-      if (orgConvertor) {
+      if (orgConvertor && isFunction(customConvertor)) {
         convertors[nodeType] = (node, context) => {
           const newContext = { ...context };
 
           newContext.origin = () => orgConvertor(node, context);
           return customConvertor(node, newContext);
         };
-      } else if (includes(['htmlBlock', 'htmlInline'], nodeType)) {
+      } else if (includes(['htmlBlock', 'htmlInline'], nodeType) && !isFunction(customConvertor)) {
         convertors[nodeType] = (node, context) => {
           const matched = node.literal!.match(reHTMLTag);
 
           if (matched) {
             const [rootHTML, openTagName, , closeTagName] = matched;
             const typeName = (openTagName || closeTagName).toLowerCase();
-            // @ts-expect-error
-            const htmlConvertor: CustomHTMLRenderer = customConvertor[typeName];
+            const htmlConvertor = customConvertor[typeName];
             const childrenHTML = getChildrenHTML(node, typeName);
 
             if (htmlConvertor) {
@@ -181,7 +182,7 @@ export function getHTMLRenderConvertors(
           return context.origin!();
         };
       } else {
-        convertors[nodeType] = customConvertor;
+        convertors[nodeType] = customConvertor as HTMLConvertor;
       }
     });
   }
