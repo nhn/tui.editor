@@ -223,17 +223,13 @@ describe('eventEmitter', () => {
 
     (['emit', 'emitReduce'] as const).forEach((apiName) => {
       it(`should not call the holding event with ${apiName} API`, () => {
-        emitter.holdEventInvoke(() => {
-          triggerEvent(apiName);
-        });
+        emitter.holdEventInvoke(() => triggerEvent(apiName));
 
         expect(handler).not.toHaveBeenCalled();
       });
 
       it(`should call the event after holding the event with ${apiName} API`, () => {
-        emitter.holdEventInvoke(() => {
-          triggerEvent(apiName);
-        });
+        emitter.holdEventInvoke(() => triggerEvent(apiName));
 
         triggerEvent(apiName);
 
