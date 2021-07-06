@@ -1,35 +1,45 @@
-const reURL = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/g;
-const encodingRegExps = [/\(/g, /\)/g, /\[/g, /\]/g, /</g, />/g];
-const encodedList = ['%28', '%29', '%5B', '%5D', '%3C', '%3E'];
-const escapedList = ['\\(', '\\)', '\\[', '\\]', '\\<', '\\>'];
+const encoderList = [
+  {
+    regExp: /\(/g,
+    encoded: '%28',
+    escaped: '\\(',
+  },
+  {
+    regExp: /\)/g,
+    encoded: '%29',
+    escaped: '\\)',
+  },
+  {
+    regExp: /\[/g,
+    encoded: '%5B',
+    escaped: '\\[',
+  },
+  {
+    regExp: /\]/g,
+    encoded: '%5D',
+    escaped: '\\]',
+  },
+  {
+    regExp: /</g,
+    encoded: '%3C',
+    escaped: '\\<',
+  },
+  {
+    regExp: />/g,
+    encoded: '%3E',
+    escaped: '\\>',
+  },
+  {
+    regExp: / /g,
+    encoded: '%20',
+    escaped: ' ',
+  },
+];
 
-export function decodeURIGraceful(uri: string) {
-  const uriList = uri.split(' ');
-
-  return uriList
-    .reduce<string[]>((decodedURIList, targetUri) => {
-      let decodedURI = '';
-
-      try {
-        decodedURI = decodeURIComponent(targetUri);
-      } catch (e) {
-        decodedURI = targetUri;
-      }
-
-      return decodedURIList.concat(decodedURI);
-    }, [])
-    .join('%20');
+export function escapeMarkdownText(text: string) {
+  return encoderList.reduce((result, { regExp, escaped }) => result.replace(regExp, escaped), text);
 }
 
-export function encodeMarkdownText(text: string, encode: boolean) {
-  const expectedValues = encode ? encodedList : escapedList;
-
-  return encodingRegExps.reduce(
-    (result, regExp, index) => result.replace(regExp, expectedValues[index]),
-    text
-  );
-}
-
-export function decodeURL(text: string) {
-  return text.replace(reURL, (matched) => encodeMarkdownText(decodeURIGraceful(matched), true));
+export function encodeMarkdownText(text: string) {
+  return encoderList.reduce((result, { regExp, encoded }) => result.replace(regExp, encoded), text);
 }

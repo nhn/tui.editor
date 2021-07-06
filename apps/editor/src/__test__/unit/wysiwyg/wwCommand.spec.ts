@@ -484,14 +484,14 @@ describe('wysiwyg commands', () => {
       expect(wwe.getHTML()).toBe('<p><br></p>');
     });
 
-    it('should decode attribute and encode wrong markdown charactors', () => {
+    it('should not decode url which is already encoded', () => {
       cmd.exec('addImage', {
-        imageUrl: 'foo %D1%88%D0%B5%D0%BB%D0%BB%D1%8B ()[]<>',
-        altText: 'foo ()[]<>',
+        imageUrl: 'https://firebasestorage.googleapis.com/images%2Fimage.png?alt=media',
+        altText: 'foo',
       });
 
       expect(wwe.getHTML()).toBe(
-        '<p><img src="foo%20шеллы%20%28%29%5B%5D%3C%3E" alt="foo \\(\\)\\[\\]\\<\\>"><br></p>'
+        '<p><img src="https://firebasestorage.googleapis.com/images%2Fimage.png?alt=media" alt="foo"><br></p>'
       );
     });
   });
@@ -520,17 +520,6 @@ describe('wysiwyg commands', () => {
       expect(wwe.getHTML()).toBe('<p><br></p>');
     });
 
-    it('should decode attribute and encode wrong markdown charactors', () => {
-      cmd.exec('addLink', {
-        linkUrl: 'foo %D1%88%D0%B5%D0%BB%D0%BB%D1%8B ()[]<>',
-        linkText: 'foo ()[]<>',
-      });
-
-      expect(wwe.getHTML()).toBe(
-        '<p><a href="foo%20шеллы%20%28%29%5B%5D%3C%3E">foo ()[]&lt;&gt;</a></p>'
-      );
-    });
-
     it('should change link url in selection', () => {
       cmd.exec('addLink', {
         linkUrl: '#',
@@ -553,6 +542,17 @@ describe('wysiwyg commands', () => {
       `;
 
       expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should not decode url which is already encoded', () => {
+      cmd.exec('addLink', {
+        linkUrl: 'https://firebasestorage.googleapis.com/links%2Fimage.png?alt=media',
+        linkText: 'foo',
+      });
+
+      expect(wwe.getHTML()).toBe(
+        '<p><a href="https://firebasestorage.googleapis.com/links%2Fimage.png?alt=media">foo</a></p>'
+      );
     });
   });
 

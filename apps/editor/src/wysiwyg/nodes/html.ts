@@ -24,10 +24,10 @@ export function getHTMLAttrsByHTMLString(html: string) {
 
   return attrs
     ? attrs.reduce<Record<string, string | null>>((acc, attr) => {
-        const [name, ...value] = attr.trim().split('=');
+        const [name, ...values] = attr.trim().split('=');
 
-        if (value.length > 0) {
-          acc[name] = value.join('=').replace(/'|"/g, '').trim();
+        if (values.length) {
+          acc[name] = values.join('=').replace(/'|"/g, '').trim();
         }
 
         return acc;

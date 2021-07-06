@@ -292,6 +292,17 @@ describe('addImage command', () => {
 
     expect(getTextContent(mde)).toBe('![image](myurl%20%28%29%5B%5D%3C%3E)');
   });
+
+  it('should not decode url which is already encoded', () => {
+    cmd.exec('addImage', {
+      altText: 'image',
+      imageUrl: 'https://firebasestorage.googleapis.com/images%2Fimage.png?alt=media',
+    });
+
+    expect(getTextContent(mde)).toBe(
+      '![image](https://firebasestorage.googleapis.com/images%2Fimage.png?alt=media)'
+    );
+  });
 });
 
 describe('addLink command', () => {
@@ -317,6 +328,17 @@ describe('addLink command', () => {
     });
 
     expect(getTextContent(mde)).toBe('[TOAST UI](myurl%20%28%29%5B%5D%3C%3E)');
+  });
+
+  it('should not decode url which is already encoded', () => {
+    cmd.exec('addLink', {
+      linkText: 'TOAST UI',
+      linkUrl: 'https://firebasestorage.googleapis.com/links%2Fimage.png?alt=media',
+    });
+
+    expect(getTextContent(mde)).toBe(
+      '[TOAST UI](https://firebasestorage.googleapis.com/links%2Fimage.png?alt=media)'
+    );
   });
 });
 
