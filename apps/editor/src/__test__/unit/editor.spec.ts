@@ -242,7 +242,7 @@ describe('editor', () => {
       expect(spy).toHaveBeenCalled();
     });
 
-    it('the event registered by addHook() API should be triggered only once', () => {
+    it('should be triggered only once when the event registered by addHook()', () => {
       const spy = jest.fn();
       const { eventEmitter } = editor;
 
