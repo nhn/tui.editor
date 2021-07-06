@@ -828,6 +828,13 @@ describe('Convertor', () => {
       assertConverting(markdown, markdown);
     });
 
+    it('should convert html block element which has "=" character as the attribute value', () => {
+      const markdown =
+        '<iframe width="420" height="315" src="//player.bilibili.com/player.html?aid=588782532&bvid=BV1hB4y1K7ro&cid=360826679&page=1"></iframe>';
+
+      assertConverting(markdown, markdown);
+    });
+
     it('should convert html inline node', () => {
       const markdown = '<big class="my-big">content</big>';
 
