@@ -201,4 +201,40 @@ describe('eventEmitter', () => {
       expect(handlerBeRemoved).not.toHaveBeenCalled();
     });
   });
+
+  describe('hold event', () => {
+    let handler: jest.Mock;
+
+    function triggerEvent(apiName: 'emit' | 'emitReduce') {
+      if (apiName === 'emit') {
+        emitter.emit('myEvent');
+      } else {
+        emitter.emitReduce('myEvent', 0);
+      }
+    }
+
+    beforeEach(() => {
+      handler = jest.fn();
+
+      emitter.addEventType('myEvent');
+
+      emitter.listen('myEvent', handler);
+    });
+
+    (['emit', 'emitReduce'] as const).forEach((apiName) => {
+      it(`should not call the holding event with ${apiName} API`, () => {
+        emitter.holdEventInvoke(() => triggerEvent(apiName));
+
+        expect(handler).not.toHaveBeenCalled();
+      });
+
+      it(`should call the event after holding the event with ${apiName} API`, () => {
+        emitter.holdEventInvoke(() => triggerEvent(apiName));
+
+        triggerEvent(apiName);
+
+        expect(handler).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
 });

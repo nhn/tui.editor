@@ -70,19 +70,31 @@ describe('editor', () => {
       expect(wwEditor).toContainHTML(expected);
     });
 
-    it('getHTML()', () => {
-      editor.setMarkdown('# heading\n* bullet');
+    describe('getHTML()', () => {
+      it('basic', () => {
+        editor.setMarkdown('# heading\n* bullet');
 
-      const result = stripIndents`
-        <h1>heading</h1>
-        <ul>
-          <li>
-            <p>bullet</p>
-          </li>
-        </ul>
-      `;
+        const result = stripIndents`
+          <h1>heading</h1>
+          <ul>
+            <li>
+              <p>bullet</p>
+            </li>
+          </ul>
+        `;
 
-      expect(editor.getHTML()).toBe(result);
+        expect(editor.getHTML()).toBe(result);
+      });
+
+      it('should not trigger change event when the mode is wysiwyg', () => {
+        const spy = jest.fn();
+
+        editor.changeMode('wysiwyg');
+        editor.on('change', spy);
+        editor.getHTML();
+
+        expect(spy).not.toHaveBeenCalled();
+      });
     });
 
     it('changeMode()', () => {

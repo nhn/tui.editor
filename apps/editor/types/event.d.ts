@@ -12,6 +12,7 @@ export interface Emitter {
   addEventType(type: string): void;
   removeEventHandler(type: string, handler?: Handler): void;
   getEvents(): Mapable<string, Handler[] | undefined>;
+  holdEventInvoke(fn: Function): void;
 }
 
 export interface EmitterConstructor {
