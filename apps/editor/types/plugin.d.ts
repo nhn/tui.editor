@@ -2,7 +2,8 @@ import { Plugin, EditorState } from 'prosemirror-state';
 import { EditorView, NodeView } from 'prosemirror-view';
 import { Node } from 'prosemirror-model';
 
-import { HTMLConvertorMap, CustomParserMap } from './toastmark';
+import { CustomParserMap } from './toastmark';
+import { CustomHTMLRendererOpt } from './editor';
 import { Emitter } from './event';
 import { ToMdConvertorMap } from './convertor';
 import { Dispatch, Payload, DefaultPayload } from './spec';
@@ -34,7 +35,7 @@ interface PluginToolbarItem {
 }
 
 export interface PluginInfo {
-  toHTMLRenderers?: HTMLConvertorMap;
+  toHTMLRenderers?: CustomHTMLRendererOpt;
   toMarkdownRenderers?: ToMdConvertorMap;
   markdownPlugins?: PluginProp[];
   wysiwygPlugins?: PluginProp[];
@@ -46,7 +47,7 @@ export interface PluginInfo {
 }
 
 export interface PluginInfoResult {
-  toHTMLRenderers: HTMLConvertorMap;
+  toHTMLRenderers: CustomHTMLRendererOpt;
   toMarkdownRenderers: ToMdConvertorMap;
   mdPlugins: PluginProp[];
   wwPlugins: PluginProp[];

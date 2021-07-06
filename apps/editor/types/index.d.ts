@@ -18,6 +18,9 @@ import {
   WidgetRule,
   PluginContext,
   I18n,
+  CustomHTMLRenderer,
+  HTMLMdNodeConvertor,
+  HTMLMdNodeConvertorMap,
 } from './editor';
 
 export {
@@ -32,7 +35,7 @@ export {
   ListData,
   HeadingMdNode,
   CodeMdNode,
-  HTMLConvertorMap as ToHTMLConvertorMap,
+  HTMLConvertorMap,
 } from './toastmark';
 export { ToMdConvertorMap } from './convertor';
 export { Emitter, Handler } from './event';
@@ -51,10 +54,13 @@ export {
   WidgetRule,
   PluginContext,
   I18n,
+  CustomHTMLRenderer,
+  HTMLMdNodeConvertor,
+  HTMLMdNodeConvertorMap,
 };
 export { Dispatch } from './spec';
 export { PluginInfo, PluginNodeViews, CommandFn, PluginCommandMap } from './plugin';
-export { MdLikeNode } from './markdown';
+export { MdLikeNode, HTMLMdNode } from './markdown';
 export { Editor, EditorCore };
 export default Editor;
 
