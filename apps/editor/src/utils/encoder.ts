@@ -1,17 +1,45 @@
-const encodingRegExps = [/\(/g, /\)/g, /\[/g, /\]/g, /</g, />/g, / /g];
-const encodedList = ['%28', '%29', '%5B', '%5D', '%3C', '%3E', '%20'];
-const escapedList = ['\\(', '\\)', '\\[', '\\]', '\\<', '\\>', ' '];
+const encoderList = [
+  {
+    regExp: /\(/g,
+    encoded: '%28',
+    escaped: '\\(',
+  },
+  {
+    regExp: /\)/g,
+    encoded: '%29',
+    escaped: '\\)',
+  },
+  {
+    regExp: /\[/g,
+    encoded: '%5B',
+    escaped: '\\[',
+  },
+  {
+    regExp: /\]/g,
+    encoded: '%5D',
+    escaped: '\\]',
+  },
+  {
+    regExp: /</g,
+    encoded: '%3C',
+    escaped: '\\<',
+  },
+  {
+    regExp: />/g,
+    encoded: '%3E',
+    escaped: '\\>',
+  },
+  {
+    regExp: / /g,
+    encoded: '%20',
+    escaped: ' ',
+  },
+];
 
 export function escapeMarkdownText(text: string) {
-  return encodingRegExps.reduce(
-    (result, regExp, index) => result.replace(regExp, escapedList[index]),
-    text
-  );
+  return encoderList.reduce((result, { regExp, escaped }) => result.replace(regExp, escaped), text);
 }
 
 export function encodeMarkdownText(text: string) {
-  return encodingRegExps.reduce(
-    (result, regExp, index) => result.replace(regExp, encodedList[index]),
-    text
-  );
+  return encoderList.reduce((result, { regExp, encoded }) => result.replace(regExp, encoded), text);
 }
