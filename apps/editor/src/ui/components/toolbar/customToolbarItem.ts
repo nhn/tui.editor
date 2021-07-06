@@ -46,10 +46,8 @@ class CustomToolbarItemComp extends Component<Props> {
   updated(prevProps: Props) {
     const { item, active, disabled } = this.props;
 
-    if (item.onUpdated) {
-      if (prevProps.active !== active || prevProps.disabled !== disabled) {
-        item.onUpdated({ active, disabled });
-      }
+    if (prevProps.active !== active || prevProps.disabled !== disabled) {
+      item.onUpdated?.({ active, disabled });
     }
   }
 
