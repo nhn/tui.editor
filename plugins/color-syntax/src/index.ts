@@ -1,7 +1,6 @@
 import ColorPicker from 'tui-color-picker';
-
 import type { Context } from '@toast-ui/toastmark';
-import type { PluginContext, PluginInfo, MdLikeNode } from '@toast-ui/editor';
+import type { PluginContext, PluginInfo, HTMLMdNode } from '@toast-ui/editor';
 import type { Transaction, Selection, TextSelection } from 'prosemirror-state';
 import { PluginOptions } from '@t/index';
 
@@ -147,10 +146,9 @@ export default function colorSyntaxPlugin(
     ],
     toHTMLRenderers: {
       htmlInline: {
-        // @ts-expect-error
-        span(node: MdLikeNode, { entering }: Context) {
+        span(node: HTMLMdNode, { entering }: Context) {
           return entering
-            ? { type: 'openTag', tagName: 'span', attributes: node.attrs }
+            ? { type: 'openTag', tagName: 'span', attributes: node.attrs! }
             : { type: 'closeTag', tagName: 'span' };
         },
       },
