@@ -2,7 +2,7 @@ import { Mark as ProsemirrorMark, DOMOutputSpecArray } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 
 import Mark from '@/spec/mark';
-import { decodeURIGraceful, encodeMarkdownText } from '@/utils/encoder';
+import { encodeMarkdownText, escapeMarkdownText } from '@/utils/encoder';
 import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
 import { createTextNode } from '@/helper/manipulation';
 import { getCustomAttrs, getDefaultCustomAttrs } from '@/wysiwyg/helper/node';
@@ -65,8 +65,8 @@ export class Link extends Mark {
 
       if (from && to && linkUrl) {
         const attrs = {
-          linkUrl: encodeMarkdownText(decodeURIGraceful(linkUrl), true),
-          linkText: encodeMarkdownText(linkText, false),
+          linkUrl: encodeMarkdownText(linkUrl),
+          linkText: escapeMarkdownText(linkText),
         };
         const mark = schema.mark('link', attrs);
 
