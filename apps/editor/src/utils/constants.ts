@@ -10,8 +10,8 @@ const ATTRIBUTE_VALUE_SPEC = `${'(?:\\s*=\\s*'}${ATTRIBUTE_VALUE})`;
 
 export const ATTRIBUTE = `${'(?:\\s+'}${ATTRIBUTE_NAME}${ATTRIBUTE_VALUE_SPEC}?)`;
 
-const OPEN_TAG = `<(${TAG_NAME})(${ATTRIBUTE})*\\s*/?>`;
-const CLOSE_TAG = `</(${TAG_NAME})\\s*[>]`;
+export const OPEN_TAG = `<(${TAG_NAME})(${ATTRIBUTE})*\\s*/?>`;
+export const CLOSE_TAG = `</(${TAG_NAME})\\s*[>]`;
 
 export const HTML_TAG = `(?:${OPEN_TAG}|${CLOSE_TAG})`;
 
