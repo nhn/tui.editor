@@ -34,7 +34,7 @@ interface TagToken {
 export interface OpenTagToken extends TagToken {
   type: 'openTag';
   classNames?: string[];
-  attributes?: Record<string, string>;
+  attributes?: Record<string, any>;
   selfClose?: boolean;
 }
 

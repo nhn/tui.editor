@@ -255,7 +255,7 @@ export type HTMLConvertor = (
   convertors?: HTMLConvertorMap
 ) => HTMLToken | HTMLToken[] | null;
 
-export type HTMLConvertorMap = Partial<Record<MdNodeType | string, HTMLConvertor>>;
+export type HTMLConvertorMap = Partial<Record<string, HTMLConvertor>>;
 
 interface RendererOptions {
   gfm: boolean;
@@ -283,7 +283,7 @@ interface TagToken {
 export interface OpenTagToken extends TagToken {
   type: 'openTag';
   classNames?: string[];
-  attributes?: Record<string, string>;
+  attributes?: Record<string, any>;
   selfClose?: boolean;
 }
 
