@@ -1,8 +1,8 @@
-import type { ToHTMLConvertorMap } from '@toast-ui/editor';
+import type { CustomHTMLRenderer } from '@toast-ui/editor';
 import type { OpenTagToken } from '@toast-ui/toastmark';
 import { MergedTableCellMdNode, MergedTableRowMdNode } from '@t/index';
 
-export const toHTMLRenderers: ToHTMLConvertorMap = {
+export const toHTMLRenderers: CustomHTMLRenderer = {
   // @ts-ignore
   tableRow(node: MergedTableRowMdNode, { entering, origin }) {
     if (entering) {
