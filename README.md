@@ -131,6 +131,7 @@ Fork `main` branch into your personal repository. Clone it to local computer. In
 ```sh
 $ git clone https://github.com/{your-personal-repo}/tui.editor.git
 $ npm install
+$ npm run build toastmark
 $ npm run test editor
 ```
 
