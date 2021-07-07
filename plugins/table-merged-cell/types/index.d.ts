@@ -1,5 +1,4 @@
-import type { PluginCommandMap } from '@toast-ui/editor';
-import type { TableCellMdNode, TableMdNode } from '@toast-ui/toastmark';
+import type { PluginCommandMap, TableMdNode, TableCellMdNode, MdNode } from '@toast-ui/editor';
 import type { Selection } from 'prosemirror-state';
 import type { Node, ResolvedPos } from 'prosemirror-model';
 
@@ -17,18 +16,18 @@ interface TableHeadMdNode extends MdNode {
 type SpanType = '@cols' | '@rows';
 
 export interface MergedTableRowMdNode extends MdNode {
-  firstChild: MergedTableCell | null;
-  lastChild: MergedTableCell | null;
+  firstChild: MergedTableCellMdNode | null;
+  lastChild: MergedTableCellMdNode | null;
   parent: TableBodyMdNode | TableHeadMdNode;
-  prev: MergedTableRow | null;
-  next: MergedTableRow | null;
+  prev: MergedTableRowMdNode | null;
+  next: MergedTableRowMdNode | null;
   rowspanMap: { [key: string]: number };
 }
 
 export interface MergedTableCellMdNode extends TableCellMdNode {
-  prev: MergedTableCell | null;
-  next: MergedTableCell | null;
-  parent: MergedTableRow;
+  prev: MergedTableCellMdNode | null;
+  next: MergedTableCellMdNode | null;
+  parent: MergedTableRowMdNode;
 }
 
 export interface CellSelection extends Selection {

@@ -25,6 +25,7 @@ describe('languageSelectBox', () => {
       removeEventHandler: jest.fn(),
       addEventType: jest.fn(),
       getEvents: jest.fn(),
+      holdEventInvoke: jest.fn(),
     };
 
     wwContainer = document.createElement('div');

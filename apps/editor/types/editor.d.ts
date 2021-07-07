@@ -1,7 +1,14 @@
 import { Schema, NodeSpec, MarkSpec, Fragment } from 'prosemirror-model';
 import { EditorView, Decoration, DecorationSet } from 'prosemirror-view';
 import { EditorState, Plugin, Selection, TextSelection } from 'prosemirror-state';
-import { HTMLConvertor, MdPos, Sourcepos, Context as MdContext } from './toastmark';
+import {
+  HTMLConvertor,
+  MdPos,
+  Sourcepos,
+  Context as MdContext,
+  HTMLToken,
+  HTMLConvertorMap,
+} from './toastmark';
 import { Emitter, Handler } from './event';
 import { Context, EditorAllCommandMap, EditorCommandFn, SpecManager } from './spec';
 import { ToMdConvertorMap } from './convertor';
