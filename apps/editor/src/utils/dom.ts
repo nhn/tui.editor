@@ -239,8 +239,6 @@ export function setAttributes(attributes: Record<string, any>, element: HTMLElem
 
 export function replaceBRWithEmptyBlock(html: string) {
   const reBr = /<br\s*\/*>/i;
-  const alternativeTagListForBr: string[] = [];
-
   const reHTMLTag = new RegExp(HTML_TAG, 'ig');
   const htmlTagMatched = html.match(reHTMLTag);
 
@@ -258,12 +256,9 @@ export function replaceBRWithEmptyBlock(html: string) {
           alternativeTag = `</${tagName}><${tagName}>`;
         }
       }
-      alternativeTagListForBr.push(alternativeTag);
+      html = html.replace(reBr, alternativeTag);
     }
   });
 
-  return alternativeTagListForBr.reduce(
-    (acc, alternativeTag) => (acc = acc.replace(reBr, alternativeTag)),
-    html
-  );
+  return html;
 }
