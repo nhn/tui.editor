@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.0.0 | Thu Jun 17 2021
+ * @version 3.0.1 | Wed Jul 07 2021
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -2432,6 +2432,7 @@ var PopupWidget = /** @class */ (function () {
         };
         this.eventEmitter = eventEmitter;
         this.eventEmitter.listen('blur', this.removeWidget);
+        this.eventEmitter.listen('removePopupWidget', this.removeWidget);
     }
     PopupWidget.prototype.update = function (view) {
         var widget = pluginKey.getState(view.state);
@@ -2864,7 +2865,22 @@ var hasClass_default = /*#__PURE__*/__webpack_require__.n(hasClass);
 // EXTERNAL MODULE: ../../node_modules/tui-code-snippet/domUtil/matches.js
 var matches = __webpack_require__(471);
 var matches_default = /*#__PURE__*/__webpack_require__.n(matches);
+;// CONCATENATED MODULE: ./src/utils/constants.ts
+var TAG_NAME = '[A-Za-z][A-Za-z0-9-]*';
+var ATTRIBUTE_NAME = '[a-zA-Z_:][a-zA-Z0-9:._-]*';
+var UNQUOTED_VALUE = '[^"\'=<>`\\x00-\\x20]+';
+var SINGLE_QUOTED_VALUE = "'[^']*'";
+var DOUBLE_QUOTED_VALUE = '"[^"]*"';
+var ATTRIBUTE_VALUE = "(?:" + UNQUOTED_VALUE + "|" + SINGLE_QUOTED_VALUE + "|" + DOUBLE_QUOTED_VALUE + ")";
+var ATTRIBUTE_VALUE_SPEC = "" + '(?:\\s*=\\s*' + ATTRIBUTE_VALUE + ")";
+var ATTRIBUTE = "" + '(?:\\s+' + ATTRIBUTE_NAME + ATTRIBUTE_VALUE_SPEC + "?)";
+var OPEN_TAG = "<(" + TAG_NAME + ")(" + ATTRIBUTE + ")*\\s*/?>";
+var CLOSE_TAG = "</(" + TAG_NAME + ")\\s*[>]";
+var HTML_TAG = "(?:" + OPEN_TAG + "|" + CLOSE_TAG + ")";
+var reHTMLTag = new RegExp("^" + HTML_TAG, 'i');
+
 ;// CONCATENATED MODULE: ./src/utils/dom.ts
+
 
 
 
@@ -2886,7 +2902,21 @@ function cls() {
     for (var _i = 0; _i < arguments.length; _i++) {
         names[_i] = arguments[_i];
     }
-    return names.map(function (className) { return "" + CLS_PREFIX + className; }).join(' ');
+    var result = [];
+    for (var _a = 0, names_1 = names; _a < names_1.length; _a++) {
+        var name = names_1[_a];
+        var className = void 0;
+        if (Array.isArray(name)) {
+            className = name[0] ? name[1] : null;
+        }
+        else {
+            className = name;
+        }
+        if (className) {
+            result.push("" + CLS_PREFIX + className);
+        }
+    }
+    return result.join(' ');
 }
 function clsWithMdPrefix() {
     var names = [];
@@ -3046,6 +3076,26 @@ function setAttributes(attributes, element) {
             element.removeAttribute(attrName);
         }
     });
+}
+function replaceBRWithEmptyBlock(html) {
+    var reBr = /<br\s*\/*>/i;
+    var reHTMLTag = new RegExp(HTML_TAG, 'ig');
+    var htmlTagMatched = html.match(reHTMLTag);
+    htmlTagMatched === null || htmlTagMatched === void 0 ? void 0 : htmlTagMatched.forEach(function (htmlTag, index) {
+        if (reBr.test(htmlTag)) {
+            var alternativeTag = '';
+            if (index) {
+                var prevTag = htmlTagMatched[index - 1];
+                var openTagMatched = prevTag.match(OPEN_TAG);
+                if (openTagMatched) {
+                    var tagName = openTagMatched[1];
+                    alternativeTag = "</" + tagName + "><" + tagName + ">";
+                }
+            }
+            html = html.replace(reBr, alternativeTag);
+        }
+    });
+    return html;
 }
 
 ;// CONCATENATED MODULE: ./src/markdown/helper/pos.ts
@@ -5019,31 +5069,54 @@ var Code = /** @class */ (function (_super) {
 
 
 ;// CONCATENATED MODULE: ./src/utils/encoder.ts
-var reURL = /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})(\/([^\s]*))?$/g;
-var encodingRegExps = [/\(/g, /\)/g, /\[/g, /\]/g, /</g, />/g];
-var encodedList = ['%28', '%29', '%5B', '%5D', '%3C', '%3E'];
-var escapedList = ['\\(', '\\)', '\\[', '\\]', '\\<', '\\>'];
-function decodeURIGraceful(uri) {
-    var uriList = uri.split(' ');
-    return uriList
-        .reduce(function (decodedURIList, targetUri) {
-        var decodedURI = '';
-        try {
-            decodedURI = decodeURIComponent(targetUri);
-        }
-        catch (e) {
-            decodedURI = targetUri;
-        }
-        return decodedURIList.concat(decodedURI);
-    }, [])
-        .join('%20');
+var encoderList = [
+    {
+        regExp: /\(/g,
+        encoded: '%28',
+        escaped: '\\(',
+    },
+    {
+        regExp: /\)/g,
+        encoded: '%29',
+        escaped: '\\)',
+    },
+    {
+        regExp: /\[/g,
+        encoded: '%5B',
+        escaped: '\\[',
+    },
+    {
+        regExp: /\]/g,
+        encoded: '%5D',
+        escaped: '\\]',
+    },
+    {
+        regExp: /</g,
+        encoded: '%3C',
+        escaped: '\\<',
+    },
+    {
+        regExp: />/g,
+        encoded: '%3E',
+        escaped: '\\>',
+    },
+    {
+        regExp: / /g,
+        encoded: '%20',
+        escaped: ' ',
+    },
+];
+function escapeMarkdownText(text) {
+    return encoderList.reduce(function (result, _a) {
+        var regExp = _a.regExp, escaped = _a.escaped;
+        return result.replace(regExp, escaped);
+    }, text);
 }
-function encodeMarkdownText(text, encode) {
-    var expectedValues = encode ? encodedList : escapedList;
-    return encodingRegExps.reduce(function (result, regExp, index) { return result.replace(regExp, expectedValues[index]); }, text);
-}
-function decodeURL(text) {
-    return text.replace(reURL, function (matched) { return encodeMarkdownText(decodeURIGraceful(matched), true); });
+function encodeMarkdownText(text) {
+    return encoderList.reduce(function (result, _a) {
+        var regExp = _a.regExp, encoded = _a.encoded;
+        return result.replace(regExp, encoded);
+    }, text);
 }
 
 ;// CONCATENATED MODULE: ./src/markdown/marks/link.ts
@@ -5102,8 +5175,8 @@ var Link = /** @class */ (function (_super) {
                 url = imageUrl;
                 syntax = '!';
             }
-            text = encodeMarkdownText(text, false);
-            url = encodeMarkdownText(decodeURIGraceful(url), true);
+            text = escapeMarkdownText(text);
+            url = encodeMarkdownText(url);
             syntax += "[" + text + "](" + url + ")";
             dispatch(tr.replaceWith(from, to, createTextNode(schema, syntax)));
             return true;
@@ -5732,6 +5805,7 @@ function esm_spreadArray(to, from) {
         to[j] = from[i];
     return to;
 }
+var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof __webpack_require__.g !== 'undefined' ? __webpack_require__.g : typeof self !== 'undefined' ? self : {};
 var encodeCache = {};
 // Create a lookup array where anything but characters in `chars` string
 // and alphanumeric chars is percent-encoded.
@@ -5807,19 +5881,8 @@ function encode$1(string, exclude, keepEscaped) {
 encode$1.defaultChars = ";/?:@&=+$,-_.!~*'()#";
 encode$1.componentChars = "-_.!~*'()";
 var encode_1 = encode$1;
-var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof __webpack_require__.g !== 'undefined' ? __webpack_require__.g : typeof self !== 'undefined' ? self : {};
-function createCommonjsModule(fn, basedir, module) {
-    return module = {
-        path: basedir,
-        exports: {},
-        require: function (path, base) {
-            return commonjsRequire(path, (base === undefined || base === null) ? module.path : base);
-        }
-    }, fn(module, module.exports), module.exports;
-}
-function commonjsRequire() {
-    throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
-}
+var lib = {};
+var decode = {};
 var Aacute$1 = "Á";
 var aacute$1 = "á";
 var Abreve = "Ă";
@@ -10296,6 +10359,7 @@ var require$$0$1 = {
     lt: lt,
     quot: quot
 };
+var decode_codepoint = {};
 var require$$0 = {
     "0": 65533,
     "128": 8364,
@@ -10326,231 +10390,228 @@ var require$$0 = {
     "158": 382,
     "159": 376
 };
-var decode_codepoint = createCommonjsModule(function (module, exports) {
-    var __importDefault = (commonjsGlobal && commonjsGlobal.__importDefault) || function (mod) {
-        return (mod && mod.__esModule) ? mod : { "default": mod };
+var __importDefault$2 = (commonjsGlobal && commonjsGlobal.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(decode_codepoint, "__esModule", { value: true });
+var decode_json_1 = __importDefault$2(require$$0);
+// Adapted from https://github.com/mathiasbynens/he/blob/master/src/he.js#L94-L119
+var fromCodePoint$2 = 
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+String.fromCodePoint ||
+    function (codePoint) {
+        var output = "";
+        if (codePoint > 0xffff) {
+            codePoint -= 0x10000;
+            output += String.fromCharCode(((codePoint >>> 10) & 0x3ff) | 0xd800);
+            codePoint = 0xdc00 | (codePoint & 0x3ff);
+        }
+        output += String.fromCharCode(codePoint);
+        return output;
     };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var decode_json_1 = __importDefault(require$$0);
-    // Adapted from https://github.com/mathiasbynens/he/blob/master/src/he.js#L94-L119
-    var fromCodePoint = 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    String.fromCodePoint ||
-        function (codePoint) {
-            var output = "";
-            if (codePoint > 0xffff) {
-                codePoint -= 0x10000;
-                output += String.fromCharCode(((codePoint >>> 10) & 0x3ff) | 0xd800);
-                codePoint = 0xdc00 | (codePoint & 0x3ff);
-            }
-            output += String.fromCharCode(codePoint);
-            return output;
-        };
-    function decodeCodePoint(codePoint) {
-        if ((codePoint >= 0xd800 && codePoint <= 0xdfff) || codePoint > 0x10ffff) {
-            return "\uFFFD";
-        }
-        if (codePoint in decode_json_1.default) {
-            codePoint = decode_json_1.default[codePoint];
-        }
-        return fromCodePoint(codePoint);
+function decodeCodePoint(codePoint) {
+    if ((codePoint >= 0xd800 && codePoint <= 0xdfff) || codePoint > 0x10ffff) {
+        return "\uFFFD";
     }
-    exports.default = decodeCodePoint;
-});
-var decode = createCommonjsModule(function (module, exports) {
-    var __importDefault = (commonjsGlobal && commonjsGlobal.__importDefault) || function (mod) {
-        return (mod && mod.__esModule) ? mod : { "default": mod };
+    if (codePoint in decode_json_1.default) {
+        codePoint = decode_json_1.default[codePoint];
+    }
+    return fromCodePoint$2(codePoint);
+}
+decode_codepoint.default = decodeCodePoint;
+var __importDefault$1 = (commonjsGlobal && commonjsGlobal.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(decode, "__esModule", { value: true });
+decode.decodeHTML = decode.decodeHTMLStrict = decode.decodeXML = void 0;
+var entities_json_1$1 = __importDefault$1(require$$1$1);
+var legacy_json_1 = __importDefault$1(require$$1);
+var xml_json_1$1 = __importDefault$1(require$$0$1);
+var decode_codepoint_1 = __importDefault$1(decode_codepoint);
+var strictEntityRe = /&(?:[a-zA-Z0-9]+|#[xX][\da-fA-F]+|#\d+);/g;
+decode.decodeXML = getStrictDecoder(xml_json_1$1.default);
+decode.decodeHTMLStrict = getStrictDecoder(entities_json_1$1.default);
+function getStrictDecoder(map) {
+    var replace = getReplacer(map);
+    return function (str) { return String(str).replace(strictEntityRe, replace); };
+}
+var sorter = function (a, b) { return (a < b ? 1 : -1); };
+decode.decodeHTML = (function () {
+    var legacy = Object.keys(legacy_json_1.default).sort(sorter);
+    var keys = Object.keys(entities_json_1$1.default).sort(sorter);
+    for (var i = 0, j = 0; i < keys.length; i++) {
+        if (legacy[j] === keys[i]) {
+            keys[i] += ";?";
+            j++;
+        }
+        else {
+            keys[i] += ";";
+        }
+    }
+    var re = new RegExp("&(?:" + keys.join("|") + "|#[xX][\\da-fA-F]+;?|#\\d+;?)", "g");
+    var replace = getReplacer(entities_json_1$1.default);
+    function replacer(str) {
+        if (str.substr(-1) !== ";")
+            str += ";";
+        return replace(str);
+    }
+    // TODO consider creating a merged map
+    return function (str) { return String(str).replace(re, replacer); };
+})();
+function getReplacer(map) {
+    return function replace(str) {
+        if (str.charAt(1) === "#") {
+            var secondChar = str.charAt(2);
+            if (secondChar === "X" || secondChar === "x") {
+                return decode_codepoint_1.default(parseInt(str.substr(3), 16));
+            }
+            return decode_codepoint_1.default(parseInt(str.substr(2), 10));
+        }
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        return map[str.slice(1, -1)] || str;
     };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.decodeHTML = exports.decodeHTMLStrict = exports.decodeXML = void 0;
-    var entities_json_1 = __importDefault(require$$1$1);
-    var legacy_json_1 = __importDefault(require$$1);
-    var xml_json_1 = __importDefault(require$$0$1);
-    var decode_codepoint_1 = __importDefault(decode_codepoint);
-    var strictEntityRe = /&(?:[a-zA-Z0-9]+|#[xX][\da-fA-F]+|#\d+);/g;
-    exports.decodeXML = getStrictDecoder(xml_json_1.default);
-    exports.decodeHTMLStrict = getStrictDecoder(entities_json_1.default);
-    function getStrictDecoder(map) {
-        var replace = getReplacer(map);
-        return function (str) { return String(str).replace(strictEntityRe, replace); };
+}
+var encode = {};
+var esm_importDefault = (commonjsGlobal && commonjsGlobal.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(encode, "__esModule", { value: true });
+encode.escapeUTF8 = encode.escape = encode.encodeNonAsciiHTML = encode.encodeHTML = encode.encodeXML = void 0;
+var xml_json_1 = esm_importDefault(require$$0$1);
+var inverseXML = getInverseObj(xml_json_1.default);
+var xmlReplacer = getInverseReplacer(inverseXML);
+/**
+ * Encodes all non-ASCII characters, as well as characters not valid in XML
+ * documents using XML entities.
+ *
+ * If a character has no equivalent entity, a
+ * numeric hexadecimal reference (eg. `&#xfc;`) will be used.
+ */
+encode.encodeXML = getASCIIEncoder(inverseXML);
+var entities_json_1 = esm_importDefault(require$$1$1);
+var inverseHTML = getInverseObj(entities_json_1.default);
+var htmlReplacer = getInverseReplacer(inverseHTML);
+/**
+ * Encodes all entities and non-ASCII characters in the input.
+ *
+ * This includes characters that are valid ASCII characters in HTML documents.
+ * For example `#` will be encoded as `&num;`. To get a more compact output,
+ * consider using the `encodeNonAsciiHTML` function.
+ *
+ * If a character has no equivalent entity, a
+ * numeric hexadecimal reference (eg. `&#xfc;`) will be used.
+ */
+encode.encodeHTML = getInverse(inverseHTML, htmlReplacer);
+/**
+ * Encodes all non-ASCII characters, as well as characters not valid in HTML
+ * documents using HTML entities.
+ *
+ * If a character has no equivalent entity, a
+ * numeric hexadecimal reference (eg. `&#xfc;`) will be used.
+ */
+encode.encodeNonAsciiHTML = getASCIIEncoder(inverseHTML);
+function getInverseObj(obj) {
+    return Object.keys(obj)
+        .sort()
+        .reduce(function (inverse, name) {
+        inverse[obj[name]] = "&" + name + ";";
+        return inverse;
+    }, {});
+}
+function getInverseReplacer(inverse) {
+    var single = [];
+    var multiple = [];
+    for (var _i = 0, _a = Object.keys(inverse); _i < _a.length; _i++) {
+        var k = _a[_i];
+        if (k.length === 1) {
+            // Add value to single array
+            single.push("\\" + k);
+        }
+        else {
+            // Add value to multiple array
+            multiple.push(k);
+        }
     }
-    var sorter = function (a, b) { return (a < b ? 1 : -1); };
-    exports.decodeHTML = (function () {
-        var legacy = Object.keys(legacy_json_1.default).sort(sorter);
-        var keys = Object.keys(entities_json_1.default).sort(sorter);
-        for (var i = 0, j = 0; i < keys.length; i++) {
-            if (legacy[j] === keys[i]) {
-                keys[i] += ";?";
-                j++;
-            }
-            else {
-                keys[i] += ";";
-            }
+    // Add ranges to single characters.
+    single.sort();
+    for (var start = 0; start < single.length - 1; start++) {
+        // Find the end of a run of characters
+        var end = start;
+        while (end < single.length - 1 &&
+            single[end].charCodeAt(1) + 1 === single[end + 1].charCodeAt(1)) {
+            end += 1;
         }
-        var re = new RegExp("&(?:" + keys.join("|") + "|#[xX][\\da-fA-F]+;?|#\\d+;?)", "g");
-        var replace = getReplacer(entities_json_1.default);
-        function replacer(str) {
-            if (str.substr(-1) !== ";")
-                str += ";";
-            return replace(str);
-        }
-        // TODO consider creating a merged map
-        return function (str) { return String(str).replace(re, replacer); };
-    })();
-    function getReplacer(map) {
-        return function replace(str) {
-            if (str.charAt(1) === "#") {
-                var secondChar = str.charAt(2);
-                if (secondChar === "X" || secondChar === "x") {
-                    return decode_codepoint_1.default(parseInt(str.substr(3), 16));
-                }
-                return decode_codepoint_1.default(parseInt(str.substr(2), 10));
-            }
-            // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-            return map[str.slice(1, -1)] || str;
+        var count = 1 + end - start;
+        // We want to replace at least three characters
+        if (count < 3)
+            continue;
+        single.splice(start, count, single[start] + "-" + single[end]);
+    }
+    multiple.unshift("[" + single.join("") + "]");
+    return new RegExp(multiple.join("|"), "g");
+}
+// /[^\0-\x7F]/gu
+var reNonASCII = /(?:[\x80-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])/g;
+var getCodePoint = 
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+String.prototype.codePointAt != null
+    ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        function (str) { return str.codePointAt(0); }
+    : // http://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
+        function (c) {
+            return (c.charCodeAt(0) - 0xd800) * 0x400 +
+                c.charCodeAt(1) -
+                0xdc00 +
+                0x10000;
         };
-    }
-});
-var encode = createCommonjsModule(function (module, exports) {
-    var __importDefault = (commonjsGlobal && commonjsGlobal.__importDefault) || function (mod) {
-        return (mod && mod.__esModule) ? mod : { "default": mod };
+function singleCharReplacer(c) {
+    return "&#x" + (c.length > 1 ? getCodePoint(c) : c.charCodeAt(0))
+        .toString(16)
+        .toUpperCase() + ";";
+}
+function getInverse(inverse, re) {
+    return function (data) {
+        return data
+            .replace(re, function (name) { return inverse[name]; })
+            .replace(reNonASCII, singleCharReplacer);
     };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.escapeUTF8 = exports.escape = exports.encodeNonAsciiHTML = exports.encodeHTML = exports.encodeXML = void 0;
-    var xml_json_1 = __importDefault(require$$0$1);
-    var inverseXML = getInverseObj(xml_json_1.default);
-    var xmlReplacer = getInverseReplacer(inverseXML);
-    /**
-     * Encodes all non-ASCII characters, as well as characters not valid in XML
-     * documents using XML entities.
-     *
-     * If a character has no equivalent entity, a
-     * numeric hexadecimal reference (eg. `&#xfc;`) will be used.
-     */
-    exports.encodeXML = getASCIIEncoder(inverseXML);
-    var entities_json_1 = __importDefault(require$$1$1);
-    var inverseHTML = getInverseObj(entities_json_1.default);
-    var htmlReplacer = getInverseReplacer(inverseHTML);
-    /**
-     * Encodes all entities and non-ASCII characters in the input.
-     *
-     * This includes characters that are valid ASCII characters in HTML documents.
-     * For example `#` will be encoded as `&num;`. To get a more compact output,
-     * consider using the `encodeNonAsciiHTML` function.
-     *
-     * If a character has no equivalent entity, a
-     * numeric hexadecimal reference (eg. `&#xfc;`) will be used.
-     */
-    exports.encodeHTML = getInverse(inverseHTML, htmlReplacer);
-    /**
-     * Encodes all non-ASCII characters, as well as characters not valid in HTML
-     * documents using HTML entities.
-     *
-     * If a character has no equivalent entity, a
-     * numeric hexadecimal reference (eg. `&#xfc;`) will be used.
-     */
-    exports.encodeNonAsciiHTML = getASCIIEncoder(inverseHTML);
-    function getInverseObj(obj) {
-        return Object.keys(obj)
-            .sort()
-            .reduce(function (inverse, name) {
-            inverse[obj[name]] = "&" + name + ";";
-            return inverse;
-        }, {});
-    }
-    function getInverseReplacer(inverse) {
-        var single = [];
-        var multiple = [];
-        for (var _i = 0, _a = Object.keys(inverse); _i < _a.length; _i++) {
-            var k = _a[_i];
-            if (k.length === 1) {
-                // Add value to single array
-                single.push("\\" + k);
-            }
-            else {
-                // Add value to multiple array
-                multiple.push(k);
-            }
-        }
-        // Add ranges to single characters.
-        single.sort();
-        for (var start = 0; start < single.length - 1; start++) {
-            // Find the end of a run of characters
-            var end = start;
-            while (end < single.length - 1 &&
-                single[end].charCodeAt(1) + 1 === single[end + 1].charCodeAt(1)) {
-                end += 1;
-            }
-            var count = 1 + end - start;
-            // We want to replace at least three characters
-            if (count < 3)
-                continue;
-            single.splice(start, count, single[start] + "-" + single[end]);
-        }
-        multiple.unshift("[" + single.join("") + "]");
-        return new RegExp(multiple.join("|"), "g");
-    }
-    // /[^\0-\x7F]/gu
-    var reNonASCII = /(?:[\x80-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])/g;
-    var getCodePoint = 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    String.prototype.codePointAt != null
-        ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            function (str) { return str.codePointAt(0); }
-        : // http://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
-            function (c) {
-                return (c.charCodeAt(0) - 0xd800) * 0x400 +
-                    c.charCodeAt(1) -
-                    0xdc00 +
-                    0x10000;
-            };
-    function singleCharReplacer(c) {
-        return "&#x" + (c.length > 1 ? getCodePoint(c) : c.charCodeAt(0))
-            .toString(16)
-            .toUpperCase() + ";";
-    }
-    function getInverse(inverse, re) {
-        return function (data) {
-            return data
-                .replace(re, function (name) { return inverse[name]; })
-                .replace(reNonASCII, singleCharReplacer);
-        };
-    }
-    var reEscapeChars = new RegExp(xmlReplacer.source + "|" + reNonASCII.source, "g");
-    /**
-     * Encodes all non-ASCII characters, as well as characters not valid in XML
-     * documents using numeric hexadecimal reference (eg. `&#xfc;`).
-     *
-     * Have a look at `escapeUTF8` if you want a more concise output at the expense
-     * of reduced transportability.
-     *
-     * @param data String to escape.
-     */
-    function escape(data) {
-        return data.replace(reEscapeChars, singleCharReplacer);
-    }
-    exports.escape = escape;
-    /**
-     * Encodes all characters not valid in XML documents using numeric hexadecimal
-     * reference (eg. `&#xfc;`).
-     *
-     * Note that the output will be character-set dependent.
-     *
-     * @param data String to escape.
-     */
-    function escapeUTF8(data) {
-        return data.replace(xmlReplacer, singleCharReplacer);
-    }
-    exports.escapeUTF8 = escapeUTF8;
-    function getASCIIEncoder(obj) {
-        return function (data) {
-            return data.replace(reEscapeChars, function (c) { return obj[c] || singleCharReplacer(c); });
-        };
-    }
-});
-var lib = createCommonjsModule(function (module, exports) {
+}
+var reEscapeChars = new RegExp(xmlReplacer.source + "|" + reNonASCII.source, "g");
+/**
+ * Encodes all non-ASCII characters, as well as characters not valid in XML
+ * documents using numeric hexadecimal reference (eg. `&#xfc;`).
+ *
+ * Have a look at `escapeUTF8` if you want a more concise output at the expense
+ * of reduced transportability.
+ *
+ * @param data String to escape.
+ */
+function esm_escape(data) {
+    return data.replace(reEscapeChars, singleCharReplacer);
+}
+encode.escape = esm_escape;
+/**
+ * Encodes all characters not valid in XML documents using numeric hexadecimal
+ * reference (eg. `&#xfc;`).
+ *
+ * Note that the output will be character-set dependent.
+ *
+ * @param data String to escape.
+ */
+function escapeUTF8(data) {
+    return data.replace(xmlReplacer, singleCharReplacer);
+}
+encode.escapeUTF8 = escapeUTF8;
+function getASCIIEncoder(obj) {
+    return function (data) {
+        return data.replace(reEscapeChars, function (c) { return obj[c] || singleCharReplacer(c); });
+    };
+}
+(function (exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.decodeXMLStrict = exports.decodeHTML5Strict = exports.decodeHTML4Strict = exports.decodeHTML5 = exports.decodeHTML4 = exports.decodeHTMLStrict = exports.decodeHTML = exports.decodeXML = exports.encodeHTML5 = exports.encodeHTML4 = exports.escapeUTF8 = exports.escape = exports.encodeNonAsciiHTML = exports.encodeHTML = exports.encodeXML = exports.encode = exports.decodeStrict = exports.decode = void 0;
+    var decode_1 = decode;
+    var encode_1 = encode;
     /**
      * Decodes a string with entities.
      *
@@ -10559,7 +10620,7 @@ var lib = createCommonjsModule(function (module, exports) {
      * @deprecated Use `decodeXML` or `decodeHTML` directly.
      */
     function decode$1(data, level) {
-        return (!level || level <= 0 ? decode.decodeXML : decode.decodeHTML)(data);
+        return (!level || level <= 0 ? decode_1.decodeXML : decode_1.decodeHTML)(data);
     }
     exports.decode = decode$1;
     /**
@@ -10570,7 +10631,7 @@ var lib = createCommonjsModule(function (module, exports) {
      * @deprecated Use `decodeHTMLStrict` or `decodeXML` directly.
      */
     function decodeStrict(data, level) {
-        return (!level || level <= 0 ? decode.decodeXML : decode.decodeHTMLStrict)(data);
+        return (!level || level <= 0 ? decode_1.decodeXML : decode_1.decodeHTMLStrict)(data);
     }
     exports.decodeStrict = decodeStrict;
     /**
@@ -10581,7 +10642,7 @@ var lib = createCommonjsModule(function (module, exports) {
      * @deprecated Use `encodeHTML`, `encodeXML` or `encodeNonAsciiHTML` directly.
      */
     function encode$1(data, level) {
-        return (!level || level <= 0 ? encode.encodeXML : encode.encodeHTML)(data);
+        return (!level || level <= 0 ? encode_1.encodeXML : encode_1.encodeHTML)(data);
     }
     exports.encode = encode$1;
     var encode_2 = encode;
@@ -10603,7 +10664,7 @@ var lib = createCommonjsModule(function (module, exports) {
     Object.defineProperty(exports, "decodeHTML4Strict", { enumerable: true, get: function () { return decode_2.decodeHTMLStrict; } });
     Object.defineProperty(exports, "decodeHTML5Strict", { enumerable: true, get: function () { return decode_2.decodeHTMLStrict; } });
     Object.defineProperty(exports, "decodeXMLStrict", { enumerable: true, get: function () { return decode_2.decodeXML; } });
-});
+}(lib));
 var ENTITY = '&(?:#x[a-f0-9]{1,6}|#[0-9]{1,7}|[a-z][a-z0-9]{1,31});';
 var C_BACKSLASH$1 = 92;
 var reBackslashOrAmp = /[\\&]/;
@@ -11051,8 +11112,8 @@ var SINGLEQUOTEDVALUE = "'[^']*'";
 var DOUBLEQUOTEDVALUE = '"[^"]*"';
 var ATTRIBUTEVALUE = "(?:" + UNQUOTEDVALUE + "|" + SINGLEQUOTEDVALUE + "|" + DOUBLEQUOTEDVALUE + ")";
 var ATTRIBUTEVALUESPEC = "" + '(?:\\s*=\\s*' + ATTRIBUTEVALUE + ")";
-var ATTRIBUTE = "" + '(?:\\s+' + ATTRIBUTENAME + ATTRIBUTEVALUESPEC + "?)";
-var OPENTAG = "<" + TAGNAME + ATTRIBUTE + "*\\s*/?>";
+var esm_ATTRIBUTE = "" + '(?:\\s+' + ATTRIBUTENAME + ATTRIBUTEVALUESPEC + "?)";
+var OPENTAG = "<" + TAGNAME + esm_ATTRIBUTE + "*\\s*/?>";
 var CLOSETAG = "</" + TAGNAME + "\\s*[>]";
 var HTMLCOMMENT = '<!---->|<!--(?:-?[^>-])(?:-?[^-])*-->';
 var PROCESSINGINSTRUCTION = '[<][?].*?[?][>]';
@@ -14739,212 +14800,6 @@ function sanitizeXSSAttributeValue(attrValue) {
     return reXSSAttrValue.test(attrValue) ? '' : attrValue;
 }
 
-;// CONCATENATED MODULE: ./src/convertors/toWysiwyg/htmlToWwConvertors.ts
-
-
-
-var TAG_NAME = '[A-Za-z][A-Za-z0-9-]*';
-var ATTRIBUTE_NAME = '[a-zA-Z_:][a-zA-Z0-9:._-]*';
-var UNQUOTED_VALUE = '[^"\'=<>`\\x00-\\x20]+';
-var SINGLE_QUOTED_VALUE = "'[^']*'";
-var DOUBLE_QUOTED_VALUE = '"[^"]*"';
-var ATTRIBUTE_VALUE = "(?:" + UNQUOTED_VALUE + "|" + SINGLE_QUOTED_VALUE + "|" + DOUBLE_QUOTED_VALUE + ")";
-var ATTRIBUTE_VALUE_SPEC = "" + '(?:\\s*=\\s*' + ATTRIBUTE_VALUE + ")";
-var htmlToWwConvertors_ATTRIBUTE = "" + '(?:\\s+' + ATTRIBUTE_NAME + ATTRIBUTE_VALUE_SPEC + "?)";
-var OPEN_TAG = "<(" + TAG_NAME + ")(" + htmlToWwConvertors_ATTRIBUTE + ")*\\s*/?>";
-var CLOSE_TAG = "</(" + TAG_NAME + ")\\s*[>]";
-var HTML_TAG = "(?:" + OPEN_TAG + "|" + CLOSE_TAG + ")";
-var reHTMLTag = new RegExp("^" + HTML_TAG, 'i');
-function getTextWithoutTrailingNewline(text) {
-    return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
-}
-function isCustomHTMLInlineNode(_a, node) {
-    var schema = _a.schema;
-    var html = node.literal;
-    var matched = html.match(reHTMLTag);
-    if (matched) {
-        var openTagName = matched[1], closeTagName = matched[3];
-        var typeName = (openTagName || closeTagName).toLowerCase();
-        return node.type === 'htmlInline' && !!(schema.marks[typeName] || schema.nodes[typeName]);
-    }
-    return false;
-}
-function htmlToWwConvertors_isInlineNode(_a) {
-    var type = _a.type;
-    return common_includes(['text', 'strong', 'emph', 'strike', 'image', 'link', 'code'], type);
-}
-function htmlToWwConvertors_isListNode(_a) {
-    var type = _a.type, literal = _a.literal;
-    var matched = type === 'htmlInline' && literal.match(reHTMLTag);
-    if (matched) {
-        var openTagName = matched[1], closeTagName = matched[3];
-        var tagName = openTagName || closeTagName;
-        if (tagName) {
-            return common_includes(['ul', 'ol', 'li'], tagName.toLowerCase());
-        }
-    }
-    return false;
-}
-function getListItemAttrs(_a) {
-    var literal = _a.literal;
-    var task = /data-task/.test(literal);
-    var checked = /data-task-checked/.test(literal);
-    return { task: task, checked: checked };
-}
-function getMatchedAttributeValue(rawHTML, attrName) {
-    var wrapper = document.createElement('div');
-    wrapper.innerHTML = rawHTML;
-    var el = wrapper.firstChild;
-    return el.getAttribute(attrName) || '';
-}
-function createConvertors(convertors) {
-    var convertorMap = {};
-    Object.keys(convertors).forEach(function (key) {
-        var tagNames = key.split(', ');
-        tagNames.forEach(function (tagName) {
-            var name = tagName.toLowerCase();
-            convertorMap[name] = convertors[key];
-        });
-    });
-    return convertorMap;
-}
-var convertors = {
-    'b, strong': function (state, _, openTagName) {
-        var strong = state.schema.marks.strong;
-        if (openTagName) {
-            state.openMark(strong.create({ rawHTML: openTagName }));
-        }
-        else {
-            state.closeMark(strong);
-        }
-    },
-    'i, em': function (state, _, openTagName) {
-        var emph = state.schema.marks.emph;
-        if (openTagName) {
-            state.openMark(emph.create({ rawHTML: openTagName }));
-        }
-        else {
-            state.closeMark(emph);
-        }
-    },
-    's, del': function (state, _, openTagName) {
-        var strike = state.schema.marks.strike;
-        if (openTagName) {
-            state.openMark(strike.create({ rawHTML: openTagName }));
-        }
-        else {
-            state.closeMark(strike);
-        }
-    },
-    code: function (state, _, openTagName) {
-        var code = state.schema.marks.code;
-        if (openTagName) {
-            state.openMark(code.create({ rawHTML: openTagName }));
-        }
-        else {
-            state.closeMark(code);
-        }
-    },
-    a: function (state, node, openTagName) {
-        var tag = node.literal;
-        var link = state.schema.marks.link;
-        if (openTagName) {
-            var linkUrl = getMatchedAttributeValue(tag, 'href');
-            state.openMark(link.create({
-                linkUrl: sanitizeXSSAttributeValue(linkUrl),
-                rawHTML: openTagName,
-            }));
-        }
-        else {
-            state.closeMark(link);
-        }
-    },
-    img: function (state, node, openTagName) {
-        var tag = node.literal;
-        var imageUrl = getMatchedAttributeValue(tag, 'src');
-        if (imageUrl) {
-            var altText = getMatchedAttributeValue(tag, 'alt');
-            var image = state.schema.nodes.image;
-            state.addNode(image, __assign({ rawHTML: openTagName, imageUrl: sanitizeXSSAttributeValue(imageUrl) }, (altText && { altText: altText })));
-        }
-    },
-    hr: function (state, _, openTagName) {
-        state.addNode(state.schema.nodes.thematicBreak, { rawHTML: openTagName });
-    },
-    br: function (state, node) {
-        var _a, _b;
-        var paragraph = state.schema.nodes.paragraph;
-        if (((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) === 'paragraph') {
-            if (node.prev) {
-                state.openNode(paragraph);
-            }
-            if (node.next) {
-                state.closeNode();
-            }
-        }
-        else if (((_b = node.parent) === null || _b === void 0 ? void 0 : _b.type) === 'tableCell') {
-            if (node.prev && (htmlToWwConvertors_isInlineNode(node.prev) || isCustomHTMLInlineNode(state, node.prev))) {
-                state.closeNode();
-            }
-            if (node.next && (htmlToWwConvertors_isInlineNode(node.next) || isCustomHTMLInlineNode(state, node.next))) {
-                state.openNode(paragraph);
-            }
-        }
-    },
-    pre: function (state, node, openTagName) {
-        var _a, _b;
-        var container = document.createElement('div');
-        container.innerHTML = node.literal;
-        var literal = (_b = (_a = container.firstChild) === null || _a === void 0 ? void 0 : _a.firstChild) === null || _b === void 0 ? void 0 : _b.textContent;
-        state.openNode(state.schema.nodes.codeBlock, { rawHTML: openTagName });
-        state.addText(getTextWithoutTrailingNewline(literal));
-        state.closeNode();
-    },
-    'ul, ol': function (state, node, openTagName) {
-        // in the table cell, '<ul>', '<ol>' is parsed as 'htmlInline' node
-        if (node.parent.type === 'tableCell') {
-            var _a = state.schema.nodes, bulletList = _a.bulletList, orderedList = _a.orderedList, paragraph = _a.paragraph;
-            var list = openTagName === 'ul' ? bulletList : orderedList;
-            if (openTagName) {
-                if (node.prev && !htmlToWwConvertors_isListNode(node.prev)) {
-                    state.closeNode();
-                }
-                state.openNode(list, { rawHTML: openTagName });
-            }
-            else {
-                state.closeNode();
-                if (node.next && !htmlToWwConvertors_isListNode(node.next)) {
-                    state.openNode(paragraph);
-                }
-            }
-        }
-    },
-    li: function (state, node, openTagName) {
-        var _a;
-        // in the table cell, '<li>' is parsed as 'htmlInline' node
-        if (((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) === 'tableCell') {
-            var _b = state.schema.nodes, listItem = _b.listItem, paragraph = _b.paragraph;
-            if (openTagName) {
-                var attrs = getListItemAttrs(node);
-                if (node.prev && !htmlToWwConvertors_isListNode(node.prev)) {
-                    state.closeNode();
-                }
-                state.openNode(listItem, __assign({ rawHTML: openTagName }, attrs));
-                if (node.next && !htmlToWwConvertors_isListNode(node.next)) {
-                    state.openNode(paragraph);
-                }
-            }
-            else {
-                if (node.prev && !htmlToWwConvertors_isListNode(node.prev)) {
-                    state.closeNode();
-                }
-                state.closeNode();
-            }
-        }
-    },
-};
-var htmlToWwConvertors = createConvertors(convertors);
-
 ;// CONCATENATED MODULE: ./src/wysiwyg/nodes/html.ts
 
 
@@ -14957,12 +14812,12 @@ function getChildrenHTML(node, typeName) {
 }
 function getHTMLAttrsByHTMLString(html) {
     html = html.match(reHTMLTag)[0];
-    var attrs = html.match(new RegExp(htmlToWwConvertors_ATTRIBUTE, 'g'));
+    var attrs = html.match(new RegExp(ATTRIBUTE, 'g'));
     return attrs
         ? attrs.reduce(function (acc, attr) {
-            var _a = attr.trim().split('='), name = _a[0], value = _a[1];
-            if (value) {
-                acc[name] = value.replace(/'|"/g, '').trim();
+            var _a = attr.trim().split('='), name = _a[0], values = _a.slice(1);
+            if (values.length) {
+                acc[name] = values.join('=').replace(/'|"/g, '').trim();
             }
             return acc;
         }, {})
@@ -15051,6 +14906,7 @@ function createHTMLSchemaMap(convertorMap, sanitizeHTML, wwToDOMAdaptor) {
 }
 
 ;// CONCATENATED MODULE: ./src/markdown/htmlRenderConvertors.ts
+
 
 
 
@@ -15163,20 +15019,19 @@ function getHTMLRenderConvertors(linkAttributes, customConvertors) {
         Object.keys(customConvertors).forEach(function (nodeType) {
             var orgConvertor = convertors[nodeType];
             var customConvertor = customConvertors[nodeType];
-            if (orgConvertor) {
+            if (orgConvertor && isFunction_default()(customConvertor)) {
                 convertors[nodeType] = function (node, context) {
                     var newContext = __assign({}, context);
                     newContext.origin = function () { return orgConvertor(node, context); };
                     return customConvertor(node, newContext);
                 };
             }
-            else if (common_includes(['htmlBlock', 'htmlInline'], nodeType)) {
+            else if (common_includes(['htmlBlock', 'htmlInline'], nodeType) && !isFunction_default()(customConvertor)) {
                 convertors[nodeType] = function (node, context) {
                     var matched = node.literal.match(reHTMLTag);
                     if (matched) {
                         var rootHTML = matched[0], openTagName = matched[1], closeTagName = matched[3];
                         var typeName = (openTagName || closeTagName).toLowerCase();
-                        // @ts-expect-error
                         var htmlConvertor = customConvertor[typeName];
                         var childrenHTML = getChildrenHTML(node, typeName);
                         if (htmlConvertor) {
@@ -18979,7 +18834,7 @@ var Image = /** @class */ (function (_super) {
             if (!imageUrl) {
                 return false;
             }
-            var node = schema.nodes.image.createAndFill(__assign({ imageUrl: encodeMarkdownText(decodeURIGraceful(imageUrl), true) }, (altText && { altText: encodeMarkdownText(altText, false) })));
+            var node = schema.nodes.image.createAndFill(__assign({ imageUrl: encodeMarkdownText(imageUrl) }, (altText && { altText: altText })));
             dispatch(tr.replaceSelectionWith(node).scrollIntoView());
             return true;
         }; };
@@ -19287,8 +19142,8 @@ var link_Link = /** @class */ (function (_super) {
             var empty = selection.empty, from = selection.from, to = selection.to;
             if (from && to && linkUrl) {
                 var attrs = {
-                    linkUrl: encodeMarkdownText(decodeURIGraceful(linkUrl), true),
-                    linkText: encodeMarkdownText(linkText, false),
+                    linkUrl: encodeMarkdownText(linkUrl),
+                    linkText: escapeMarkdownText(linkText),
                 };
                 var mark = schema.mark('link', attrs);
                 if (empty && linkText) {
@@ -19788,6 +19643,7 @@ var eventTypeList = [
     'toggleScrollSync',
     'mixinTableOffsetMapPrototype',
     'setFocusedNode',
+    'removePopupWidget',
     // provide event for user
     'openPopup',
     'closePopup',
@@ -19814,6 +19670,7 @@ var EventEmitter = /** @class */ (function () {
         this.eventTypes = eventTypeList.reduce(function (types, type) {
             return __assign(__assign({}, types), { type: type });
         }, {});
+        this.hold = false;
         eventTypeList.forEach(function (eventType) {
             _this.addEventType(eventType);
         });
@@ -19848,7 +19705,7 @@ var EventEmitter = /** @class */ (function () {
         var typeInfo = this.getTypeInfo(type);
         var eventHandlers = this.events.get(typeInfo.type);
         var results = [];
-        if (eventHandlers) {
+        if (!this.hold && eventHandlers) {
             eventHandlers.forEach(function (handler) {
                 var result = handler.apply(void 0, args);
                 if (!isUndefined_default()(result)) {
@@ -19870,7 +19727,7 @@ var EventEmitter = /** @class */ (function () {
             args[_i - 2] = arguments[_i];
         }
         var eventHandlers = this.events.get(type);
-        if (eventHandlers) {
+        if (!this.hold && eventHandlers) {
             eventHandlers.forEach(function (handler) {
                 var result = handler.apply(void 0, __spreadArray([source], args));
                 if (!isFalsy_default()(result)) {
@@ -19973,6 +19830,11 @@ var EventEmitter = /** @class */ (function () {
     EventEmitter.prototype.getEvents = function () {
         return this.events;
     };
+    EventEmitter.prototype.holdEventInvoke = function (fn) {
+        this.hold = true;
+        fn();
+        this.hold = false;
+    };
     return EventEmitter;
 }());
 /* harmony default export */ var eventEmitter = (EventEmitter);
@@ -20021,7 +19883,203 @@ var CommandManager = /** @class */ (function () {
 }());
 /* harmony default export */ var commandManager = (CommandManager);
 
+;// CONCATENATED MODULE: ./src/convertors/toWysiwyg/htmlToWwConvertors.ts
+
+
+
+
+function getTextWithoutTrailingNewline(text) {
+    return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
+}
+function isCustomHTMLInlineNode(_a, node) {
+    var schema = _a.schema;
+    var html = node.literal;
+    var matched = html.match(reHTMLTag);
+    if (matched) {
+        var openTagName = matched[1], closeTagName = matched[3];
+        var typeName = (openTagName || closeTagName).toLowerCase();
+        return node.type === 'htmlInline' && !!(schema.marks[typeName] || schema.nodes[typeName]);
+    }
+    return false;
+}
+function htmlToWwConvertors_isInlineNode(_a) {
+    var type = _a.type;
+    return common_includes(['text', 'strong', 'emph', 'strike', 'image', 'link', 'code'], type);
+}
+function htmlToWwConvertors_isListNode(_a) {
+    var type = _a.type, literal = _a.literal;
+    var matched = type === 'htmlInline' && literal.match(reHTMLTag);
+    if (matched) {
+        var openTagName = matched[1], closeTagName = matched[3];
+        var tagName = openTagName || closeTagName;
+        if (tagName) {
+            return common_includes(['ul', 'ol', 'li'], tagName.toLowerCase());
+        }
+    }
+    return false;
+}
+function getListItemAttrs(_a) {
+    var literal = _a.literal;
+    var task = /data-task/.test(literal);
+    var checked = /data-task-checked/.test(literal);
+    return { task: task, checked: checked };
+}
+function getMatchedAttributeValue(rawHTML, attrName) {
+    var wrapper = document.createElement('div');
+    wrapper.innerHTML = rawHTML;
+    var el = wrapper.firstChild;
+    return el.getAttribute(attrName) || '';
+}
+function createConvertors(convertors) {
+    var convertorMap = {};
+    Object.keys(convertors).forEach(function (key) {
+        var tagNames = key.split(', ');
+        tagNames.forEach(function (tagName) {
+            var name = tagName.toLowerCase();
+            convertorMap[name] = convertors[key];
+        });
+    });
+    return convertorMap;
+}
+var convertors = {
+    'b, strong': function (state, _, openTagName) {
+        var strong = state.schema.marks.strong;
+        if (openTagName) {
+            state.openMark(strong.create({ rawHTML: openTagName }));
+        }
+        else {
+            state.closeMark(strong);
+        }
+    },
+    'i, em': function (state, _, openTagName) {
+        var emph = state.schema.marks.emph;
+        if (openTagName) {
+            state.openMark(emph.create({ rawHTML: openTagName }));
+        }
+        else {
+            state.closeMark(emph);
+        }
+    },
+    's, del': function (state, _, openTagName) {
+        var strike = state.schema.marks.strike;
+        if (openTagName) {
+            state.openMark(strike.create({ rawHTML: openTagName }));
+        }
+        else {
+            state.closeMark(strike);
+        }
+    },
+    code: function (state, _, openTagName) {
+        var code = state.schema.marks.code;
+        if (openTagName) {
+            state.openMark(code.create({ rawHTML: openTagName }));
+        }
+        else {
+            state.closeMark(code);
+        }
+    },
+    a: function (state, node, openTagName) {
+        var tag = node.literal;
+        var link = state.schema.marks.link;
+        if (openTagName) {
+            var linkUrl = getMatchedAttributeValue(tag, 'href');
+            state.openMark(link.create({
+                linkUrl: sanitizeXSSAttributeValue(linkUrl),
+                rawHTML: openTagName,
+            }));
+        }
+        else {
+            state.closeMark(link);
+        }
+    },
+    img: function (state, node, openTagName) {
+        var tag = node.literal;
+        var imageUrl = getMatchedAttributeValue(tag, 'src');
+        if (imageUrl) {
+            var altText = getMatchedAttributeValue(tag, 'alt');
+            var image = state.schema.nodes.image;
+            state.addNode(image, __assign({ rawHTML: openTagName, imageUrl: sanitizeXSSAttributeValue(imageUrl) }, (altText && { altText: altText })));
+        }
+    },
+    hr: function (state, _, openTagName) {
+        state.addNode(state.schema.nodes.thematicBreak, { rawHTML: openTagName });
+    },
+    br: function (state, node) {
+        var _a, _b;
+        var paragraph = state.schema.nodes.paragraph;
+        if (((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) === 'paragraph') {
+            if (node.prev) {
+                state.openNode(paragraph);
+            }
+            if (node.next) {
+                state.closeNode();
+            }
+        }
+        else if (((_b = node.parent) === null || _b === void 0 ? void 0 : _b.type) === 'tableCell') {
+            if (node.prev && (htmlToWwConvertors_isInlineNode(node.prev) || isCustomHTMLInlineNode(state, node.prev))) {
+                state.closeNode();
+            }
+            if (node.next && (htmlToWwConvertors_isInlineNode(node.next) || isCustomHTMLInlineNode(state, node.next))) {
+                state.openNode(paragraph);
+            }
+        }
+    },
+    pre: function (state, node, openTagName) {
+        var _a, _b;
+        var container = document.createElement('div');
+        container.innerHTML = node.literal;
+        var literal = (_b = (_a = container.firstChild) === null || _a === void 0 ? void 0 : _a.firstChild) === null || _b === void 0 ? void 0 : _b.textContent;
+        state.openNode(state.schema.nodes.codeBlock, { rawHTML: openTagName });
+        state.addText(getTextWithoutTrailingNewline(literal));
+        state.closeNode();
+    },
+    'ul, ol': function (state, node, openTagName) {
+        // in the table cell, '<ul>', '<ol>' is parsed as 'htmlInline' node
+        if (node.parent.type === 'tableCell') {
+            var _a = state.schema.nodes, bulletList = _a.bulletList, orderedList = _a.orderedList, paragraph = _a.paragraph;
+            var list = openTagName === 'ul' ? bulletList : orderedList;
+            if (openTagName) {
+                if (node.prev && !htmlToWwConvertors_isListNode(node.prev)) {
+                    state.closeNode();
+                }
+                state.openNode(list, { rawHTML: openTagName });
+            }
+            else {
+                state.closeNode();
+                if (node.next && !htmlToWwConvertors_isListNode(node.next)) {
+                    state.openNode(paragraph);
+                }
+            }
+        }
+    },
+    li: function (state, node, openTagName) {
+        var _a;
+        // in the table cell, '<li>' is parsed as 'htmlInline' node
+        if (((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) === 'tableCell') {
+            var _b = state.schema.nodes, listItem = _b.listItem, paragraph = _b.paragraph;
+            if (openTagName) {
+                var attrs = getListItemAttrs(node);
+                if (node.prev && !htmlToWwConvertors_isListNode(node.prev)) {
+                    state.closeNode();
+                }
+                state.openNode(listItem, __assign({ rawHTML: openTagName }, attrs));
+                if (node.next && !htmlToWwConvertors_isListNode(node.next)) {
+                    state.openNode(paragraph);
+                }
+            }
+            else {
+                if (node.prev && !htmlToWwConvertors_isListNode(node.prev)) {
+                    state.closeNode();
+                }
+                state.closeNode();
+            }
+        }
+    },
+};
+var htmlToWwConvertors = createConvertors(convertors);
+
 ;// CONCATENATED MODULE: ./src/convertors/toWysiwyg/toWwConvertors.ts
+
 
 
 
@@ -22066,12 +22124,6 @@ var ToastUIEditorCore = /** @class */ (function () {
             sanitizer: customHTMLSanitizer || sanitizeHTML,
         };
         var wwToDOMAdaptor = new WwToDOMAdaptor(linkAttributes, rendererOptions.customHTMLRenderer);
-        if (this.options.hooks) {
-            forEachOwnProperties_default()(this.options.hooks, function (fn, key) { return _this.addHook(key, fn); });
-        }
-        if (this.options.events) {
-            forEachOwnProperties_default()(this.options.events, function (fn, key) { return _this.on(key, fn); });
-        }
         var htmlSchemaMap = createHTMLSchemaMap(rendererOptions.customHTMLRenderer, rendererOptions.sanitizer, wwToDOMAdaptor);
         this.i18n = i18n;
         this.i18n.setCode(this.options.language);
@@ -22114,6 +22166,12 @@ var ToastUIEditorCore = /** @class */ (function () {
         this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
         this.addInitEvent();
         this.addInitCommand(mdCommands, wwCommands);
+        if (this.options.hooks) {
+            forEachOwnProperties_default()(this.options.hooks, function (fn, key) { return _this.addHook(key, fn); });
+        }
+        if (this.options.events) {
+            forEachOwnProperties_default()(this.options.events, function (fn, key) { return _this.on(key, fn); });
+        }
         this.eventEmitter.emit('load', this);
         this.moveCursorToStart();
     }
@@ -22265,7 +22323,8 @@ var ToastUIEditorCore = /** @class */ (function () {
         if (html === void 0) { html = ''; }
         if (cursorToEnd === void 0) { cursorToEnd = true; }
         var container = document.createElement('div');
-        container.innerHTML = html;
+        // the `br` tag should be replaced with empty block to separate between blocks
+        container.innerHTML = replaceBRWithEmptyBlock(html);
         var wwNode = external_commonjs_prosemirror_model_commonjs2_prosemirror_model_amd_prosemirror_model_.DOMParser.fromSchema(this.wwEditor.schema).parse(container);
         if (this.isMarkdownMode()) {
             this.mdEditor.setMarkdown(this.convertor.toMarkdownText(wwNode), cursorToEnd);
@@ -22289,9 +22348,12 @@ var ToastUIEditorCore = /** @class */ (function () {
      * @returns {string} html string
      */
     ToastUIEditorCore.prototype.getHTML = function () {
-        if (this.isWysiwygMode()) {
-            this.mdEditor.setMarkdown(this.convertor.toMarkdownText(this.wwEditor.getModel()));
-        }
+        var _this = this;
+        this.eventEmitter.holdEventInvoke(function () {
+            if (_this.isWysiwygMode()) {
+                _this.mdEditor.setMarkdown(_this.convertor.toMarkdownText(_this.wwEditor.getModel()));
+            }
+        });
         var mdNode = this.toastMark.getRootNode();
         var mdRenderer = this.preview.getRenderer();
         return mdRenderer
@@ -22472,6 +22534,7 @@ var ToastUIEditorCore = /** @class */ (function () {
             var wwNode = this.wwEditor.getModel();
             this.mdEditor.setMarkdown(this.convertor.toMarkdownText(wwNode), !withoutFocus);
         }
+        this.eventEmitter.emit('removePopupWidget');
         this.eventEmitter.emit('changeMode', mode);
         if (!withoutFocus) {
             var pos = this.convertor.getMappedPos();
@@ -23239,7 +23302,7 @@ var ImagePopupBody = /** @class */ (function (_super) {
     ImagePopupBody.prototype.render = function () {
         var _this = this;
         var _a = this.state, activeTab = _a.activeTab, file = _a.file, fileNameElClassName = _a.fileNameElClassName;
-        return template(imagePopupBody_templateObject_1 || (imagePopupBody_templateObject_1 = __makeTemplateObject(["\n      <div>\n        <", " tabs=", " activeTab=", " onClick=", " />\n        <div style=\"display:", "\">\n          <label for=\"toastuiImageUrlInput\">", "</label>\n          <input\n            id=\"toastuiImageUrlInput\"\n            type=\"text\"\n            ref=", "\n          />\n        </div>\n        <div style=\"display:", ";position: relative;\">\n          <label for=\"toastuiImageFileInput\">", "</label>\n          <span\n            class=\"", "", "\"\n            onClick=", "\n            onSelectstart=", "\n          >\n            ", "\n          </span>\n          <button class=\"", "\" onClick=", ">\n            ", "\n          </button>\n          <input\n            id=\"toastuiImageFileInput\"\n            type=\"file\"\n            accept=\"image/*\"\n            onChange=", "\n            ref=", "\n          />\n        </div>\n        <label for=\"toastuiAltTextInput\">", "</label>\n        <input\n          id=\"toastuiAltTextInput\"\n          type=\"text\"\n          ref=", "\n        />\n        <div class=\"", "\">\n          <button type=\"button\" class=\"", "\" onClick=", ">\n            ", "\n          </button>\n          <button type=\"button\" class=\"", "\" onClick=", ">\n            ", "\n          </button>\n        </div>\n      </div>\n    "], ["\n      <div>\n        <", " tabs=", " activeTab=", " onClick=", " />\n        <div style=\"display:", "\">\n          <label for=\"toastuiImageUrlInput\">", "</label>\n          <input\n            id=\"toastuiImageUrlInput\"\n            type=\"text\"\n            ref=", "\n          />\n        </div>\n        <div style=\"display:", ";position: relative;\">\n          <label for=\"toastuiImageFileInput\">", "</label>\n          <span\n            class=\"", "", "\"\n            onClick=", "\n            onSelectstart=", "\n          >\n            ", "\n          </span>\n          <button class=\"", "\" onClick=", ">\n            ", "\n          </button>\n          <input\n            id=\"toastuiImageFileInput\"\n            type=\"file\"\n            accept=\"image/*\"\n            onChange=", "\n            ref=", "\n          />\n        </div>\n        <label for=\"toastuiAltTextInput\">", "</label>\n        <input\n          id=\"toastuiAltTextInput\"\n          type=\"text\"\n          ref=", "\n        />\n        <div class=\"", "\">\n          <button type=\"button\" class=\"", "\" onClick=", ">\n            ", "\n          </button>\n          <button type=\"button\" class=\"", "\" onClick=", ">\n            ", "\n          </button>\n        </div>\n      </div>\n    "])), Tabs, this.tabs, activeTab, this.toggleTab, activeTab === 'url' ? 'block' : 'none', i18n.get('Image URL'), function (el) { return (_this.refs.url = el); }, activeTab === 'file' ? 'block' : 'none', i18n.get('Select image file'), cls('file-name'), file ? ' has-file' : fileNameElClassName, this.showFileSelectBox, this.preventSelectStart, file ? file.name : i18n.get('No file'), cls('file-select-button'), this.showFileSelectBox, i18n.get('Choose a file'), this.changeFile, function (el) { return (_this.refs.file = el); }, i18n.get('Description'), function (el) { return (_this.refs.altText = el); }, cls('button-container'), cls('close-button'), this.props.hidePopup, i18n.get('Cancel'), cls('ok-button'), this.execCommand, i18n.get('OK'));
+        return template(imagePopupBody_templateObject_1 || (imagePopupBody_templateObject_1 = __makeTemplateObject(["\n      <div>\n        <", " tabs=", " activeTab=", " onClick=", " />\n        <div style=\"display:", "\">\n          <label for=\"toastuiImageUrlInput\">", "</label>\n          <input\n            id=\"toastuiImageUrlInput\"\n            type=\"text\"\n            ref=", "\n          />\n        </div>\n        <div style=\"display:", ";position: relative;\">\n          <label for=\"toastuiImageFileInput\">", "</label>\n          <span\n            class=\"", "", "\"\n            onClick=", "\n            onSelectstart=", "\n          >\n            ", "\n          </span>\n          <button\n            type=\"button\"\n            class=\"", "\"\n            onClick=", "\n          >\n            ", "\n          </button>\n          <input\n            id=\"toastuiImageFileInput\"\n            type=\"file\"\n            accept=\"image/*\"\n            onChange=", "\n            ref=", "\n          />\n        </div>\n        <label for=\"toastuiAltTextInput\">", "</label>\n        <input\n          id=\"toastuiAltTextInput\"\n          type=\"text\"\n          ref=", "\n        />\n        <div class=\"", "\">\n          <button type=\"button\" class=\"", "\" onClick=", ">\n            ", "\n          </button>\n          <button type=\"button\" class=\"", "\" onClick=", ">\n            ", "\n          </button>\n        </div>\n      </div>\n    "], ["\n      <div>\n        <", " tabs=", " activeTab=", " onClick=", " />\n        <div style=\"display:", "\">\n          <label for=\"toastuiImageUrlInput\">", "</label>\n          <input\n            id=\"toastuiImageUrlInput\"\n            type=\"text\"\n            ref=", "\n          />\n        </div>\n        <div style=\"display:", ";position: relative;\">\n          <label for=\"toastuiImageFileInput\">", "</label>\n          <span\n            class=\"", "", "\"\n            onClick=", "\n            onSelectstart=", "\n          >\n            ", "\n          </span>\n          <button\n            type=\"button\"\n            class=\"", "\"\n            onClick=", "\n          >\n            ", "\n          </button>\n          <input\n            id=\"toastuiImageFileInput\"\n            type=\"file\"\n            accept=\"image/*\"\n            onChange=", "\n            ref=", "\n          />\n        </div>\n        <label for=\"toastuiAltTextInput\">", "</label>\n        <input\n          id=\"toastuiAltTextInput\"\n          type=\"text\"\n          ref=", "\n        />\n        <div class=\"", "\">\n          <button type=\"button\" class=\"", "\" onClick=", ">\n            ", "\n          </button>\n          <button type=\"button\" class=\"", "\" onClick=", ">\n            ", "\n          </button>\n        </div>\n      </div>\n    "])), Tabs, this.tabs, activeTab, this.toggleTab, activeTab === 'url' ? 'block' : 'none', i18n.get('Image URL'), function (el) { return (_this.refs.url = el); }, activeTab === 'file' ? 'block' : 'none', i18n.get('Select image file'), cls('file-name'), file ? ' has-file' : fileNameElClassName, this.showFileSelectBox, this.preventSelectStart, file ? file.name : i18n.get('No file'), cls('file-select-button'), this.showFileSelectBox, i18n.get('Choose a file'), this.changeFile, function (el) { return (_this.refs.file = el); }, i18n.get('Description'), function (el) { return (_this.refs.altText = el); }, cls('button-container'), cls('close-button'), this.props.hidePopup, i18n.get('Cancel'), cls('ok-button'), this.execCommand, i18n.get('OK'));
     };
     return ImagePopupBody;
 }(Component));
@@ -23764,8 +23827,8 @@ var TOOLTIP_INDENT = 6;
 function connectHOC(WrappedComponent) {
     return /** @class */ (function (_super) {
         __extends(ButtonHOC, _super);
-        function ButtonHOC() {
-            var _this = _super !== null && _super.apply(this, arguments) || this;
+        function ButtonHOC(props) {
+            var _this = _super.call(this, props) || this;
             _this.showTooltip = function (el) {
                 var tooltip = _this.props.item.tooltip;
                 if (!_this.props.disabled && tooltip) {
@@ -23779,14 +23842,27 @@ function connectHOC(WrappedComponent) {
             _this.hideTooltip = function () {
                 css_default()(_this.props.tooltipRef.current, 'display', 'none');
             };
+            _this.state = { active: false };
+            _this.addEvent();
             return _this;
         }
+        ButtonHOC.prototype.addEvent = function () {
+            var _this = this;
+            var _a = this.props, item = _a.item, eventEmitter = _a.eventEmitter;
+            if (item.state) {
+                eventEmitter.listen('changeToolbarState', function (_a) {
+                    var toolbarState = _a.toolbarState;
+                    var active = !!toolbarState[item.state];
+                    _this.setState({ active: active });
+                });
+            }
+        };
         ButtonHOC.prototype.getBound = function (el) {
             var _a = getTotalOffset(el, closest(el, "." + cls('toolbar'))), offsetLeft = _a.offsetLeft, offsetTop = _a.offsetTop;
             return { left: offsetLeft, top: el.offsetHeight + offsetTop };
         };
         ButtonHOC.prototype.render = function () {
-            return template(buttonHoc_templateObject_1 || (buttonHoc_templateObject_1 = __makeTemplateObject(["\n        <", "\n          ...", "\n          showTooltip=", "\n          hideTooltip=", "\n          getBound=", "\n        />\n      "], ["\n        <", "\n          ...", "\n          showTooltip=", "\n          hideTooltip=", "\n          getBound=", "\n        />\n      "])), WrappedComponent, this.props, this.showTooltip, this.hideTooltip, this.getBound);
+            return template(buttonHoc_templateObject_1 || (buttonHoc_templateObject_1 = __makeTemplateObject(["\n        <", "\n          ...", "\n          active=", "\n          showTooltip=", "\n          hideTooltip=", "\n          getBound=", "\n        />\n      "], ["\n        <", "\n          ...", "\n          active=", "\n          showTooltip=", "\n          hideTooltip=", "\n          getBound=", "\n        />\n      "])), WrappedComponent, this.props, this.state.active, this.showTooltip, this.hideTooltip, this.getBound);
         };
         return ButtonHOC;
     }(Component));
@@ -23803,8 +23879,8 @@ var buttonHoc_templateObject_1;
 var DEFAULT_WIDTH = 80;
 var ToolbarButtonComp = /** @class */ (function (_super) {
     __extends(ToolbarButtonComp, _super);
-    function ToolbarButtonComp(props) {
-        var _this = _super.call(this, props) || this;
+    function ToolbarButtonComp() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
         _this.showTooltip = function () {
             _this.props.showTooltip(_this.refs.el);
         };
@@ -23826,20 +23902,8 @@ var ToolbarButtonComp = /** @class */ (function (_super) {
                 }
             }
         };
-        _this.state = { active: false };
-        _this.addEvent();
         return _this;
     }
-    ToolbarButtonComp.prototype.addEvent = function () {
-        var _this = this;
-        if (this.props.item.state) {
-            this.props.eventEmitter.listen('changeToolbarState', function (_a) {
-                var toolbarState = _a.toolbarState;
-                var active = !!toolbarState[_this.props.item.state];
-                _this.setState({ active: active });
-            });
-        }
-    };
     ToolbarButtonComp.prototype.mounted = function () {
         this.setItemWidth();
     };
@@ -23857,9 +23921,9 @@ var ToolbarButtonComp = /** @class */ (function (_super) {
     };
     ToolbarButtonComp.prototype.render = function () {
         var _this = this;
-        var _a = this.props, hideTooltip = _a.hideTooltip, disabled = _a.disabled, item = _a.item;
+        var _a = this.props, hideTooltip = _a.hideTooltip, disabled = _a.disabled, item = _a.item, active = _a.active;
         var style = __assign({ display: item.hidden ? 'none' : null }, item.style);
-        var classNames = "" + (item.className || '') + (this.state.active ? ' active' : '');
+        var classNames = "" + (item.className || '') + (active ? ' active' : '');
         return template(toolbarButton_templateObject_1 || (toolbarButton_templateObject_1 = __makeTemplateObject(["\n      <button\n        ref=", "\n        type=\"button\"\n        style=", "\n        class=", "\n        onClick=", "\n        onMouseover=", "\n        onMouseout=", "\n        disabled=", "\n      >\n        ", "\n      </button>\n    "], ["\n      <button\n        ref=", "\n        type=\"button\"\n        style=", "\n        class=", "\n        onClick=", "\n        onMouseover=", "\n        onMouseout=", "\n        disabled=", "\n      >\n        ", "\n      </button>\n    "])), function (el) { return (_this.refs.el = el); }, style, classNames, this.execCommand, this.showTooltip, hideTooltip, !!disabled, item.text || '');
     };
     return ToolbarButtonComp;
@@ -23906,10 +23970,19 @@ var CustomToolbarItemComp = /** @class */ (function (_super) {
             item.onMounted(this.props.execCommand);
         }
     };
+    CustomToolbarItemComp.prototype.updated = function (prevProps) {
+        var _a;
+        var _b = this.props, item = _b.item, active = _b.active, disabled = _b.disabled;
+        if (prevProps.active !== active || prevProps.disabled !== disabled) {
+            (_a = item.onUpdated) === null || _a === void 0 ? void 0 : _a.call(item, { active: active, disabled: disabled });
+        }
+    };
     CustomToolbarItemComp.prototype.render = function () {
         var _this = this;
-        var style = { display: this.props.item.hidden ? 'none' : 'inline-block' };
-        return template(customToolbarItem_templateObject_1 || (customToolbarItem_templateObject_1 = __makeTemplateObject(["\n      <div\n        ref=", "\n        style=", "\n        class=\"tui-toolbar-item-wrapper\"\n        onClick=", "\n        onMouseover=", "\n        onMouseout=", "\n      ></div>\n    "], ["\n      <div\n        ref=", "\n        style=", "\n        class=\"tui-toolbar-item-wrapper\"\n        onClick=", "\n        onMouseover=", "\n        onMouseout=", "\n      ></div>\n    "])), function (el) { return (_this.refs.el = el); }, style, this.showPopup, this.showTooltip, this.props.hideTooltip);
+        var _a = this.props, disabled = _a.disabled, item = _a.item;
+        var style = { display: item.hidden ? 'none' : 'inline-block' };
+        var getListener = function (listener) { return (disabled ? null : listener); };
+        return template(customToolbarItem_templateObject_1 || (customToolbarItem_templateObject_1 = __makeTemplateObject(["\n      <div\n        ref=", "\n        style=", "\n        class=", "\n        onClick=", "\n        onMouseover=", "\n        onMouseout=", "\n      ></div>\n    "], ["\n      <div\n        ref=", "\n        style=", "\n        class=", "\n        onClick=", "\n        onMouseover=", "\n        onMouseout=", "\n      ></div>\n    "])), function (el) { return (_this.refs.el = el); }, style, cls('toolbar-item-wrapper'), getListener(this.showPopup), getListener(this.showTooltip), getListener(this.props.hideTooltip));
     };
     return CustomToolbarItemComp;
 }(Component));
@@ -24324,9 +24397,9 @@ var Layout = /** @class */ (function (_super) {
         var _a = this.props, eventEmitter = _a.eventEmitter, hideModeSwitch = _a.hideModeSwitch, toolbarItems = _a.toolbarItems, theme = _a.theme;
         var _b = this.state, hide = _b.hide, previewStyle = _b.previewStyle, editorType = _b.editorType;
         var displayClassName = hide ? ' hidden' : '';
-        var editorTypeClassName = editorType === 'markdown' ? cls('md-mode') : cls('ww-mode');
+        var editorTypeClassName = cls(editorType === 'markdown' ? 'md-mode' : 'ww-mode');
         var previewClassName = cls('md') + "-" + previewStyle + "-style";
-        var themeClassName = theme === 'light' ? '' : cls(theme) + " ";
+        var themeClassName = cls([theme !== 'light', theme + " "]);
         return template(layout_templateObject_2 || (layout_templateObject_2 = __makeTemplateObject(["\n      <div\n        class=\"", "", "", "\"\n        ref=", "\n      >\n        <", "\n          ref=", "\n          eventEmitter=", "\n          previewStyle=", "\n          toolbarItems=", "\n          editorType=", "\n        />\n        <div\n          class=\"", " ", "\"\n          ref=", "\n        >\n          <div\n            class=\"", " ", "\"\n            ref=", "\n          >\n            <div class=\"", "\"></div>\n          </div>\n          <div\n            class=\"", "\"\n            ref=", "\n          />\n        </div>\n        ", "\n        <", " eventEmitter=", " />\n      </div>\n    "], ["\n      <div\n        class=\"", "", "", "\"\n        ref=", "\n      >\n        <", "\n          ref=", "\n          eventEmitter=", "\n          previewStyle=", "\n          toolbarItems=", "\n          editorType=", "\n        />\n        <div\n          class=\"", " ", "\"\n          ref=", "\n        >\n          <div\n            class=\"", " ", "\"\n            ref=", "\n          >\n            <div class=\"", "\"></div>\n          </div>\n          <div\n            class=\"", "\"\n            ref=", "\n          />\n        </div>\n        ",
             "\n        <", " eventEmitter=", " />\n      </div>\n    "])), themeClassName, cls('defaultUI'), displayClassName, function (el) { return (_this.refs.el = el); }, Toolbar, function (toolbar) { return (_this.toolbar = toolbar); }, eventEmitter, previewStyle, toolbarItems, editorType, cls('main'), editorTypeClassName, function (el) { return (_this.refs.editorSection = el); }, cls('md-container'), previewClassName, function (el) { return (_this.refs.mdContainer = el); }, cls('md-splitter'), cls('ww-container'), function (el) { return (_this.refs.wwContainer = el); }, !hideModeSwitch && template(layout_templateObject_1 || (layout_templateObject_1 = __makeTemplateObject(["<", " eventEmitter=", " editorType=", " />"], ["<", " eventEmitter=", " editorType=", " />"])), Switch, eventEmitter, editorType), ContextMenu, eventEmitter);
     };

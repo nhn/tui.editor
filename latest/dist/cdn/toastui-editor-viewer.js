@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.0.0 | Thu Jun 17 2021
+ * @version 3.0.1 | Wed Jul 07 2021
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -1124,6 +1124,32 @@ module.exports = isFalsy;
 
 /***/ }),
 
+/***/ 294:
+/***/ (function(module) {
+
+/**
+ * @fileoverview Check whether the given variable is a function or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Check whether the given variable is a function or not.
+ * If the given variable is a function, return true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is function?
+ * @memberof module:type
+ */
+function isFunction(obj) {
+  return obj instanceof Function;
+}
+
+module.exports = isFunction;
+
+
+/***/ }),
+
 /***/ 934:
 /***/ (function(module) {
 
@@ -1617,6 +1643,7 @@ function esm_spreadArray(to, from) {
         to[j] = from[i];
     return to;
 }
+var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof __webpack_require__.g !== 'undefined' ? __webpack_require__.g : typeof self !== 'undefined' ? self : {};
 var encodeCache = {};
 // Create a lookup array where anything but characters in `chars` string
 // and alphanumeric chars is percent-encoded.
@@ -1692,19 +1719,8 @@ function encode$1(string, exclude, keepEscaped) {
 encode$1.defaultChars = ";/?:@&=+$,-_.!~*'()#";
 encode$1.componentChars = "-_.!~*'()";
 var encode_1 = encode$1;
-var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof __webpack_require__.g !== 'undefined' ? __webpack_require__.g : typeof self !== 'undefined' ? self : {};
-function createCommonjsModule(fn, basedir, module) {
-    return module = {
-        path: basedir,
-        exports: {},
-        require: function (path, base) {
-            return commonjsRequire(path, (base === undefined || base === null) ? module.path : base);
-        }
-    }, fn(module, module.exports), module.exports;
-}
-function commonjsRequire() {
-    throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
-}
+var lib = {};
+var decode = {};
 var Aacute$1 = "Á";
 var aacute$1 = "á";
 var Abreve = "Ă";
@@ -6181,6 +6197,7 @@ var require$$0$1 = {
     lt: lt,
     quot: quot
 };
+var decode_codepoint = {};
 var require$$0 = {
     "0": 65533,
     "128": 8364,
@@ -6211,231 +6228,228 @@ var require$$0 = {
     "158": 382,
     "159": 376
 };
-var decode_codepoint = createCommonjsModule(function (module, exports) {
-    var __importDefault = (commonjsGlobal && commonjsGlobal.__importDefault) || function (mod) {
-        return (mod && mod.__esModule) ? mod : { "default": mod };
+var __importDefault$2 = (commonjsGlobal && commonjsGlobal.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(decode_codepoint, "__esModule", { value: true });
+var decode_json_1 = __importDefault$2(require$$0);
+// Adapted from https://github.com/mathiasbynens/he/blob/master/src/he.js#L94-L119
+var fromCodePoint$2 = 
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+String.fromCodePoint ||
+    function (codePoint) {
+        var output = "";
+        if (codePoint > 0xffff) {
+            codePoint -= 0x10000;
+            output += String.fromCharCode(((codePoint >>> 10) & 0x3ff) | 0xd800);
+            codePoint = 0xdc00 | (codePoint & 0x3ff);
+        }
+        output += String.fromCharCode(codePoint);
+        return output;
     };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    var decode_json_1 = __importDefault(require$$0);
-    // Adapted from https://github.com/mathiasbynens/he/blob/master/src/he.js#L94-L119
-    var fromCodePoint = 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    String.fromCodePoint ||
-        function (codePoint) {
-            var output = "";
-            if (codePoint > 0xffff) {
-                codePoint -= 0x10000;
-                output += String.fromCharCode(((codePoint >>> 10) & 0x3ff) | 0xd800);
-                codePoint = 0xdc00 | (codePoint & 0x3ff);
-            }
-            output += String.fromCharCode(codePoint);
-            return output;
-        };
-    function decodeCodePoint(codePoint) {
-        if ((codePoint >= 0xd800 && codePoint <= 0xdfff) || codePoint > 0x10ffff) {
-            return "\uFFFD";
-        }
-        if (codePoint in decode_json_1.default) {
-            codePoint = decode_json_1.default[codePoint];
-        }
-        return fromCodePoint(codePoint);
+function decodeCodePoint(codePoint) {
+    if ((codePoint >= 0xd800 && codePoint <= 0xdfff) || codePoint > 0x10ffff) {
+        return "\uFFFD";
     }
-    exports.default = decodeCodePoint;
-});
-var decode = createCommonjsModule(function (module, exports) {
-    var __importDefault = (commonjsGlobal && commonjsGlobal.__importDefault) || function (mod) {
-        return (mod && mod.__esModule) ? mod : { "default": mod };
+    if (codePoint in decode_json_1.default) {
+        codePoint = decode_json_1.default[codePoint];
+    }
+    return fromCodePoint$2(codePoint);
+}
+decode_codepoint.default = decodeCodePoint;
+var __importDefault$1 = (commonjsGlobal && commonjsGlobal.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(decode, "__esModule", { value: true });
+decode.decodeHTML = decode.decodeHTMLStrict = decode.decodeXML = void 0;
+var entities_json_1$1 = __importDefault$1(require$$1$1);
+var legacy_json_1 = __importDefault$1(require$$1);
+var xml_json_1$1 = __importDefault$1(require$$0$1);
+var decode_codepoint_1 = __importDefault$1(decode_codepoint);
+var strictEntityRe = /&(?:[a-zA-Z0-9]+|#[xX][\da-fA-F]+|#\d+);/g;
+decode.decodeXML = getStrictDecoder(xml_json_1$1.default);
+decode.decodeHTMLStrict = getStrictDecoder(entities_json_1$1.default);
+function getStrictDecoder(map) {
+    var replace = getReplacer(map);
+    return function (str) { return String(str).replace(strictEntityRe, replace); };
+}
+var sorter = function (a, b) { return (a < b ? 1 : -1); };
+decode.decodeHTML = (function () {
+    var legacy = Object.keys(legacy_json_1.default).sort(sorter);
+    var keys = Object.keys(entities_json_1$1.default).sort(sorter);
+    for (var i = 0, j = 0; i < keys.length; i++) {
+        if (legacy[j] === keys[i]) {
+            keys[i] += ";?";
+            j++;
+        }
+        else {
+            keys[i] += ";";
+        }
+    }
+    var re = new RegExp("&(?:" + keys.join("|") + "|#[xX][\\da-fA-F]+;?|#\\d+;?)", "g");
+    var replace = getReplacer(entities_json_1$1.default);
+    function replacer(str) {
+        if (str.substr(-1) !== ";")
+            str += ";";
+        return replace(str);
+    }
+    // TODO consider creating a merged map
+    return function (str) { return String(str).replace(re, replacer); };
+})();
+function getReplacer(map) {
+    return function replace(str) {
+        if (str.charAt(1) === "#") {
+            var secondChar = str.charAt(2);
+            if (secondChar === "X" || secondChar === "x") {
+                return decode_codepoint_1.default(parseInt(str.substr(3), 16));
+            }
+            return decode_codepoint_1.default(parseInt(str.substr(2), 10));
+        }
+        // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+        return map[str.slice(1, -1)] || str;
     };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.decodeHTML = exports.decodeHTMLStrict = exports.decodeXML = void 0;
-    var entities_json_1 = __importDefault(require$$1$1);
-    var legacy_json_1 = __importDefault(require$$1);
-    var xml_json_1 = __importDefault(require$$0$1);
-    var decode_codepoint_1 = __importDefault(decode_codepoint);
-    var strictEntityRe = /&(?:[a-zA-Z0-9]+|#[xX][\da-fA-F]+|#\d+);/g;
-    exports.decodeXML = getStrictDecoder(xml_json_1.default);
-    exports.decodeHTMLStrict = getStrictDecoder(entities_json_1.default);
-    function getStrictDecoder(map) {
-        var replace = getReplacer(map);
-        return function (str) { return String(str).replace(strictEntityRe, replace); };
+}
+var encode = {};
+var esm_importDefault = (commonjsGlobal && commonjsGlobal.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(encode, "__esModule", { value: true });
+encode.escapeUTF8 = encode.escape = encode.encodeNonAsciiHTML = encode.encodeHTML = encode.encodeXML = void 0;
+var xml_json_1 = esm_importDefault(require$$0$1);
+var inverseXML = getInverseObj(xml_json_1.default);
+var xmlReplacer = getInverseReplacer(inverseXML);
+/**
+ * Encodes all non-ASCII characters, as well as characters not valid in XML
+ * documents using XML entities.
+ *
+ * If a character has no equivalent entity, a
+ * numeric hexadecimal reference (eg. `&#xfc;`) will be used.
+ */
+encode.encodeXML = getASCIIEncoder(inverseXML);
+var entities_json_1 = esm_importDefault(require$$1$1);
+var inverseHTML = getInverseObj(entities_json_1.default);
+var htmlReplacer = getInverseReplacer(inverseHTML);
+/**
+ * Encodes all entities and non-ASCII characters in the input.
+ *
+ * This includes characters that are valid ASCII characters in HTML documents.
+ * For example `#` will be encoded as `&num;`. To get a more compact output,
+ * consider using the `encodeNonAsciiHTML` function.
+ *
+ * If a character has no equivalent entity, a
+ * numeric hexadecimal reference (eg. `&#xfc;`) will be used.
+ */
+encode.encodeHTML = getInverse(inverseHTML, htmlReplacer);
+/**
+ * Encodes all non-ASCII characters, as well as characters not valid in HTML
+ * documents using HTML entities.
+ *
+ * If a character has no equivalent entity, a
+ * numeric hexadecimal reference (eg. `&#xfc;`) will be used.
+ */
+encode.encodeNonAsciiHTML = getASCIIEncoder(inverseHTML);
+function getInverseObj(obj) {
+    return Object.keys(obj)
+        .sort()
+        .reduce(function (inverse, name) {
+        inverse[obj[name]] = "&" + name + ";";
+        return inverse;
+    }, {});
+}
+function getInverseReplacer(inverse) {
+    var single = [];
+    var multiple = [];
+    for (var _i = 0, _a = Object.keys(inverse); _i < _a.length; _i++) {
+        var k = _a[_i];
+        if (k.length === 1) {
+            // Add value to single array
+            single.push("\\" + k);
+        }
+        else {
+            // Add value to multiple array
+            multiple.push(k);
+        }
     }
-    var sorter = function (a, b) { return (a < b ? 1 : -1); };
-    exports.decodeHTML = (function () {
-        var legacy = Object.keys(legacy_json_1.default).sort(sorter);
-        var keys = Object.keys(entities_json_1.default).sort(sorter);
-        for (var i = 0, j = 0; i < keys.length; i++) {
-            if (legacy[j] === keys[i]) {
-                keys[i] += ";?";
-                j++;
-            }
-            else {
-                keys[i] += ";";
-            }
+    // Add ranges to single characters.
+    single.sort();
+    for (var start = 0; start < single.length - 1; start++) {
+        // Find the end of a run of characters
+        var end = start;
+        while (end < single.length - 1 &&
+            single[end].charCodeAt(1) + 1 === single[end + 1].charCodeAt(1)) {
+            end += 1;
         }
-        var re = new RegExp("&(?:" + keys.join("|") + "|#[xX][\\da-fA-F]+;?|#\\d+;?)", "g");
-        var replace = getReplacer(entities_json_1.default);
-        function replacer(str) {
-            if (str.substr(-1) !== ";")
-                str += ";";
-            return replace(str);
-        }
-        // TODO consider creating a merged map
-        return function (str) { return String(str).replace(re, replacer); };
-    })();
-    function getReplacer(map) {
-        return function replace(str) {
-            if (str.charAt(1) === "#") {
-                var secondChar = str.charAt(2);
-                if (secondChar === "X" || secondChar === "x") {
-                    return decode_codepoint_1.default(parseInt(str.substr(3), 16));
-                }
-                return decode_codepoint_1.default(parseInt(str.substr(2), 10));
-            }
-            // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-            return map[str.slice(1, -1)] || str;
+        var count = 1 + end - start;
+        // We want to replace at least three characters
+        if (count < 3)
+            continue;
+        single.splice(start, count, single[start] + "-" + single[end]);
+    }
+    multiple.unshift("[" + single.join("") + "]");
+    return new RegExp(multiple.join("|"), "g");
+}
+// /[^\0-\x7F]/gu
+var reNonASCII = /(?:[\x80-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])/g;
+var getCodePoint = 
+// eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+String.prototype.codePointAt != null
+    ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        function (str) { return str.codePointAt(0); }
+    : // http://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
+        function (c) {
+            return (c.charCodeAt(0) - 0xd800) * 0x400 +
+                c.charCodeAt(1) -
+                0xdc00 +
+                0x10000;
         };
-    }
-});
-var encode = createCommonjsModule(function (module, exports) {
-    var __importDefault = (commonjsGlobal && commonjsGlobal.__importDefault) || function (mod) {
-        return (mod && mod.__esModule) ? mod : { "default": mod };
+function singleCharReplacer(c) {
+    return "&#x" + (c.length > 1 ? getCodePoint(c) : c.charCodeAt(0))
+        .toString(16)
+        .toUpperCase() + ";";
+}
+function getInverse(inverse, re) {
+    return function (data) {
+        return data
+            .replace(re, function (name) { return inverse[name]; })
+            .replace(reNonASCII, singleCharReplacer);
     };
-    Object.defineProperty(exports, "__esModule", { value: true });
-    exports.escapeUTF8 = exports.escape = exports.encodeNonAsciiHTML = exports.encodeHTML = exports.encodeXML = void 0;
-    var xml_json_1 = __importDefault(require$$0$1);
-    var inverseXML = getInverseObj(xml_json_1.default);
-    var xmlReplacer = getInverseReplacer(inverseXML);
-    /**
-     * Encodes all non-ASCII characters, as well as characters not valid in XML
-     * documents using XML entities.
-     *
-     * If a character has no equivalent entity, a
-     * numeric hexadecimal reference (eg. `&#xfc;`) will be used.
-     */
-    exports.encodeXML = getASCIIEncoder(inverseXML);
-    var entities_json_1 = __importDefault(require$$1$1);
-    var inverseHTML = getInverseObj(entities_json_1.default);
-    var htmlReplacer = getInverseReplacer(inverseHTML);
-    /**
-     * Encodes all entities and non-ASCII characters in the input.
-     *
-     * This includes characters that are valid ASCII characters in HTML documents.
-     * For example `#` will be encoded as `&num;`. To get a more compact output,
-     * consider using the `encodeNonAsciiHTML` function.
-     *
-     * If a character has no equivalent entity, a
-     * numeric hexadecimal reference (eg. `&#xfc;`) will be used.
-     */
-    exports.encodeHTML = getInverse(inverseHTML, htmlReplacer);
-    /**
-     * Encodes all non-ASCII characters, as well as characters not valid in HTML
-     * documents using HTML entities.
-     *
-     * If a character has no equivalent entity, a
-     * numeric hexadecimal reference (eg. `&#xfc;`) will be used.
-     */
-    exports.encodeNonAsciiHTML = getASCIIEncoder(inverseHTML);
-    function getInverseObj(obj) {
-        return Object.keys(obj)
-            .sort()
-            .reduce(function (inverse, name) {
-            inverse[obj[name]] = "&" + name + ";";
-            return inverse;
-        }, {});
-    }
-    function getInverseReplacer(inverse) {
-        var single = [];
-        var multiple = [];
-        for (var _i = 0, _a = Object.keys(inverse); _i < _a.length; _i++) {
-            var k = _a[_i];
-            if (k.length === 1) {
-                // Add value to single array
-                single.push("\\" + k);
-            }
-            else {
-                // Add value to multiple array
-                multiple.push(k);
-            }
-        }
-        // Add ranges to single characters.
-        single.sort();
-        for (var start = 0; start < single.length - 1; start++) {
-            // Find the end of a run of characters
-            var end = start;
-            while (end < single.length - 1 &&
-                single[end].charCodeAt(1) + 1 === single[end + 1].charCodeAt(1)) {
-                end += 1;
-            }
-            var count = 1 + end - start;
-            // We want to replace at least three characters
-            if (count < 3)
-                continue;
-            single.splice(start, count, single[start] + "-" + single[end]);
-        }
-        multiple.unshift("[" + single.join("") + "]");
-        return new RegExp(multiple.join("|"), "g");
-    }
-    // /[^\0-\x7F]/gu
-    var reNonASCII = /(?:[\x80-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])/g;
-    var getCodePoint = 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    String.prototype.codePointAt != null
-        ? // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            function (str) { return str.codePointAt(0); }
-        : // http://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae
-            function (c) {
-                return (c.charCodeAt(0) - 0xd800) * 0x400 +
-                    c.charCodeAt(1) -
-                    0xdc00 +
-                    0x10000;
-            };
-    function singleCharReplacer(c) {
-        return "&#x" + (c.length > 1 ? getCodePoint(c) : c.charCodeAt(0))
-            .toString(16)
-            .toUpperCase() + ";";
-    }
-    function getInverse(inverse, re) {
-        return function (data) {
-            return data
-                .replace(re, function (name) { return inverse[name]; })
-                .replace(reNonASCII, singleCharReplacer);
-        };
-    }
-    var reEscapeChars = new RegExp(xmlReplacer.source + "|" + reNonASCII.source, "g");
-    /**
-     * Encodes all non-ASCII characters, as well as characters not valid in XML
-     * documents using numeric hexadecimal reference (eg. `&#xfc;`).
-     *
-     * Have a look at `escapeUTF8` if you want a more concise output at the expense
-     * of reduced transportability.
-     *
-     * @param data String to escape.
-     */
-    function escape(data) {
-        return data.replace(reEscapeChars, singleCharReplacer);
-    }
-    exports.escape = escape;
-    /**
-     * Encodes all characters not valid in XML documents using numeric hexadecimal
-     * reference (eg. `&#xfc;`).
-     *
-     * Note that the output will be character-set dependent.
-     *
-     * @param data String to escape.
-     */
-    function escapeUTF8(data) {
-        return data.replace(xmlReplacer, singleCharReplacer);
-    }
-    exports.escapeUTF8 = escapeUTF8;
-    function getASCIIEncoder(obj) {
-        return function (data) {
-            return data.replace(reEscapeChars, function (c) { return obj[c] || singleCharReplacer(c); });
-        };
-    }
-});
-var lib = createCommonjsModule(function (module, exports) {
+}
+var reEscapeChars = new RegExp(xmlReplacer.source + "|" + reNonASCII.source, "g");
+/**
+ * Encodes all non-ASCII characters, as well as characters not valid in XML
+ * documents using numeric hexadecimal reference (eg. `&#xfc;`).
+ *
+ * Have a look at `escapeUTF8` if you want a more concise output at the expense
+ * of reduced transportability.
+ *
+ * @param data String to escape.
+ */
+function esm_escape(data) {
+    return data.replace(reEscapeChars, singleCharReplacer);
+}
+encode.escape = esm_escape;
+/**
+ * Encodes all characters not valid in XML documents using numeric hexadecimal
+ * reference (eg. `&#xfc;`).
+ *
+ * Note that the output will be character-set dependent.
+ *
+ * @param data String to escape.
+ */
+function escapeUTF8(data) {
+    return data.replace(xmlReplacer, singleCharReplacer);
+}
+encode.escapeUTF8 = escapeUTF8;
+function getASCIIEncoder(obj) {
+    return function (data) {
+        return data.replace(reEscapeChars, function (c) { return obj[c] || singleCharReplacer(c); });
+    };
+}
+(function (exports) {
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.decodeXMLStrict = exports.decodeHTML5Strict = exports.decodeHTML4Strict = exports.decodeHTML5 = exports.decodeHTML4 = exports.decodeHTMLStrict = exports.decodeHTML = exports.decodeXML = exports.encodeHTML5 = exports.encodeHTML4 = exports.escapeUTF8 = exports.escape = exports.encodeNonAsciiHTML = exports.encodeHTML = exports.encodeXML = exports.encode = exports.decodeStrict = exports.decode = void 0;
+    var decode_1 = decode;
+    var encode_1 = encode;
     /**
      * Decodes a string with entities.
      *
@@ -6444,7 +6458,7 @@ var lib = createCommonjsModule(function (module, exports) {
      * @deprecated Use `decodeXML` or `decodeHTML` directly.
      */
     function decode$1(data, level) {
-        return (!level || level <= 0 ? decode.decodeXML : decode.decodeHTML)(data);
+        return (!level || level <= 0 ? decode_1.decodeXML : decode_1.decodeHTML)(data);
     }
     exports.decode = decode$1;
     /**
@@ -6455,7 +6469,7 @@ var lib = createCommonjsModule(function (module, exports) {
      * @deprecated Use `decodeHTMLStrict` or `decodeXML` directly.
      */
     function decodeStrict(data, level) {
-        return (!level || level <= 0 ? decode.decodeXML : decode.decodeHTMLStrict)(data);
+        return (!level || level <= 0 ? decode_1.decodeXML : decode_1.decodeHTMLStrict)(data);
     }
     exports.decodeStrict = decodeStrict;
     /**
@@ -6466,7 +6480,7 @@ var lib = createCommonjsModule(function (module, exports) {
      * @deprecated Use `encodeHTML`, `encodeXML` or `encodeNonAsciiHTML` directly.
      */
     function encode$1(data, level) {
-        return (!level || level <= 0 ? encode.encodeXML : encode.encodeHTML)(data);
+        return (!level || level <= 0 ? encode_1.encodeXML : encode_1.encodeHTML)(data);
     }
     exports.encode = encode$1;
     var encode_2 = encode;
@@ -6488,7 +6502,7 @@ var lib = createCommonjsModule(function (module, exports) {
     Object.defineProperty(exports, "decodeHTML4Strict", { enumerable: true, get: function () { return decode_2.decodeHTMLStrict; } });
     Object.defineProperty(exports, "decodeHTML5Strict", { enumerable: true, get: function () { return decode_2.decodeHTMLStrict; } });
     Object.defineProperty(exports, "decodeXMLStrict", { enumerable: true, get: function () { return decode_2.decodeXML; } });
-});
+}(lib));
 var ENTITY = '&(?:#x[a-f0-9]{1,6}|#[0-9]{1,7}|[a-z][a-z0-9]{1,31});';
 var C_BACKSLASH$1 = 92;
 var reBackslashOrAmp = /[\\&]/;
@@ -10559,7 +10573,22 @@ var hasClass = __webpack_require__(714);
 var hasClass_default = /*#__PURE__*/__webpack_require__.n(hasClass);
 // EXTERNAL MODULE: ../../node_modules/tui-code-snippet/domUtil/matches.js
 var domUtil_matches = __webpack_require__(471);
+;// CONCATENATED MODULE: ./src/utils/constants.ts
+var TAG_NAME = '[A-Za-z][A-Za-z0-9-]*';
+var ATTRIBUTE_NAME = '[a-zA-Z_:][a-zA-Z0-9:._-]*';
+var UNQUOTED_VALUE = '[^"\'=<>`\\x00-\\x20]+';
+var SINGLE_QUOTED_VALUE = "'[^']*'";
+var DOUBLE_QUOTED_VALUE = '"[^"]*"';
+var ATTRIBUTE_VALUE = "(?:" + UNQUOTED_VALUE + "|" + SINGLE_QUOTED_VALUE + "|" + DOUBLE_QUOTED_VALUE + ")";
+var ATTRIBUTE_VALUE_SPEC = "" + '(?:\\s*=\\s*' + ATTRIBUTE_VALUE + ")";
+var constants_ATTRIBUTE = "" + '(?:\\s+' + ATTRIBUTE_NAME + ATTRIBUTE_VALUE_SPEC + "?)";
+var constants_OPEN_TAG = "<(" + TAG_NAME + ")(" + constants_ATTRIBUTE + ")*\\s*/?>";
+var CLOSE_TAG = "</(" + TAG_NAME + ")\\s*[>]";
+var constants_HTML_TAG = "(?:" + constants_OPEN_TAG + "|" + CLOSE_TAG + ")";
+var reHTMLTag = new RegExp("^" + constants_HTML_TAG, 'i');
+
 ;// CONCATENATED MODULE: ./src/utils/dom.ts
+
 
 
 
@@ -10581,7 +10610,21 @@ function cls() {
     for (var _i = 0; _i < arguments.length; _i++) {
         names[_i] = arguments[_i];
     }
-    return names.map(function (className) { return "" + CLS_PREFIX + className; }).join(' ');
+    var result = [];
+    for (var _a = 0, names_1 = names; _a < names_1.length; _a++) {
+        var name = names_1[_a];
+        var className = void 0;
+        if (Array.isArray(name)) {
+            className = name[0] ? name[1] : null;
+        }
+        else {
+            className = name;
+        }
+        if (className) {
+            result.push("" + CLS_PREFIX + className);
+        }
+    }
+    return result.join(' ');
 }
 function clsWithMdPrefix() {
     var names = [];
@@ -10742,7 +10785,30 @@ function setAttributes(attributes, element) {
         }
     });
 }
+function replaceBRWithEmptyBlock(html) {
+    var reBr = /<br\s*\/*>/i;
+    var reHTMLTag = new RegExp(HTML_TAG, 'ig');
+    var htmlTagMatched = html.match(reHTMLTag);
+    htmlTagMatched === null || htmlTagMatched === void 0 ? void 0 : htmlTagMatched.forEach(function (htmlTag, index) {
+        if (reBr.test(htmlTag)) {
+            var alternativeTag = '';
+            if (index) {
+                var prevTag = htmlTagMatched[index - 1];
+                var openTagMatched = prevTag.match(OPEN_TAG);
+                if (openTagMatched) {
+                    var tagName = openTagMatched[1];
+                    alternativeTag = "</" + tagName + "><" + tagName + ">";
+                }
+            }
+            html = html.replace(reBr, alternativeTag);
+        }
+    });
+    return html;
+}
 
+// EXTERNAL MODULE: ../../node_modules/tui-code-snippet/type/isFunction.js
+var isFunction = __webpack_require__(294);
+var isFunction_default = /*#__PURE__*/__webpack_require__.n(isFunction);
 // EXTERNAL MODULE: ../../node_modules/tui-code-snippet/type/isNull.js
 var type_isNull = __webpack_require__(934);
 // EXTERNAL MODULE: ../../node_modules/tui-code-snippet/request/sendHostname.js
@@ -10893,315 +10959,6 @@ function getSortedNumPair(valueA, valueB) {
     return valueA > valueB ? [valueB, valueA] : [valueA, valueB];
 }
 
-;// CONCATENATED MODULE: ./src/sanitizer/htmlSanitizer.ts
-
-
-
-
-
-var reXSSHtmlAttr = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' +
-    'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' +
-    'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' +
-    'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' +
-    'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' +
-    'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
-var reXSSSvgAttr = new RegExp('^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' +
-    'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' +
-    'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' +
-    'font-style|font-variant|font-weight|from|fx|fy|g1|g2|glyph-name|gradientUnits|hanging|' +
-    'height|horiz-adv-x|horiz-origin-x|ideographic|k|keyPoints|keySplines|keyTimes|lang|' +
-    'marker-end|marker-mid|marker-start|markerHeight|markerUnits|markerWidth|mathematical|' +
-    'max|min|offset|opacity|orient|origin|overline-position|overline-thickness|panose-1|' +
-    'path|pathLength|points|preserveAspectRatio|r|refX|refY|repeatCount|repeatDur|' +
-    'requiredExtensions|requiredFeatures|restart|rotate|rx|ry|slope|stemh|stemv|stop-color|' +
-    'stop-opacity|strikethrough-position|strikethrough-thickness|stroke|stroke-dasharray|' +
-    'stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-miterlimit|stroke-opacity|' +
-    'stroke-width|systemLanguage|target|text-anchor|to|transform|type|u1|u2|underline-position|' +
-    'underline-thickness|unicode|unicode-range|units-per-em|values|version|viewBox|visibility|' +
-    'width|widths|x|x-height|x1|x2|xlink:actuate|xlink:arcrole|xlink:role|xlink:show|xlink:title|' +
-    'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)', 'g');
-var reXSSAttr = /href|src|background/i;
-var reXSSAttrValue = /((java|vb|live)script|x):/i;
-var reOnEvent = /^on\S+/i;
-var reComment = /<!--[\s\S]*?-->/g;
-var DEFAULT_TAG_BLACK_LIST = [
-    'script',
-    'iframe',
-    'textarea',
-    'form',
-    'button',
-    'select',
-    'input',
-    'meta',
-    'style',
-    'link',
-    'title',
-    'embed',
-    'object',
-    'details',
-    'summary',
-];
-var CAN_BE_TAG_WHITE_LIST = (/* unused pure expression or super */ null && (['iframe', 'embed', 'details', 'summary']));
-var tagBlacklist = __spreadArray([], DEFAULT_TAG_BLACK_LIST);
-function htmlSanitizer_registerTagWhitelistIfPossible(tagName) {
-    if (includes(CAN_BE_TAG_WHITE_LIST, tagName)) {
-        tagBlacklist.splice(tagBlacklist.indexOf(tagName), 1);
-    }
-}
-function sanitizeHTML(html) {
-    var root = document.createElement('div');
-    if (isString_default()(html)) {
-        html = html.replace(reComment, '');
-        root.innerHTML = html;
-    }
-    removeUnnecessaryTags(root);
-    leaveOnlyWhitelistAttribute(root);
-    return finalizeHtml(root, true);
-}
-function removeUnnecessaryTags(html) {
-    var removedTags = findNodes(html, tagBlacklist.join(','));
-    removedTags.forEach(function (node) {
-        removeNode(node);
-    });
-}
-function isXSSAttribute(attrName, attrValue) {
-    return attrName.match(reXSSAttr) && attrValue.match(reXSSAttrValue);
-}
-function removeBlacklistAttributes(node, blacklistAttrs) {
-    blacklistAttrs.forEach(function (_a) {
-        var name = _a.name;
-        if (reOnEvent.test(name)) {
-            node[name] = null;
-        }
-        if (node.getAttribute(name)) {
-            node.removeAttribute(name);
-        }
-    });
-}
-function leaveOnlyWhitelistAttribute(html) {
-    findNodes(html, '*').forEach(function (node) {
-        var attributes = node.attributes;
-        var blacklist = toArray_default()(attributes).filter(function (attr) {
-            var name = attr.name, value = attr.value;
-            var htmlAttr = name.match(reXSSHtmlAttr);
-            var svgAttr = name.match(reXSSSvgAttr);
-            var xssAttr = htmlAttr && isXSSAttribute(name, value);
-            return (!htmlAttr && !svgAttr) || xssAttr;
-        });
-        removeBlacklistAttributes(node, blacklist);
-    });
-}
-function sanitizeXSSAttributeValue(attrValue) {
-    attrValue = attrValue.replace(reComment, '');
-    return reXSSAttrValue.test(attrValue) ? '' : attrValue;
-}
-
-;// CONCATENATED MODULE: ./src/convertors/toWysiwyg/htmlToWwConvertors.ts
-
-
-
-var TAG_NAME = '[A-Za-z][A-Za-z0-9-]*';
-var ATTRIBUTE_NAME = '[a-zA-Z_:][a-zA-Z0-9:._-]*';
-var UNQUOTED_VALUE = '[^"\'=<>`\\x00-\\x20]+';
-var SINGLE_QUOTED_VALUE = "'[^']*'";
-var DOUBLE_QUOTED_VALUE = '"[^"]*"';
-var ATTRIBUTE_VALUE = "(?:" + UNQUOTED_VALUE + "|" + SINGLE_QUOTED_VALUE + "|" + DOUBLE_QUOTED_VALUE + ")";
-var ATTRIBUTE_VALUE_SPEC = "" + '(?:\\s*=\\s*' + ATTRIBUTE_VALUE + ")";
-var htmlToWwConvertors_ATTRIBUTE = "" + '(?:\\s+' + ATTRIBUTE_NAME + ATTRIBUTE_VALUE_SPEC + "?)";
-var OPEN_TAG = "<(" + TAG_NAME + ")(" + htmlToWwConvertors_ATTRIBUTE + ")*\\s*/?>";
-var CLOSE_TAG = "</(" + TAG_NAME + ")\\s*[>]";
-var HTML_TAG = "(?:" + OPEN_TAG + "|" + CLOSE_TAG + ")";
-var reHTMLTag = new RegExp("^" + HTML_TAG, 'i');
-function getTextWithoutTrailingNewline(text) {
-    return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
-}
-function isCustomHTMLInlineNode(_a, node) {
-    var schema = _a.schema;
-    var html = node.literal;
-    var matched = html.match(reHTMLTag);
-    if (matched) {
-        var openTagName = matched[1], closeTagName = matched[3];
-        var typeName = (openTagName || closeTagName).toLowerCase();
-        return node.type === 'htmlInline' && !!(schema.marks[typeName] || schema.nodes[typeName]);
-    }
-    return false;
-}
-function isInlineNode(_a) {
-    var type = _a.type;
-    return common_includes(['text', 'strong', 'emph', 'strike', 'image', 'link', 'code'], type);
-}
-function isListNode(_a) {
-    var type = _a.type, literal = _a.literal;
-    var matched = type === 'htmlInline' && literal.match(reHTMLTag);
-    if (matched) {
-        var openTagName = matched[1], closeTagName = matched[3];
-        var tagName = openTagName || closeTagName;
-        if (tagName) {
-            return common_includes(['ul', 'ol', 'li'], tagName.toLowerCase());
-        }
-    }
-    return false;
-}
-function getListItemAttrs(_a) {
-    var literal = _a.literal;
-    var task = /data-task/.test(literal);
-    var checked = /data-task-checked/.test(literal);
-    return { task: task, checked: checked };
-}
-function getMatchedAttributeValue(rawHTML, attrName) {
-    var wrapper = document.createElement('div');
-    wrapper.innerHTML = rawHTML;
-    var el = wrapper.firstChild;
-    return el.getAttribute(attrName) || '';
-}
-function createConvertors(convertors) {
-    var convertorMap = {};
-    Object.keys(convertors).forEach(function (key) {
-        var tagNames = key.split(', ');
-        tagNames.forEach(function (tagName) {
-            var name = tagName.toLowerCase();
-            convertorMap[name] = convertors[key];
-        });
-    });
-    return convertorMap;
-}
-var convertors = {
-    'b, strong': function (state, _, openTagName) {
-        var strong = state.schema.marks.strong;
-        if (openTagName) {
-            state.openMark(strong.create({ rawHTML: openTagName }));
-        }
-        else {
-            state.closeMark(strong);
-        }
-    },
-    'i, em': function (state, _, openTagName) {
-        var emph = state.schema.marks.emph;
-        if (openTagName) {
-            state.openMark(emph.create({ rawHTML: openTagName }));
-        }
-        else {
-            state.closeMark(emph);
-        }
-    },
-    's, del': function (state, _, openTagName) {
-        var strike = state.schema.marks.strike;
-        if (openTagName) {
-            state.openMark(strike.create({ rawHTML: openTagName }));
-        }
-        else {
-            state.closeMark(strike);
-        }
-    },
-    code: function (state, _, openTagName) {
-        var code = state.schema.marks.code;
-        if (openTagName) {
-            state.openMark(code.create({ rawHTML: openTagName }));
-        }
-        else {
-            state.closeMark(code);
-        }
-    },
-    a: function (state, node, openTagName) {
-        var tag = node.literal;
-        var link = state.schema.marks.link;
-        if (openTagName) {
-            var linkUrl = getMatchedAttributeValue(tag, 'href');
-            state.openMark(link.create({
-                linkUrl: sanitizeXSSAttributeValue(linkUrl),
-                rawHTML: openTagName,
-            }));
-        }
-        else {
-            state.closeMark(link);
-        }
-    },
-    img: function (state, node, openTagName) {
-        var tag = node.literal;
-        var imageUrl = getMatchedAttributeValue(tag, 'src');
-        if (imageUrl) {
-            var altText = getMatchedAttributeValue(tag, 'alt');
-            var image = state.schema.nodes.image;
-            state.addNode(image, tslib_es6_assign({ rawHTML: openTagName, imageUrl: sanitizeXSSAttributeValue(imageUrl) }, (altText && { altText: altText })));
-        }
-    },
-    hr: function (state, _, openTagName) {
-        state.addNode(state.schema.nodes.thematicBreak, { rawHTML: openTagName });
-    },
-    br: function (state, node) {
-        var _a, _b;
-        var paragraph = state.schema.nodes.paragraph;
-        if (((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) === 'paragraph') {
-            if (node.prev) {
-                state.openNode(paragraph);
-            }
-            if (node.next) {
-                state.closeNode();
-            }
-        }
-        else if (((_b = node.parent) === null || _b === void 0 ? void 0 : _b.type) === 'tableCell') {
-            if (node.prev && (isInlineNode(node.prev) || isCustomHTMLInlineNode(state, node.prev))) {
-                state.closeNode();
-            }
-            if (node.next && (isInlineNode(node.next) || isCustomHTMLInlineNode(state, node.next))) {
-                state.openNode(paragraph);
-            }
-        }
-    },
-    pre: function (state, node, openTagName) {
-        var _a, _b;
-        var container = document.createElement('div');
-        container.innerHTML = node.literal;
-        var literal = (_b = (_a = container.firstChild) === null || _a === void 0 ? void 0 : _a.firstChild) === null || _b === void 0 ? void 0 : _b.textContent;
-        state.openNode(state.schema.nodes.codeBlock, { rawHTML: openTagName });
-        state.addText(getTextWithoutTrailingNewline(literal));
-        state.closeNode();
-    },
-    'ul, ol': function (state, node, openTagName) {
-        // in the table cell, '<ul>', '<ol>' is parsed as 'htmlInline' node
-        if (node.parent.type === 'tableCell') {
-            var _a = state.schema.nodes, bulletList = _a.bulletList, orderedList = _a.orderedList, paragraph = _a.paragraph;
-            var list = openTagName === 'ul' ? bulletList : orderedList;
-            if (openTagName) {
-                if (node.prev && !isListNode(node.prev)) {
-                    state.closeNode();
-                }
-                state.openNode(list, { rawHTML: openTagName });
-            }
-            else {
-                state.closeNode();
-                if (node.next && !isListNode(node.next)) {
-                    state.openNode(paragraph);
-                }
-            }
-        }
-    },
-    li: function (state, node, openTagName) {
-        var _a;
-        // in the table cell, '<li>' is parsed as 'htmlInline' node
-        if (((_a = node.parent) === null || _a === void 0 ? void 0 : _a.type) === 'tableCell') {
-            var _b = state.schema.nodes, listItem = _b.listItem, paragraph = _b.paragraph;
-            if (openTagName) {
-                var attrs = getListItemAttrs(node);
-                if (node.prev && !isListNode(node.prev)) {
-                    state.closeNode();
-                }
-                state.openNode(listItem, tslib_es6_assign({ rawHTML: openTagName }, attrs));
-                if (node.next && !isListNode(node.next)) {
-                    state.openNode(paragraph);
-                }
-            }
-            else {
-                if (node.prev && !isListNode(node.prev)) {
-                    state.closeNode();
-                }
-                state.closeNode();
-            }
-        }
-    },
-};
-var htmlToWwConvertors = createConvertors(convertors);
-
 ;// CONCATENATED MODULE: ./src/utils/markdown.ts
 
 function hasSpecificTypeAncestor(mdNode) {
@@ -11252,19 +11009,19 @@ function isCodeBlockNode(mdNode) {
 function isCustomBlockNode(mdNode) {
     return mdNode && mdNode.type === 'customBlock';
 }
-function markdown_isListNode(mdNode) {
+function isListNode(mdNode) {
     return mdNode && (mdNode.type === 'item' || mdNode.type === 'list');
 }
 function isOrderedListNode(mdNode) {
-    return markdown_isListNode(mdNode) && mdNode.listData.type === 'ordered';
+    return isListNode(mdNode) && mdNode.listData.type === 'ordered';
 }
 function isBulletListNode(mdNode) {
-    return markdown_isListNode(mdNode) && mdNode.listData.type !== 'ordered';
+    return isListNode(mdNode) && mdNode.listData.type !== 'ordered';
 }
 function isTableCellNode(mdNode) {
     return mdNode && (mdNode.type === 'tableCell' || mdNode.type === 'tableDelimCell');
 }
-function markdown_isInlineNode(mdNode) {
+function isInlineNode(mdNode) {
     switch (mdNode.type) {
         case 'code':
         case 'text':
@@ -11474,6 +11231,109 @@ function getWidgetContent(widgetNode) {
     return text;
 }
 
+;// CONCATENATED MODULE: ./src/sanitizer/htmlSanitizer.ts
+
+
+
+
+
+var reXSSHtmlAttr = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' +
+    'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' +
+    'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' +
+    'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' +
+    'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' +
+    'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
+var reXSSSvgAttr = new RegExp('^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' +
+    'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' +
+    'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' +
+    'font-style|font-variant|font-weight|from|fx|fy|g1|g2|glyph-name|gradientUnits|hanging|' +
+    'height|horiz-adv-x|horiz-origin-x|ideographic|k|keyPoints|keySplines|keyTimes|lang|' +
+    'marker-end|marker-mid|marker-start|markerHeight|markerUnits|markerWidth|mathematical|' +
+    'max|min|offset|opacity|orient|origin|overline-position|overline-thickness|panose-1|' +
+    'path|pathLength|points|preserveAspectRatio|r|refX|refY|repeatCount|repeatDur|' +
+    'requiredExtensions|requiredFeatures|restart|rotate|rx|ry|slope|stemh|stemv|stop-color|' +
+    'stop-opacity|strikethrough-position|strikethrough-thickness|stroke|stroke-dasharray|' +
+    'stroke-dashoffset|stroke-linecap|stroke-linejoin|stroke-miterlimit|stroke-opacity|' +
+    'stroke-width|systemLanguage|target|text-anchor|to|transform|type|u1|u2|underline-position|' +
+    'underline-thickness|unicode|unicode-range|units-per-em|values|version|viewBox|visibility|' +
+    'width|widths|x|x-height|x1|x2|xlink:actuate|xlink:arcrole|xlink:role|xlink:show|xlink:title|' +
+    'xlink:type|xml:base|xml:lang|xml:space|xmlns|xmlns:xlink|y|y1|y2|zoomAndPan)', 'g');
+var reXSSAttr = /href|src|background/i;
+var reXSSAttrValue = /((java|vb|live)script|x):/i;
+var reOnEvent = /^on\S+/i;
+var reComment = /<!--[\s\S]*?-->/g;
+var DEFAULT_TAG_BLACK_LIST = [
+    'script',
+    'iframe',
+    'textarea',
+    'form',
+    'button',
+    'select',
+    'input',
+    'meta',
+    'style',
+    'link',
+    'title',
+    'embed',
+    'object',
+    'details',
+    'summary',
+];
+var CAN_BE_TAG_WHITE_LIST = (/* unused pure expression or super */ null && (['iframe', 'embed', 'details', 'summary']));
+var tagBlacklist = __spreadArray([], DEFAULT_TAG_BLACK_LIST);
+function htmlSanitizer_registerTagWhitelistIfPossible(tagName) {
+    if (includes(CAN_BE_TAG_WHITE_LIST, tagName)) {
+        tagBlacklist.splice(tagBlacklist.indexOf(tagName), 1);
+    }
+}
+function sanitizeHTML(html) {
+    var root = document.createElement('div');
+    if (isString_default()(html)) {
+        html = html.replace(reComment, '');
+        root.innerHTML = html;
+    }
+    removeUnnecessaryTags(root);
+    leaveOnlyWhitelistAttribute(root);
+    return finalizeHtml(root, true);
+}
+function removeUnnecessaryTags(html) {
+    var removedTags = findNodes(html, tagBlacklist.join(','));
+    removedTags.forEach(function (node) {
+        removeNode(node);
+    });
+}
+function isXSSAttribute(attrName, attrValue) {
+    return attrName.match(reXSSAttr) && attrValue.match(reXSSAttrValue);
+}
+function removeBlacklistAttributes(node, blacklistAttrs) {
+    blacklistAttrs.forEach(function (_a) {
+        var name = _a.name;
+        if (reOnEvent.test(name)) {
+            node[name] = null;
+        }
+        if (node.getAttribute(name)) {
+            node.removeAttribute(name);
+        }
+    });
+}
+function leaveOnlyWhitelistAttribute(html) {
+    findNodes(html, '*').forEach(function (node) {
+        var attributes = node.attributes;
+        var blacklist = toArray_default()(attributes).filter(function (attr) {
+            var name = attr.name, value = attr.value;
+            var htmlAttr = name.match(reXSSHtmlAttr);
+            var svgAttr = name.match(reXSSSvgAttr);
+            var xssAttr = htmlAttr && isXSSAttribute(name, value);
+            return (!htmlAttr && !svgAttr) || xssAttr;
+        });
+        removeBlacklistAttributes(node, blacklist);
+    });
+}
+function sanitizeXSSAttributeValue(attrValue) {
+    attrValue = attrValue.replace(reComment, '');
+    return reXSSAttrValue.test(attrValue) ? '' : attrValue;
+}
+
 ;// CONCATENATED MODULE: ./src/wysiwyg/nodes/html.ts
 
 
@@ -11486,12 +11346,12 @@ function getChildrenHTML(node, typeName) {
 }
 function getHTMLAttrsByHTMLString(html) {
     html = html.match(reHTMLTag)[0];
-    var attrs = html.match(new RegExp(htmlToWwConvertors_ATTRIBUTE, 'g'));
+    var attrs = html.match(new RegExp(constants_ATTRIBUTE, 'g'));
     return attrs
         ? attrs.reduce(function (acc, attr) {
-            var _a = attr.trim().split('='), name = _a[0], value = _a[1];
-            if (value) {
-                acc[name] = value.replace(/'|"/g, '').trim();
+            var _a = attr.trim().split('='), name = _a[0], values = _a.slice(1);
+            if (values.length) {
+                acc[name] = values.join('=').replace(/'|"/g, '').trim();
             }
             return acc;
         }, {})
@@ -11580,6 +11440,7 @@ function createHTMLSchemaMap(convertorMap, sanitizeHTML, wwToDOMAdaptor) {
 }
 
 ;// CONCATENATED MODULE: ./src/markdown/htmlRenderConvertors.ts
+
 
 
 
@@ -11692,20 +11553,19 @@ function getHTMLRenderConvertors(linkAttributes, customConvertors) {
         Object.keys(customConvertors).forEach(function (nodeType) {
             var orgConvertor = convertors[nodeType];
             var customConvertor = customConvertors[nodeType];
-            if (orgConvertor) {
+            if (orgConvertor && isFunction_default()(customConvertor)) {
                 convertors[nodeType] = function (node, context) {
                     var newContext = tslib_es6_assign({}, context);
                     newContext.origin = function () { return orgConvertor(node, context); };
                     return customConvertor(node, newContext);
                 };
             }
-            else if (common_includes(['htmlBlock', 'htmlInline'], nodeType)) {
+            else if (common_includes(['htmlBlock', 'htmlInline'], nodeType) && !isFunction_default()(customConvertor)) {
                 convertors[nodeType] = function (node, context) {
                     var matched = node.literal.match(reHTMLTag);
                     if (matched) {
                         var rootHTML = matched[0], openTagName = matched[1], closeTagName = matched[3];
                         var typeName = (openTagName || closeTagName).toLowerCase();
-                        // @ts-expect-error
                         var htmlConvertor = customConvertor[typeName];
                         var childrenHTML = getChildrenHTML(node, typeName);
                         if (htmlConvertor) {
@@ -11959,7 +11819,7 @@ var MarkdownPreview = /** @class */ (function () {
     };
     MarkdownPreview.prototype.updateCursorNode = function (cursorNode, cursorPos) {
         if (cursorNode) {
-            cursorNode = findClosestNode(cursorNode, function (mdNode) { return !markdown_isInlineNode(mdNode); });
+            cursorNode = findClosestNode(cursorNode, function (mdNode) { return !isInlineNode(mdNode); });
             if (cursorNode.type === 'tableRow') {
                 cursorNode = findTableCell(cursorNode, cursorPos[1]);
             }
@@ -12527,6 +12387,7 @@ var eventTypeList = [
     'toggleScrollSync',
     'mixinTableOffsetMapPrototype',
     'setFocusedNode',
+    'removePopupWidget',
     // provide event for user
     'openPopup',
     'closePopup',
@@ -12553,6 +12414,7 @@ var EventEmitter = /** @class */ (function () {
         this.eventTypes = eventTypeList.reduce(function (types, type) {
             return tslib_es6_assign(tslib_es6_assign({}, types), { type: type });
         }, {});
+        this.hold = false;
         eventTypeList.forEach(function (eventType) {
             _this.addEventType(eventType);
         });
@@ -12587,7 +12449,7 @@ var EventEmitter = /** @class */ (function () {
         var typeInfo = this.getTypeInfo(type);
         var eventHandlers = this.events.get(typeInfo.type);
         var results = [];
-        if (eventHandlers) {
+        if (!this.hold && eventHandlers) {
             eventHandlers.forEach(function (handler) {
                 var result = handler.apply(void 0, args);
                 if (!isUndefined_default()(result)) {
@@ -12609,7 +12471,7 @@ var EventEmitter = /** @class */ (function () {
             args[_i - 2] = arguments[_i];
         }
         var eventHandlers = this.events.get(type);
-        if (eventHandlers) {
+        if (!this.hold && eventHandlers) {
             eventHandlers.forEach(function (handler) {
                 var result = handler.apply(void 0, __spreadArray([source], args));
                 if (!isFalsy_default()(result)) {
@@ -12711,6 +12573,11 @@ var EventEmitter = /** @class */ (function () {
     };
     EventEmitter.prototype.getEvents = function () {
         return this.events;
+    };
+    EventEmitter.prototype.holdEventInvoke = function (fn) {
+        this.hold = true;
+        fn();
+        this.hold = false;
     };
     return EventEmitter;
 }());
