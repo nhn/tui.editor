@@ -33,6 +33,6 @@
     "vue": "^2.5.0"
   },
   "dependencies": {
-    "@toast-ui/editor": "^3.0.0"
+    "@toast-ui/editor": "^3.0.1"
   }
 }
