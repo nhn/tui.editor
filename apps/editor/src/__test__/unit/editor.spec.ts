@@ -132,7 +132,7 @@ describe('editor', () => {
       expect(getPreviewHTML()).toBe('<h1>heading</h1>');
     });
 
-    describe('setHTML(', () => {
+    describe('setHTML()', () => {
       it('basic', () => {
         editor.setHTML('<h1>heading</h1>');
 
