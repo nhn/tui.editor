@@ -11,6 +11,11 @@ const filename = `toastui-${name.replace(/@toast-ui\//, '')}`;
 
 function getOutputConfig(isProduction, isCDN, minify) {
   const defaultConfig = {
+    library: {
+      name: ['toastui', 'Editor', 'plugin', 'uml'],
+      export: 'default',
+      type: 'umd',
+    },
     environment: {
       arrowFunction: false,
       const: false,
@@ -38,10 +43,6 @@ function getOutputConfig(isProduction, isCDN, minify) {
 
   return {
     ...defaultConfig,
-    library: {
-      export: 'default',
-      type: 'commonjs2',
-    },
     path: path.resolve(__dirname, 'dist'),
     filename: `${filename}.js`,
   };
