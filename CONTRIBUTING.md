@@ -42,14 +42,15 @@ Unsure where to begin contributing to TOAST UI? You can start by looking through
 ### Development WorkFlow
 - Set up your development environment
 - Make change from a right branch
-- Be sure the code passes `npm run lint`, `npm run test`
+- Be sure the code passes `npm run lint:all`, `npm run test:types:all`, `npm run test:all`
 - Make a pull request
 
 ### Development environment
 - Prepare your machine node and it's packages installed.
 - Checkout our repository
-- Install dependencies by `npm install && bower install`
-- Start webpack-dev-server by `npm run serve`
+- Install dependencies by `npm install`
+- Build toastmark by `npm run build toastmark`
+- Start snowpack-dev-server by `npm run serve`
 
 ### Make changes
 #### Checkout a branch
@@ -61,7 +62,7 @@ Unsure where to begin contributing to TOAST UI? You can start by looking through
 Run `npm run eslint` and make sure all the tests pass.
 
 #### Test
-Run `npm run test` and verify all the tests pass.
+Run `npm run test:all` and verify all the tests pass.
 If you are adding new commands or features, they must include tests.
 If you are changing functionality, update the tests if you need to.
 

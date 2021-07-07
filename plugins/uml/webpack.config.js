@@ -9,6 +9,11 @@ const ESLintPlugin = require('eslint-webpack-plugin');
 function getOutputConfig(isProduction, isCDN, minify) {
   const filename = `toastui-${name.replace(/@toast-ui\//, '')}`;
   const defaultConfig = {
+    library: {
+      name: ['toastui', 'Editor', 'plugin', 'uml'],
+      export: 'default',
+      type: 'umd',
+    },
     environment: {
       arrowFunction: false,
       const: false,
@@ -18,11 +23,6 @@ function getOutputConfig(isProduction, isCDN, minify) {
   if (!isProduction || isCDN) {
     const config = {
       ...defaultConfig,
-      library: {
-        name: ['toastui', 'Editor', 'plugin', 'uml'],
-        export: 'default',
-        type: 'umd',
-      },
       path: path.resolve(__dirname, 'dist/cdn'),
       filename: `${filename}${minify ? '.min' : ''}.js`,
     };
@@ -36,10 +36,6 @@ function getOutputConfig(isProduction, isCDN, minify) {
 
   return {
     ...defaultConfig,
-    library: {
-      export: 'default',
-      type: 'commonjs2',
-    },
     path: path.resolve(__dirname, 'dist'),
     filename: `${filename}.js`,
   };
