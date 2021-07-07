@@ -132,13 +132,22 @@ describe('editor', () => {
       expect(getPreviewHTML()).toBe('<h1>heading</h1>');
     });
 
-    it('setHTML()', () => {
-      editor.setHTML('<h1>heading</h1>');
+    describe('setHTML()', () => {
+      it('basic', () => {
+        editor.setHTML('<h1>heading</h1>');
 
-      expect(mdEditor).toContainHTML(
-        `<div><span class="${HEADING_CLS}"><span class="${DELIM_CLS}">#</span> heading</span></div>`
-      );
-      expect(getPreviewHTML()).toBe('<h1>heading</h1>');
+        expect(mdEditor).toContainHTML(
+          `<div><span class="${HEADING_CLS}"><span class="${DELIM_CLS}">#</span> heading</span></div>`
+        );
+        expect(getPreviewHTML()).toBe('<h1>heading</h1>');
+      });
+
+      it('should parse the br tag as the empty block to separate between blocks', () => {
+        editor.setHTML('<p>a<br/>b</p>');
+
+        expect(mdEditor).toContainHTML('<div>a</div><div>b</div>');
+        expect(getPreviewHTML()).toBe('<p>a<br>b</p>');
+      });
     });
 
     it('reset()', () => {

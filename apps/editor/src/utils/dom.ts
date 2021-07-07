@@ -6,6 +6,7 @@ import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import matches from 'tui-code-snippet/domUtil/matches';
+import { HTML_TAG, OPEN_TAG } from './constants';
 
 export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
   const left = parseInt(style.left, 10);
@@ -234,4 +235,30 @@ export function setAttributes(attributes: Record<string, any>, element: HTMLElem
       element.removeAttribute(attrName);
     }
   });
+}
+
+export function replaceBRWithEmptyBlock(html: string) {
+  const reBr = /<br\s*\/*>/i;
+  const reHTMLTag = new RegExp(HTML_TAG, 'ig');
+  const htmlTagMatched = html.match(reHTMLTag);
+
+  htmlTagMatched?.forEach((htmlTag, index) => {
+    if (reBr.test(htmlTag)) {
+      let alternativeTag = '';
+
+      if (index) {
+        const prevTag = htmlTagMatched[index - 1];
+        const openTagMatched = prevTag.match(OPEN_TAG);
+
+        if (openTagMatched) {
+          const [, tagName] = openTagMatched;
+
+          alternativeTag = `</${tagName}><${tagName}>`;
+        }
+      }
+      html = html.replace(reBr, alternativeTag);
+    }
+  });
+
+  return html;
 }

@@ -17,7 +17,6 @@ import toArray from 'tui-code-snippet/collection/toArray';
 import { isElemNode } from '@/utils/dom';
 
 import {
-  reHTMLTag,
   htmlToWwConvertors,
   getTextWithoutTrailingNewline,
   isInlineNode,
@@ -28,6 +27,7 @@ import { ToWwConvertorMap } from '@t/convertor';
 import { createWidgetContent, getWidgetContent } from '@/widget/rules';
 import { getChildrenHTML, getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
 import { includes } from '@/utils/common';
+import { reHTMLTag } from '@/utils/constants';
 
 function isBRTag(node: MdNode) {
   return node.type === 'htmlInline' && /<br ?\/?>/.test(node.literal!);

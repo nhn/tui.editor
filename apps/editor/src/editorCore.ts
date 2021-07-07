@@ -38,7 +38,7 @@ import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
 import { ScrollSync } from './markdown/scroll/scrollSync';
 import { addDefaultImageBlobHook } from './helper/image';
 import { setWidgetRules } from './widget/rules';
-import { cls } from './utils/dom';
+import { cls, replaceBRWithEmptyBlock } from './utils/dom';
 import { sanitizeHTML } from './sanitizer/htmlSanitizer';
 import { createHTMLSchemaMap } from './wysiwyg/nodes/html';
 import { getHTMLRenderConvertors } from './markdown/htmlRenderConvertors';
@@ -448,7 +448,8 @@ class ToastUIEditorCore {
   setHTML(html = '', cursorToEnd = true) {
     const container = document.createElement('div');
 
-    container.innerHTML = html;
+    // the `br` tag should be replaced with empty block to separate between blocks
+    container.innerHTML = replaceBRWithEmptyBlock(html);
     const wwNode = DOMParser.fromSchema(this.wwEditor.schema).parse(container);
 
     if (this.isMarkdownMode()) {

@@ -9,8 +9,8 @@ import { HTMLConvertorMap, MdNode } from '@toast-ui/toastmark';
 import toArray from 'tui-code-snippet/collection/toArray';
 import { Sanitizer, HTMLSchemaMap } from '@t/editor';
 import { ToDOMAdaptor } from '@t/convertor';
-import { ATTRIBUTE, reHTMLTag } from '@/convertors/toWysiwyg/htmlToWwConvertors';
 import { registerTagWhitelistIfPossible } from '@/sanitizer/htmlSanitizer';
+import { reHTMLTag, ATTRIBUTE } from '@/utils/constants';
 
 export function getChildrenHTML(node: MdNode, typeName: string) {
   return node
