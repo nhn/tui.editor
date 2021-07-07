@@ -3,10 +3,10 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import on from 'tui-code-snippet/domEvent/on';
 import css from 'tui-code-snippet/domUtil/css';
-import { EditResult, HTMLConvertorMap, MdNode, MdPos, Renderer } from '@toast-ui/toastmark';
+import { EditResult, MdNode, MdPos, Renderer } from '@toast-ui/toastmark';
 
 import { Emitter } from '@t/event';
-import { LinkAttributes } from '@t/editor';
+import { CustomHTMLRenderer, LinkAttributes } from '@t/editor';
 import { cls, createElementWith, removeNode, toggleClass } from '@/utils/dom';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
@@ -32,7 +32,7 @@ type Sanitizer = (html: string) => string;
 
 interface Options {
   linkAttributes: LinkAttributes | null;
-  customHTMLRenderer: HTMLConvertorMap;
+  customHTMLRenderer: CustomHTMLRenderer;
   isViewer: boolean;
   highlight?: boolean;
   sanitizer: Sanitizer;

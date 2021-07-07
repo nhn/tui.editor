@@ -14,7 +14,7 @@ import isArray from 'tui-code-snippet/type/isArray';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { ToDOMAdaptor } from '@t/convertor';
 import { includes, last } from '@/utils/common';
-import { LinkAttributes } from '@t/editor';
+import { CustomHTMLRenderer, LinkAttributes } from '@t/editor';
 import { setAttributes } from '@/utils/dom';
 import { createMdLikeNode, isContainer, isPmNode } from './mdLikeNode';
 
@@ -65,7 +65,7 @@ export class WwToDOMAdaptor implements ToDOMAdaptor {
 
   convertors: HTMLConvertorMap;
 
-  constructor(linkAttributes: LinkAttributes | null, customRenderer: HTMLConvertorMap) {
+  constructor(linkAttributes: LinkAttributes | null, customRenderer: CustomHTMLRenderer) {
     const convertors = getHTMLRenderConvertors(linkAttributes, customRenderer);
     const customHTMLConvertor = { ...customRenderer.htmlBlock, ...customRenderer.htmlInline };
 
