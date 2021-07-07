@@ -5,9 +5,9 @@ import {
   NodeSpec,
   MarkSpec,
 } from 'prosemirror-model';
-import { HTMLConvertorMap, MdNode } from '@toast-ui/toastmark';
+import { MdNode } from '@toast-ui/toastmark';
 import toArray from 'tui-code-snippet/collection/toArray';
-import { Sanitizer, HTMLSchemaMap } from '@t/editor';
+import { Sanitizer, HTMLSchemaMap, CustomHTMLRenderer } from '@t/editor';
 import { ToDOMAdaptor } from '@t/convertor';
 import { registerTagWhitelistIfPossible } from '@/sanitizer/htmlSanitizer';
 import { reHTMLTag, ATTRIBUTE } from '@/utils/constants';
@@ -117,7 +117,7 @@ const schemaFactory = {
 };
 
 export function createHTMLSchemaMap(
-  convertorMap: HTMLConvertorMap,
+  convertorMap: CustomHTMLRenderer,
   sanitizeHTML: Sanitizer,
   wwToDOMAdaptor: ToDOMAdaptor
 ): HTMLSchemaMap {
