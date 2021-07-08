@@ -53,7 +53,7 @@ const editor = new Editor({
 | `className` | string | 옵셔널 값이며, 툴바 요소에 적용할 class를 정의한다. | 
 | `style` | Object | 옵셔널 값이며, 툴바 요소에 적용할 style을 정의한다. | 
 | `command` | string | 옵셔널 값이며, 툴바 버튼을 클릭했을 때 실행하고 싶은 명령을 지정한다. `popup` 옵션과는 서로 배타적인 관계이다. | 
-| `popup` | PopupOptions | 옵셔널 값이며, 툴바 버튼을 클릭했을 때 팝업을 띄우고 싶은 경우 지정한다. `command` 옵션과는 서로 배타적인 관계이다. | 
+| `popup` | PopupOptions | 옵셔널 값이며, 툴바 버튼을 클릭했을 때 팝업을 띄우고 싶은 경우 지정한다. `command` 옵션과는 서로 배타적인 관계이다. |
 
 ```js
 const editor = new Editor({
@@ -151,6 +151,85 @@ const editor = new Editor({
 위의 예제 코드를 실행하면 아래와 같이 동작한다.
 
 ![iamge](https://user-images.githubusercontent.com/37766175/120915883-3e4b5e00-c6e1-11eb-8f44-95e6d31f41e7.gif)
+
+## 툴바 상태 변경
+에디터에서는 현재 커서의 위치에 따라 어떤 노드인지 툴바 요소의 스타일로 활성화할 수 있다. 예를 들어, 커서가 굵은 텍스트를 표시하는 `strong` 노드에 위치한다면, 아래와 같이 `bold` 툴바 요소가 활성화된다.
+
+![image](https://user-images.githubusercontent.com/37766175/124843166-49d5c180-dfcc-11eb-9633-ae1e61d612ea.gif)
+
+
+위의 예시처럼 커스터마이징한 툴바 요소의 상태를 변경하고 싶다면 `state` 옵션을 지정해야 한다.
+
+```js
+const editor = new Editor({
+  el: document.querySelector('#editor'),
+  toolbarItems: [
+    [{
+      name: 'myItem',
+      tooltip: 'myItem',
+      command: 'bold',
+      text: '@',
+      className: 'toastui-editor-toolbar-icons',
+      style: { backgroundImage: 'none', color: 'red' },
+      // `strong` 노드에 위치할 경우 툴바 요소에 'active' 클래스가 추가된다.
+      state: 'strong',
+    }]
+  ],
+  // ...
+});
+```
+
+`state`에 따라 툴바 버튼이 활성화된다면 `active` 클래스가 추가되며, 이 클래스를 기준으로 원하는 스타일을 지정하면 된다.
+
+### state 목록
+아래의 state 값을 사용해야만 툴바 요소의 활성화 상태를 변경할 수 있다.
+* `heading`: 헤딩
+* `strong`: 볼드
+* `emph`: 이탤릭
+* `strike`: 스트라이크
+* `thematicBreak`: 수평 가로줄 
+* `blockQuote`: 인용문
+* `bulletList`: 순서가 없는 리스트
+* `orderedList`: 순서가 있는 리스트
+* `taskList`: task 리스트
+* `table`: 테이블
+* `code`: 인라인 코드
+* `codeBlock`: 코드 블럭
+
+### `onUpdated()` 옵션
+기본 버튼 UI를 사용하지 않고 `el` 옵션을 사용하여 툴바 요소를 만든 경우, `onUpdated` 옵션을 지정해야 상태를 변경할 수 있다. 에디터 내부에서 커스터마이징한 툴바 요소를 직접 조작하는 것은 한계가 있기 때문에 `onUpdated` 콜백 옵션을 제공한다.
+
+```js
+const myCustomEl = document.createElement('span');
+
+myCustomEl.textContent = '😎';
+myCustomEl.style = 'cursor: pointer; background: red;'
+myCustomEl.addEventListener('click', () => {
+  editor.exec('bold');
+});
+
+const editor = new Editor({
+  el: document.querySelector('#editor'),
+  toolbarItems: [
+    [{
+      name: 'myItem',
+      tooltip: 'myItem',
+      el: myCustomEl,
+      state: 'strong',
+      onUpdated({ active, disabled }) {
+        if (active) {
+          myCustomEl.style.background = 'green';
+        } else {
+          myCustomEl.style.background = '';
+        }
+      }
+    }]
+  ],
+  // ...
+});
+```
+
+`onUpdated()` 함수는 `active`, `disabled` 상태를 나타내는 객체를 매개변수로 전달한다. 이 매개변수를 사용하여 요소에 스타일링을 추가하거나 원하는 동작을 정의할 수 있다.
 
 ## 예제
 

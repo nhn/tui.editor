@@ -153,6 +153,85 @@ If you run the example code above, it will work as follows.
 
 ![iamge](https://user-images.githubusercontent.com/37766175/120915883-3e4b5e00-c6e1-11eb-8f44-95e6d31f41e7.gif)
 
+## Change Toolbar Item State
+In the editor, you can activate which node is based on the current cursor's position by changing the style of the toolbar element. For example, if the cursor is located on a `strong` node that displays bold text, an element of the `bold` toolbar item is activated as follows.
+
+![image](https://user-images.githubusercontent.com/37766175/124843166-49d5c180-dfcc-11eb-9633-ae1e61d612ea.gif)
+
+
+If you want to change the state of a customized toolbar element like the example above, you need to configure the `state` option.
+
+```js
+const editor = new Editor({
+  el: document.querySelector('#editor'),
+  toolbarItems: [
+    [{
+      name: 'myItem',
+      tooltip: 'myItem',
+      command: 'bold',
+      text: '@',
+      className: 'toastui-editor-toolbar-icons',
+      style: { backgroundImage: 'none', color: 'red' },
+      // If it is located on the `strong` node, the `active` CSS class is added to this toolbar element.
+      state: 'strong',
+    }]
+  ],
+  // ...
+});
+```
+
+If the toolbar button is activated according to `state`, the `active` CSS class will be added and you can specify the style that you want using this class.
+
+### `state` list
+The state of the toolbar element can only be changed by using the state value below.
+* `heading`: Heading
+* `strong`: Bold
+* `emph`: Italic
+* `strike`: Strike
+* `thematicBreak`: Horizontal Line
+* `blockQuote`: Quotes
+* `bulletList`: Bullet List
+* `orderedList`: Ordered List
+* `taskList`: Task List
+* `table`: Table
+* `code`: Inline Code
+* `codeBlock`: Code Block
+
+### `onUpdated()` option
+If a toolbar element is created with the `el` option without using the default button UI, the state can be changed by configuring the `onUpdated` option. Because there is a limit to directly manipulating toolbar elements that are customized, it is going to provide the `onUpdated` callback options.
+
+```js
+const myCustomEl = document.createElement('span');
+
+myCustomEl.textContent = '😎';
+myCustomEl.style = 'cursor: pointer; background: red;'
+myCustomEl.addEventListener('click', () => {
+  editor.exec('bold');
+});
+
+const editor = new Editor({
+  el: document.querySelector('#editor'),
+  toolbarItems: [
+    [{
+      name: 'myItem',
+      tooltip: 'myItem',
+      el: myCustomEl,
+      state: 'strong',
+      onUpdated({ active, disabled }) {
+        if (active) {
+          myCustomEl.style.background = 'green';
+        } else {
+          myCustomEl.style.background = '';
+        }
+      }
+    }]
+  ],
+  // ...
+});
+```
+
+The `onUpdated()` function passes the object that represent `active` and `disabled` state as parameter. This parameter allows you to add styling to an element or define the desired operation.
+
 ## Example
 
 You can see the example [here](https://nhn.github.io/tui.editor/latest/tutorial-example15-customizing-toolbar-buttons)
