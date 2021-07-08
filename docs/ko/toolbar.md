@@ -181,7 +181,7 @@ const editor = new Editor({
 
 `state`에 따라 툴바 버튼이 활성화된다면 `active` 클래스가 추가되며, 이 클래스를 기준으로 원하는 스타일을 지정하면 된다.
 
-### state 노드 목록
+### state 목록
 아래의 state 값을 사용해야만 툴바 요소의 활성화 상태를 변경할 수 있다.
 * `heading`: 헤딩
 * `strong`: 볼드

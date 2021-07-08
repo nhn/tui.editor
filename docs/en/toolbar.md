@@ -182,7 +182,7 @@ const editor = new Editor({
 
 If the toolbar button is activated according to `state`, the `active` CSS class will be added and you can specify the style that you want using this class.
 
-### state node list
+### `state` list
 The state of the toolbar element can only be changed by using the state value below.
 * `heading`: Heading
 * `strong`: Bold
