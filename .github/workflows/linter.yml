@@ -1,0 +1,21 @@
+name: Editor Lint Code Base
+on: pull_request
+jobs: 
+  lint:
+    name: Lint Code Base
+    runs-on: ubuntu-latest
+    env:
+      WORKING_DIRECTORY: ./
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+      - name: npm install
+        run: |
+          npm install
+      - name: eslint
+        run: |
+          npm run lint:all
