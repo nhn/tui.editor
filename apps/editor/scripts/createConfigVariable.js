@@ -30,7 +30,7 @@ function getGlobalVariable() {
     throw Error('not exist examples path at tuidoc.config.json');
   }
 
-  fs.writeFileSync('errorVariable.txt', globalErrorLogVariable);
+  fs.writeFileSync('errorVariable.txt', String(globalErrorLogVariable));
 }
 
 getTestUrls();
