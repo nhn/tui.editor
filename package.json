@@ -64,11 +64,12 @@
   },
   "scripts": {
     "lint:all": "lerna run --stream lint",
-    "test:all": "jest --watch",
+    "test:all": "jest",
     "test:types:all": "lerna run --stream test:types",
     "build:all": "lerna run --stream build",
     "lint": "node ./scripts/pkg-script.js --script lint --type $type",
     "test": "node ./scripts/pkg-script.js --script test --type $type",
+    "test:ci": "node ./scripts/pkg-script.js --script test:ci --type $type",
     "test:types": "node ./scripts/pkg-script.js --script test:types --type $type",
     "serve": "node ./scripts/pkg-script.js --script serve --type $type",
     "serve:ie": "node ./scripts/pkg-script.js --script serve:ie --type $type",
