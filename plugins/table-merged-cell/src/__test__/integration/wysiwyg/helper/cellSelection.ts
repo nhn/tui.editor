@@ -2,7 +2,7 @@ import { Node, ResolvedPos, Slice, Fragment } from 'prosemirror-model';
 import { Selection, SelectionRange, TextSelection } from 'prosemirror-state';
 import { Mappable } from 'prosemirror-transform';
 import { SelectionInfo } from '@t/index';
-import { TableOffsetMap } from './TableOffsetMap';
+import { TableOffsetMap } from './tableOffsetMap';
 
 function getSelectionRanges(
   doc: Node,
