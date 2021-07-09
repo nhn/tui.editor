@@ -5,7 +5,7 @@ import { EditorOptions } from '@t/editor';
 import type { OpenTagToken } from '@toast-ui/toastmark';
 import i18n from '@/i18n/i18n';
 import Editor from '@/editor';
-import Viewer from '@/Viewer';
+import Viewer from '@/viewer';
 import * as commonUtil from '@/utils/common';
 import { createHTMLrenderer } from './markdown/util';
 import { cls } from '@/utils/dom';
