@@ -57,6 +57,7 @@
     "lint": "eslint .",
     "test:types": "tsc",
     "test": "jest --watch",
+    "test:ci": "jest",
     "serve": "snowpack dev",
     "serve:ie": "webpack serve",
     "build:i18n": "cross-env webpack --config scripts/webpack.config.i18n.js && webpack --config scripts/webpack.config.i18n.js --env minify",

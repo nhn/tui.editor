@@ -1,0 +1,39 @@
+name: Plugin Unit, Integration Test
+on: pull_request
+jobs: 
+  plugin-test:
+    name: Unit, Integration Test
+    runs-on: ubuntu-latest
+    env:
+      WORKING_DIRECTORY: ./
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+      - name: npm install
+        run: |
+          npm install
+      - name: build toastmark
+        run: |
+          npm run build toastmark
+      - name: build editor
+        run: |
+          npm run build editor
+      - name: chart plugin unit, integration test
+        run: |
+          npm run test:ci chart
+      - name: color syntax plugin unit, integration test
+        run: |
+          npm run test:ci color
+      - name: code syntax highlighting plugin unit, integration test
+        run: |
+          npm run test:ci code
+      - name: table merged cell plugin unit, integration test
+        run: |
+          npm run test:ci table
+      - name: uml plugin unit, integration test
+        run: |
+          npm run test:ci uml

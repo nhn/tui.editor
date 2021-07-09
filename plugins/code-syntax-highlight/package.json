@@ -35,6 +35,7 @@
     "lint": "eslint .",
     "test:types": "tsc",
     "test": "jest --watch",
+    "test:ci": "jest",
     "serve": "snowpack dev",
     "serve:ie": "webpack serve",
     "serve:ie:all": "webpack serve --env all",
