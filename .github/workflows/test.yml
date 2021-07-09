@@ -21,7 +21,7 @@ jobs:
           npm run build toastmark
       - name: toastmark unit, integration test
         run: |
-          npm run test toastmark
+          npm run test:ci toastmark
       - name: editor unit, integration test
         run: |
-          npm run test editor
+          npm run test:ci editor

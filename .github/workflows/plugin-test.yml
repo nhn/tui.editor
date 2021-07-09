@@ -24,16 +24,16 @@ jobs:
           npm run build editor
       - name: chart plugin unit, integration test
         run: |
-          npm run test chart
+          npm run test:ci chart
       - name: color syntax plugin unit, integration test
         run: |
-          npm run test color
+          npm run test:ci color
       - name: code syntax highlighting plugin unit, integration test
         run: |
-          npm run test code
+          npm run test:ci code
       - name: table merged cell plugin unit, integration test
         run: |
-          npm run test table
+          npm run test:ci table
       - name: uml plugin unit, integration test
         run: |
-          npm run test uml
+          npm run test:ci uml
