@@ -20,6 +20,7 @@ const openingTag = `(\\\\<|<)([A-Za-z][A-Za-z0-9\\-]*${attribute})(\\/?>)`;
 const HTML_TAG_RX = new RegExp(openingTag, 'g');
 const FRONT_MATTER_RX = /^\s?\\-\\-\\-([\s\S]+?)\\-\\-\\-/;
 const NBSP_RX = /&nbsp;/g;
+const BULLET_LIST_WITH_ORDERED_NUM_RX = /^(\s*\*\s+\d+)\./g;
 
 /**
  * Class Convertor
@@ -77,9 +78,11 @@ class Convertor {
    * @private
    */
   _markdownToHtml(markdown) {
-    markdown = markdown.replace(HTML_TAG_RX, (match, $1, $2, $3) =>
-      match[0] !== '\\' ? `${$1}${$2} data-tomark-pass ${$3}` : match
-    );
+    markdown = markdown
+      .replace(HTML_TAG_RX, (match, $1, $2, $3) =>
+        match[0] !== '\\' ? `${$1}${$2} data-tomark-pass ${$3}` : match
+      )
+      .replace(BULLET_LIST_WITH_ORDERED_NUM_RX, '$1\\.');
 
     return this.renderHTML(this.mdReader.parse(markdown));
   }
