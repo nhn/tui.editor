@@ -3027,7 +3027,15 @@ proto.setSelection = function ( range ) {
                 this._win.focus();
             }
             var sel = getWindowSelection( this );
-            if ( sel ) {
+            if ( sel && sel.setBaseAndExtent ) {
+                sel.setBaseAndExtent(
+                    range.startContainer,
+                    range.startOffset,
+                    range.endContainer,
+                    range.endOffset
+                );
+            } else if ( sel ) {
+                // This is just for IE11
                 sel.removeAllRanges();
                 sel.addRange( range );
             }
