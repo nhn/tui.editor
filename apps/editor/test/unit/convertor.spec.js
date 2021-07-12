@@ -175,7 +175,7 @@ describe('Convertor', () => {
       expect(convertor.toHTML(taskItemMd)).toBe(expectedHTML);
     });
 
-    it('bullet list item with ordered num should be converted with escape character', () => {
+    it('bullet list item having the ordered num contents should be converted as the bullet list item(not ordered list item)', () => {
       const listItemMd = ['* 1. ordered num', '    * child1', '    * child2'].join('\n');
       const expectedHTML = [
         '<ul>',
