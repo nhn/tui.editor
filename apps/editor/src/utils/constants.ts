@@ -1,4 +1,4 @@
-const TAG_NAME = '[A-Za-z][A-Za-z0-9-]*';
+export const TAG_NAME = '[A-Za-z][A-Za-z0-9-]*';
 const ATTRIBUTE_NAME = '[a-zA-Z_:][a-zA-Z0-9:._-]*';
 const UNQUOTED_VALUE = '[^"\'=<>`\\x00-\\x20]+';
 
