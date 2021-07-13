@@ -174,6 +174,23 @@ describe('Convertor', () => {
 
       expect(convertor.toHTML(taskItemMd)).toBe(expectedHTML);
     });
+
+    it('bullet list item having the ordered num contents should be converted as the bullet list item(not ordered list item)', () => {
+      const listItemMd = ['* 1. ordered num', '    * child1', '    * child2'].join('\n');
+      const expectedHTML = [
+        '<ul>',
+        '<li>1. ordered num',
+        '<ul>',
+        '<li>child1</li>',
+        '<li>child2</li>',
+        '</ul>',
+        '</li>',
+        '</ul>',
+        ''
+      ].join('\n');
+
+      expect(convertor.toHTML(listItemMd)).toBe(expectedHTML);
+    });
   });
 
   describe('html to markdown', () => {
