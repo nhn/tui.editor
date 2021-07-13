@@ -76,10 +76,6 @@ export function sanitizeHTML(html: string) {
   const root = document.createElement('div');
 
   if (isString(html)) {
-    // html = html.replace(reComment, '').replace(reXSSOnload, (_, $1, $2, $3) => {
-    //   console.log(`${$1}${$3}`);
-    //   return `${$1}${$3}`;
-    // });
     html = html.replace(reComment, '').replace(reXSSOnload, '$1');
     root.innerHTML = html;
   }
