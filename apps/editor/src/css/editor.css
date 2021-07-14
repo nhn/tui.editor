@@ -179,7 +179,7 @@
 }
 
 .toastui-editor-defaultUI .toastui-editor-ok-button {
-  width: 63px;
+  min-width: 63px;
   height: 32px;
   background-color: #00a9ff;
   color: #fff;
@@ -191,7 +191,7 @@
 }
 
 .toastui-editor-defaultUI .toastui-editor-close-button {
-  width: 63px;
+  min-width: 63px;
   height: 32px;
   background-color: #f7f9fc;
   border: 1px solid #dadde6;
@@ -508,7 +508,7 @@
 }
 
 .toastui-editor-popup-add-image .toastui-editor-file-name {
-  width: 62%;
+  width: 58%;
   display: inline-block;
   border-radius: 2px;
   border: 1px solid #e1e3e9;
@@ -527,7 +527,7 @@
 }
 
 .toastui-editor-popup-add-image .toastui-editor-file-select-button {
-  width: 29%;
+  width: 33%;
   margin-left: 5px;
   height: 32px;
   border-radius: 2px;
