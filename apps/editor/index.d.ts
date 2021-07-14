@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Editor v2.5.2
+// Type definitions for TOAST UI Editor v2.5.3
 // TypeScript Version: 3.2.2
 
 /// <reference types="codemirror" />
