@@ -53,7 +53,7 @@ describe('sanitizeHTML', () => {
         );
       });
 
-      it('svg and onload attribute', () => {
+      it('should remove onload attribute in svg', () => {
         expect(sanitizeHTML('<svg><svg onload=alert(111)> </svg></svg>')).toBe(
           '<svg><svg> </svg></svg>'
         );
