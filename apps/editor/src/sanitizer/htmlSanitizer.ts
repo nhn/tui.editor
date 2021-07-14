@@ -3,13 +3,14 @@ import isString from 'tui-code-snippet/type/isString';
 
 import { finalizeHtml, findNodes, removeNode } from '@/utils/dom';
 import { includes } from '@/utils/common';
+import { TAG_NAME } from '@/utils/constants';
 
 type GlobalEventTypes = keyof Omit<
   Omit<GlobalEventHandlers, 'addEventListener'>,
   'removeEventListener'
 >;
 
-const reXSSHtmlAttr = new RegExp(
+const reHTMLAttr = new RegExp(
   '^(abbr|align|alt|axis|bgcolor|border|cellpadding|cellspacing|class|clear|' +
     'color|cols|compact|coords|dir|face|headers|height|hreflang|hspace|' +
     'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' +
@@ -19,7 +20,7 @@ const reXSSHtmlAttr = new RegExp(
   'g'
 );
 
-const reXSSSvgAttr = new RegExp(
+const reSvgAttr = new RegExp(
   '^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' +
     'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' +
     'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' +
@@ -41,7 +42,9 @@ const reXSSSvgAttr = new RegExp(
 const reXSSAttr = /href|src|background/i;
 const reXSSAttrValue = /((java|vb|live)script|x):/i;
 const reOnEvent = /^on\S+/i;
+const reXSSOnload = new RegExp(`(<${TAG_NAME}[^>]*)(onload\\s*=)`, 'ig');
 const reComment = /<!--[\s\S]*?-->/g;
+const reWhitespace = /[ \t\r\n]/g;
 const DEFAULT_TAG_BLACK_LIST = [
   'script',
   'iframe',
@@ -58,6 +61,7 @@ const DEFAULT_TAG_BLACK_LIST = [
   'object',
   'details',
   'summary',
+  'base',
 ];
 const CAN_BE_TAG_WHITE_LIST = ['iframe', 'embed', 'details', 'summary'];
 const tagBlacklist = [...DEFAULT_TAG_BLACK_LIST];
@@ -72,7 +76,7 @@ export function sanitizeHTML(html: string) {
   const root = document.createElement('div');
 
   if (isString(html)) {
-    html = html.replace(reComment, '');
+    html = html.replace(reComment, '').replace(reXSSOnload, '$1');
     root.innerHTML = html;
   }
 
@@ -91,7 +95,7 @@ function removeUnnecessaryTags(html: HTMLElement) {
 }
 
 function isXSSAttribute(attrName: string, attrValue: string) {
-  return attrName.match(reXSSAttr) && attrValue.match(reXSSAttrValue);
+  return attrName.match(reXSSAttr) && attrValue.replace(reWhitespace, '').match(reXSSAttrValue);
 }
 
 function removeBlacklistAttributes(node: HTMLElement, blacklistAttrs: Attr[]) {
@@ -99,20 +103,18 @@ function removeBlacklistAttributes(node: HTMLElement, blacklistAttrs: Attr[]) {
     if (reOnEvent.test(name)) {
       node[name as GlobalEventTypes] = null;
     }
-
-    if (node.getAttribute(name)) {
-      node.removeAttribute(name);
-    }
+    node.removeAttribute(name);
   });
 }
 
 function leaveOnlyWhitelistAttribute(html: HTMLElement) {
   findNodes(html, '*').forEach((node) => {
     const { attributes } = node as HTMLElement;
+
     const blacklist = toArray(attributes).filter((attr) => {
       const { name, value } = attr;
-      const htmlAttr = name.match(reXSSHtmlAttr);
-      const svgAttr = name.match(reXSSSvgAttr);
+      const htmlAttr = name.match(reHTMLAttr);
+      const svgAttr = name.match(reSvgAttr);
       const xssAttr = htmlAttr && isXSSAttribute(name, value);
 
       return (!htmlAttr && !svgAttr) || xssAttr;

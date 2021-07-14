@@ -7,6 +7,7 @@ describe('sanitizeHTML', () => {
     expect(sanitizeHTML('<object>child die</object>')).toBe('');
     expect(sanitizeHTML('<details><summary>foo</summary></details>')).toBe('');
     expect(sanitizeHTML('<input type="image" />')).toBe('');
+    expect(sanitizeHTML('<base href=https://avocadot0ast.free.beeceptor.com>')).toBe('');
   });
 
   describe('attributes', () => {
@@ -29,6 +30,7 @@ describe('sanitizeHTML', () => {
         expect(sanitizeHTML('<a href="  LIVEScript: alert() ;">xss</a>')).toBe('<a>xss</a>');
         expect(sanitizeHTML(`123<a href=' javascript:alert();'>xss</a>`)).toBe('123<a>xss</a>');
         expect(sanitizeHTML(`<a href='javas<!-- -->cript:alert()'>xss</a>`)).toBe('<a>xss</a>');
+        expect(sanitizeHTML(`<a href='javas cript:alert()'>xss</a>`)).toBe('<a>xss</a>');
       });
 
       it('src attribute with img tag', () => {
@@ -38,6 +40,7 @@ describe('sanitizeHTML', () => {
         expect(sanitizeHTML('<img src="  VBscript: alert(); ">')).toBe('<img>');
         expect(sanitizeHTML('<img src="  LIVEScript: alert() ;">')).toBe('<img>');
         expect(sanitizeHTML('<img src="java<!-- -->script:alert();">')).toBe('<img>');
+        expect(sanitizeHTML('<img src="java script:alert();">')).toBe('<img>');
       });
 
       it('src and onerror attribute with img tag', () => {
@@ -47,6 +50,21 @@ describe('sanitizeHTML', () => {
         expect(sanitizeHTML('"><img src="x:x" onerror="alert(XSS)">')).toBe('"&gt;<img>');
         expect(sanitizeHTML('<img src=x:alert(alt) onerror=eval(src) alt=0>')).toBe(
           '<img alt="0">'
+        );
+      });
+
+      it('should remove onload attribute in svg', () => {
+        expect(sanitizeHTML('<svg><svg onload=alert(111)> </svg></svg>')).toBe(
+          '<svg><svg> </svg></svg>'
+        );
+        expect(sanitizeHTML('<svg><svg onLOad=alert(111)> </svg></svg>')).toBe(
+          '<svg><svg> </svg></svg>'
+        );
+        expect(sanitizeHTML('<svg><svg onLOad="alert(111)"> </svg></svg>')).toBe(
+          '<svg><svg> </svg></svg>'
+        );
+        expect(sanitizeHTML(`<svg><svg onLOad='alert(111)'> </svg></svg>`)).toBe(
+          '<svg><svg> </svg></svg>'
         );
       });
     });
