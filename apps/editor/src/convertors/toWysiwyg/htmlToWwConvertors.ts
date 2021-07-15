@@ -7,7 +7,7 @@ import {
   ToWwConvertorState,
 } from '@t/convertor';
 import { includes } from '@/utils/common';
-import { reHTMLTag } from '@/utils/constants';
+import { CLOSE_TAG, reHTMLTag } from '@/utils/constants';
 
 export function getTextWithoutTrailingNewline(text: string) {
   return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
@@ -159,21 +159,22 @@ const convertors: HTMLToWwConvertorMap = {
 
   br: (state, node) => {
     const { paragraph } = state.schema.nodes;
+    const { parent, prev, next } = node;
 
-    if (node.parent?.type === 'paragraph') {
-      if (node.prev) {
+    if (parent?.type === 'paragraph') {
+      if (prev && !(prev.type === 'htmlInline' && prev.literal!.match(CLOSE_TAG))) {
         state.openNode(paragraph);
       }
 
-      if (node.next) {
+      if (next) {
         state.closeNode();
       }
-    } else if (node.parent?.type === 'tableCell') {
-      if (node.prev && (isInlineNode(node.prev) || isCustomHTMLInlineNode(state, node.prev))) {
+    } else if (parent?.type === 'tableCell') {
+      if (prev && (isInlineNode(prev) || isCustomHTMLInlineNode(state, prev))) {
         state.closeNode();
       }
 
-      if (node.next && (isInlineNode(node.next) || isCustomHTMLInlineNode(state, node.next))) {
+      if (next && (isInlineNode(next) || isCustomHTMLInlineNode(state, next))) {
         state.openNode(paragraph);
       }
     }
