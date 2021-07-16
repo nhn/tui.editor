@@ -28,6 +28,7 @@
     "./dist/toastui-editor.css": "./dist/toastui-editor.css",
     "./dist/toastui-editor-viewer.css": "./dist/toastui-editor-viewer.css",
     "./dist/theme/toastui-editor-dark.css": "./dist/theme/toastui-editor-dark.css",
+    "./dist/i18n/*": "./dist/i18n/*.js",
     "./toastui-editor.css": "./dist/toastui-editor.css",
     "./toastui-editor-viewer.css": "./dist/toastui-editor-viewer.css",
     "./toastui-editor-dark.css": "./dist/theme/toastui-editor-dark.css"
