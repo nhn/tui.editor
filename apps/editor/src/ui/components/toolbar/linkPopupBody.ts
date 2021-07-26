@@ -74,7 +74,7 @@ export class LinkPopupBody extends Component<Props> {
 
   render() {
     return html`
-      <div>
+      <div aria-role="dialog" aria-label="${i18n.get('Insert link')}">
         <label for="toastuiLinkUrlInput">${i18n.get('URL')}</label>
         <input
           id="toastuiLinkUrlInput"

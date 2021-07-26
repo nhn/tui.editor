@@ -124,7 +124,7 @@ export class ImagePopupBody extends Component<Props, State> {
     const { activeTab, file, fileNameElClassName } = this.state;
 
     return html`
-      <div>
+      <div aria-role="dialog" aria-label="${i18n.get('Insert image')}">
         <${Tabs} tabs=${this.tabs} activeTab=${activeTab} onClick=${this.toggleTab} />
         <div style="display:${activeTab === 'url' ? 'block' : 'none'}">
           <label for="toastuiImageUrlInput">${i18n.get('Image URL')}</label>
