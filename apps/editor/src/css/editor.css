@@ -125,6 +125,8 @@
 
 .toastui-editor-ww-container > .toastui-editor {
   height: inherit;
+  position: absolute;
+  width: 100%;
 }
 
 .toastui-editor-ww-container .toastui-editor-contents {
