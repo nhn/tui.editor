@@ -340,7 +340,7 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
-    it('<br> html string', () => {
+    it('<br>', () => {
       const markdown = source`
         foo
         <br>
@@ -369,7 +369,7 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
-    it('<br> html string with soft break', () => {
+    it('<br> with soft break', () => {
       const markdown = source`
         foo
 
@@ -410,6 +410,21 @@ describe('Convertor', () => {
         <br>
         <br>
         quuz
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('<br> with html inline node ', () => {
+      const markdown = source`
+        foo
+        bar
+        Para       <b>Word</b><br>
+      `;
+      const expected = source`
+        foo
+        bar
+        Para       <b>Word</b>
       `;
 
       assertConverting(markdown, expected);
