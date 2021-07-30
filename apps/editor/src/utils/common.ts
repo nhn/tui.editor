@@ -68,7 +68,7 @@ function isNil(value: unknown): value is null | undefined {
   return isNull(value) || isUndefined(value);
 }
 
-export function shallowEqual(o1: Record<string, any>, o2: Record<string, any>) {
+export function shallowEqual(o1: Record<string, any> | null, o2: Record<string, any> | null) {
   if (o1 === null && o1 === o2) {
     return true;
   }
