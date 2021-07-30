@@ -26,7 +26,7 @@ export function smartTask({ schema, toastMark }: MdContext) {
               (node) => node!.type === 'paragraph' && node.parent?.type === 'item'
             );
 
-            if (paraNode && paraNode.firstChild) {
+            if (paraNode?.firstChild?.literal) {
               const { firstChild } = paraNode;
               const matched = firstChild.literal!.match(reTaskMarker);
 
