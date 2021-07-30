@@ -68,7 +68,11 @@ const tagBlacklist = [...DEFAULT_TAG_BLACK_LIST];
 
 export function registerTagWhitelistIfPossible(tagName: string) {
   if (includes(CAN_BE_TAG_WHITE_LIST, tagName)) {
-    tagBlacklist.splice(tagBlacklist.indexOf(tagName), 1);
+    const index = tagBlacklist.indexOf(tagName);
+
+    if (index > -1) {
+      tagBlacklist.splice(index, 1);
+    }
   }
 }
 
