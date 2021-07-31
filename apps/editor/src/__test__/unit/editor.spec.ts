@@ -123,13 +123,24 @@ describe('editor', () => {
       expect(editor.getCurrentPreviewStyle()).toBe('vertical');
     });
 
-    it('setMarkdown()', () => {
-      editor.setMarkdown('# heading');
+    describe('setMarkdown()', () => {
+      it('basic', () => {
+        editor.setMarkdown('# heading');
 
-      expect(mdEditor).toContainHTML(
-        `<div><span class="${HEADING_CLS}"><span class="${DELIM_CLS}">#</span> heading</span></div>`
-      );
-      expect(getPreviewHTML()).toBe('<h1>heading</h1>');
+        expect(mdEditor).toContainHTML(
+          `<div><span class="${HEADING_CLS}"><span class="${DELIM_CLS}">#</span> heading</span></div>`
+        );
+        expect(getPreviewHTML()).toBe('<h1>heading</h1>');
+      });
+
+      it('should parse the CRLF properly in markdown', () => {
+        editor.setMarkdown('# heading\r\nCRLF');
+
+        expect(mdEditor).toContainHTML(
+          `<div><span class="${HEADING_CLS}"><span class="${DELIM_CLS}">#</span> heading</span></div><div>CRLF</div>`
+        );
+        expect(getPreviewHTML()).toBe('<h1>heading</h1><p>CRLF</p>');
+      });
     });
 
     describe('setHTML()', () => {
@@ -374,6 +385,13 @@ describe('editor', () => {
         editor.replaceSelection('Replaced', 1, 7);
 
         expect(wwEditor).toContainHTML('<p>Replaced</p><p>line2</p>');
+      });
+
+      it('should parse the CRLF properly in markdown', () => {
+        editor.replaceSelection('text\r\nCRLF');
+
+        expect(mdEditor).toContainHTML('<div>ltext</div><div>CRLFe2</div>');
+        expect(getPreviewHTML()).toBe('<p>ltext<br>CRLFe2</p>');
       });
     });
 
