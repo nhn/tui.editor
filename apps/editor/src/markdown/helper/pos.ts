@@ -51,7 +51,7 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
     // prevent the end offset from pointing to the root document position
     const endResolvedPos = doc.resolve(to === doc.content.size ? to - 1 : to);
 
-    endOffset = endResolvedPos.start();
+    endOffset = endResolvedPos.start(1);
 
     // To resolve the end offset excluding document tag size
     if (endResolvedPos.pos === doc.content.size) {
