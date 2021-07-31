@@ -1,5 +1,11 @@
 import { oneLineTrim, source, stripIndent } from 'common-tags';
 import { undo } from 'prosemirror-history';
+import {
+  chainCommands,
+  deleteSelection,
+  joinBackward,
+  selectNodeBackward,
+} from 'prosemirror-commands';
 import { Sourcepos, ToastMark } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdown/mdEditor';
 import MarkdownPreview from '@/markdown/mdPreview';
@@ -16,6 +22,12 @@ function forceKeymapFn(type: string, methodName: string, args: any[] = []) {
 
   // @ts-ignore
   keymapFn[methodName](...args)(view.state, view.dispatch);
+}
+
+function forceBackspaceKeymap() {
+  const { state, dispatch } = mde.view;
+
+  chainCommands(deleteSelection, joinBackward, selectNodeBackward)(state, dispatch, mde.view);
 }
 
 let mde: MarkdownEditor, em: EventEmitter, preview: MarkdownPreview;
@@ -1041,3 +1053,15 @@ describe('keep indentation in code block', () => {
   });
 });
 /* eslint-enable no-irregular-whitespace */
+
+// @TODO: should move key event test case to e2e test
+describe('default keymap', () => {
+  it('should delete the blank line properly when pressing the backspace key', () => {
+    mde.setMarkdown('# myText\n\ntest');
+    mde.setSelection([3, 1], [3, 1]);
+
+    forceBackspaceKeymap();
+
+    expect(getPreviewHTML()).toBe('<h1>myText</h1><p>test</p>');
+  });
+});
