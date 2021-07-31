@@ -47,6 +47,7 @@ interface MarkdownOptions {
 }
 
 const EVENT_TYPE = 'cut';
+const reLineEnding = /\r\n|\n|\r/;
 
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
@@ -269,7 +270,7 @@ export default class MdEditor extends EditorBase {
   replaceSelection(text: string, start?: MdPos, end?: MdPos) {
     let newTr;
     const { tr, schema, doc } = this.view.state;
-    const lineTexts = text.split('\n');
+    const lineTexts = text.split(reLineEnding);
     const nodes = lineTexts.map((lineText) =>
       createParagraph(schema, createNodesWithWidget(lineText, schema))
     );
@@ -322,7 +323,7 @@ export default class MdEditor extends EditorBase {
   }
 
   setMarkdown(markdown: string, cursorToEnd = true) {
-    const lineTexts = markdown.split('\n');
+    const lineTexts = markdown.split(reLineEnding);
     const { tr, doc, schema } = this.view.state;
     const nodes = lineTexts.map((lineText) =>
       createParagraph(schema, createNodesWithWidget(lineText, schema))
