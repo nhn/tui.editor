@@ -32,7 +32,7 @@ const reMarkdownTextToEscapeMap = {
   link: /!?\[.*\]\(.*\)/,
   reflink: /!?\[.*\]\s*\[([^\]]*)\]/,
   verticalBar: /\u007C/,
-  codeblockBacktick: /^((`|~){3,})/,
+  fencedCodeblock: /^((`|~){3,})/,
 };
 
 export function sanitizeLinkAttribute(attribute: LinkAttributes) {
