@@ -96,16 +96,6 @@ export function escape(text: string) {
   return escapedText;
 }
 
-// export function escape(text: string, startOfLine?: boolean) {
-//   const result = text.replace(/[`*\\~[\]]/g, '\\$&');
-
-//   if (startOfLine) {
-//     return result.replace(/^[:#\-*+]/, '\\$&').replace(/^(\d+)\./, '$1\\.');
-//   }
-
-//   return result;
-// }
-
 export function quote(text: string) {
   let result;
 
