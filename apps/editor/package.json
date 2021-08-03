@@ -24,6 +24,10 @@
       "import": "./dist/esm/indexViewer.js",
       "require": "./dist/toastui-editor-viewer.js"
     },
+    "./dist/i18n/*": {
+      "import": "./dist/esm/i18n/*.js",
+      "require": "./dist/i18n/*.js"
+    },
     "./dist/toastui-editor-viewer": "./dist/toastui-editor-viewer.js",
     "./dist/toastui-editor.css": "./dist/toastui-editor.css",
     "./dist/toastui-editor-viewer.css": "./dist/toastui-editor-viewer.css",
