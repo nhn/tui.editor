@@ -17,16 +17,23 @@ export class Tabs extends Component<Props> {
 
   render() {
     return html`
-      <div class="${cls('tabs')}">
+      <div class="${cls('tabs')}" aria-role="tabpanel">
         ${this.props.tabs.map(
-          ({ name, text }) => html`
-            <div
-              class="tab-item${this.props.activeTab === name ? ' active' : ''}"
-              onClick=${(ev: MouseEvent) => this.toggleTab(ev, name)}
-            >
-              ${i18n.get(text)}
-            </div>
-          `
+          ({ name, text }) => {
+            const isActive = this.props.activeTab === name;
+            return html`
+              <div
+                class="tab-item${isActive ? ' active' : ''}"
+                onClick=${(ev: MouseEvent) => this.toggleTab(ev, name)}
+                aria-role="tab"
+                aria-label="${i18n.get(text)}"
+                aria-selected="${isActive ? 'true' : 'false'}"
+                tabindex="${isActive ? '0' : '-1'}"
+              >
+                ${i18n.get(text)}
+              </div>
+            `
+          }
         )}
       </div>
     `;

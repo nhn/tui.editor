@@ -3,6 +3,7 @@ import { ExecCommand, Pos } from '@t/ui';
 import { cls } from '@/utils/dom';
 import html from '@/ui/vdom/template';
 import { Component } from '@/ui/vdom/component';
+import i18n from '@/i18n/i18n';
 
 interface Range {
   rowIdx: number;
@@ -143,7 +144,7 @@ export class TablePopupBody extends Component<Props, State> {
     const selectionAreaBound = this.getSelectionAreaBound();
 
     return html`
-      <div>
+      <div aria-role="dialog" aria-label="${i18n.get('Insert table')}">
         <div
           class="${cls('table-selection')}"
           ref=${(el: HTMLElement) => (this.refs.tableEl = el)}
