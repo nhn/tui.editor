@@ -890,4 +890,26 @@ describe('Convertor', () => {
       assertConverting(markdown, markdown);
     });
   });
+
+  describe('should escape markdown text in wysiwyg', () => {
+    it('with markdown text', () => {
+      const markdown = source`
+        \\# heading
+        \\> blockquote
+        \\*test\\*
+        \\* list
+      `;
+
+      assertConverting(markdown, markdown);
+    });
+
+    it('with html text', () => {
+      const markdown = source`
+        \\<div>block\\</div>
+        \\<strong>bold\\</strong>
+      `;
+
+      assertConverting(markdown, markdown);
+    });
+  });
 });

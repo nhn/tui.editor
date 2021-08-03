@@ -1,10 +1,16 @@
 import isUndefined from 'tui-code-snippet/type/isUndefined';
 import isNull from 'tui-code-snippet/type/isNull';
 import sendHostname from 'tui-code-snippet/request/sendHostname';
+import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 
 import { LinkAttributeNames, LinkAttributes } from '@t/editor';
 
 export const isMac = /Mac/.test(navigator.platform);
+const reSpaceMoreThanOne = /[\u0020]+/g;
+const reEscapeChars = /[>(){}[\]+-.!#|]/g;
+const reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-.:/]*)>/g;
+const reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
+const reEscapePairedChars = /[*_~`]/g;
 
 export function sendHostName() {
   sendHostname('editor', 'UA-129966929-1');
@@ -15,6 +21,19 @@ export function includes<T>(arr: T[], targetItem: T) {
 }
 
 const availableLinkAttributes: LinkAttributeNames[] = ['rel', 'target', 'hreflang', 'type'];
+const reMarkdownTextToEscapeMap = {
+  codeblock: /(^ {4}[^\n]+\n*)+/,
+  thematicBreak: /^ *((\* *){3,}|(- *){3,} *|(_ *){3,}) */,
+  atxHeading: /^(#{1,6}) +[\s\S]+/,
+  seTextheading: /^([^\n]+)\n *(=|-){2,} */,
+  blockquote: /^( *>[^\n]+.*)+/,
+  list: /^ *(\*+|-+|\d+\.) [\s\S]+/,
+  def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? */,
+  link: /!?\[.*\]\(.*\)/,
+  reflink: /!?\[.*\]\s*\[([^\]]*)\]/,
+  verticalBar: /\u007C/,
+  fencedCodeblock: /^((`|~){3,})/,
+};
 
 export function sanitizeLinkAttribute(attribute: LinkAttributes) {
   if (!attribute) {
@@ -42,14 +61,39 @@ export function repeat(text: string, count: number) {
   return result;
 }
 
-export function escape(text: string, startOfLine?: boolean) {
-  const result = text.replace(/[`*\\~[\]]/g, '\\$&');
+function isNeedEscapeText(text: string) {
+  let needEscape = false;
 
-  if (startOfLine) {
-    return result.replace(/^[:#\-*+]/, '\\$&').replace(/^(\d+)\./, '$1\\.');
+  forEachOwnProperties(reMarkdownTextToEscapeMap, (reMarkdownTextToEscape) => {
+    if (reMarkdownTextToEscape.test(text)) {
+      needEscape = true;
+    }
+    return !needEscape;
+  });
+
+  return needEscape;
+}
+
+export function escape(text: string) {
+  const replacer = (matched: string) => `\\${matched}`;
+
+  let escapedText = text.replace(reSpaceMoreThanOne, ' ');
+
+  if (reEscapeBackSlash.test(escapedText)) {
+    escapedText = escapedText.replace(reEscapeBackSlash, replacer);
   }
 
-  return result;
+  escapedText = escapedText.replace(reEscapePairedChars, replacer);
+
+  if (reEscapeHTML.test(escapedText)) {
+    escapedText = escapedText.replace(reEscapeHTML, replacer);
+  }
+
+  if (isNeedEscapeText(escapedText)) {
+    escapedText = escapedText.replace(reEscapeChars, replacer);
+  }
+
+  return escapedText;
 }
 
 export function quote(text: string) {

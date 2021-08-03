@@ -120,14 +120,12 @@ export default class ToMdConvertorState {
     this.closed = node;
   }
 
-  text(text: string, escaped?: boolean) {
+  text(text: string, escaped = true) {
     const lines = text.split('\n');
 
     for (let i = 0; i < lines.length; i += 1) {
-      const startOfLine = this.isInBlank() || !!this.closed;
-
       this.write();
-      this.result += escaped !== false ? escape(lines[i], startOfLine) : lines[i];
+      this.result += escaped ? escape(lines[i]) : lines[i];
 
       if (i !== lines.length - 1) {
         this.result += '\n';
