@@ -36,7 +36,7 @@ jobs:
           npm run test:types:all
 
   test:
-    # needs: [checkVersion]
+    needs: [checkVersion]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
@@ -59,7 +59,7 @@ jobs:
           npm run test:ci editor
 
   plugin-test:
-    # needs: [checkVersion]
+    needs: [checkVersion]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
@@ -126,6 +126,8 @@ jobs:
           mv apps/editor/_latest latest
           rm -rf apps/editor/tmpdoc
           git checkout -- apps/editor/types/index.d.ts
+          git add ${{ steps.check.outputs.committed-version }}/dist -f
+          git add latest/dist -f
           git stash --include-untracked
       - name: Checkout gh-pages
         uses: actions/checkout@v2
@@ -137,6 +139,7 @@ jobs:
           git config --local user.name 'js87zz'
           rm -rf ${{ steps.check.outputs.committed-version }}
           rm -rf latest
+          git add .
           git stash pop
           git add .
           git commit -m '${{ steps.check.outputs.committed-version }}'
@@ -223,4 +226,3 @@ jobs:
           TOAST_CLOUD_STORAGEID: ${{ secrets.TOAST_CLOUD_STORAGEID }}
           TOAST_CLOUD_USERNAME: ${{ secrets.TOAST_CLOUD_USERNAME }}
           TOAST_CLOUD_PASSWORD: ${{ secrets.TOAST_CLOUD_PASSWORD }}
-          
