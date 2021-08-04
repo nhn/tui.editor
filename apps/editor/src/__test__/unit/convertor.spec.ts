@@ -424,7 +424,7 @@ describe('Convertor', () => {
       const expected = source`
         foo
         bar
-        Para       <b>Word</b>
+        Para <b>Word</b>
       `;
 
       assertConverting(markdown, expected);
