@@ -1,19 +1,19 @@
 name: Editor Publish
 on: [workflow_dispatch]
 jobs:
-  checkVersion:
-    name: Check package version
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Check package version
-        id: check
-        uses: PostHog/check-package-version@v2
-        with:
-          path: ./apps/editor/
-      - name: Cancel when unchanged
-        uses: andymckay/cancel-action@0.2
-        if: steps.check.outputs.is-new-version == 'false'
+  # checkVersion:
+  #   name: Check package version
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v2
+  #     - name: Check package version
+  #       id: check
+  #       uses: PostHog/check-package-version@v2
+  #       with:
+  #         path: ./apps/editor/
+  #     - name: Cancel when unchanged
+  #       uses: andymckay/cancel-action@0.2
+  #       if: steps.check.outputs.is-new-version == 'false'
   pre-check:
     # needs: [checkVersion]
     runs-on: ubuntu-latest
