@@ -61,7 +61,11 @@ export class ContextMenu extends Component<Props, State> {
 
             menuItem.push(
               html`
-                <li onClick=${handleClick} class="menu-item${disabled ? ' disabled' : ''}" aria-role="menuitem" tabindex="-1">
+                <li
+                  onClick=${handleClick}
+                  class="menu-item${disabled ? ' disabled' : ''}"
+                  aria-role="menuitem"
+                >
                   <span class="${className}">${label}</span>
                 </li>
               `

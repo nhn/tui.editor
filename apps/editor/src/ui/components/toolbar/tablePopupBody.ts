@@ -144,7 +144,7 @@ export class TablePopupBody extends Component<Props, State> {
     const selectionAreaBound = this.getSelectionAreaBound();
 
     return html`
-      <div aria-role="dialog" aria-label="${i18n.get('Insert table')}">
+      <div aria-label="${i18n.get('Insert table')}">
         <div
           class="${cls('table-selection')}"
           ref=${(el: HTMLElement) => (this.refs.tableEl = el)}

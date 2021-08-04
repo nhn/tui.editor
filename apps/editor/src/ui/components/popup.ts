@@ -73,6 +73,7 @@ export class Popup extends Component<Props, State> {
         class="${cls('popup')} ${className}"
         style=${popupStyle}
         ref=${(el: HTMLElement) => (this.refs.el = el)}
+        aria-role="dialog"
       >
         <div class="${cls('popup-body')}">
           ${render && render({ eventEmitter, show, hidePopup, execCommand, initialValues })}
