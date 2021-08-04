@@ -173,7 +173,7 @@ jobs:
         run: |
           git config --local user.email 'js87zz.lee@nhn.com'
           git config --local user.name 'js87zz'
-          git tag v${{ steps.check.outputs.committed-version }}
+          git tag editor@${{ steps.check.outputs.committed-version }}
       - name: Push Tag
         run: |
           git push origin editor@${{ steps.check.outputs.committed-version }}
