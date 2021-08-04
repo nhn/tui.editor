@@ -21,16 +21,22 @@ export class HeadingPopupBody extends Component<Props> {
 
   render() {
     return html`
-      <ul onClick=${(ev: MouseEvent) => this.execCommand(ev)} aria-role="menu" aria-label="${i18n.get('Headings')}">
+      <ul
+        onClick=${(ev: MouseEvent) => this.execCommand(ev)}
+        aria-role="menu"
+        aria-label="${i18n.get('Headings')}"
+      >
         ${[1, 2, 3, 4, 5, 6].map(
           (level) =>
             html`
-              <li data-level="${level}" data-type="Heading" aria-role="menuitem" tabindex="-1">
+              <li data-level="${level}" data-type="Heading" aria-role="menuitem">
                 <${`h${level}`}>${i18n.get('Heading')} ${level}</$>
               </li>
             `
         )}
-        <li data-type="Paragraph" aria-role="menuitem" tabindex="-1"><div>${i18n.get('Paragraph')}</div></li>
+        <li data-type="Paragraph" aria-role="menuitem">
+          <div>${i18n.get('Paragraph')}</div>
+        </li>
       </ul>
     `;
   }
