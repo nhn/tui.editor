@@ -1,44 +1,67 @@
 <!DOCTYPE html>
 <html>
-<head>
-        <!-- <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css" /> -->
-        <link rel="stylesheet" href="https://uicdn.toast.com/editor/3.0.2-alpha.0/toastui-editor-viewer.css" />
-        <!-- <link rel="stylesheet" href="https://uicdn.toast.com/editor/3.0.2/toastui-editor-viewer.css" /> -->
-        <!-- <link rel="stylesheet" href="https://uicdn.toast.com/editor/3.0.2-alpha.0/theme/toastui-editor-dark.css" /> -->
-        <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-</body>
-</head>
-<body>
-        <div id="editordiv"></div>
-        <script>
-const Editor = toastui.Editor;
-// const editor = new Editor({
-//   el: document.querySelector('#editordiv'),
-//   height: '500px',
-//   initialEditType: 'markdown',
-//   previewStyle: 'vertical',
-//   theme: 'dark'
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>Demo</title>
+  </head>
+  <body>
+    <div id="editor"></div>
+    <!-- Editor -->
+    <script type="module">
+      import { Editor } from '/dist/index.js';
 
-// });
-const editor = Editor.factory({
-  el: document.querySelector('#editordiv'),
-  height: '500px',
-  initialEditType: 'markdown',
-  previewStyle: 'vertical',
-  theme: 'dark',
-  initialValue: '# heading\n* list',
-  viewer: true
+      const content = [
+        '![image](https://uicdn.toast.com/toastui/img/tui-editor-bi.png)',
+        '',
+        '# Awesome Editor!',
+        '',
+        'It has been _released as opensource in 2018_ and has ~~continually~~ evolved to **receive 10k GitHub ⭐️ Stars**.',
+        '',
+        '## Create Instance',
+        '',
+        'You can create an instance with the following code and use `getHtml()` and `getMarkdown()` of the [Editor](https://github.com/nhn/tui.editor).',
+        '',
+        '```js',
+        'const editor = new Editor(options);',
+        '```',
+        '',
+        '> See the table below for default options',
+        '> > More API information can be found in the document',
+        '',
+        '| name | type | description |',
+        '| --- | --- | --- |',
+        '| el | `HTMLElement` | container element |',
+        '',
+        '## Features',
+        '',
+        '* CommonMark + GFM Specifications',
+        '   * Live Preview',
+        '   * Scroll Sync',
+        '   * Auto Indent',
+        '   * Syntax Highlight',
+        '        1. Markdown',
+        '        2. Preview',
+        '',
+        '## Support Wrappers',
+        '',
+        '> * Wrappers',
+        '>    1. [x] React',
+        '>    2. [x] Vue',
+        '>    3. [ ] Ember',
+      ].join('\n');
 
-});
+      const editor = new Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '400px',
+        initialEditType: 'markdown',
+        useCommandShortcut: true,
+        extendedAutolinks: true,
+        frontMatter: true,
+        initialValue: content,
+      });
 
-editor.getMarkdown();
-
-function Save() {
-        alert(editor.getHTML())
-}
-        </script>
-
-<input type="button" onClick="Save();" value="Save">
-
-</body>
+      window.editor = editor;
+    </script>
+  </body>
 </html>
