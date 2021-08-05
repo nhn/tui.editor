@@ -107,7 +107,7 @@ jobs:
           node-version: '15.x'
       - name: Install
         run: |
-          npm ci
+          npm install
       - name: Use Node.js 10.x
         uses: actions/setup-node@v1
         with:
@@ -122,9 +122,11 @@ jobs:
       - name: Run doc
         run: |
           npm run doc
+          mv apps/editor/_${{ steps.check.outputs.committed-version }} ${{ steps.check.outputs.committed-version }}
           mv apps/editor/_latest latest
           rm -rf apps/editor/tmpdoc
-          git checkout -- apps/editor/types/index.d.ts
+          git checkout -- apps/editor/types/index.d.ts package-lock.json
+          git add ${{ steps.check.outputs.committed-version }}/dist -f
           git add latest/dist -f
           git stash --include-untracked
       - name: Checkout gh-pages
@@ -135,6 +137,7 @@ jobs:
         run: |
           git config --local user.email 'js87zz.lee@nhn.com'
           git config --local user.name 'js87zz'
+          rm -rf ${{ steps.check.outputs.committed-version }}
           rm -rf latest
           git add .
           git stash pop
