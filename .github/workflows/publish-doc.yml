@@ -1,4 +1,4 @@
-name: Editor Publish
+name: Doc Publish
 on: [workflow_dispatch]
 jobs:
   checkVersion:
@@ -107,7 +107,7 @@ jobs:
           node-version: '15.x'
       - name: Install
         run: |
-          npm ci
+          npm install
       - name: Use Node.js 10.x
         uses: actions/setup-node@v1
         with:
@@ -125,7 +125,7 @@ jobs:
           mv apps/editor/_${{ steps.check.outputs.committed-version }} ${{ steps.check.outputs.committed-version }}
           mv apps/editor/_latest latest
           rm -rf apps/editor/tmpdoc
-          git checkout -- apps/editor/types/index.d.ts
+          git checkout -- apps/editor/types/index.d.ts package-lock.json
           git add ${{ steps.check.outputs.committed-version }}/dist -f
           git add latest/dist -f
           git stash --include-untracked
@@ -148,81 +148,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
-
-  publish:
-    runs-on: ubuntu-latest
-    needs: [pre-check, test, plugin-test]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Check the package version
-        id: check
-        uses: PostHog/check-package-version@v2
-        with:
-          path: ./apps/editor/
-      - name: Use Node.js 15.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: '15.x'
-          registry-url: https://registry.npmjs.org/
-      - name: Install
-        run: |
-          npm ci
-      - name: Build
-        run: |
-          npm run build toastmark
-          npm run build editor
-          npm run build react
-          npm run build vue
-      - name: Create Tag
-        run: |
-          git config --local user.email 'js87zz.lee@nhn.com'
-          git config --local user.name 'js87zz'
-          git tag editor@${{ steps.check.outputs.committed-version }}
-      - name: Push Tag
-        run: |
-          git push origin editor@${{ steps.check.outputs.committed-version }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Npm Publish(editor)
-        working-directory: ./apps/editor
-        run: |
-          npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
-      - name: Npm Publish(react)
-        working-directory: ./apps/react-editor
-        run: |
-          npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
-      - name: Npm Publish(vue)
-        working-directory: ./apps/vue-editor
-        run: |
-          npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
-
-  publish-cdn:
-    runs-on: ubuntu-latest
-    needs: [pre-check, test, plugin-test]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js 15.x
-        uses: actions/setup-node@v1
-        with:
-          node-version: '15.x'
-      - name: Install
-        run: |
-          npm ci
-      - name: Build
-        run: |
-          npm run build toastmark
-          npm run build editor
-      - name: Publish CDN
-        run: |
-          npm run publish:cdn
-        env:
-          TOAST_CLOUD_TENENTID: ${{ secrets.TOAST_CLOUD_TENENTID }}
-          TOAST_CLOUD_STORAGEID: ${{ secrets.TOAST_CLOUD_STORAGEID }}
-          TOAST_CLOUD_USERNAME: ${{ secrets.TOAST_CLOUD_USERNAME }}
-          TOAST_CLOUD_PASSWORD: ${{ secrets.TOAST_CLOUD_PASSWORD }}

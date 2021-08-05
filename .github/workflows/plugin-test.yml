@@ -4,8 +4,6 @@ jobs:
   plugin-test:
     name: Unit, Integration Test
     runs-on: ubuntu-latest
-    env:
-      WORKING_DIRECTORY: ./
     steps:
       - name: Checkout branch
         uses: actions/checkout@v2
@@ -13,9 +11,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '15.x'
-      - name: npm install
+      - name: Install
         run: |
-          npm install
+          npm ci
       - name: build toastmark
         run: |
           npm run build toastmark

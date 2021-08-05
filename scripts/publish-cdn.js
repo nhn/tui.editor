@@ -55,13 +55,14 @@ function publishToCdn(token, localPath, cdnPath) {
   files.forEach((fileName) => {
     const objectPath = `${cdnPath}/${fileName}`;
 
-    if (fileName.match(/js|css/)) {
+    if (fileName.match(/(js|css)$/)) {
       const readStream = fs.createReadStream(`${localPath}/${fileName}`);
+      const contentType = /css$/.test(fileName) ? 'text/css' : 'text/javascript';
 
       fetch(`${STORAGE_API_URL}/${objectPath}`, {
         method: 'PUT',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': contentType,
           'X-Auth-Token': token,
         },
         body: readStream,
