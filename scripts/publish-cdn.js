@@ -77,7 +77,7 @@ async function publish() {
   const container = await getTOASTCloudContainer(token);
   const cdnPath = `${storageId}/${container}`;
 
-  [pkg.version, 'latest'].forEach((dir) => {
+  [pkg.version].forEach((dir) => {
     publishToCdn(token, LOCAL_DIST_PATH, `${cdnPath}/${dir}`);
   });
 }
