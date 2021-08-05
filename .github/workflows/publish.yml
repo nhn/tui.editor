@@ -122,8 +122,8 @@ jobs:
       - name: Run doc
         run: |
           npm run doc
-          mv apps/editor/_${{ steps.check.outputs.committed-version }} ${{ steps.check.outputs.committed-version }}
-          mv apps/editor/_latest latest
+          mv ./apps/editor/_${{ steps.check.outputs.committed-version }} ${{ steps.check.outputs.committed-version }}
+          mv ./apps/editor/_latest latest
           rm -rf apps/editor/tmpdoc
           git checkout -- apps/editor/types/index.d.ts
           git add ${{ steps.check.outputs.committed-version }}/dist -f
