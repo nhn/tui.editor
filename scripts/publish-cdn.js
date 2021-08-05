@@ -57,7 +57,7 @@ function publishToCdn(token, localPath, cdnPath) {
 
     if (fileName.match(/(js|css)$/)) {
       const readStream = fs.createReadStream(`${localPath}/${fileName}`);
-      const contentType = fileName.match(/css$/) ? 'text/css' : 'text/javascript';
+      const contentType = /css$/.test(fileName) ? 'text/css' : 'text/javascript';
 
       fetch(`${STORAGE_API_URL}/${objectPath}`, {
         method: 'PUT',
@@ -78,7 +78,7 @@ async function publish() {
   const container = await getTOASTCloudContainer(token);
   const cdnPath = `${storageId}/${container}`;
 
-  [pkg.version].forEach((dir) => {
+  [pkg.version, 'latest'].forEach((dir) => {
     publishToCdn(token, LOCAL_DIST_PATH, `${cdnPath}/${dir}`);
   });
 }
