@@ -106,18 +106,16 @@ export class TablePopupBody extends Component<Props, State> {
     return range;
   }
 
-  mounted() {
-    const { left, top } = this.refs.tableEl.getBoundingClientRect();
-
-    this.offsetRect = {
-      left: window.pageXOffset + left,
-      top: window.pageYOffset + top,
-    };
-  }
-
   updated() {
     if (!this.props.show) {
       this.setState({ colIdx: -1, rowIdx: -1 });
+    } else if (this.state.colIdx === -1 && this.state.rowIdx === -1) {
+      const { left, top } = this.refs.tableEl.getBoundingClientRect();
+
+      this.offsetRect = {
+        left: window.pageXOffset + left,
+        top: window.pageYOffset + top,
+      };
     }
   }
 
