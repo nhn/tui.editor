@@ -74,6 +74,10 @@ class ToastUIEditor extends EditorCore {
     this.defaultUI.removeToolbarItem(itemName);
   }
 
+  /**
+   * Refresh toolbar layout.
+   * It is recommended to use only when the toolbar is not properly placed under specific situation
+   */
   refreshToolbarLayout() {
     this.eventEmitter.emit('refreshToolbarLayout');
   }
