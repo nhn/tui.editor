@@ -131,7 +131,7 @@ export function getOuterWidth(el: HTMLElement) {
 
   return (
     ['margin-left', 'margin-right'].reduce(
-      (acc, type) => acc + parseInt(computed.getPropertyValue(type), 10),
+      (acc, type) => acc + parseInt(computed.getPropertyValue(type), 10) || 0,
       0
     ) + el.offsetWidth
   );

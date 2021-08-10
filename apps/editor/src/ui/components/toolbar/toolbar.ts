@@ -119,8 +119,17 @@ export class Toolbar extends Component<Props, State> {
   }
 
   addEvent() {
-    this.props.eventEmitter.listen('openPopup', this.openPopup);
+    const { eventEmitter } = this.props;
+
     this.handleResize = throttle(() => this.setState(this.classifyToolbarItems()), 200);
+    eventEmitter.listen('openPopup', this.openPopup);
+    eventEmitter.listen('refreshToolbarLayout', () => {
+      const { items, dropdownItems } = this.state;
+
+      // reset the toolbar items to layout the item using the DOM width
+      this.setState({ items: items.concat(dropdownItems), dropdownItems: [] });
+      this.handleResize();
+    });
     window.addEventListener('resize', this.handleResize);
   }
 

@@ -22,6 +22,7 @@ const eventTypeList: EventTypes[] = [
   'mixinTableOffsetMapPrototype',
   'setFocusedNode',
   'removePopupWidget',
+  'refreshToolbarLayout',
   // provide event for user
   'openPopup',
   'closePopup',
