@@ -118,7 +118,6 @@
 .toastui-editor-ww-container {
   display: none;
   overflow: hidden;
-  z-index: 10;
   height: inherit;
   background-color: #fff;
 }
@@ -144,7 +143,7 @@
 .toastui-editor-md-mode .toastui-editor-md-container,
 .toastui-editor-ww-mode .toastui-editor-ww-container {
   display: block;
-  z-index: 100;
+  z-index: 20;
 }
 
 .toastui-editor-md-mode .toastui-editor-md-vertical-style {
@@ -398,7 +397,7 @@
 .toastui-editor-dropdown-toolbar {
   position: absolute;
   height: 46px;
-  z-index: 101;
+  z-index: 30;
   border-radius: 2px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
   border: 1px solid #dadde6;
@@ -418,7 +417,7 @@
   width: 400px;
   margin-right: auto;
   background: #fff;
-  z-index: 9999;
+  z-index: 30;
   position: absolute;
   border-radius: 2px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
@@ -578,7 +577,7 @@
   left: 0;
   border: 1px solid #00a9ff;
   background: rgba(0, 169, 255, 0.1);
-  z-index: 999;
+  z-index: 30;
 }
 
 .toastui-editor-popup-add-table .toastui-editor-table-description {
@@ -654,7 +653,7 @@
   border-radius: 2px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
   border: 1px solid #dadde6;
-  z-index: 100;
+  z-index: 30;
   padding: 5px 0;
   background-color: #fff;
 }
@@ -748,7 +747,7 @@
 .toastui-editor-tooltip {
   position: absolute;
   background-color: #444;
-  z-index: 999;
+  z-index: 30;
   padding: 4px 7px;
   font-size: 12px;
   border-radius: 3px;

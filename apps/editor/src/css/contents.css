@@ -1,3 +1,9 @@
+/* 
+  z-index basis
+  -1: pseudo element
+  20 - preview, wysiwyg
+  30 - wysiwyg code block language editor, tooltip, popup, context menu
+*/
 .ProseMirror {
   font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
     'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
@@ -36,6 +42,7 @@ table.ProseMirror-selectednode {
   font-size: 13px;
   font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
     'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
+  z-index: 20;
 }
 
 .toastui-editor-contents *:not(table) {
@@ -424,7 +431,7 @@ table.ProseMirror-selectednode {
   border: 1px solid #ccc;
   border-radius: 2px;
   background-color: #fff;
-  z-index: 100;
+  z-index: 30;
 }
 
 .toastui-editor-ww-code-block-language input {
