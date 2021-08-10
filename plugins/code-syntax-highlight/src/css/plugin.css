@@ -31,7 +31,7 @@ pre[class*="language-"] {
   position: fixed;
   display: inline-block;
   right: 35px;
-  z-index: 100;
+  z-index: 30;
 }
 
 .toastui-editor-code-block-language-input {
