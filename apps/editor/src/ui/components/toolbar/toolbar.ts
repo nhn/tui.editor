@@ -1,5 +1,6 @@
 import throttle from 'tui-code-snippet/tricks/throttle';
 import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import ResizeObserver from 'resize-observer-polyfill';
 import { EditorType, PreviewStyle } from '@t/editor';
 import { Emitter } from '@t/event';
 import {
@@ -67,6 +68,8 @@ export class Toolbar extends Component<Props, State> {
 
   private handleResize!: () => void;
 
+  private resizeObserver!: ResizeObserver;
+
   constructor(props: Props) {
     super(props);
     this.tabs = [
@@ -84,6 +87,7 @@ export class Toolbar extends Component<Props, State> {
       activeTab: 'write',
     };
     this.tooltipRef = { current: null };
+    this.resizeObserver = new ResizeObserver(() => this.handleResize());
     this.addEvent();
   }
 
@@ -119,9 +123,10 @@ export class Toolbar extends Component<Props, State> {
   }
 
   addEvent() {
-    this.props.eventEmitter.listen('openPopup', this.openPopup);
+    const { eventEmitter } = this.props;
+
     this.handleResize = throttle(() => this.setState(this.classifyToolbarItems()), 200);
-    window.addEventListener('resize', this.handleResize);
+    eventEmitter.listen('openPopup', this.openPopup);
   }
 
   private appendTooltipToRoot() {
@@ -231,6 +236,7 @@ export class Toolbar extends Component<Props, State> {
     // classify toolbar and dropdown toolbar after DOM has been rendered
     this.setState(this.classifyToolbarItems());
     this.appendTooltipToRoot();
+    this.resizeObserver.observe(this.refs.el);
   }
 
   updated(prevProps: Props) {
@@ -253,6 +259,7 @@ export class Toolbar extends Component<Props, State> {
 
   beforeDestroy() {
     window.removeEventListener('resize', this.handleResize);
+    this.resizeObserver.disconnect();
     removeNode(this.tooltipRef.current!);
   }
 
