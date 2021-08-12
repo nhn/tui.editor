@@ -259,6 +259,7 @@ export class Toolbar extends Component<Props, State> {
 
   beforeDestroy() {
     window.removeEventListener('resize', this.handleResize);
+    this.resizeObserver.disconnect();
     removeNode(this.tooltipRef.current!);
   }
 
