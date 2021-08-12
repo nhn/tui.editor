@@ -12,6 +12,10 @@ module.exports = {
     library: {
       type: 'commonjs2',
     },
+    environment: {
+      arrowFunction: false,
+      const: false,
+    },
   },
   externals: {
     '@toast-ui/editor': {
@@ -28,6 +32,18 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.js$/,
+        use: [
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+            },
+          },
+        ],
         exclude: /node_modules/,
       },
     ],
