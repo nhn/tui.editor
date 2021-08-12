@@ -7,6 +7,7 @@
     "index.d.ts"
   ],
   "main": "dist/toastui-react-editor.js",
+  "module": "dist/esm/index.js",
   "scripts": {
     "test:types": "tsc",
     "lint": "eslint .",
