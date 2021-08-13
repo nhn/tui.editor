@@ -3,6 +3,7 @@
   "version": "3.0.2",
   "description": "TOAST UI Editor for Vue",
   "main": "dist/toastui-vue-editor.js",
+  "module": "dist/esm/index.js",
   "files": [
     "dist",
     "index.d.ts"
@@ -10,7 +11,7 @@
   "scripts": {
     "lint": "eslint .",
     "serve": "snowpack dev",
-    "build": "webpack build"
+    "build": "webpack build && rollup -c"
   },
   "homepage": "https://ui.toast.com",
   "bugs": {

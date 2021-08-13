@@ -2,16 +2,17 @@
   "name": "@toast-ui/react-editor",
   "version": "3.0.2",
   "description": "TOAST UI Editor for React",
-  "main": "dist/toastui-react-editor.js",
   "files": [
     "dist",
     "index.d.ts"
   ],
+  "main": "dist/toastui-react-editor.js",
+  "module": "dist/esm/index.js",
   "scripts": {
     "test:types": "tsc",
     "lint": "eslint .",
     "serve": "snowpack dev",
-    "build": "webpack build"
+    "build": "webpack build && rollup -c"
   },
   "homepage": "https://ui.toast.com",
   "bugs": {
