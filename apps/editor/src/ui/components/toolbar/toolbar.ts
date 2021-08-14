@@ -21,6 +21,7 @@ import {
   cls,
   removeNode,
 } from '@/utils/dom';
+import { last } from '@/utils/common';
 import {
   createToolbarItemInfo,
   toggleScrollSync,
@@ -54,8 +55,7 @@ interface ItemWidthMap {
   [key: string]: number;
 }
 
-const DROPDOWN_WIDTH = 120;
-const DEFAULT_WIDTH = 80;
+const INLINE_PADDING = 50;
 
 export class Toolbar extends Component<Props, State> {
   private tabs: TabInfo[];
@@ -66,9 +66,9 @@ export class Toolbar extends Component<Props, State> {
 
   private initialItems: ToolbarGroupInfo[];
 
-  private handleResize!: () => void;
-
   private resizeObserver!: ResizeObserver;
+
+  private handleResize!: () => void;
 
   constructor(props: Props) {
     super(props);
@@ -125,7 +125,11 @@ export class Toolbar extends Component<Props, State> {
   addEvent() {
     const { eventEmitter } = this.props;
 
-    this.handleResize = throttle(() => this.setState(this.classifyToolbarItems()), 200);
+    this.handleResize = throttle(() => {
+      // reset toolbar items to re-layout toolbar items with each clientWidth
+      this.setState({ items: this.initialItems, dropdownItems: [] });
+      this.setState(this.classifyToolbarItems());
+    }, 200);
     eventEmitter.listen('openPopup', this.openPopup);
   }
 
@@ -194,6 +198,31 @@ export class Toolbar extends Component<Props, State> {
     this.hidePopup();
   };
 
+  private movePrevItemToDropdownToolbar(
+    itemIndex: number,
+    items: ToolbarGroupInfo[],
+    group: ToolbarGroupInfo,
+    dropdownGroup: ToolbarGroupInfo
+  ) {
+    const moveItem = (targetGroup: ToolbarGroupInfo) => {
+      const item = targetGroup.pop();
+
+      if (item) {
+        dropdownGroup.push(item);
+      }
+    };
+
+    if (itemIndex > 1) {
+      moveItem(group);
+    } else {
+      const prevGroup = last(items);
+
+      if (prevGroup) {
+        moveItem(prevGroup);
+      }
+    }
+  }
+
   private classifyToolbarItems() {
     let totalWidth = 0;
     const { clientWidth } = this.refs.el;
@@ -201,16 +230,27 @@ export class Toolbar extends Component<Props, State> {
     const dividerWidth = divider ? getOuterWidth(divider) : 0;
     const items: ToolbarGroupInfo[] = [];
     const dropdownItems: ToolbarGroupInfo[] = [];
+    let moved = false;
 
-    this.initialItems.forEach((initialGroup, index) => {
+    this.initialItems.forEach((initialGroup, groupIndex) => {
       const group: ToolbarGroupInfo = [];
       const dropdownGroup: ToolbarGroupInfo = [];
 
-      initialGroup.forEach((item) => {
-        totalWidth += this.itemWidthMap[item.name] || DEFAULT_WIDTH;
-        const target = totalWidth >= clientWidth - DROPDOWN_WIDTH ? dropdownGroup : group;
+      initialGroup.forEach((item, itemIndex) => {
+        if (!item.hidden) {
+          totalWidth += this.itemWidthMap[item.name];
 
-        target.push(item);
+          if (totalWidth > clientWidth - INLINE_PADDING) {
+            // should move the prev item to dropdown toolbar for placing the more button
+            if (!moved) {
+              this.movePrevItemToDropdownToolbar(itemIndex, items, group, dropdownGroup);
+              moved = true;
+            }
+            dropdownGroup.push(item);
+          } else {
+            group.push(item);
+          }
+        }
       });
 
       if (group.length) {
@@ -222,7 +262,7 @@ export class Toolbar extends Component<Props, State> {
         dropdownItems.push(dropdownGroup);
       }
       // add divider width
-      if (index < this.state.items.length - 1) {
+      if (groupIndex < this.state.items.length - 1) {
         totalWidth += dividerWidth;
       }
     });
