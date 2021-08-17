@@ -1,22 +1,7 @@
-name: Npm Publish
+name: Wrapper Npm Publish
 on: [workflow_dispatch]
 jobs:
-  checkVersion:
-    name: Check package version
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Check package version
-        id: check
-        uses: PostHog/check-package-version@v2
-        with:
-          path: ./apps/editor/
-      - name: Cancel when unchanged
-        uses: andymckay/cancel-action@0.2
-        if: steps.check.outputs.is-new-version == 'false'
-
   pre-check:
-    needs: [checkVersion]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
@@ -36,7 +21,6 @@ jobs:
           npm run test:types:all
 
   test:
-    needs: [checkVersion]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
@@ -59,7 +43,6 @@ jobs:
           npm run test:ci editor
 
   plugin-test:
-    needs: [checkVersion]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
@@ -113,18 +96,16 @@ jobs:
         run: |
           npm run build toastmark
           npm run build editor
-      - name: Create Tag
+          npm run build react
+          npm run build vue
+      - name: Npm Publish(react)
+        working-directory: ./apps/react-editor
         run: |
-          git config --local user.email 'js87zz.lee@nhn.com'
-          git config --local user.name 'js87zz'
-          git tag editor@${{ steps.check.outputs.committed-version }}
-      - name: Push Tag
-        run: |
-          git push origin editor@${{ steps.check.outputs.committed-version }}
+          npm publish
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Npm Publish(editor)
-        working-directory: ./apps/editor
+          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+      - name: Npm Publish(vue)
+        working-directory: ./apps/vue-editor
         run: |
           npm publish
         env:
