@@ -83,7 +83,7 @@ export class Layout extends Component<Props, State> {
           class="${cls('main')} ${editorTypeClassName}"
           ref=${(el: HTMLElement) => (this.refs.editorSection = el)}
         >
-          <div class=${cls('main-container')}>
+          <div class="${cls('main-container')}">
             <div
               class="${cls('md-container')} ${previewClassName}"
               ref=${(el: HTMLElement) => (this.refs.mdContainer = el)}
