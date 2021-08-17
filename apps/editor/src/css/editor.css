@@ -31,13 +31,6 @@
   clear: both;
 }
 
-.toastui-editor-md-container {
-  position: absolute;
-  line-height: 1;
-  color: #222;
-  width: 100%;
-  height: inherit;
-}
 
 .toastui-editor-main {
   min-height: 0px;
@@ -109,6 +102,8 @@
   height: 100%;
   width: 1px;
   background-color: #ebedf2;
+  position: absolute;
+  left: 50%;
 }
 
 .toastui-editor-main .toastui-editor-md-vertical-style .toastui-editor-md-splitter {
@@ -122,9 +117,21 @@
   background-color: #fff;
 }
 
+.auto-height .toastui-editor-main-container {
+  position: relative;
+}
+
+.toastui-editor-main-container {
+  position: absolute;
+  line-height: 1;
+  color: #222;
+  width: 100%;
+  height: inherit;
+}
+
 .toastui-editor-ww-container > .toastui-editor {
   height: inherit;
-  position: absolute;
+  position: relative;
   width: 100%;
 }
 
@@ -747,7 +754,7 @@
 .toastui-editor-tooltip {
   position: absolute;
   background-color: #444;
-  z-index: 30;
+  z-index: 40;
   padding: 4px 7px;
   font-size: 12px;
   border-radius: 3px;

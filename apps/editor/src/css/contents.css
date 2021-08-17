@@ -2,7 +2,8 @@
   z-index basis
   -1: pseudo element
   20 - preview, wysiwyg
-  30 - wysiwyg code block language editor, tooltip, popup, context menu
+  30 - wysiwyg code block language editor, popup, context menu
+  40 - tooltip
 */
 .ProseMirror {
   font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
