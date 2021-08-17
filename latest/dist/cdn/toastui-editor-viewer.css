@@ -1,9 +1,16 @@
 /*!
  * @toast-ui/editor
- * @version 3.0.2 | Thu Aug 05 2021
+ * @version 3.0.3 | Tue Aug 17 2021
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
+/* 
+  z-index basis
+  -1: pseudo element
+  20 - preview, wysiwyg
+  30 - wysiwyg code block language editor, popup, context menu
+  40 - tooltip
+*/
 .ProseMirror {
   font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
     'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
@@ -42,6 +49,7 @@ table.ProseMirror-selectednode {
   font-size: 13px;
   font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
     'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
+  z-index: 20;
 }
 
 .toastui-editor-contents *:not(table) {
@@ -430,7 +438,7 @@ table.ProseMirror-selectednode {
   border: 1px solid #ccc;
   border-radius: 2px;
   background-color: #fff;
-  z-index: 100;
+  z-index: 30;
 }
 
 .toastui-editor-ww-code-block-language input {

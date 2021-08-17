@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.0.2 | Thu Aug 05 2021
+ * @version 3.0.3 | Tue Aug 17 2021
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -81,13 +81,6 @@ li.ProseMirror-selectednode:after {
   clear: both;
 }
 
-.toastui-editor-md-container {
-  position: absolute;
-  line-height: 1;
-  color: #222;
-  width: 100%;
-  height: inherit;
-}
 
 .toastui-editor-main {
   min-height: 0px;
@@ -159,6 +152,8 @@ li.ProseMirror-selectednode:after {
   height: 100%;
   width: 1px;
   background-color: #ebedf2;
+  position: absolute;
+  left: 50%;
 }
 
 .toastui-editor-main .toastui-editor-md-vertical-style .toastui-editor-md-splitter {
@@ -168,14 +163,25 @@ li.ProseMirror-selectednode:after {
 .toastui-editor-ww-container {
   display: none;
   overflow: hidden;
-  z-index: 10;
   height: inherit;
   background-color: #fff;
 }
 
+.auto-height .toastui-editor-main-container {
+  position: relative;
+}
+
+.toastui-editor-main-container {
+  position: absolute;
+  line-height: 1;
+  color: #222;
+  width: 100%;
+  height: inherit;
+}
+
 .toastui-editor-ww-container > .toastui-editor {
   height: inherit;
-  position: absolute;
+  position: relative;
   width: 100%;
 }
 
@@ -194,7 +200,7 @@ li.ProseMirror-selectednode:after {
 .toastui-editor-md-mode .toastui-editor-md-container,
 .toastui-editor-ww-mode .toastui-editor-ww-container {
   display: block;
-  z-index: 100;
+  z-index: 20;
 }
 
 .toastui-editor-md-mode .toastui-editor-md-vertical-style {
@@ -448,7 +454,7 @@ li.ProseMirror-selectednode:after {
 .toastui-editor-dropdown-toolbar {
   position: absolute;
   height: 46px;
-  z-index: 101;
+  z-index: 30;
   border-radius: 2px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
   border: 1px solid #dadde6;
@@ -468,7 +474,7 @@ li.ProseMirror-selectednode:after {
   width: 400px;
   margin-right: auto;
   background: #fff;
-  z-index: 9999;
+  z-index: 30;
   position: absolute;
   border-radius: 2px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
@@ -628,7 +634,7 @@ li.ProseMirror-selectednode:after {
   left: 0;
   border: 1px solid #00a9ff;
   background: rgba(0, 169, 255, 0.1);
-  z-index: 999;
+  z-index: 30;
 }
 
 .toastui-editor-popup-add-table .toastui-editor-table-description {
@@ -704,7 +710,7 @@ li.ProseMirror-selectednode:after {
   border-radius: 2px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
   border: 1px solid #dadde6;
-  z-index: 100;
+  z-index: 30;
   padding: 5px 0;
   background-color: #fff;
 }
@@ -798,7 +804,7 @@ li.ProseMirror-selectednode:after {
 .toastui-editor-tooltip {
   position: absolute;
   background-color: #444;
-  z-index: 999;
+  z-index: 40;
   padding: 4px 7px;
   font-size: 12px;
   border-radius: 3px;
@@ -932,6 +938,13 @@ li.ProseMirror-selectednode:after {
     max-width: none;
   }
 }
+/* 
+  z-index basis
+  -1: pseudo element
+  20 - preview, wysiwyg
+  30 - wysiwyg code block language editor, popup, context menu
+  40 - tooltip
+*/
 .ProseMirror {
   font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
     'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
@@ -970,6 +983,7 @@ table.ProseMirror-selectednode {
   font-size: 13px;
   font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', '나눔바른고딕',
     'Nanum Barun Gothic', '맑은고딕', 'Malgun Gothic', sans-serif;
+  z-index: 20;
 }
 
 .toastui-editor-contents *:not(table) {
@@ -1358,7 +1372,7 @@ table.ProseMirror-selectednode {
   border: 1px solid #ccc;
   border-radius: 2px;
   background-color: #fff;
-  z-index: 100;
+  z-index: 30;
 }
 
 .toastui-editor-ww-code-block-language input {
