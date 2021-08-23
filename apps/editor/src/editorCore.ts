@@ -82,6 +82,7 @@ import { getHTMLRenderConvertors } from './markdown/htmlRenderConvertors';
  *     @param {boolean} [options.frontMatter=false] - whether use the front matter
  *     @param {Array.<object>} [options.widgetRules=[]] - The rules for replacing the text with widget node
  *     @param {string} [options.theme] - The theme to style the editor with. The default is included in toastui-editor.css.
+ *     @param {autofocus} [options.autofocus=true] - automatically focus the editor on creation.
  */
 class ToastUIEditorCore {
   private initialHtml: string;
@@ -148,6 +149,7 @@ class ToastUIEditorCore {
         frontMatter: false,
         widgetRules: [],
         theme: 'light',
+        autofocus: true,
       },
       options
     );
@@ -281,7 +283,7 @@ class ToastUIEditorCore {
     }
 
     this.eventEmitter.emit('load', this);
-    this.moveCursorToStart();
+    this.moveCursorToStart(this.options.autofocus);
   }
 
   private addInitEvent() {
@@ -413,15 +415,15 @@ class ToastUIEditorCore {
   /**
    * Set cursor position to end
    */
-  moveCursorToEnd() {
-    this.getCurrentModeEditor().moveCursorToEnd();
+  moveCursorToEnd(focus = true) {
+    this.getCurrentModeEditor().moveCursorToEnd(focus);
   }
 
   /**
    * Set cursor position to start
    */
-  moveCursorToStart() {
-    this.getCurrentModeEditor().moveCursorToStart();
+  moveCursorToStart(focus = true) {
+    this.getCurrentModeEditor().moveCursorToStart(focus);
   }
 
   /**
