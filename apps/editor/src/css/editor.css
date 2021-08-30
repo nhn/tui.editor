@@ -50,6 +50,11 @@
   position: relative;
 }
 
+.toastui-editor > div {
+  height: inherit;
+  min-height: inherit;
+}
+
 .toastui-editor-md-container .toastui-editor,
 .toastui-editor-md-container .toastui-editor-md-preview {
   box-sizing: border-box;
