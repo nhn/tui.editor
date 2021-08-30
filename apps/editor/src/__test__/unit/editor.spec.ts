@@ -864,6 +864,25 @@ describe('editor', () => {
 
         expect(wwEditor.innerHTML).toContain(result);
       });
+
+      it('should keep the html block attributes with an empty string after changing the mode', () => {
+        createEditor({
+          el: container,
+          initialValue: '<iframe width="" height="" src=""></iframe>\n\ntest',
+          previewHighlight: false,
+          // add iframe html block renderer
+          customHTMLRenderer: createHTMLrenderer(),
+        });
+
+        editor.changeMode('wysiwyg');
+
+        const result = oneLineTrim`
+          <iframe width="" height="" src="" class="html-block"></iframe>
+          <p>test</p>
+        `;
+
+        expect(wwEditor.innerHTML).toContain(result);
+      });
     });
 
     describe('hooks option', () => {
