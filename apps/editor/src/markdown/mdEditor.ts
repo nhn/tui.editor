@@ -332,7 +332,7 @@ export default class MdEditor extends EditorBase {
     this.view.dispatch(tr.replaceWith(0, doc.content.size, nodes));
 
     if (cursorToEnd) {
-      this.moveCursorToEnd();
+      this.moveCursorToEnd(true);
     }
   }
 

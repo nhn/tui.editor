@@ -158,6 +158,7 @@ export interface EditorOptions {
   frontMatter?: boolean;
   widgetRules?: WidgetRule[];
   theme?: string;
+  autofocus?: boolean;
 }
 
 interface Slots {
@@ -193,9 +194,9 @@ export class EditorCore {
 
   blur(): void;
 
-  moveCursorToEnd(): void;
+  moveCursorToEnd(focus?: boolean): void;
 
-  moveCursorToStart(): void;
+  moveCursorToStart(focus?: boolean): void;
 
   setMarkdown(markdown: string, cursorToEnd?: boolean): void;
 
@@ -312,9 +313,9 @@ export interface Base {
 
   destroy(): void;
 
-  moveCursorToStart(): void;
+  moveCursorToStart(focus?: boolean): void;
 
-  moveCursorToEnd(): void;
+  moveCursorToEnd(focus?: boolean): void;
 
   setScrollTop(top: number): void;
 

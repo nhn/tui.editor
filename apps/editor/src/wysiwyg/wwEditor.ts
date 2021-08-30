@@ -255,7 +255,7 @@ export default class WysiwygEditor extends EditorBase {
     this.view.dispatch(tr.replaceWith(0, doc.content.size, newDoc));
 
     if (cursorToEnd) {
-      this.moveCursorToEnd();
+      this.moveCursorToEnd(true);
     }
   }
 
