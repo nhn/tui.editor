@@ -107,7 +107,7 @@ export default class ToWwConvertorState {
           if (nodeInfo.content.length) {
             this.closeNode();
           } else {
-            // just pop useless unmatced html inline node
+            // just pop useless unmatched html inline node
             this.stack.pop();
           }
         } else {
