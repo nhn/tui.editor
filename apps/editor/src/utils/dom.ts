@@ -7,6 +7,7 @@ import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import matches from 'tui-code-snippet/domUtil/matches';
 import { HTML_TAG, OPEN_TAG } from './constants';
+import { isNil } from './common';
 
 export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
   const left = parseInt(style.left, 10);
@@ -229,10 +230,10 @@ export function prependNode(node: Element, appended: string | ArrayLike<Element>
 
 export function setAttributes(attributes: Record<string, any>, element: HTMLElement) {
   Object.keys(attributes).forEach((attrName) => {
-    if (attributes[attrName]) {
-      element.setAttribute(attrName, attributes[attrName]);
-    } else {
+    if (isNil(attributes[attrName])) {
       element.removeAttribute(attrName);
+    } else {
+      element.setAttribute(attrName, attributes[attrName]);
     }
   });
 }

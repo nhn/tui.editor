@@ -108,7 +108,7 @@ export function quote(text: string) {
   return result[0] + text + result[1];
 }
 
-function isNil(value: unknown): value is null | undefined {
+export function isNil(value: unknown): value is null | undefined {
   return isNull(value) || isUndefined(value);
 }
 

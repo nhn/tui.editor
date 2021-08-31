@@ -16,7 +16,7 @@ const reHTMLAttr = new RegExp(
     'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' +
     'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' +
     'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' +
-    'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)',
+    'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style|controls)',
   'g'
 );
 
