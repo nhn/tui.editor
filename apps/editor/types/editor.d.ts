@@ -313,9 +313,9 @@ export interface Base {
 
   destroy(): void;
 
-  moveCursorToStart(focus?: boolean): void;
+  moveCursorToStart(focus: boolean): void;
 
-  moveCursorToEnd(focus?: boolean): void;
+  moveCursorToEnd(focus: boolean): void;
 
   setScrollTop(top: number): void;
 

@@ -498,6 +498,25 @@ describe('Convertor', () => {
 
       assertConverting(markdown, `${markdown}\n`);
     });
+
+    it('table with unmatched html list', () => {
+      const markdown = source`
+        | thead |
+        | ----- |
+        | <ul><li>bullet</li><ul> |
+        | <ol><li>ordered</li><ol> |
+        | <ul><li>nested<ul><li>nested</li><ul><li><ul> |
+      `;
+      const expected = source`
+        | thead |
+        | ----- |
+        | <ul><li>bullet</li></ul> |
+        | <ol><li>ordered</li></ol> |
+        | <ul><li>nested<ul><li>nested</li></ul></li></ul> |
+      `;
+
+      assertConverting(markdown, `${expected}\n`);
+    });
   });
 
   describe('convert block html', () => {
