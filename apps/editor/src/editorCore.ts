@@ -414,6 +414,7 @@ class ToastUIEditorCore {
 
   /**
    * Set cursor position to end
+   * @param {boolean} [focus] - automatically focus the editor
    */
   moveCursorToEnd(focus = true) {
     this.getCurrentModeEditor().moveCursorToEnd(focus);
@@ -421,6 +422,7 @@ class ToastUIEditorCore {
 
   /**
    * Set cursor position to start
+   * @param {boolean} [focus] - automatically focus the editor
    */
   moveCursorToStart(focus = true) {
     this.getCurrentModeEditor().moveCursorToStart(focus);
