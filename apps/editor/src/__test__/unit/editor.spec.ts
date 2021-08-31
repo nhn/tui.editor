@@ -865,10 +865,10 @@ describe('editor', () => {
         expect(wwEditor.innerHTML).toContain(result);
       });
 
-      it('should keep the html block attributes with an empty string after changing the mode', () => {
+      it('should keep the html attributes with an empty string after changing the mode', () => {
         createEditor({
           el: container,
-          initialValue: '<iframe width="" height="" src=""></iframe>\n\ntest',
+          initialValue: '<iframe width="" height="" src=""></iframe>',
           previewHighlight: false,
           // add iframe html block renderer
           customHTMLRenderer: createHTMLrenderer(),
@@ -878,7 +878,6 @@ describe('editor', () => {
 
         const result = oneLineTrim`
           <iframe width="" height="" src="" class="html-block"></iframe>
-          <p>test</p>
         `;
 
         expect(wwEditor.innerHTML).toContain(result);
