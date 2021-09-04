@@ -10,6 +10,8 @@ import {
 import { escapeXml } from '../commonmark/common';
 import { filterDisallowedTags } from './tagFilter';
 
+const CUSTOM_SYNTAX_LENGTH = 4;
+
 export const baseConvertors: HTMLConvertorMap = {
   heading(node, { entering }) {
     return {
@@ -223,16 +225,32 @@ export const baseConvertors: HTMLConvertorMap = {
   },
 
   customInline(node, context, convertors) {
-    const info = (node as CustomBlockNode).info!.trim().toLowerCase();
-    const customConvertor = convertors![info];
+    const { sourcepos, info } = node as CustomBlockNode;
+    const nomalizedInfo = info.trim().toLowerCase();
+    const customConvertor = convertors![nomalizedInfo];
+    const { entering } = context;
 
     if (customConvertor) {
-      return customConvertor!(node, context);
+      try {
+        return customConvertor!(node, context);
+      } catch (e) {
+        console.warn(e);
+      }
     }
 
-    return {
-      type: context.entering ? 'openTag' : 'closeTag',
-      tagName: 'span',
-    };
+    const text =
+      sourcepos![1][1] - sourcepos![0][1] + 1 === info.length + CUSTOM_SYNTAX_LENGTH
+        ? ''
+        : `${info} `;
+
+    return entering
+      ? [
+          { type: 'openTag', tagName: 'span' },
+          { type: 'text', content: `$$${text}` },
+        ]
+      : [
+          { type: 'text', content: '$$' },
+          { type: 'closeTag', tagName: 'span' },
+        ];
   },
 };
