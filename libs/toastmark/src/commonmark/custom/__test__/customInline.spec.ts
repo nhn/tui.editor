@@ -27,7 +27,7 @@ describe('customInline', () => {
 
     const html = renderer.render(root);
 
-    expect(html).toBe('<p>Hello <span>World</span></p>\n');
+    expect(html).toBe('<p>Hello <span>$$myInline World$$</span></p>\n');
   });
 
   it('nested markdown text example', () => {
@@ -50,7 +50,7 @@ describe('customInline', () => {
 
     const html = renderer.render(root);
 
-    expect(html).toBe('<p>Hello <span><em>World</em></span></p>\n');
+    expect(html).toBe('<p>Hello <span>$$myInline <em>World</em>$$</span></p>\n');
   });
 
   it('should be parsed as text without meta information', () => {
