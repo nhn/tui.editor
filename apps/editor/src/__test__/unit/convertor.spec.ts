@@ -316,6 +316,29 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
+    it('block nodes in list', () => {
+      const markdown = source`
+        1. foo
+
+            \`\`\`
+            bar
+            \`\`\`
+        
+            > bam
+      `;
+      const expected = source`
+        1. foo
+
+            \`\`\`
+            bar
+            \`\`\`
+        
+            > bam
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
     it('soft break', () => {
       const markdown = source`
         foo
