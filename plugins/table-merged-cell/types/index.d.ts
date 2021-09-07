@@ -1,4 +1,11 @@
-import type { PluginCommandMap, TableMdNode, TableCellMdNode, MdNode } from '@toast-ui/editor';
+import type {
+  PluginCommandMap,
+  TableMdNode,
+  TableCellMdNode,
+  MdNode,
+  PluginContext,
+  PluginInfo,
+} from '@toast-ui/editor';
 import type { Selection } from 'prosemirror-state';
 import type { Node, ResolvedPos } from 'prosemirror-model';
 
@@ -94,3 +101,5 @@ export interface TableOffsetMap {
 }
 
 export type CommandFn = PluginCommandMap[keyof PluginCommandMap];
+
+export default function tableMergedCellPlugin(context: PluginContext): PluginInfo;
