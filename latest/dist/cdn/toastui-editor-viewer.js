@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.0.3 | Tue Aug 17 2021
+ * @version 3.1.0 | Tue Sep 07 2021
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -10027,6 +10027,7 @@ function filterDisallowedTags(str) {
     }
     return str;
 }
+var CUSTOM_SYNTAX_LENGTH = 4;
 var baseConvertors = {
     heading: function (node, _a) {
         var entering = _a.entering;
@@ -10194,7 +10195,7 @@ var baseConvertors = {
                 return customConvertor(node, context);
             }
             catch (e) {
-                console.warn(e);
+                console.warn("[@toast-ui/editor] - The error occurred when " + info + " block node was parsed in markdown renderer: " + e);
             }
         }
         return [
@@ -10217,15 +10218,30 @@ var baseConvertors = {
         ];
     },
     customInline: function (node, context, convertors) {
-        var info = node.info.trim().toLowerCase();
-        var customConvertor = convertors[info];
+        var _a = node, sourcepos = _a.sourcepos, info = _a.info;
+        var nomalizedInfo = info.trim().toLowerCase();
+        var customConvertor = convertors[nomalizedInfo];
+        var entering = context.entering;
         if (customConvertor) {
-            return customConvertor(node, context);
+            try {
+                return customConvertor(node, context);
+            }
+            catch (e) {
+                console.warn("[@toast-ui/editor] - The error occurred when " + nomalizedInfo + " inline node was parsed in markdown renderer: " + e);
+            }
         }
-        return {
-            type: context.entering ? 'openTag' : 'closeTag',
-            tagName: 'span',
-        };
+        var text = sourcepos[1][1] - sourcepos[0][1] + 1 === info.length + CUSTOM_SYNTAX_LENGTH
+            ? ''
+            : info + " ";
+        return entering
+            ? [
+                { type: 'openTag', tagName: 'span' },
+                { type: 'text', content: "$$" + text },
+            ]
+            : [
+                { type: 'text', content: '$$' },
+                { type: 'closeTag', tagName: 'span' },
+            ];
     },
 };
 var gfmConvertors = {
@@ -10388,8 +10404,8 @@ var Renderer = /** @class */ (function () {
                     ? nodeType.toLowerCase()
                     : nodeType;
                 if (orgConvertor) {
-                    convertors[convertorType] = function (node, context) {
-                        context.origin = function () { return orgConvertor(node, context); };
+                    convertors[convertorType] = function (node, context, convertors) {
+                        context.origin = function () { return orgConvertor(node, context, convertors); };
                         return convertor(node, context);
                     };
                 }
@@ -10587,7 +10603,195 @@ var CLOSE_TAG = "</(" + TAG_NAME + ")\\s*[>]";
 var constants_HTML_TAG = "(?:" + constants_OPEN_TAG + "|" + CLOSE_TAG + ")";
 var reHTMLTag = new RegExp("^" + constants_HTML_TAG, 'i');
 
+// EXTERNAL MODULE: ../../node_modules/tui-code-snippet/type/isNull.js
+var type_isNull = __webpack_require__(934);
+// EXTERNAL MODULE: ../../node_modules/tui-code-snippet/request/sendHostname.js
+var request_sendHostname = __webpack_require__(391);
+;// CONCATENATED MODULE: ./src/utils/common.ts
+
+
+
+
+
+var isMac = /Mac/.test(navigator.platform);
+var reSpaceMoreThanOne = /[\u0020]+/g;
+var common_reEscapeChars = /[>(){}[\]+-.!#|]/g;
+var reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-.:/]*)>/g;
+var reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
+var reEscapePairedChars = /[*_~`]/g;
+function sendHostName() {
+    sendHostname('editor', 'UA-129966929-1');
+}
+function common_includes(arr, targetItem) {
+    return arr.indexOf(targetItem) !== -1;
+}
+var availableLinkAttributes = ['rel', 'target', 'hreflang', 'type'];
+var reMarkdownTextToEscapeMap = {
+    codeblock: /(^ {4}[^\n]+\n*)+/,
+    thematicBreak: /^ *((\* *){3,}|(- *){3,} *|(_ *){3,}) */,
+    atxHeading: /^(#{1,6}) +[\s\S]+/,
+    seTextheading: /^([^\n]+)\n *(=|-){2,} */,
+    blockquote: /^( *>[^\n]+.*)+/,
+    list: /^ *(\*+|-+|\d+\.) [\s\S]+/,
+    def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? */,
+    link: /!?\[.*\]\(.*\)/,
+    reflink: /!?\[.*\]\s*\[([^\]]*)\]/,
+    verticalBar: /\u007C/,
+    fencedCodeblock: /^((`|~){3,})/,
+};
+function sanitizeLinkAttribute(attribute) {
+    if (!attribute) {
+        return null;
+    }
+    var linkAttributes = {};
+    availableLinkAttributes.forEach(function (key) {
+        if (!isUndefined_default()(attribute[key])) {
+            linkAttributes[key] = attribute[key];
+        }
+    });
+    return linkAttributes;
+}
+function common_repeat(text, count) {
+    var result = '';
+    for (var i = 0; i < count; i += 1) {
+        result += text;
+    }
+    return result;
+}
+function isNeedEscapeText(text) {
+    var needEscape = false;
+    forEachOwnProperties(reMarkdownTextToEscapeMap, function (reMarkdownTextToEscape) {
+        if (reMarkdownTextToEscape.test(text)) {
+            needEscape = true;
+        }
+        return !needEscape;
+    });
+    return needEscape;
+}
+function common_escape(text) {
+    var replacer = function (matched) { return "\\" + matched; };
+    var escapedText = text.replace(reSpaceMoreThanOne, ' ');
+    if (reEscapeBackSlash.test(escapedText)) {
+        escapedText = escapedText.replace(reEscapeBackSlash, replacer);
+    }
+    escapedText = escapedText.replace(reEscapePairedChars, replacer);
+    if (reEscapeHTML.test(escapedText)) {
+        escapedText = escapedText.replace(reEscapeHTML, replacer);
+    }
+    if (isNeedEscapeText(escapedText)) {
+        escapedText = escapedText.replace(common_reEscapeChars, replacer);
+    }
+    return escapedText;
+}
+function quote(text) {
+    var result;
+    if (text.indexOf('"') === -1) {
+        result = '""';
+    }
+    else {
+        result = text.indexOf("'") === -1 ? "''" : '()';
+    }
+    return result[0] + text + result[1];
+}
+function common_isNil(value) {
+    return isNull(value) || isUndefined(value);
+}
+function shallowEqual(o1, o2) {
+    if (o1 === null && o1 === o2) {
+        return true;
+    }
+    if (typeof o1 !== 'object' || typeof o2 !== 'object' || common_isNil(o1) || common_isNil(o2)) {
+        return o1 === o2;
+    }
+    for (var key in o1) {
+        if (o1[key] !== o2[key]) {
+            return false;
+        }
+    }
+    for (var key in o2) {
+        if (!(key in o1)) {
+            return false;
+        }
+    }
+    return true;
+}
+function common_last(arr) {
+    return arr[arr.length - 1];
+}
+function common_between(value, min, max) {
+    return value >= min && value <= max;
+}
+function isObject(obj) {
+    return typeof obj === 'object' && obj !== null;
+}
+function deepMergedCopy(targetObj, obj) {
+    var resultObj = tslib_es6_assign({}, targetObj);
+    if (targetObj && obj) {
+        Object.keys(obj).forEach(function (prop) {
+            if (isObject(resultObj[prop])) {
+                if (Array.isArray(obj[prop])) {
+                    resultObj[prop] = deepCopyArray(obj[prop]);
+                }
+                else if (resultObj.hasOwnProperty(prop)) {
+                    resultObj[prop] = deepMergedCopy(resultObj[prop], obj[prop]);
+                }
+                else {
+                    resultObj[prop] = deepCopy(obj[prop]);
+                }
+            }
+            else {
+                resultObj[prop] = obj[prop];
+            }
+        });
+    }
+    return resultObj;
+}
+function deepCopyArray(items) {
+    return items.map(function (item) {
+        if (isObject(item)) {
+            return Array.isArray(item) ? deepCopyArray(item) : deepCopy(item);
+        }
+        return item;
+    });
+}
+function deepCopy(obj) {
+    var keys = Object.keys(obj);
+    if (!keys.length) {
+        return obj;
+    }
+    return keys.reduce(function (acc, prop) {
+        if (isObject(obj[prop])) {
+            acc[prop] = Array.isArray(obj[prop]) ? deepCopyArray(obj[prop]) : deepCopy(obj[prop]);
+        }
+        else {
+            acc[prop] = obj[prop];
+        }
+        return acc;
+    }, {});
+}
+function common_assign(targetObj, obj) {
+    if (obj === void 0) { obj = {}; }
+    Object.keys(obj).forEach(function (prop) {
+        if (targetObj.hasOwnProperty(prop) && typeof targetObj[prop] === 'object') {
+            if (Array.isArray(obj[prop])) {
+                targetObj[prop] = obj[prop];
+            }
+            else {
+                common_assign(targetObj[prop], obj[prop]);
+            }
+        }
+        else {
+            targetObj[prop] = obj[prop];
+        }
+    });
+    return targetObj;
+}
+function getSortedNumPair(valueA, valueB) {
+    return valueA > valueB ? [valueB, valueA] : [valueA, valueB];
+}
+
 ;// CONCATENATED MODULE: ./src/utils/dom.ts
+
 
 
 
@@ -10777,11 +10981,11 @@ function prependNode(node, appended) {
 }
 function setAttributes(attributes, element) {
     Object.keys(attributes).forEach(function (attrName) {
-        if (attributes[attrName]) {
-            element.setAttribute(attrName, attributes[attrName]);
+        if (isNil(attributes[attrName])) {
+            element.removeAttribute(attrName);
         }
         else {
-            element.removeAttribute(attrName);
+            element.setAttribute(attrName, attributes[attrName]);
         }
     });
 }
@@ -10809,193 +11013,6 @@ function replaceBRWithEmptyBlock(html) {
 // EXTERNAL MODULE: ../../node_modules/tui-code-snippet/type/isFunction.js
 var isFunction = __webpack_require__(294);
 var isFunction_default = /*#__PURE__*/__webpack_require__.n(isFunction);
-// EXTERNAL MODULE: ../../node_modules/tui-code-snippet/type/isNull.js
-var type_isNull = __webpack_require__(934);
-// EXTERNAL MODULE: ../../node_modules/tui-code-snippet/request/sendHostname.js
-var request_sendHostname = __webpack_require__(391);
-;// CONCATENATED MODULE: ./src/utils/common.ts
-
-
-
-
-
-var isMac = /Mac/.test(navigator.platform);
-var reSpaceMoreThanOne = /[\u0020]+/g;
-var common_reEscapeChars = /[>(){}[\]+-.!#|]/g;
-var reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-.:/]*)>/g;
-var reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
-var reEscapePairedChars = /[*_~`]/g;
-function sendHostName() {
-    sendHostname('editor', 'UA-129966929-1');
-}
-function common_includes(arr, targetItem) {
-    return arr.indexOf(targetItem) !== -1;
-}
-var availableLinkAttributes = ['rel', 'target', 'hreflang', 'type'];
-var reMarkdownTextToEscapeMap = {
-    codeblock: /(^ {4}[^\n]+\n*)+/,
-    thematicBreak: /^ *((\* *){3,}|(- *){3,} *|(_ *){3,}) */,
-    atxHeading: /^(#{1,6}) +[\s\S]+/,
-    seTextheading: /^([^\n]+)\n *(=|-){2,} */,
-    blockquote: /^( *>[^\n]+.*)+/,
-    list: /^ *(\*+|-+|\d+\.) [\s\S]+/,
-    def: /^ *\[([^\]]+)\]: *<?([^\s>]+)>?(?: +["(]([^\n]+)[")])? */,
-    link: /!?\[.*\]\(.*\)/,
-    reflink: /!?\[.*\]\s*\[([^\]]*)\]/,
-    verticalBar: /\u007C/,
-    fencedCodeblock: /^((`|~){3,})/,
-};
-function sanitizeLinkAttribute(attribute) {
-    if (!attribute) {
-        return null;
-    }
-    var linkAttributes = {};
-    availableLinkAttributes.forEach(function (key) {
-        if (!isUndefined_default()(attribute[key])) {
-            linkAttributes[key] = attribute[key];
-        }
-    });
-    return linkAttributes;
-}
-function common_repeat(text, count) {
-    var result = '';
-    for (var i = 0; i < count; i += 1) {
-        result += text;
-    }
-    return result;
-}
-function isNeedEscapeText(text) {
-    var needEscape = false;
-    forEachOwnProperties(reMarkdownTextToEscapeMap, function (reMarkdownTextToEscape) {
-        if (reMarkdownTextToEscape.test(text)) {
-            needEscape = true;
-        }
-        return !needEscape;
-    });
-    return needEscape;
-}
-function common_escape(text) {
-    var replacer = function (matched) { return "\\" + matched; };
-    var escapedText = text.replace(reSpaceMoreThanOne, ' ');
-    if (reEscapeBackSlash.test(escapedText)) {
-        escapedText = escapedText.replace(reEscapeBackSlash, replacer);
-    }
-    escapedText = escapedText.replace(reEscapePairedChars, replacer);
-    if (reEscapeHTML.test(escapedText)) {
-        escapedText = escapedText.replace(reEscapeHTML, replacer);
-    }
-    if (isNeedEscapeText(escapedText)) {
-        escapedText = escapedText.replace(common_reEscapeChars, replacer);
-    }
-    return escapedText;
-}
-function quote(text) {
-    var result;
-    if (text.indexOf('"') === -1) {
-        result = '""';
-    }
-    else {
-        result = text.indexOf("'") === -1 ? "''" : '()';
-    }
-    return result[0] + text + result[1];
-}
-function isNil(value) {
-    return isNull(value) || isUndefined(value);
-}
-function shallowEqual(o1, o2) {
-    if (o1 === null && o1 === o2) {
-        return true;
-    }
-    if (typeof o1 !== 'object' || typeof o2 !== 'object' || isNil(o1) || isNil(o2)) {
-        return o1 === o2;
-    }
-    for (var key in o1) {
-        if (o1[key] !== o2[key]) {
-            return false;
-        }
-    }
-    for (var key in o2) {
-        if (!(key in o1)) {
-            return false;
-        }
-    }
-    return true;
-}
-function common_last(arr) {
-    return arr[arr.length - 1];
-}
-function common_between(value, min, max) {
-    return value >= min && value <= max;
-}
-function isObject(obj) {
-    return typeof obj === 'object' && obj !== null;
-}
-function deepMergedCopy(targetObj, obj) {
-    var resultObj = tslib_es6_assign({}, targetObj);
-    if (targetObj && obj) {
-        Object.keys(obj).forEach(function (prop) {
-            if (isObject(resultObj[prop])) {
-                if (Array.isArray(obj[prop])) {
-                    resultObj[prop] = deepCopyArray(obj[prop]);
-                }
-                else if (resultObj.hasOwnProperty(prop)) {
-                    resultObj[prop] = deepMergedCopy(resultObj[prop], obj[prop]);
-                }
-                else {
-                    resultObj[prop] = deepCopy(obj[prop]);
-                }
-            }
-            else {
-                resultObj[prop] = obj[prop];
-            }
-        });
-    }
-    return resultObj;
-}
-function deepCopyArray(items) {
-    return items.map(function (item) {
-        if (isObject(item)) {
-            return Array.isArray(item) ? deepCopyArray(item) : deepCopy(item);
-        }
-        return item;
-    });
-}
-function deepCopy(obj) {
-    var keys = Object.keys(obj);
-    if (!keys.length) {
-        return obj;
-    }
-    return keys.reduce(function (acc, prop) {
-        if (isObject(obj[prop])) {
-            acc[prop] = Array.isArray(obj[prop]) ? deepCopyArray(obj[prop]) : deepCopy(obj[prop]);
-        }
-        else {
-            acc[prop] = obj[prop];
-        }
-        return acc;
-    }, {});
-}
-function common_assign(targetObj, obj) {
-    if (obj === void 0) { obj = {}; }
-    Object.keys(obj).forEach(function (prop) {
-        if (targetObj.hasOwnProperty(prop) && typeof targetObj[prop] === 'object') {
-            if (Array.isArray(obj[prop])) {
-                targetObj[prop] = obj[prop];
-            }
-            else {
-                common_assign(targetObj[prop], obj[prop]);
-            }
-        }
-        else {
-            targetObj[prop] = obj[prop];
-        }
-    });
-    return targetObj;
-}
-function getSortedNumPair(valueA, valueB) {
-    return valueA > valueB ? [valueB, valueA] : [valueA, valueB];
-}
-
 ;// CONCATENATED MODULE: ./src/utils/markdown.ts
 
 function hasSpecificTypeAncestor(mdNode) {
@@ -11280,7 +11297,7 @@ var reHTMLAttr = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|ce
     'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' +
     'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' +
     'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' +
-    'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
+    'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style|controls)', 'g');
 var reSvgAttr = new RegExp('^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' +
     'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' +
     'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' +

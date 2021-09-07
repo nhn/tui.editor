@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.0.3 | Tue Aug 17 2021
+ * @version 3.1.0 | Tue Sep 07 2021
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -2775,15 +2775,19 @@ var EditorBase = /** @class */ (function () {
             delete _this[prop];
         });
     };
-    EditorBase.prototype.moveCursorToStart = function () {
+    EditorBase.prototype.moveCursorToStart = function (focus) {
         var tr = this.view.state.tr;
         this.view.dispatch(tr.setSelection(createTextSelection(tr, 1)).scrollIntoView());
-        this.focus();
+        if (focus) {
+            this.focus();
+        }
     };
-    EditorBase.prototype.moveCursorToEnd = function () {
+    EditorBase.prototype.moveCursorToEnd = function (focus) {
         var tr = this.view.state.tr;
         this.view.dispatch(tr.setSelection(createTextSelection(tr, tr.doc.content.size - 1)).scrollIntoView());
-        this.focus();
+        if (focus) {
+            this.focus();
+        }
     };
     EditorBase.prototype.setScrollTop = function (top) {
         this.view.dom.scrollTop = top;
@@ -2917,6 +2921,7 @@ var HTML_TAG = "(?:" + OPEN_TAG + "|" + CLOSE_TAG + ")";
 var reHTMLTag = new RegExp("^" + HTML_TAG, 'i');
 
 ;// CONCATENATED MODULE: ./src/utils/dom.ts
+
 
 
 
@@ -3106,11 +3111,11 @@ function prependNode(node, appended) {
 }
 function setAttributes(attributes, element) {
     Object.keys(attributes).forEach(function (attrName) {
-        if (attributes[attrName]) {
-            element.setAttribute(attrName, attributes[attrName]);
+        if (isNil(attributes[attrName])) {
+            element.removeAttribute(attrName);
         }
         else {
-            element.removeAttribute(attrName);
+            element.setAttribute(attrName, attributes[attrName]);
         }
     });
 }
@@ -5750,7 +5755,7 @@ var MdEditor = /** @class */ (function (_super) {
         });
         this.view.dispatch(tr.replaceWith(0, doc.content.size, nodes));
         if (cursorToEnd) {
-            this.moveCursorToEnd();
+            this.moveCursorToEnd(true);
         }
     };
     MdEditor.prototype.addWidget = function (node, style, mdPos) {
@@ -14226,6 +14231,7 @@ function filterDisallowedTags(str) {
     }
     return str;
 }
+var CUSTOM_SYNTAX_LENGTH = 4;
 var baseConvertors = {
     heading: function (node, _a) {
         var entering = _a.entering;
@@ -14393,7 +14399,7 @@ var baseConvertors = {
                 return customConvertor(node, context);
             }
             catch (e) {
-                console.warn(e);
+                console.warn("[@toast-ui/editor] - The error occurred when " + info + " block node was parsed in markdown renderer: " + e);
             }
         }
         return [
@@ -14416,15 +14422,30 @@ var baseConvertors = {
         ];
     },
     customInline: function (node, context, convertors) {
-        var info = node.info.trim().toLowerCase();
-        var customConvertor = convertors[info];
+        var _a = node, sourcepos = _a.sourcepos, info = _a.info;
+        var nomalizedInfo = info.trim().toLowerCase();
+        var customConvertor = convertors[nomalizedInfo];
+        var entering = context.entering;
         if (customConvertor) {
-            return customConvertor(node, context);
+            try {
+                return customConvertor(node, context);
+            }
+            catch (e) {
+                console.warn("[@toast-ui/editor] - The error occurred when " + nomalizedInfo + " inline node was parsed in markdown renderer: " + e);
+            }
         }
-        return {
-            type: context.entering ? 'openTag' : 'closeTag',
-            tagName: 'span',
-        };
+        var text = sourcepos[1][1] - sourcepos[0][1] + 1 === info.length + CUSTOM_SYNTAX_LENGTH
+            ? ''
+            : info + " ";
+        return entering
+            ? [
+                { type: 'openTag', tagName: 'span' },
+                { type: 'text', content: "$$" + text },
+            ]
+            : [
+                { type: 'text', content: '$$' },
+                { type: 'closeTag', tagName: 'span' },
+            ];
     },
 };
 var gfmConvertors = {
@@ -14587,8 +14608,8 @@ var Renderer = /** @class */ (function () {
                     ? nodeType.toLowerCase()
                     : nodeType;
                 if (orgConvertor) {
-                    convertors[convertorType] = function (node, context) {
-                        context.origin = function () { return orgConvertor(node, context); };
+                    convertors[convertorType] = function (node, context, convertors) {
+                        context.origin = function () { return orgConvertor(node, context, convertors); };
                         return convertor(node, context);
                     };
                 }
@@ -14746,7 +14767,7 @@ var reHTMLAttr = new RegExp('^(abbr|align|alt|axis|bgcolor|border|cellpadding|ce
     'ismap|lang|language|nohref|nowrap|rel|rev|rows|rules|' +
     'scope|scrolling|shape|size|span|start|summary|tabindex|target|title|type|' +
     'valign|value|vspace|width|checked|mathvariant|encoding|id|name|' +
-    'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style)', 'g');
+    'background|cite|href|longdesc|src|usemap|xlink:href|data-+|checked|style|controls)', 'g');
 var reSvgAttr = new RegExp('^(accent-height|accumulate|additive|alphabetic|arabic-form|ascent|' +
     'baseProfile|bbox|begin|by|calcMode|cap-height|class|color|color-rendering|content|' +
     'cx|cy|d|dx|dy|descent|display|dur|end|fill|fill-rule|font-family|font-size|font-stretch|' +
@@ -17570,7 +17591,7 @@ var paragraph_Paragraph = /** @class */ (function (_super) {
         get: function () {
             return {
                 content: 'inline*',
-                group: 'block listGroup',
+                group: 'block',
                 attrs: __assign({}, getDefaultCustomAttrs()),
                 parseDOM: [{ tag: 'p' }],
                 toDOM: function (_a) {
@@ -17825,7 +17846,7 @@ var BulletList = /** @class */ (function (_super) {
         get: function () {
             return {
                 content: 'listItem+',
-                group: 'block listGroup',
+                group: 'block',
                 attrs: __assign({ rawHTML: { default: null } }, getDefaultCustomAttrs()),
                 parseDOM: [createDOMInfoParsedRawHTML('ul')],
                 toDOM: function (_a) {
@@ -17882,7 +17903,7 @@ var OrderedList = /** @class */ (function (_super) {
         get: function () {
             return {
                 content: 'listItem+',
-                group: 'block listGroup',
+                group: 'block',
                 attrs: __assign({ order: { default: 1 }, rawHTML: { default: null } }, getDefaultCustomAttrs()),
                 parseDOM: [
                     {
@@ -17943,7 +17964,8 @@ var listItem_ListItem = /** @class */ (function (_super) {
     Object.defineProperty(ListItem.prototype, "schema", {
         get: function () {
             return {
-                content: 'paragraph listGroup*',
+                content: 'paragraph block*',
+                selectable: false,
                 attrs: {
                     task: { default: false },
                     checked: { default: false },
@@ -19609,7 +19631,7 @@ var WysiwygEditor = /** @class */ (function (_super) {
         var _a = this.view.state, tr = _a.tr, doc = _a.doc;
         this.view.dispatch(tr.replaceWith(0, doc.content.size, newDoc));
         if (cursorToEnd) {
-            this.moveCursorToEnd();
+            this.moveCursorToEnd(true);
         }
     };
     WysiwygEditor.prototype.setSelection = function (start, end) {
@@ -20525,6 +20547,27 @@ var ToWwConvertorState = /** @class */ (function () {
         var doc = external_commonjs_prosemirror_model_commonjs2_prosemirror_model_amd_prosemirror_model_.DOMParser.fromSchema(this.schema).parse(root);
         doc.content.forEach(function (node) { return _this.push(node); });
     };
+    ToWwConvertorState.prototype.closeUnmatchedHTMLInline = function (node, entering) {
+        var _a;
+        if (!entering && node.type !== 'htmlInline') {
+            var length = this.stack.length - 1;
+            for (var i = length; i >= 0; i -= 1) {
+                var nodeInfo = this.stack[i];
+                if ((_a = nodeInfo.attrs) === null || _a === void 0 ? void 0 : _a.rawHTML) {
+                    if (nodeInfo.content.length) {
+                        this.closeNode();
+                    }
+                    else {
+                        // just pop useless unmatched html inline node
+                        this.stack.pop();
+                    }
+                }
+                else {
+                    break;
+                }
+            }
+        }
+    };
     ToWwConvertorState.prototype.convert = function (mdNode, infoForPosSync) {
         var walker = mdNode.walker();
         var event = walker.next();
@@ -20542,6 +20585,7 @@ var ToWwConvertorState = /** @class */ (function () {
                         skipped = true;
                     },
                 };
+                this_1.closeUnmatchedHTMLInline(node, entering);
                 convertor(this_1, node, context);
                 if ((infoForPosSync === null || infoForPosSync === void 0 ? void 0 : infoForPosSync.node) === node) {
                     var pos = this_1.stack.reduce(function (nodeSize, stackItem) {
@@ -22115,6 +22159,7 @@ var ScrollSync = /** @class */ (function () {
  *     @param {boolean} [options.frontMatter=false] - whether use the front matter
  *     @param {Array.<object>} [options.widgetRules=[]] - The rules for replacing the text with widget node
  *     @param {string} [options.theme] - The theme to style the editor with. The default is included in toastui-editor.css.
+ *     @param {autofocus} [options.autofocus=true] - automatically focus the editor on creation.
  */
 var ToastUIEditorCore = /** @class */ (function () {
     function ToastUIEditorCore(options) {
@@ -22148,6 +22193,7 @@ var ToastUIEditorCore = /** @class */ (function () {
             frontMatter: false,
             widgetRules: [],
             theme: 'light',
+            autofocus: true,
         }, options);
         var _a = this.options, customHTMLRenderer = _a.customHTMLRenderer, extendedAutolinks = _a.extendedAutolinks, referenceDefinition = _a.referenceDefinition, frontMatter = _a.frontMatter, customMarkdownRenderer = _a.customMarkdownRenderer, useCommandShortcut = _a.useCommandShortcut, initialEditType = _a.initialEditType, widgetRules = _a.widgetRules, customHTMLSanitizer = _a.customHTMLSanitizer;
         this.mode = initialEditType || 'markdown';
@@ -22215,7 +22261,7 @@ var ToastUIEditorCore = /** @class */ (function () {
             forEachOwnProperties_default()(this.options.events, function (fn, key) { return _this.on(key, fn); });
         }
         this.eventEmitter.emit('load', this);
-        this.moveCursorToStart();
+        this.moveCursorToStart(this.options.autofocus);
     }
     ToastUIEditorCore.prototype.addInitEvent = function () {
         this.on('needChangeMode', this.changeMode.bind(this));
@@ -22331,15 +22377,19 @@ var ToastUIEditorCore = /** @class */ (function () {
     };
     /**
      * Set cursor position to end
+     * @param {boolean} [focus] - automatically focus the editor
      */
-    ToastUIEditorCore.prototype.moveCursorToEnd = function () {
-        this.getCurrentModeEditor().moveCursorToEnd();
+    ToastUIEditorCore.prototype.moveCursorToEnd = function (focus) {
+        if (focus === void 0) { focus = true; }
+        this.getCurrentModeEditor().moveCursorToEnd(focus);
     };
     /**
      * Set cursor position to start
+     * @param {boolean} [focus] - automatically focus the editor
      */
-    ToastUIEditorCore.prototype.moveCursorToStart = function () {
-        this.getCurrentModeEditor().moveCursorToStart();
+    ToastUIEditorCore.prototype.moveCursorToStart = function (focus) {
+        if (focus === void 0) { focus = true; }
+        this.getCurrentModeEditor().moveCursorToStart(focus);
     };
     /**
      * Set markdown syntax text.
