@@ -199,7 +199,9 @@ export const baseConvertors: HTMLConvertorMap = {
       try {
         return customConvertor!(node, context);
       } catch (e) {
-        console.warn(e);
+        console.warn(
+          `[@toast-ui/editor] - The error occurs when ${info} block node is parsed in markdown renderer: ${e}`
+        );
       }
     }
 
@@ -234,7 +236,9 @@ export const baseConvertors: HTMLConvertorMap = {
       try {
         return customConvertor!(node, context);
       } catch (e) {
-        console.warn(e);
+        console.warn(
+          `[@toast-ui/editor] - The error occurs when ${nomalizedInfo} inline node is parsed in markdown renderer: ${e}`
+        );
       }
     }
 
