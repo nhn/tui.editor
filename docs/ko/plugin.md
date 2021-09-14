@@ -200,7 +200,7 @@ interface PluginInfo {
 }
 ```
 
-#### toHTMLRenderers, toMarkdownRenderers
+#### toHTMLRenderers
 
 `toHTMLRenderers` 객체는 에디터의 마크다운 프리뷰에서 렌더링될 때 또는 마크다운 에디터에서 위지윅 에디터로 컨버팅될 때 요소의 렌더링 결과를 변경할 수 있다. 에디터의 [customHTMLRenderer](https://github.com/nhn/tui.editor/blob/master/docs/ko/custom-html-renderer.md) 옵션과 동일하다.
 
