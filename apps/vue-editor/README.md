@@ -295,6 +295,7 @@ new Vue({
 | ------------ | ------ | ------- | ----------------------------------------------- |
 | initialValue | String | ''      | Viewer's initial value                          |
 | height       | String | '300px' | This prop can control the height of the viewer. |
+| options      | Object | above `defaultOptions` | Options of tui.editor. This is for initailize tui.editor. |
 
 ```html
 <template>
