@@ -80,9 +80,11 @@ export function addLangs(i18n: I18n) {
   i18n.setLanguage(['uk', 'uk-UA'], {
     'Text color': 'Колір тексту',
   });
+
   i18n.setLanguage('zh-CN', {
     'Text color': '文字颜色',
   });
+
   i18n.setLanguage('zh-TW', {
     'Text color': '文字顏色',
   });
