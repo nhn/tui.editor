@@ -169,6 +169,9 @@ class ToastUIEditorCore {
     this.mode = initialEditType || 'markdown';
     this.mdPreviewStyle = this.options.previewStyle;
 
+    this.i18n = i18n;
+    this.i18n.setCode(this.options.language);
+
     this.eventEmitter = new EventEmitter();
 
     setWidgetRules(widgetRules);
@@ -204,9 +207,6 @@ class ToastUIEditorCore {
       rendererOptions.sanitizer,
       wwToDOMAdaptor
     );
-
-    this.i18n = i18n;
-    this.i18n.setCode(this.options.language);
 
     this.toastMark = new ToastMark('', {
       disallowedHtmlBlockTags: ['br', 'img'],
