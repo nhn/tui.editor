@@ -162,9 +162,7 @@ export interface CustomInlineMdNode extends MdNode {
   info: string;
 }
 
-export type AutolinkParser = (
-  content: string
-) => {
+export type AutolinkParser = (content: string) => {
   url: string;
   text: string;
   range: [number, number];

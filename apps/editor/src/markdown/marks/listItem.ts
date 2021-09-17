@@ -121,51 +121,52 @@ export class ListItem extends Mark {
   }
 
   private toList(commandType: CommandType): EditorCommand {
-    return () => ({ doc, tr, selection }, dispatch) => {
-      const { toastMark } = this.context;
-      const rangeInfo = getRangeInfo(selection);
-      // should add `1` to line for the markdown parser
-      // because markdown parser has `1`(not zero) as the start number
-      const startLine = rangeInfo.startIndex + 1;
-      const endLine = rangeInfo.endIndex + 1;
-      let { endToOffset } = rangeInfo;
+    return () =>
+      ({ doc, tr, selection }, dispatch) => {
+        const { toastMark } = this.context;
+        const rangeInfo = getRangeInfo(selection);
+        // should add `1` to line for the markdown parser
+        // because markdown parser has `1`(not zero) as the start number
+        const startLine = rangeInfo.startIndex + 1;
+        const endLine = rangeInfo.endIndex + 1;
+        let { endToOffset } = rangeInfo;
 
-      let skipLines: number[] = [];
+        let skipLines: number[] = [];
 
-      for (let line = startLine; line <= endLine; line += 1) {
-        const mdNode: MdNode = toastMark.findFirstNodeAtLine(line)!;
+        for (let line = startLine; line <= endLine; line += 1) {
+          const mdNode: MdNode = toastMark.findFirstNodeAtLine(line)!;
 
-        if (mdNode && cannotBeListNode(mdNode)) {
-          break;
+          if (mdNode && cannotBeListNode(mdNode)) {
+            break;
+          }
+
+          // to skip unnecessary processing
+          if (skipLines.indexOf(line) !== -1) {
+            continue;
+          }
+
+          const context: ToListContext<MdNode> = { toastMark, mdNode, doc, line, startLine };
+          const { changedResults } = isListNode(mdNode)
+            ? otherListToList[commandType](context as ToListContext)
+            : otherNodeToList[commandType](context);
+
+          const endOffset = this.changeToListPerLine(tr, changedResults, {
+            from: getNodeContentOffsetRange(doc, changedResults[0].line - 1).startOffset,
+            startLine: changedResults[0].line,
+            endLine: last(changedResults).line,
+            indexDiff: 1,
+          });
+
+          endToOffset = Math.max(endOffset, endToOffset);
+
+          if (changedResults) {
+            skipLines = skipLines.concat(changedResults.map((info) => info.line));
+          }
         }
 
-        // to skip unnecessary processing
-        if (skipLines.indexOf(line) !== -1) {
-          continue;
-        }
-
-        const context: ToListContext<MdNode> = { toastMark, mdNode, doc, line, startLine };
-        const { changedResults } = isListNode(mdNode)
-          ? otherListToList[commandType](context as ToListContext)
-          : otherNodeToList[commandType](context);
-
-        const endOffset = this.changeToListPerLine(tr, changedResults, {
-          from: getNodeContentOffsetRange(doc, changedResults[0].line - 1).startOffset,
-          startLine: changedResults[0].line,
-          endLine: last(changedResults).line,
-          indexDiff: 1,
-        });
-
-        endToOffset = Math.max(endOffset, endToOffset);
-
-        if (changedResults) {
-          skipLines = skipLines.concat(changedResults.map((info) => info.line));
-        }
-      }
-
-      dispatch!(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset))));
-      return true;
-    };
+        dispatch!(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset))));
+        return true;
+      };
   }
 
   private changeToListPerLine(

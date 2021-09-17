@@ -7,9 +7,10 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v2
       - name: Use Node.js 15.x
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: '15.x'
+          cache: npm
       - name: Install
         run: |
           npm ci
@@ -26,9 +27,10 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v2
       - name: Use Node.js 15.x
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: '15.x'
+          cache: npm
       - name: Install
         run: |
           npm ci
@@ -48,9 +50,10 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v2
       - name: Use Node.js 15.x
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: '15.x'
+          cache: npm
       - name: Install
         run: |
           npm ci
@@ -85,9 +88,10 @@ jobs:
         with:
           path: ./apps/editor/
       - name: Use Node.js 15.x
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: '15.x'
+          cache: npm
           registry-url: https://registry.npmjs.org/
       - name: Install
         run: |

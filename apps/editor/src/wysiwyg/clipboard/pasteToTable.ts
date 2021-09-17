@@ -282,9 +282,8 @@ function canMerge(map: TableOffsetMap, pastingInfo: PastingRangeInfo) {
   const ranges = map.getSpannedOffsets(pastingInfo);
 
   const { rowCount, columnCount } = getRowAndColumnCount(ranges);
-  const { rowCount: pastingRowCount, columnCount: pastingColumnCount } = getRowAndColumnCount(
-    pastingInfo
-  );
+  const { rowCount: pastingRowCount, columnCount: pastingColumnCount } =
+    getRowAndColumnCount(pastingInfo);
 
   return rowCount === pastingRowCount && columnCount === pastingColumnCount;
 }

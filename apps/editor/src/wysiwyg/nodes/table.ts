@@ -105,31 +105,32 @@ export class Table extends NodeSchema {
   }
 
   private addTable(): EditorCommand<AddTablePayload> {
-    return (payload = { rowCount: 2, columnCount: 1, data: [] }) => (state, dispatch) => {
-      const { rowCount, columnCount, data } = payload;
-      const { schema, selection, tr } = state;
-      const { from, to, $from } = selection;
-      const collapsed = from === to;
+    return (payload = { rowCount: 2, columnCount: 1, data: [] }) =>
+      (state, dispatch) => {
+        const { rowCount, columnCount, data } = payload;
+        const { schema, selection, tr } = state;
+        const { from, to, $from } = selection;
+        const collapsed = from === to;
 
-      if (collapsed && !isInTableNode($from)) {
-        const { tableHead, tableBody } = schema.nodes;
+        if (collapsed && !isInTableNode($from)) {
+          const { tableHead, tableBody } = schema.nodes;
 
-        const theadData = data?.slice(0, columnCount);
-        const tbodyData = data?.slice(columnCount, data.length);
-        const tableHeadRow = createTableHeadRow(columnCount, schema, theadData);
-        const tableBodyRows = createTableBodyRows(rowCount - 1, columnCount, schema, tbodyData);
-        const table = schema.nodes.table.create(null, [
-          tableHead.create(null, tableHeadRow),
-          tableBody.create(null, tableBodyRows),
-        ]);
+          const theadData = data?.slice(0, columnCount);
+          const tbodyData = data?.slice(columnCount, data.length);
+          const tableHeadRow = createTableHeadRow(columnCount, schema, theadData);
+          const tableBodyRows = createTableBodyRows(rowCount - 1, columnCount, schema, tbodyData);
+          const table = schema.nodes.table.create(null, [
+            tableHead.create(null, tableHeadRow),
+            tableBody.create(null, tableBodyRows),
+          ]);
 
-        dispatch!(tr.replaceSelectionWith(table));
+          dispatch!(tr.replaceSelectionWith(table));
 
-        return true;
-      }
+          return true;
+        }
 
-      return false;
-    };
+        return false;
+      };
   }
 
   private removeTable(): EditorCommand {
@@ -283,32 +284,33 @@ export class Table extends NodeSchema {
   }
 
   private alignColumn(): EditorCommand<AlignColumnPayload> {
-    return (payload = { align: 'center' }) => (state, dispatch) => {
-      const { align } = payload;
-      const { selection, tr } = state;
-      const { anchor, head } = getResolvedSelection(selection);
+    return (payload = { align: 'center' }) =>
+      (state, dispatch) => {
+        const { align } = payload;
+        const { selection, tr } = state;
+        const { anchor, head } = getResolvedSelection(selection);
 
-      if (anchor && head) {
-        const map = TableOffsetMap.create(anchor)!;
-        const { totalRowCount } = map;
-        const selectionInfo = map.getRectOffsets(anchor, head);
-        const { startColIdx, endColIdx } = selectionInfo;
+        if (anchor && head) {
+          const map = TableOffsetMap.create(anchor)!;
+          const { totalRowCount } = map;
+          const selectionInfo = map.getRectOffsets(anchor, head);
+          const { startColIdx, endColIdx } = selectionInfo;
 
-        for (let rowIdx = 0; rowIdx < totalRowCount; rowIdx += 1) {
-          for (let colIdx = startColIdx; colIdx <= endColIdx; colIdx += 1) {
-            if (!map.extendedRowspan(rowIdx, colIdx) && !map.extendedColspan(rowIdx, colIdx)) {
-              const { node, pos } = map.getNodeAndPos(rowIdx, colIdx);
-              const attrs = setAttrs(node, { align });
+          for (let rowIdx = 0; rowIdx < totalRowCount; rowIdx += 1) {
+            for (let colIdx = startColIdx; colIdx <= endColIdx; colIdx += 1) {
+              if (!map.extendedRowspan(rowIdx, colIdx) && !map.extendedColspan(rowIdx, colIdx)) {
+                const { node, pos } = map.getNodeAndPos(rowIdx, colIdx);
+                const attrs = setAttrs(node, { align });
 
-              tr.setNodeMarkup(pos, null, attrs);
+                tr.setNodeMarkup(pos, null, attrs);
+              }
             }
           }
+          dispatch!(tr);
+          return true;
         }
-        dispatch!(tr);
-        return true;
-      }
-      return false;
-    };
+        return false;
+      };
   }
 
   private moveToCell(direction: Direction): Command {

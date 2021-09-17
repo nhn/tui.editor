@@ -1,8 +1,6 @@
 import { BlockMdNode, BlockNodeType, MdNode, MdNodeType, RefDefMdNode, Sourcepos } from './node';
 
-export type AutolinkParser = (
-  content: string
-) => {
+export type AutolinkParser = (content: string) => {
   url: string;
   text: string;
   range: [number, number];

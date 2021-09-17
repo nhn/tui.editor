@@ -85,7 +85,7 @@ module.exports = (env) => {
       inline: true,
       host: '0.0.0.0',
       port: 8000,
-      disableHostCheck: true,
+      allowedHosts: 'all',
     },
   });
 };

@@ -52,22 +52,23 @@ export class Image extends NodeSchema {
   }
 
   private addImage(): EditorCommand {
-    return (payload) => ({ schema, tr }, dispatch) => {
-      const { imageUrl, altText } = payload!;
+    return (payload) =>
+      ({ schema, tr }, dispatch) => {
+        const { imageUrl, altText } = payload!;
 
-      if (!imageUrl) {
-        return false;
-      }
+        if (!imageUrl) {
+          return false;
+        }
 
-      const node = schema.nodes.image.createAndFill({
-        imageUrl: encodeMarkdownText(imageUrl),
-        ...(altText && { altText }),
-      });
+        const node = schema.nodes.image.createAndFill({
+          imageUrl: encodeMarkdownText(imageUrl),
+          ...(altText && { altText }),
+        });
 
-      dispatch!(tr.replaceSelectionWith(node!).scrollIntoView());
+        dispatch!(tr.replaceSelectionWith(node!).scrollIntoView());
 
-      return true;
-    };
+        return true;
+      };
   }
 
   commands() {

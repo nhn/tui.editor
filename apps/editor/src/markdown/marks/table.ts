@@ -96,9 +96,11 @@ export class Table extends Mark {
         if (isEmpty) {
           tr.deleteRange(endFromOffset, endToOffset).split(tr.mapping.map(endToOffset));
         } else {
-          (tr
-            .split(endToOffset)
-            .insert(tr.mapping.map(endToOffset), createTextNode(schema, row)) as Transaction)
+          (
+            tr
+              .split(endToOffset)
+              .insert(tr.mapping.map(endToOffset), createTextNode(schema, row)) as Transaction
+          )
             // should subtract `2` to selection end position considering ` |` text
             .setSelection(createTextSelection(tr, tr.mapping.map(endToOffset) - 2));
         }
@@ -152,24 +154,25 @@ export class Table extends Mark {
   }
 
   private addTable(): EditorCommand<Payload> {
-    return (payload) => ({ selection, tr, schema }, dispatch) => {
-      const { columnCount, rowCount } = payload!;
-      const { endToOffset } = getRangeInfo(selection);
+    return (payload) =>
+      ({ selection, tr, schema }, dispatch) => {
+        const { columnCount, rowCount } = payload!;
+        const { endToOffset } = getRangeInfo(selection);
 
-      const headerRows = createTableHeader(columnCount);
-      const bodyRows = createTableBody(columnCount, rowCount - 1);
-      const rows = [...headerRows, ...bodyRows];
+        const headerRows = createTableHeader(columnCount);
+        const bodyRows = createTableBody(columnCount, rowCount - 1);
+        const rows = [...headerRows, ...bodyRows];
 
-      rows.forEach((row) => {
-        tr.split(tr.mapping.map(endToOffset)).insert(
-          tr.mapping.map(endToOffset),
-          createTextNode(schema, row)
-        );
-      });
-      // should add `4` to selection position considering `| ` text and start block tag length
-      dispatch!(tr.setSelection(createTextSelection(tr, endToOffset + 4)));
-      return true;
-    };
+        rows.forEach((row) => {
+          tr.split(tr.mapping.map(endToOffset)).insert(
+            tr.mapping.map(endToOffset),
+            createTextNode(schema, row)
+          );
+        });
+        // should add `4` to selection position considering `| ` text and start block tag length
+        dispatch!(tr.setSelection(createTextSelection(tr, endToOffset + 4)));
+        return true;
+      };
   }
 
   commands() {

@@ -44,9 +44,7 @@ export type HookMap = {
   addImageBlobHook?: (blob: Blob | File, callback: HookCallback) => void;
 };
 
-export type AutolinkParser = (
-  content: string
-) => {
+export type AutolinkParser = (content: string) => {
   url: string;
   text: string;
   range: [number, number];

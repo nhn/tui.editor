@@ -27,12 +27,12 @@ export class ThematicBreak extends Mark {
       const { from, to, endToOffset } = getRangeInfo(selection);
       const node = createTextNode(schema, thematicBreakSyntax);
 
-      (tr
-        .split(from)
-        .replaceWith(tr.mapping.map(from), tr.mapping.map(to), node)
-        .split(tr.mapping.map(to)) as Transaction).setSelection(
-        createTextSelection(tr, tr.mapping.map(endToOffset))
-      );
+      (
+        tr
+          .split(from)
+          .replaceWith(tr.mapping.map(from), tr.mapping.map(to), node)
+          .split(tr.mapping.map(to)) as Transaction
+      ).setSelection(createTextSelection(tr, tr.mapping.map(endToOffset)));
 
       dispatch!(tr);
       return true;
