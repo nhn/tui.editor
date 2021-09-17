@@ -14,7 +14,7 @@ function getContentBetweenFragmentComments(html: string) {
     html = html.slice(startFragmentIndex + START_FRAGMENT_COMMENT.length, endFragmentIndex);
   }
 
-  return html;
+  return html.replace(/<br[^>]*>/g, '</p><p>');
 }
 
 function convertMsoTableToCompletedTable(html: string) {
