@@ -24,7 +24,7 @@ export class CustomPopupBody extends Component<Props> {
 
   updated() {
     // append the custom popup body element
-    this.refs.el.innerHTML='';
+    this.refs.el.innerHTML = '';
     this.mounted();
   }
 
