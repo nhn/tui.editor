@@ -6,7 +6,7 @@ import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import matches from 'tui-code-snippet/domUtil/matches';
-import { HTML_TAG, OPEN_TAG } from './constants';
+import { ALTERNATIVE_TAG_FOR_BR, HTML_TAG, OPEN_TAG } from './constants';
 import { isNil } from './common';
 
 export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
@@ -239,27 +239,29 @@ export function setAttributes(attributes: Record<string, any>, element: HTMLElem
 }
 
 export function replaceBRWithEmptyBlock(html: string) {
+  // remove br in paragraph to compatible with markdown
+  let replacedHTML = html.replace(/<p><br\s*\/*><\/p>/gi, '<p></p>');
   const reBr = /<br\s*\/*>/i;
   const reHTMLTag = new RegExp(HTML_TAG, 'ig');
-  const htmlTagMatched = html.match(reHTMLTag);
+  const htmlTagMatched = replacedHTML.match(reHTMLTag);
 
   htmlTagMatched?.forEach((htmlTag, index) => {
     if (reBr.test(htmlTag)) {
-      let alternativeTag = '';
+      let alternativeTag = ALTERNATIVE_TAG_FOR_BR;
 
       if (index) {
         const prevTag = htmlTagMatched[index - 1];
         const openTagMatched = prevTag.match(OPEN_TAG);
 
-        if (openTagMatched) {
+        if (openTagMatched && !/br/i.test(openTagMatched[1])) {
           const [, tagName] = openTagMatched;
 
           alternativeTag = `</${tagName}><${tagName}>`;
         }
       }
-      html = html.replace(reBr, alternativeTag);
+      replacedHTML = replacedHTML.replace(reBr, alternativeTag);
     }
   });
 
-  return html;
+  return replacedHTML;
 }
