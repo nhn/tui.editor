@@ -6,7 +6,7 @@ import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 import matches from 'tui-code-snippet/domUtil/matches';
-import { ALTERNATIVE_TAG_FOR_BR, HTML_TAG, OPEN_TAG } from './constants';
+import { ALTERNATIVE_TAG_FOR_BR, HTML_TAG, OPEN_TAG, reBR } from './constants';
 import { isNil } from './common';
 
 export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
@@ -241,12 +241,11 @@ export function setAttributes(attributes: Record<string, any>, element: HTMLElem
 export function replaceBRWithEmptyBlock(html: string) {
   // remove br in paragraph to compatible with markdown
   let replacedHTML = html.replace(/<p><br\s*\/*><\/p>/gi, '<p></p>');
-  const reBr = /<br\s*\/*>/i;
   const reHTMLTag = new RegExp(HTML_TAG, 'ig');
   const htmlTagMatched = replacedHTML.match(reHTMLTag);
 
   htmlTagMatched?.forEach((htmlTag, index) => {
-    if (reBr.test(htmlTag)) {
+    if (reBR.test(htmlTag)) {
       let alternativeTag = ALTERNATIVE_TAG_FOR_BR;
 
       if (index) {
@@ -259,7 +258,7 @@ export function replaceBRWithEmptyBlock(html: string) {
           alternativeTag = `</${tagName}><${tagName}>`;
         }
       }
-      replacedHTML = replacedHTML.replace(reBr, alternativeTag);
+      replacedHTML = replacedHTML.replace(reBR, alternativeTag);
     }
   });
 
