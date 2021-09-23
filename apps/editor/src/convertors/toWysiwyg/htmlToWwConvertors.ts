@@ -7,7 +7,7 @@ import {
   ToWwConvertorState,
 } from '@t/convertor';
 import { includes } from '@/utils/common';
-import { CLOSE_TAG, reHTMLTag } from '@/utils/constants';
+import { reHTMLTag } from '@/utils/constants';
 
 export function getTextWithoutTrailingNewline(text: string) {
   return text[text.length - 1] === '\n' ? text.slice(0, text.length - 1) : text;
@@ -28,6 +28,10 @@ export function isCustomHTMLInlineNode({ schema }: ToWwConvertorState, node: MdN
 
 export function isInlineNode({ type }: MdNode) {
   return includes(['text', 'strong', 'emph', 'strike', 'image', 'link', 'code'], type);
+}
+
+function isSoftbreak(mdNode: MdNode | null) {
+  return mdNode?.type === 'softbreak';
 }
 
 function isListNode({ type, literal }: MdNode) {
@@ -162,12 +166,22 @@ const convertors: HTMLToWwConvertorMap = {
     const { parent, prev, next } = node;
 
     if (parent?.type === 'paragraph') {
-      if (prev && !(prev.type === 'htmlInline' && prev.literal!.match(CLOSE_TAG))) {
+      // should open a paragraph node when line text has only <br> tag
+      // ex) first line\n\n<br>\nfourth line
+      if (isSoftbreak(prev)) {
         state.openNode(paragraph);
       }
 
-      if (next) {
+      // should close a paragraph node when line text has only <br> tag
+      // ex) first line\n\n<br>\nfourth line
+      if (isSoftbreak(next)) {
         state.closeNode();
+        // should close a paragraph node and open a paragraph node to separate between blocks
+        // when <br> tag is in the middle of the paragraph
+        // ex) first <br>line\nthird line
+      } else if (next) {
+        state.closeNode();
+        state.openNode(paragraph);
       }
     } else if (parent?.type === 'tableCell') {
       if (prev && (isInlineNode(prev) || isCustomHTMLInlineNode(state, prev))) {
