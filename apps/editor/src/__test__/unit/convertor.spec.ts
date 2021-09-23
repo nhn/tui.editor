@@ -438,7 +438,7 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
-    it('<br> with html inline node ', () => {
+    it('<br> with html inline node', () => {
       const markdown = source`
         foo
         bar
@@ -448,6 +448,45 @@ describe('Convertor', () => {
         foo
         bar
         Para <b>Word</b>
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('<br> with following <br>', () => {
+      const markdown = source`
+        text1
+        <br>
+        text2<br>
+        <br>
+        text3
+      `;
+      const expected = source`
+        text1
+        
+        text2
+        
+        text3
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('<br> in the middle of the paragraph', () => {
+      const markdown = source`
+        text1
+        <br>
+        te<br>xt2<br>
+        <br>
+        text3
+      `;
+      const expected = source`
+        text1
+        
+        te
+        xt2
+        
+        text3
       `;
 
       assertConverting(markdown, expected);
