@@ -229,6 +229,8 @@ describe('editor', () => {
         const mdEditorHTML = mdEditor.innerHTML;
         const mdPreviewHTML = getPreviewHTML();
 
+        editor.setHTML(editor.getHTML());
+
         expect(mdEditor).toContainHTML(mdEditorHTML);
         expect(getPreviewHTML()).toBe(mdPreviewHTML);
       });
