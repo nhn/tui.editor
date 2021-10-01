@@ -20,10 +20,8 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
 function registerHTMLTagToWhitelist(convertorMap: CustomHTMLRenderer) {
   ['htmlBlock', 'htmlInline'].forEach((htmlType) => {
     if (convertorMap[htmlType]) {
-      Object.keys(convertorMap[htmlType]!).forEach((type) => {
         // register tag white list for preventing to remove the html in sanitizer
-        registerTagWhitelistIfPossible(type);
-      });
+      Object.keys(convertorMap[htmlType]!).forEach((type) => registerTagWhitelistIfPossible(type));
     }
   });
 }
