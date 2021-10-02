@@ -767,13 +767,17 @@ describe('event', () => {
     destroy();
   });
 
-  describe('openPopup', () => {
-    it('should open popup corresponding to name', () => {
+  describe('openPopup, closePopup', () => {
+    it('should open and close popup corresponding to name', () => {
       em.emit('openPopup', 'image');
 
       const imagePopup = getElement(`.${cls('popup-add-image')}`);
 
       expect(imagePopup).toHaveStyle({ display: 'block' });
+
+      em.emit('closePopup');
+
+      expect(imagePopup).toHaveStyle({ display: 'none' });
     });
 
     it('should render popup with initial values', () => {
