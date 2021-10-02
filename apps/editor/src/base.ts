@@ -87,6 +87,7 @@ export default abstract class EditorBase implements Base {
       keymap({
         'Mod-z': undo(),
         'Shift-Mod-z': redo(),
+        'Shift-Enter': baseKeymap.Enter,
         ...baseKeymap,
       }),
       history(),
