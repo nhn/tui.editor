@@ -24,11 +24,12 @@ import { createSpecs } from './specCreator';
 import { Emitter } from '@t/event';
 import { ToDOMAdaptor } from '@t/convertor';
 import { HTMLSchemaMap, LinkAttributes, WidgetStyle } from '@t/editor';
+import { NodeViewPropMap, PluginProp } from '@t/plugin';
 import { createNodesWithWidget } from '@/widget/rules';
 import { widgetNodeView } from '@/widget/widgetNode';
 import { cls } from '@/utils/dom';
 import { includes } from '@/utils/common';
-import { NodeViewPropMap, PluginProp } from '@t/plugin';
+import { isInTableNode } from '@/wysiwyg/helper/node';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -157,7 +158,8 @@ export default class WysiwygEditor extends EditorBase {
         this.eventEmitter.emit('setFocusedNode', state.selection.$from.node(1));
       },
       transformPastedHTML: changePastedHTML,
-      transformPasted: (slice: Slice) => changePastedSlice(slice, this.schema),
+      transformPasted: (slice: Slice) =>
+        changePastedSlice(slice, this.schema, isInTableNode(this.view.state.selection.$from)),
       handlePaste: (view: EditorView, _: ClipboardEvent, slice: Slice) => pasteToTable(view, slice),
       handleKeyDown: (_, ev) => {
         this.eventEmitter.emit('keydown', this.editorType, ev);
@@ -167,9 +169,9 @@ export default class WysiwygEditor extends EditorBase {
         paste: (_, ev) => {
           const clipboardData =
             (ev as ClipboardEvent).clipboardData || (window as WindowWithClipboard).clipboardData;
-          const items = clipboardData && clipboardData.items;
+          const items = clipboardData?.items;
 
-          if (items) {
+          if (items?.length === 1) {
             const imageBlob = pasteImageOnly(items);
 
             if (imageBlob) {
