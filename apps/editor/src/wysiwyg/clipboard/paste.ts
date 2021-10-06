@@ -2,6 +2,7 @@ import { Schema, Node, Slice, Fragment, NodeType } from 'prosemirror-model';
 
 import { isFromMso, convertMsoParagraphsToList } from '@/wysiwyg/clipboard/pasteMsoList';
 import { getTableContentFromSlice } from '@/wysiwyg/helper/table';
+import { ALTERNATIVE_TAG_FOR_BR } from '@/utils/constants';
 
 const START_FRAGMENT_COMMENT = '<!--StartFragment-->';
 const END_FRAGMENT_COMMENT = '<!--EndFragment-->';
@@ -14,7 +15,7 @@ function getContentBetweenFragmentComments(html: string) {
     html = html.slice(startFragmentIndex + START_FRAGMENT_COMMENT.length, endFragmentIndex);
   }
 
-  return html;
+  return html.replace(/<br[^>]*>/g, ALTERNATIVE_TAG_FOR_BR);
 }
 
 function convertMsoTableToCompletedTable(html: string) {

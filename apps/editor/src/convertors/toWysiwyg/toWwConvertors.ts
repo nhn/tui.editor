@@ -27,10 +27,10 @@ import { ToWwConvertorMap } from '@t/convertor';
 import { createWidgetContent, getWidgetContent } from '@/widget/rules';
 import { getChildrenHTML, getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
 import { includes } from '@/utils/common';
-import { reHTMLTag } from '@/utils/constants';
+import { reBR, reHTMLTag } from '@/utils/constants';
 
 function isBRTag(node: MdNode) {
-  return node.type === 'htmlInline' && /<br ?\/?>/.test(node.literal!);
+  return node.type === 'htmlInline' && reBR.test(node.literal!);
 }
 
 function addRawHTMLAttributeToDOM(parent: Node) {

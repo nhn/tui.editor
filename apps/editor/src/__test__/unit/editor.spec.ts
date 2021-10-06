@@ -1,5 +1,5 @@
 import '@/i18n/en-us';
-import { oneLineTrim, stripIndents } from 'common-tags';
+import { oneLineTrim, stripIndents, source } from 'common-tags';
 import { Emitter } from '@t/event';
 import { EditorOptions } from '@t/editor';
 import type { OpenTagToken } from '@toast-ui/toastmark';
@@ -74,7 +74,7 @@ describe('editor', () => {
       it('basic', () => {
         editor.setMarkdown('# heading\n* bullet');
 
-        const result = stripIndents`
+        const result = oneLineTrim`
           <h1>heading</h1>
           <ul>
             <li>
@@ -94,6 +94,28 @@ describe('editor', () => {
         editor.getHTML();
 
         expect(spy).not.toHaveBeenCalled();
+      });
+
+      it('should be the same as wysiwyg contents', () => {
+        const input = source`
+          <p>first line</p>
+          <p>second line</p>
+          <p><br>\nthird line</p>
+          <p><br>\n<br>\nfourth line</p>
+        `;
+        const expected = oneLineTrim`
+          <p>first line</p>
+          <p>second line</p>
+          <p><br></p>
+          <p>third line</p>
+          <p><br></p>
+          <p><br></p>
+          <p>fourth line</p>
+        `;
+
+        editor.setHTML(input);
+
+        expect(editor.getHTML()).toBe(expected);
       });
     });
 
@@ -158,6 +180,59 @@ describe('editor', () => {
 
         expect(mdEditor).toContainHTML('<div>a</div><div>b</div>');
         expect(getPreviewHTML()).toBe('<p>a<br>b</p>');
+      });
+
+      it('should parse the br tag with the paragraph block to separate between blocks in wysiwyg', () => {
+        editor.setHTML(
+          '<h1>test title</h1><p><strong>test bold</strong><br><em>test italic</em><br>normal text</p>'
+        );
+        editor.changeMode('wysiwyg');
+
+        const expected = oneLineTrim`
+          <h1>test title</h1>
+          <p><strong>test bold</strong></p>
+          <p><em>test italic</em></p>
+          <p>normal text</p>
+        `;
+
+        expect(wwEditor).toContainHTML(expected);
+      });
+
+      it('should parse the br tag with the paragraph block to separate between blocks', () => {
+        const input = source`
+          <p>first line</p>
+          <p>second line</p>
+          <p><br>\nthird line</p>
+          <p><br>\n<br>\nfourth line</p>
+        `;
+        const expected = oneLineTrim`
+          <p>first line<br>second line</p>
+          <p>third line</p>
+          <p><br>fourth line</p>
+        `;
+
+        editor.setHTML(input);
+
+        expect(getPreviewHTML()).toBe(expected);
+      });
+
+      it('should be parsed with the same content when calling setHTML() with getHTML() API result', () => {
+        const input = source`
+          <p>first line</p>
+          <p>second line</p>
+          <p><br>\nthird line</p>
+          <p><br>\n<br>\nfourth line</p>
+        `;
+
+        editor.setHTML(input);
+
+        const mdEditorHTML = mdEditor.innerHTML;
+        const mdPreviewHTML = getPreviewHTML();
+
+        editor.setHTML(editor.getHTML());
+
+        expect(mdEditor).toContainHTML(mdEditorHTML);
+        expect(getPreviewHTML()).toBe(mdPreviewHTML);
       });
     });
 
