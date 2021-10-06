@@ -1,8 +1,9 @@
 import ColorPicker from 'tui-color-picker';
 import type { Context } from '@toast-ui/toastmark';
-import type { PluginContext, PluginInfo, HTMLMdNode } from '@toast-ui/editor';
+import type { PluginContext, PluginInfo, HTMLMdNode, I18n } from '@toast-ui/editor';
 import type { Transaction, Selection, TextSelection } from 'prosemirror-state';
 import { PluginOptions } from '@t/index';
+import { addLangs } from './i18n/langs';
 
 import './css/plugin.css';
 
@@ -17,10 +18,10 @@ function createApplyButton(text: string) {
   return button;
 }
 
-function createToolbarItemOption(colorPickerContainer: HTMLDivElement) {
+function createToolbarItemOption(colorPickerContainer: HTMLDivElement, i18n: I18n) {
   return {
     name: 'color',
-    tooltip: 'Text color',
+    tooltip: i18n.get('Text color'),
     className: `${PREFIX}toolbar-icons color`,
     popup: {
       className: `${PREFIX}popup-color`,
@@ -72,6 +73,8 @@ export default function colorSyntaxPlugin(
   const container = document.createElement('div');
   const colorPickerOption: ColorPickerOption = { container, usageStatistics };
 
+  addLangs(i18n);
+
   if (preset) {
     colorPickerOption.preset = preset;
   }
@@ -99,7 +102,7 @@ export default function colorSyntaxPlugin(
   colorPicker.slider.toggle(true);
   container.appendChild(button);
 
-  const toolbarItem = createToolbarItemOption(container);
+  const toolbarItem = createToolbarItemOption(container, i18n);
 
   return {
     markdownCommands: {
