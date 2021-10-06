@@ -27,12 +27,8 @@ import { ToWwConvertorMap } from '@t/convertor';
 import { createWidgetContent, getWidgetContent } from '@/widget/rules';
 import { getChildrenHTML, getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
 import { includes } from '@/utils/common';
-<<<<<<< HEAD
 import { reBR, reHTMLTag } from '@/utils/constants';
-=======
-import { reHTMLTag } from '@/utils/constants';
 import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
->>>>>>> feat: apply sanitizer when converting to wysiwyg
 
 function isBRTag(node: MdNode) {
   return node.type === 'htmlInline' && reBR.test(node.literal!);
