@@ -161,12 +161,6 @@ function createTableFromPastingTable(
     if (isInTable) {
       return schema.nodes.table.create(null, [createTableBody(rows, columnCount, schema)]);
     }
-    const nodes = [
-      createTableHead(creatTableHeadDummyRow(columnCount, schema), columnCount, schema),
-      createTableBody(rows, columnCount, schema),
-    ];
-
-    return schema.nodes.table.create(null, nodes);
   }
 
   const [tableHeadRow] = rows;
