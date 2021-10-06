@@ -3,7 +3,7 @@ import { toggleMark } from 'prosemirror-commands';
 
 import Mark from '@/spec/mark';
 import { encodeMarkdownText, escapeMarkdownText } from '@/utils/encoder';
-import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
+import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 import { createTextNode } from '@/helper/manipulation';
 import { getCustomAttrs, getDefaultCustomAttrs } from '@/wysiwyg/helper/node';
 
@@ -35,12 +35,14 @@ export class Link extends Mark {
         {
           tag: 'a[href]',
           getAttrs(dom: Node | string) {
-            const href = (dom as HTMLElement).getAttribute('href') || '';
-            const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
+            const sanitizedDOM = sanitizeHTML<DocumentFragment>(dom, { RETURN_DOM_FRAGMENT: true })
+              .firstChild as HTMLElement;
+            const href = sanitizedDOM.getAttribute('href') || '';
+            const rawHTML = sanitizedDOM.getAttribute('data-raw-html');
 
             return {
-              linkUrl: sanitizeXSSAttributeValue(href),
-              linkText: (dom as HTMLElement).textContent,
+              linkUrl: href,
+              linkText: sanitizedDOM.textContent,
               ...(rawHTML && { rawHTML }),
             };
           },

@@ -1,5 +1,5 @@
 import { MdNode } from '@toast-ui/toastmark';
-import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
+import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 
 import {
   HTMLToWwConvertorMap,
@@ -56,14 +56,14 @@ function getListItemAttrs({ literal }: MdNode) {
   return { task, checked };
 }
 
-function getMatchedAttributeValue(rawHTML: string, attrName: string) {
+function getMatchedAttributeValue(rawHTML: string, ...attrNames: string[]) {
   const wrapper = document.createElement('div');
 
-  wrapper.innerHTML = rawHTML;
+  wrapper.innerHTML = sanitizeHTML(rawHTML);
 
   const el = wrapper.firstChild as HTMLElement;
 
-  return el.getAttribute(attrName) || '';
+  return attrNames.map((attrName) => el.getAttribute(attrName) || '');
 }
 
 function createConvertors(convertors: HTMLToWwConvertorMap) {
@@ -128,11 +128,11 @@ const convertors: HTMLToWwConvertorMap = {
     const { link } = state.schema.marks;
 
     if (openTagName) {
-      const linkUrl = getMatchedAttributeValue(tag, 'href');
+      const [linkUrl] = getMatchedAttributeValue(tag, 'href');
 
       state.openMark(
         link.create({
-          linkUrl: sanitizeXSSAttributeValue(linkUrl),
+          linkUrl,
           rawHTML: openTagName,
         })
       );
@@ -143,15 +143,14 @@ const convertors: HTMLToWwConvertorMap = {
 
   img: (state, node, openTagName) => {
     const tag = node.literal!;
-    const imageUrl = getMatchedAttributeValue(tag, 'src');
 
-    if (imageUrl) {
-      const altText = getMatchedAttributeValue(tag, 'alt');
+    if (openTagName) {
+      const [imageUrl, altText] = getMatchedAttributeValue(tag, 'src', 'alt');
       const { image } = state.schema.nodes;
 
       state.addNode(image, {
         rawHTML: openTagName,
-        imageUrl: sanitizeXSSAttributeValue(imageUrl),
+        imageUrl,
         ...(altText && { altText }),
       });
     }

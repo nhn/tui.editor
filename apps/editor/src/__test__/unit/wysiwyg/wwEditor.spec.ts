@@ -15,7 +15,7 @@ describe('WysiwygEditor', () => {
   let wwe: WysiwygEditor, em: EventEmitter, el: HTMLElement;
 
   function assertToContainHTML(html: string) {
-    expect(wwe.view.dom).toContainHTML(html);
+    expect(wwe.view.dom.innerHTML).toContain(html);
   }
 
   function setContent(content: string) {
@@ -177,7 +177,7 @@ describe('WysiwygEditor', () => {
     );
 
     assertToContainHTML(
-      '<iframe width="420" height="315" src="https://www.youtube.com/embed/XyenY12fzAk" class="html-block ProseMirror-selectednode" draggable="true"></iframe>'
+      '<iframe src="https://www.youtube.com/embed/XyenY12fzAk" height="315" width="420" class="html-block ProseMirror-selectednode" draggable="true"></iframe>'
     );
   });
 
@@ -191,7 +191,7 @@ describe('WysiwygEditor', () => {
     setContent('<iframe width="420" height="315" src="javascript: alert(1);"></iframe>');
 
     assertToContainHTML(
-      '<iframe width="420" height="315" class="html-block ProseMirror-selectednode" draggable="true"></iframe>'
+      '<iframe height="315" width="420" class="html-block ProseMirror-selectednode" draggable="true"></iframe>'
     );
   });
 });

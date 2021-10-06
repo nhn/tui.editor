@@ -4,8 +4,7 @@ describe('sanitizeHTML', () => {
   it('removes unnecessary tags', () => {
     expect(sanitizeHTML('<script>alert("test");</script>')).toBe('');
     expect(sanitizeHTML('<embed type="image/jpg" src="">')).toBe('');
-    expect(sanitizeHTML('<object>child die</object>')).toBe('');
-    expect(sanitizeHTML('<details><summary>foo</summary></details>')).toBe('');
+    expect(sanitizeHTML('<object>child die</object>')).toBe('child die');
     expect(sanitizeHTML('<input type="image" />')).toBe('');
     expect(sanitizeHTML('<base href=https://avocadot0ast.free.beeceptor.com>')).toBe('');
   });
@@ -29,7 +28,6 @@ describe('sanitizeHTML', () => {
         expect(sanitizeHTML('<a href="livescript:alert();">xss</a>')).toBe('<a>xss</a>');
         expect(sanitizeHTML('<a href="  LIVEScript: alert() ;">xss</a>')).toBe('<a>xss</a>');
         expect(sanitizeHTML(`123<a href=' javascript:alert();'>xss</a>`)).toBe('123<a>xss</a>');
-        expect(sanitizeHTML(`<a href='javas<!-- -->cript:alert()'>xss</a>`)).toBe('<a>xss</a>');
         expect(sanitizeHTML(`<a href='javas cript:alert()'>xss</a>`)).toBe('<a>xss</a>');
       });
 
@@ -39,7 +37,6 @@ describe('sanitizeHTML', () => {
         expect(sanitizeHTML('<img src="vbscript:alert();">')).toBe('<img>');
         expect(sanitizeHTML('<img src="  VBscript: alert(); ">')).toBe('<img>');
         expect(sanitizeHTML('<img src="  LIVEScript: alert() ;">')).toBe('<img>');
-        expect(sanitizeHTML('<img src="java<!-- -->script:alert();">')).toBe('<img>');
         expect(sanitizeHTML('<img src="java script:alert();">')).toBe('<img>');
       });
 
@@ -66,6 +63,34 @@ describe('sanitizeHTML', () => {
         expect(sanitizeHTML(`<svg><svg onLOad='alert(111)'> </svg></svg>`)).toBe(
           '<svg><svg> </svg></svg>'
         );
+        expect(sanitizeHTML('<svg><svg onload=alert(1) onload=alert(2)>')).toBe(
+          '<svg><svg></svg></svg>'
+        );
+        expect(sanitizeHTML('<svg><svg x=">" onload=alert(1)>')).toBe(
+          '<svg><svg x=">"></svg></svg>'
+        );
+        expect(sanitizeHTML('<p><svg><svg onload=onload=alert(1)></svg></svg></p>')).toBe(
+          '<p><svg><svg></svg></svg></p>'
+        );
+      });
+
+      it('should remove <use> tag and href attribute in svg', () => {
+        expect(
+          sanitizeHTML(
+            '<svg><use href="data:image/svg+xml;base64,PHN2ZyBpZD0neCcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJyAKICAgIHhtbG5zOnhsaW5rPSdodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rJyB3aWR0aD0nMTAwJyBoZWlnaHQ9JzEwMCc+PGEgeGxpbms6aHJlZj0namF2YXNjcmlwdDphbGVydCgxKSc+PHJlY3QgeD0nMCcgeT0nMCcgd2lkdGg9JzEwMCcgaGVpZ2h0PScxMDAnIC8+PC9hPjwvc3ZnPg#x"></use></svg>'
+          )
+        ).toBe('<svg></svg>');
+        expect(
+          sanitizeHTML(
+            `<svg><use href="data:image/svg+xml;charset=ISO-2022-JP,<svg id='x' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='100' height='100'><a xlink:href='javas%1B%28Bcript:alert(1)'><rect x='0' y='0' width='100' height='100' /></a></svg>#x"></use></svg>`
+          )
+        ).toBe('<svg></svg>');
+      });
+
+      it('should remove ontoggle attribute in details', () => {
+        expect(sanitizeHTML('<details open ontoggle=alert(1)>')).toBe(
+          '<details open=""></details>'
+        );
       });
     });
 
@@ -76,7 +101,7 @@ describe('sanitizeHTML', () => {
 
         expect(sanitizeHTML('<iframe src=""></iframe>')).toBe('<iframe src=""></iframe>');
         expect(sanitizeHTML('<embed type="image/jpg" src="">')).toBe(
-          '<embed type="image/jpg" src="">'
+          '<embed src="" type="image/jpg">'
         );
       });
 
