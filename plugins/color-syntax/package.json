@@ -42,7 +42,7 @@
     "build": "webpack build && npm run build:cdn"
   },
   "devDependencies": {
-    "cross-env": "^6.0.3"
+    "cross-env": "^7.0.3"
   },
   "dependencies": {
     "tui-color-picker": "^2.2.6"

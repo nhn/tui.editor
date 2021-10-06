@@ -41,7 +41,7 @@
   },
   "devDependencies": {
     "@types/plantuml-encoder": "^1.4.0",
-    "cross-env": "^6.0.3"
+    "cross-env": "^7.0.3"
   },
   "dependencies": {
     "plantuml-encoder": "^1.4.0"
