@@ -203,7 +203,7 @@ interface PluginInfo {
 }
 ```
 
-#### toHTMLRenderers, toMarkdownRenderers
+#### toHTMLRenderers
 
 `toHTMLRenderers` object can change the rendering results of elements when rendered in the Markdown Preview or when converted from Markdown Editor to WYSIWYG Editor. It is same as the [customHTMLRenderer](https://github.com/nhn/tui.editor/blob/master/docs/en/custom-html-renderer.md) option in the editor.
 

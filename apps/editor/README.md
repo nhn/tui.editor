@@ -171,6 +171,6 @@ Find out more options [here](https://nhn.github.io/tui.editor/latest/ToastUIEdit
 
 ## 🦄 Tutorials
 
-- [Viewer](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/en/viewer.md)
-- [Plugins](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/en/plugins.md)
-- [Internationalization (i18n)](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/en/i18n.md)
+- [Viewer](https://github.com/nhn/tui.editor/blob/master/docs/en/viewer.md)
+- [Plugins](https://github.com/nhn/tui.editor/blob/master/docs/en/plugin.md)
+- [Internationalization (i18n)](https://github.com/nhn/tui.editor/blob/master/docs/en/i18n.md)
