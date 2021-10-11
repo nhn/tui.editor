@@ -47,7 +47,7 @@
     "resize-observer-polyfill": "^1.5.1",
     "rollup": "^2.52.0",
     "rollup-plugin-banner": "^0.2.1",
-    "rollup-plugin-vue": "^5.1.9",
+    "rollup-plugin-vue": "^6.0.0",
     "snowpack": "^3.0.13",
     "style-loader": "^2.0.0",
     "terser-webpack-plugin": "^5.1.1",
