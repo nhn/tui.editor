@@ -55,7 +55,7 @@ import chart from '@toast-ui/editor-plugin-chart';
 
 ### CDN을 통한 설치
 
-각 플러그인은 [TOAST Cloud](https://www.toast.com)에서 제공하는 CDN을 통해서도 사용할 수 있다.
+각 플러그인은 [NHN Cloud](https://www.toast.com)에서 제공하는 CDN을 통해서도 사용할 수 있다.
 
 ```html
 ...

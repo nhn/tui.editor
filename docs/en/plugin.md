@@ -56,7 +56,7 @@ import chart from '@toast-ui/editor-plugin-chart';
 ```
 ### Via Contents Delivery Network (CDN)
 
-Each plugin is available over the CDN powered by [TOAST Cloud](https://www.toast.com). 
+Each plugin is available over the CDN powered by [NHN Cloud](https://www.toast.com). 
 
 ```html
 ...
