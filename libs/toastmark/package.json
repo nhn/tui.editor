@@ -25,7 +25,7 @@
   "module": "dist/esm/index.js",
   "license": "MIT",
   "devDependencies": {
-    "@types/codemirror": "5.60.4",
+    "@types/codemirror": "5.60.5",
     "@types/mdurl": "^1.0.2",
     "codemirror": "^5.51.0",
     "entities": "^2.0.0",
