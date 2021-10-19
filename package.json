@@ -12,7 +12,7 @@
     "@testing-library/jest-dom": "^5.11.9",
     "@types/common-tags": "^1.8.0",
     "@types/jest": "^26.0.20",
-    "@types/node": "^14.14.34",
+    "@types/node": "^16.11.1",
     "@types/prosemirror-commands": "^1.0.3",
     "@types/prosemirror-history": "^1.0.1",
     "@types/prosemirror-inputrules": "^1.0.4",
