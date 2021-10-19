@@ -97,19 +97,6 @@ function creatTableBodyDummyRow(columnCount: number, schema: Schema) {
   return tableRow.create({ dummyRowForPasting: true }, cells);
 }
 
-function creatTableHeadDummyRow(columnCount: number, schema: Schema) {
-  const { tableRow, tableHeadCell } = schema.nodes;
-  const cells = [];
-
-  for (let columnIndex = 0; columnIndex < columnCount; columnIndex += 1) {
-    const dummyCell = tableHeadCell.createAndFill()!;
-
-    cells.push(dummyCell);
-  }
-
-  return tableRow.create(null, cells);
-}
-
 export function createRowsFromPastingTable(tableContent: Fragment) {
   const tableHeadRows: Node[] = [];
   const tableBodyRows: Node[] = [];
@@ -157,10 +144,8 @@ function createTableFromPastingTable(
 ) {
   const columnCount = getMaxColumnCount(rows);
 
-  if (startFromBody) {
-    if (isInTable) {
-      return schema.nodes.table.create(null, [createTableBody(rows, columnCount, schema)]);
-    }
+  if (startFromBody && isInTable) {
+    return schema.nodes.table.create(null, [createTableBody(rows, columnCount, schema)]);
   }
 
   const [tableHeadRow] = rows;
