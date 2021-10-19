@@ -136,10 +136,15 @@ function createTableBody(tableBodyRows: Node[], maxColumnCount: number, schema: 
   return schema.nodes.tableBody.create(null, copiedRows);
 }
 
-function createTableFromPastingTable(rows: Node[], schema: Schema, startFromBody: boolean) {
+function createTableFromPastingTable(
+  rows: Node[],
+  schema: Schema,
+  startFromBody: boolean,
+  isInTable: boolean
+) {
   const columnCount = getMaxColumnCount(rows);
 
-  if (startFromBody) {
+  if (startFromBody && isInTable) {
     return schema.nodes.table.create(null, [createTableBody(rows, columnCount, schema)]);
   }
 
@@ -155,7 +160,7 @@ function createTableFromPastingTable(rows: Node[], schema: Schema, startFromBody
   return schema.nodes.table.create(null, nodes);
 }
 
-export function changePastedSlice(slice: Slice, schema: Schema) {
+export function changePastedSlice(slice: Slice, schema: Schema, isInTable: boolean) {
   const nodes: Node[] = [];
   const { content, openStart, openEnd } = slice;
 
@@ -166,7 +171,7 @@ export function changePastedSlice(slice: Slice, schema: Schema) {
       if (tableContent) {
         const rows = createRowsFromPastingTable(tableContent);
         const startFromBody = tableContent.firstChild!.type.name === 'tableBody';
-        const table = createTableFromPastingTable(rows, schema, startFromBody);
+        const table = createTableFromPastingTable(rows, schema, startFromBody, isInTable);
 
         nodes.push(table);
       }
