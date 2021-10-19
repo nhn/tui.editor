@@ -159,6 +159,7 @@ export interface EditorOptions {
   widgetRules?: WidgetRule[];
   theme?: string;
   autofocus?: boolean;
+  viewer?: boolean;
 }
 
 interface Slots {
