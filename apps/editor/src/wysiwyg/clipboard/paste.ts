@@ -157,8 +157,9 @@ function createTableFromPastingTable(rows: Node[], schema: Schema, startFromBody
 
 export function changePastedSlice(slice: Slice, schema: Schema) {
   const nodes: Node[] = [];
+  const { content, openStart, openEnd } = slice;
 
-  slice.content.forEach((node) => {
+  content.forEach((node) => {
     if (node.type.name === 'table') {
       const tableContent = getTableContentFromSlice(new Slice(Fragment.from(node), 0, 0));
 
@@ -174,5 +175,5 @@ export function changePastedSlice(slice: Slice, schema: Schema) {
     }
   });
 
-  return new Slice(Fragment.from(nodes), 0, 0);
+  return new Slice(Fragment.from(nodes), openStart, openEnd);
 }
