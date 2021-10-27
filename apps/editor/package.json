@@ -31,9 +31,11 @@
     "./dist/toastui-editor-viewer": "./dist/toastui-editor-viewer.js",
     "./dist/toastui-editor.css": "./dist/toastui-editor.css",
     "./dist/toastui-editor-viewer.css": "./dist/toastui-editor-viewer.css",
+    "./dist/toastui-editor-only.css": "./dist/toastui-editor-only.css",
     "./dist/theme/toastui-editor-dark.css": "./dist/theme/toastui-editor-dark.css",
     "./toastui-editor.css": "./dist/toastui-editor.css",
     "./toastui-editor-viewer.css": "./dist/toastui-editor-viewer.css",
+    "./toastui-editor-only.css": "./dist/toastui-editor-only.css",
     "./toastui-editor-dark.css": "./dist/theme/toastui-editor-dark.css"
   },
   "types": "types/index.d.ts",
