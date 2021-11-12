@@ -126,7 +126,7 @@ TOAST UI products are open source, so you can create a pull request(PR) after yo
 
 ### Setup
 
-Fork `main` branch into your personal repository. Clone it to local computer. Install node modules. Before starting development, you should check to haveany errors.
+Fork `main` branch into your personal repository. Clone it to local computer. Install node modules. Before starting development, you should check if there are any errors.
 
 ```sh
 $ git clone https://github.com/{your-personal-repo}/tui.editor.git
@@ -139,7 +139,7 @@ $ npm run test editor
 
 ### Develop
 
-You can see your code is reflected as soon as you saving the codes by running a server. Don't miss adding test cases and then make green rights.
+You can see your code reflected as soon as you save the code by running a server. Don't miss adding test cases and then make green rights.
 
 #### Run snowpack-dev-server
 [snowpack](https://www.snowpack.dev/) allows you to run a development server without bundling.
@@ -163,9 +163,9 @@ $ npm test editor
 
 ### Pull Request
 
-Before creating a PR, test and check for any errors. If there are no errors, then commit and push.
+Before uploading your PR, run test one last time to check if there are any errors. If it has no errors, commit and then push it!
 
-For more information, please refer to the Contributing section.
+For more information on PR's steps, please see links in the Contributing section.
 
 ## 💬 Contributing
 
