@@ -400,7 +400,7 @@ A convertor function can also returns an array of token object. This is useful w
 ```js
 function codeBlock(node) {
   return [
-    { type: 'openTag', tagName: 'pre' classNames: ['code-block'] },
+    { type: 'openTag', tagName: 'pre', classNames: ['code-block'] },
     { type: 'openTag', tagName: 'code' },
     { type: 'text', content: node.literal },
     { type: 'closeTag', tagName: 'code' },
