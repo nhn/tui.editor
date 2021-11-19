@@ -249,7 +249,7 @@ class ToastUIEditorCore {
 
     this.setHeight(this.options.height);
 
-    this.setMarkdown(this.options.initialValue, false);
+    this.setMarkdown(this.options.initialValue, false, this.options.autofocus);
 
     if (this.options.placeholder) {
       this.setPlaceholder(this.options.placeholder);
@@ -433,8 +433,8 @@ class ToastUIEditorCore {
    * @param {string} markdown - markdown syntax text.
    * @param {boolean} [cursorToEnd=true] - move cursor to contents end
    */
-  setMarkdown(markdown = '', cursorToEnd = true) {
-    this.mdEditor.setMarkdown(markdown, cursorToEnd);
+  setMarkdown(markdown = '', cursorToEnd = true, focus = true) {
+    this.mdEditor.setMarkdown(markdown, cursorToEnd, focus);
 
     if (this.isWysiwygMode()) {
       const mdNode = this.toastMark.getRootNode();

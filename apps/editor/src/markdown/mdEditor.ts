@@ -322,7 +322,7 @@ export default class MdEditor extends EditorBase {
     return getEditorToMdPos(this.view.state.tr.doc, from, to);
   }
 
-  setMarkdown(markdown: string, cursorToEnd = true) {
+  setMarkdown(markdown: string, cursorToEnd = true, focus = true) {
     const lineTexts = markdown.split(reLineEnding);
     const { tr, doc, schema } = this.view.state;
     const nodes = lineTexts.map((lineText) =>
@@ -332,7 +332,7 @@ export default class MdEditor extends EditorBase {
     this.view.dispatch(tr.replaceWith(0, doc.content.size, nodes));
 
     if (cursorToEnd) {
-      this.moveCursorToEnd(true);
+      this.moveCursorToEnd(focus);
     }
   }
 
