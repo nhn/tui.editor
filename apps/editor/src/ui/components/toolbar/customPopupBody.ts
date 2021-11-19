@@ -17,6 +17,11 @@ export class CustomPopupBody extends Component<Props> {
     this.refs.el.appendChild(this.props.body);
   }
 
+  updated(prevProps: Props) {
+    // update custom popup element
+    this.refs.el.replaceChild(this.props.body, prevProps.body);
+  }
+
   render() {
     return html`<div ref=${(el: HTMLElement) => (this.refs.el = el)}></div>`;
   }
