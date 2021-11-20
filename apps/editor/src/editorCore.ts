@@ -256,7 +256,7 @@ class ToastUIEditorCore {
     }
 
     if (!this.options.initialValue) {
-      this.setHTML(this.initialHTML, false);
+      this.setHTML(this.initialHTML, false, this.options.autofocus);
     }
 
     this.commandManager = new CommandManager(
@@ -449,7 +449,7 @@ class ToastUIEditorCore {
    * @param {string} html - html syntax text
    * @param {boolean} [cursorToEnd=true] - move cursor to contents end
    */
-  setHTML(html = '', cursorToEnd = true) {
+  setHTML(html = '', cursorToEnd = true, focus = true) {
     const container = document.createElement('div');
 
     // the `br` tag should be replaced with empty block to separate between blocks
@@ -457,7 +457,7 @@ class ToastUIEditorCore {
     const wwNode = DOMParser.fromSchema(this.wwEditor.schema).parse(container);
 
     if (this.isMarkdownMode()) {
-      this.mdEditor.setMarkdown(this.convertor.toMarkdownText(wwNode), cursorToEnd);
+      this.mdEditor.setMarkdown(this.convertor.toMarkdownText(wwNode), cursorToEnd, focus);
     } else {
       this.wwEditor.setModel(wwNode, cursorToEnd);
     }

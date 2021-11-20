@@ -201,7 +201,7 @@ export class EditorCore {
 
   setMarkdown(markdown: string, cursorToEnd?: boolean, focus?: boolean): void;
 
-  setHTML(html: string, cursorToEnd?: boolean): void;
+  setHTML(html: string, cursorToEnd?: boolean, focus?: boolean): void;
 
   getMarkdown(): string;
 
