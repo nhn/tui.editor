@@ -95,6 +95,7 @@ export class CustomBlockView implements NodeView {
       throw new Error('The editor is already opened.');
     }
 
+    this.dom.draggable = false;
     this.wrapper.style.display = 'none';
     this.innerViewContainer.style.display = 'block';
 
