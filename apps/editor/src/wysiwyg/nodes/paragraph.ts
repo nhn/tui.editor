@@ -11,7 +11,7 @@ export class Paragraph extends NodeSchema {
   get schema() {
     return {
       content: 'inline*',
-      group: 'block listGroup',
+      group: 'block',
       attrs: {
         ...getDefaultCustomAttrs(),
       },

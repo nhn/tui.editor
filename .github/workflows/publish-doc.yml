@@ -1,0 +1,133 @@
+name: Doc Publish
+on: [workflow_dispatch]
+jobs:
+  pre-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+      - name: Install
+        run: |
+          npm ci
+      - name: Eslint
+        run: |
+          npm run lint:all
+      - name: Check types
+        run: |
+          npm run test:types:all
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+      - name: Install
+        run: |
+          npm ci
+      - name: Build
+        run: |
+          npm run build toastmark
+      - name: Toastmark unit, integration test
+        run: |
+          npm run test:ci toastmark
+      - name: Editor unit, integration test
+        run: |
+          npm run test:ci editor
+
+  plugin-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+      - name: Install
+        run: |
+          npm ci
+      - name: Build
+        run: |
+          npm run build toastmark
+          npm run build editor
+      - name: chart plugin unit, integration test
+        run: |
+          npm run test:ci chart
+      - name: color syntax plugin unit, integration test
+        run: |
+          npm run test:ci color
+      - name: code syntax highlighting plugin unit, integration test
+        run: |
+          npm run test:ci code
+      - name: table merged cell plugin unit, integration test
+        run: |
+          npm run test:ci table
+      - name: uml plugin unit, integration test
+        run: |
+          npm run test:ci uml
+
+  doc:
+    runs-on: ubuntu-latest
+    needs: [pre-check, test, plugin-test]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check the package version
+        id: check
+        uses: PostHog/check-package-version@v2
+        with:
+          path: ./apps/editor/
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+      - name: Install
+        run: |
+          npm install
+      - name: Use Node.js 10.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '10.x'
+      - name: Install @toast-ui/doc
+        run: |
+          npm i -g @toast-ui/doc
+      - name: Build
+        run: |
+          npm run build toastmark
+          npm run build editor
+      - name: Run doc
+        run: |
+          npm run doc
+          mv apps/editor/_${{ steps.check.outputs.committed-version }} ${{ steps.check.outputs.committed-version }}
+          mv apps/editor/_latest latest
+          rm -rf apps/editor/tmpdoc
+          git checkout -- apps/editor/types/index.d.ts package-lock.json
+          git add ${{ steps.check.outputs.committed-version }}/dist -f
+          git add latest/dist -f
+          git stash --include-untracked
+      - name: Checkout gh-pages
+        uses: actions/checkout@v2
+        with:
+          ref: gh-pages
+      - name: Commit files
+        run: |
+          git config --local user.email 'js87zz.lee@nhn.com'
+          git config --local user.name 'js87zz'
+          rm -rf ${{ steps.check.outputs.committed-version }}
+          rm -rf latest
+          git add .
+          git stash pop
+          git add .
+          git commit -m '${{ steps.check.outputs.committed-version }}'
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages

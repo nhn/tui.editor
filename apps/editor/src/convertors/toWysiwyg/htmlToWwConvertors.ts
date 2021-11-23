@@ -1,5 +1,5 @@
 import { MdNode } from '@toast-ui/toastmark';
-import { sanitizeXSSAttributeValue } from '@/sanitizer/htmlSanitizer';
+import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 
 import {
   HTMLToWwConvertorMap,
@@ -30,6 +30,10 @@ export function isInlineNode({ type }: MdNode) {
   return includes(['text', 'strong', 'emph', 'strike', 'image', 'link', 'code'], type);
 }
 
+function isSoftbreak(mdNode: MdNode | null) {
+  return mdNode?.type === 'softbreak';
+}
+
 function isListNode({ type, literal }: MdNode) {
   const matched = type === 'htmlInline' && literal!.match(reHTMLTag);
 
@@ -52,14 +56,14 @@ function getListItemAttrs({ literal }: MdNode) {
   return { task, checked };
 }
 
-function getMatchedAttributeValue(rawHTML: string, attrName: string) {
+function getMatchedAttributeValue(rawHTML: string, ...attrNames: string[]) {
   const wrapper = document.createElement('div');
 
-  wrapper.innerHTML = rawHTML;
+  wrapper.innerHTML = sanitizeHTML(rawHTML);
 
   const el = wrapper.firstChild as HTMLElement;
 
-  return el.getAttribute(attrName) || '';
+  return attrNames.map((attrName) => el.getAttribute(attrName) || '');
 }
 
 function createConvertors(convertors: HTMLToWwConvertorMap) {
@@ -124,11 +128,11 @@ const convertors: HTMLToWwConvertorMap = {
     const { link } = state.schema.marks;
 
     if (openTagName) {
-      const linkUrl = getMatchedAttributeValue(tag, 'href');
+      const [linkUrl] = getMatchedAttributeValue(tag, 'href');
 
       state.openMark(
         link.create({
-          linkUrl: sanitizeXSSAttributeValue(linkUrl),
+          linkUrl,
           rawHTML: openTagName,
         })
       );
@@ -139,15 +143,14 @@ const convertors: HTMLToWwConvertorMap = {
 
   img: (state, node, openTagName) => {
     const tag = node.literal!;
-    const imageUrl = getMatchedAttributeValue(tag, 'src');
 
-    if (imageUrl) {
-      const altText = getMatchedAttributeValue(tag, 'alt');
+    if (openTagName) {
+      const [imageUrl, altText] = getMatchedAttributeValue(tag, 'src', 'alt');
       const { image } = state.schema.nodes;
 
       state.addNode(image, {
         rawHTML: openTagName,
-        imageUrl: sanitizeXSSAttributeValue(imageUrl),
+        imageUrl,
         ...(altText && { altText }),
       });
     }
@@ -159,21 +162,32 @@ const convertors: HTMLToWwConvertorMap = {
 
   br: (state, node) => {
     const { paragraph } = state.schema.nodes;
+    const { parent, prev, next } = node;
 
-    if (node.parent?.type === 'paragraph') {
-      if (node.prev) {
+    if (parent?.type === 'paragraph') {
+      // should open a paragraph node when line text has only <br> tag
+      // ex) first line\n\n<br>\nfourth line
+      if (isSoftbreak(prev)) {
         state.openNode(paragraph);
       }
 
-      if (node.next) {
+      // should close a paragraph node when line text has only <br> tag
+      // ex) first line\n\n<br>\nfourth line
+      if (isSoftbreak(next)) {
         state.closeNode();
+        // should close a paragraph node and open a paragraph node to separate between blocks
+        // when <br> tag is in the middle of the paragraph
+        // ex) first <br>line\nthird line
+      } else if (next) {
+        state.closeNode();
+        state.openNode(paragraph);
       }
-    } else if (node.parent?.type === 'tableCell') {
-      if (node.prev && (isInlineNode(node.prev) || isCustomHTMLInlineNode(state, node.prev))) {
+    } else if (parent?.type === 'tableCell') {
+      if (prev && (isInlineNode(prev) || isCustomHTMLInlineNode(state, prev))) {
         state.closeNode();
       }
 
-      if (node.next && (isInlineNode(node.next) || isCustomHTMLInlineNode(state, node.next))) {
+      if (next && (isInlineNode(next) || isCustomHTMLInlineNode(state, next))) {
         state.openNode(paragraph);
       }
     }

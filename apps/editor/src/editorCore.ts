@@ -82,9 +82,10 @@ import { getHTMLRenderConvertors } from './markdown/htmlRenderConvertors';
  *     @param {boolean} [options.frontMatter=false] - whether use the front matter
  *     @param {Array.<object>} [options.widgetRules=[]] - The rules for replacing the text with widget node
  *     @param {string} [options.theme] - The theme to style the editor with. The default is included in toastui-editor.css.
+ *     @param {autofocus} [options.autofocus=true] - automatically focus the editor on creation.
  */
 class ToastUIEditorCore {
-  private initialHtml: string;
+  private initialHTML: string;
 
   private toastMark: ToastMark;
 
@@ -117,7 +118,7 @@ class ToastUIEditorCore {
   protected pluginInfo: PluginInfoResult;
 
   constructor(options: EditorOptions) {
-    this.initialHtml = options.el.innerHTML;
+    this.initialHTML = options.el.innerHTML;
     options.el.innerHTML = '';
 
     this.options = extend(
@@ -148,6 +149,7 @@ class ToastUIEditorCore {
         frontMatter: false,
         widgetRules: [],
         theme: 'light',
+        autofocus: true,
       },
       options
     );
@@ -166,6 +168,9 @@ class ToastUIEditorCore {
 
     this.mode = initialEditType || 'markdown';
     this.mdPreviewStyle = this.options.previewStyle;
+
+    this.i18n = i18n;
+    this.i18n.setCode(this.options.language);
 
     this.eventEmitter = new EventEmitter();
 
@@ -202,9 +207,6 @@ class ToastUIEditorCore {
       rendererOptions.sanitizer,
       wwToDOMAdaptor
     );
-
-    this.i18n = i18n;
-    this.i18n.setCode(this.options.language);
 
     this.toastMark = new ToastMark('', {
       disallowedHtmlBlockTags: ['br', 'img'],
@@ -254,7 +256,7 @@ class ToastUIEditorCore {
     }
 
     if (!this.options.initialValue) {
-      this.setHTML(this.initialHtml, false);
+      this.setHTML(this.initialHTML, false);
     }
 
     this.commandManager = new CommandManager(
@@ -281,7 +283,7 @@ class ToastUIEditorCore {
     }
 
     this.eventEmitter.emit('load', this);
-    this.moveCursorToStart();
+    this.moveCursorToStart(this.options.autofocus);
   }
 
   private addInitEvent() {
@@ -412,16 +414,18 @@ class ToastUIEditorCore {
 
   /**
    * Set cursor position to end
+   * @param {boolean} [focus] - automatically focus the editor
    */
-  moveCursorToEnd() {
-    this.getCurrentModeEditor().moveCursorToEnd();
+  moveCursorToEnd(focus = true) {
+    this.getCurrentModeEditor().moveCursorToEnd(focus);
   }
 
   /**
    * Set cursor position to start
+   * @param {boolean} [focus] - automatically focus the editor
    */
-  moveCursorToStart() {
-    this.getCurrentModeEditor().moveCursorToStart();
+  moveCursorToStart(focus = true) {
+    this.getCurrentModeEditor().moveCursorToStart(focus);
   }
 
   /**
@@ -477,18 +481,15 @@ class ToastUIEditorCore {
    */
   getHTML() {
     this.eventEmitter.holdEventInvoke(() => {
-      if (this.isWysiwygMode()) {
-        this.mdEditor.setMarkdown(this.convertor.toMarkdownText(this.wwEditor.getModel()));
+      if (this.isMarkdownMode()) {
+        const mdNode = this.toastMark.getRootNode();
+        const wwNode = this.convertor.toWysiwygModel(mdNode);
+
+        this.wwEditor.setModel(wwNode!);
       }
     });
 
-    const mdNode = this.toastMark.getRootNode();
-    const mdRenderer = this.preview.getRenderer();
-
-    return mdRenderer
-      .render(mdNode)
-      .replace(/\sdata-nodeid="\d{1,}"/g, '')
-      .trim();
+    return this.wwEditor.view.dom.innerHTML;
   }
 
   /**

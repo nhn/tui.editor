@@ -316,6 +316,29 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
+    it('block nodes in list', () => {
+      const markdown = source`
+        1. foo
+
+            \`\`\`
+            bar
+            \`\`\`
+        
+            > bam
+      `;
+      const expected = source`
+        1. foo
+
+            \`\`\`
+            bar
+            \`\`\`
+        
+            > bam
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
     it('soft break', () => {
       const markdown = source`
         foo
@@ -340,7 +363,7 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
-    it('<br> html string', () => {
+    it('<br>', () => {
       const markdown = source`
         foo
         <br>
@@ -369,7 +392,7 @@ describe('Convertor', () => {
       assertConverting(markdown, expected);
     });
 
-    it('<br> html string with soft break', () => {
+    it('<br> with soft break', () => {
       const markdown = source`
         foo
 
@@ -410,6 +433,60 @@ describe('Convertor', () => {
         <br>
         <br>
         quuz
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('<br> with html inline node', () => {
+      const markdown = source`
+        foo
+        bar
+        Para       <b>Word</b><br>
+      `;
+      const expected = source`
+        foo
+        bar
+        Para <b>Word</b>
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('<br> with following <br>', () => {
+      const markdown = source`
+        text1
+        <br>
+        text2<br>
+        <br>
+        text3
+      `;
+      const expected = source`
+        text1
+        
+        text2
+        
+        text3
+      `;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('<br> in the middle of the paragraph', () => {
+      const markdown = source`
+        text1
+        <br>
+        te<br>xt2<br>
+        <br>
+        text3
+      `;
+      const expected = source`
+        text1
+        
+        te
+        xt2
+        
+        text3
       `;
 
       assertConverting(markdown, expected);
@@ -482,6 +559,25 @@ describe('Convertor', () => {
       `;
 
       assertConverting(markdown, `${markdown}\n`);
+    });
+
+    it('table with unmatched html list', () => {
+      const markdown = source`
+        | thead |
+        | ----- |
+        | <ul><li>bullet</li><ul> |
+        | <ol><li>ordered</li><ol> |
+        | <ul><li>nested<ul><li>nested</li><ul><li><ul> |
+      `;
+      const expected = source`
+        | thead |
+        | ----- |
+        | <ul><li>bullet</li></ul> |
+        | <ol><li>ordered</li></ol> |
+        | <ul><li>nested<ul><li>nested</li></ul></li></ul> |
+      `;
+
+      assertConverting(markdown, `${expected}\n`);
     });
   });
 
@@ -621,8 +717,6 @@ describe('Convertor', () => {
         <a href="  LIVEScript: alert() ;">xss</a>
 
         123<a href=' javascript:alert();'>xss</a>
-
-        <a href='javas<!-- -->cript:alert()'>xss</a>
       `;
       const expected = source`
         <a href="">xss</a>
@@ -638,8 +732,6 @@ describe('Convertor', () => {
         <a href="">xss</a>
 
         123<a href="">xss</a>
-
-        <a href="">xss</a>
       `;
 
       assertConverting(markdown, expected);
@@ -656,12 +748,8 @@ describe('Convertor', () => {
         <img src="  VBscript: alert(); ">
 
         <img src="  LIVEScript: alert() ;">
-
-        <img src="java<!-- -->script:alert();">
       `;
       const expected = source`
-        <img src="">
-
         <img src="">
 
         <img src="">
@@ -823,16 +911,20 @@ describe('Convertor', () => {
 
     it('should convert html block node to wysiwyg ignoring sanitizer tag', () => {
       const markdown =
+        '<iframe src="https://www.youtube.com/embed/XyenY12fzAk" height="315" width="420"></iframe>';
+      const expected =
         '<iframe width="420" height="315" src="https://www.youtube.com/embed/XyenY12fzAk"></iframe>';
 
-      assertConverting(markdown, markdown);
+      assertConverting(markdown, expected);
     });
 
     it('should convert html block element which has "=" character as the attribute value', () => {
       const markdown =
-        '<iframe width="420" height="315" src="//player.bilibili.com/player.html?aid=588782532&bvid=BV1hB4y1K7ro&cid=360826679&page=1"></iframe>';
+        '<iframe src="//player.bilibili.com/player.html?aid=588782532&bvid=BV1hB4y1K7ro&cid=360826679&page=1" height="315" width="420"></iframe>';
+      const expected =
+        '<iframe width="420" height="315" src="//player.bilibili.com/player.html?aid=588782532&amp;bvid=BV1hB4y1K7ro&amp;cid=360826679&amp;page=1"></iframe>';
 
-      assertConverting(markdown, markdown);
+      assertConverting(markdown, expected);
     });
 
     it('should convert html inline node', () => {
@@ -870,6 +962,28 @@ describe('Convertor', () => {
         >     1. [x] React
         >     2. [x] Vue
         >     3. [ ] Ember
+      `;
+
+      assertConverting(markdown, markdown);
+    });
+  });
+
+  describe('should escape markdown text in wysiwyg', () => {
+    it('with markdown text', () => {
+      const markdown = source`
+        \\# heading
+        \\> blockquote
+        \\*test\\*
+        \\* list
+      `;
+
+      assertConverting(markdown, markdown);
+    });
+
+    it('with html text', () => {
+      const markdown = source`
+        \\<div>block\\</div>
+        \\<strong>bold\\</strong>
       `;
 
       assertConverting(markdown, markdown);

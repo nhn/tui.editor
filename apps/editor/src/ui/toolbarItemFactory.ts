@@ -229,7 +229,6 @@ interface Payload {
   initialValues?: PopupInitialValues;
 }
 
-// eslint-disable-next-line consistent-return
 export function createPopupInfo(type: string, payload: Payload): PopupInfo | null {
   const { el, pos, popup, initialValues } = payload;
 

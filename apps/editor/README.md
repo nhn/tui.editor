@@ -52,7 +52,7 @@ $ npm install --save @toast-ui/editor@<version> # Specific Version
 
 ### Via Contents Delivery Network (CDN)
 
-TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
+TOAST UI products are available over the CDN powered by [NHN Cloud](https://www.toast.com).
 
 You can use the CDN as below.
 
@@ -171,6 +171,6 @@ Find out more options [here](https://nhn.github.io/tui.editor/latest/ToastUIEdit
 
 ## 🦄 Tutorials
 
-- [Viewer](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/en/viewer.md)
-- [Plugins](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/en/plugins.md)
-- [Internationalization (i18n)](https://github.com/nhn/tui.editor/blob/master/apps/editor/docs/en/i18n.md)
+- [Viewer](https://github.com/nhn/tui.editor/blob/master/docs/en/viewer.md)
+- [Plugins](https://github.com/nhn/tui.editor/blob/master/docs/en/plugin.md)
+- [Internationalization (i18n)](https://github.com/nhn/tui.editor/blob/master/docs/en/i18n.md)

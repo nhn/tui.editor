@@ -19,7 +19,7 @@ export class BulletList extends NodeSchema {
   get schema() {
     return {
       content: 'listItem+',
-      group: 'block listGroup',
+      group: 'block',
       attrs: {
         rawHTML: { default: null },
         ...getDefaultCustomAttrs(),

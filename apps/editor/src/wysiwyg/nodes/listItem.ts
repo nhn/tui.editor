@@ -11,7 +11,8 @@ export class ListItem extends NodeSchema {
 
   get schema() {
     return {
-      content: 'paragraph listGroup*',
+      content: 'paragraph block*',
+      selectable: false,
       attrs: {
         task: { default: false },
         checked: { default: false },

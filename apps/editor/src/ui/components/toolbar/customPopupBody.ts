@@ -12,11 +12,6 @@ interface Props {
 }
 
 export class CustomPopupBody extends Component<Props> {
-  constructor(props: Props) {
-    super(props);
-    props.eventEmitter.listen('closePopup', this.props.hidePopup);
-  }
-
   mounted() {
     // append the custom popup body element
     this.refs.el.appendChild(this.props.body);

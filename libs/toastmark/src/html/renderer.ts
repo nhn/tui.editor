@@ -72,8 +72,8 @@ export class Renderer implements HTMLRenderer {
             : nodeType;
 
         if (orgConvertor) {
-          convertors[convertorType] = (node, context) => {
-            context.origin = () => orgConvertor(node, context);
+          convertors[convertorType] = (node, context, convertors) => {
+            context.origin = () => orgConvertor(node, context, convertors);
             return convertor(node, context);
           };
         } else {

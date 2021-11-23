@@ -96,6 +96,27 @@ export default class ToWwConvertorState {
     doc.content.forEach((node) => this.push(node));
   }
 
+  private closeUnmatchedHTMLInline(node: MdNode, entering: boolean) {
+    if (!entering && node.type !== 'htmlInline') {
+      const length = this.stack.length - 1;
+
+      for (let i = length; i >= 0; i -= 1) {
+        const nodeInfo = this.stack[i];
+
+        if (nodeInfo.attrs?.rawHTML) {
+          if (nodeInfo.content.length) {
+            this.closeNode();
+          } else {
+            // just pop useless unmatched html inline node
+            this.stack.pop();
+          }
+        } else {
+          break;
+        }
+      }
+    }
+  }
+
   private convert(mdNode: MdNode, infoForPosSync?: InfoForPosSync) {
     const walker = mdNode.walker();
     let event = walker.next();
@@ -117,6 +138,7 @@ export default class ToWwConvertorState {
           },
         };
 
+        this.closeUnmatchedHTMLInline(node, entering);
         convertor(this, node, context);
 
         if (infoForPosSync?.node === node) {

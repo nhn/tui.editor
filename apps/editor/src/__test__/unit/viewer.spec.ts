@@ -1,6 +1,6 @@
 import { oneLineTrim } from 'common-tags';
 import Viewer from '@/viewer';
-import { removeDataAttr } from './markdown/util';
+import { createHTMLrenderer, removeDataAttr } from './markdown/util';
 
 describe('Viewer', () => {
   let viewer: Viewer, container: HTMLElement;
@@ -19,6 +19,7 @@ describe('Viewer', () => {
       extendedAutolinks: true,
       frontMatter: true,
       initialValue: '# test\n* list1\n* list2',
+      customHTMLRenderer: createHTMLrenderer(),
     });
 
     document.body.appendChild(container);
@@ -54,6 +55,17 @@ describe('Viewer', () => {
         heading <em>emph</em>
       </h1>
     `;
+
+    expect(getViewerHTML()).toBe(expected);
+  });
+
+  it('should render htmlBlock properly', () => {
+    viewer.setMarkdown(
+      '<iframe src="https://www.youtube.com/embed/XyenY12fzAk" height="315" width="420"></iframe>'
+    );
+
+    const expected =
+      '<iframe width="420" height="315" src="https://www.youtube.com/embed/XyenY12fzAk"></iframe>';
 
     expect(getViewerHTML()).toBe(expected);
   });

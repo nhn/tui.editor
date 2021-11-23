@@ -3,6 +3,7 @@ import { ExecCommand, Pos } from '@t/ui';
 import { cls } from '@/utils/dom';
 import html from '@/ui/vdom/template';
 import { Component } from '@/ui/vdom/component';
+import i18n from '@/i18n/i18n';
 
 interface Range {
   rowIdx: number;
@@ -105,18 +106,16 @@ export class TablePopupBody extends Component<Props, State> {
     return range;
   }
 
-  mounted() {
-    const { left, top } = this.refs.tableEl.getBoundingClientRect();
-
-    this.offsetRect = {
-      left: window.pageXOffset + left,
-      top: window.pageYOffset + top,
-    };
-  }
-
   updated() {
     if (!this.props.show) {
       this.setState({ colIdx: -1, rowIdx: -1 });
+    } else if (this.state.colIdx === -1 && this.state.rowIdx === -1) {
+      const { left, top } = this.refs.tableEl.getBoundingClientRect();
+
+      this.offsetRect = {
+        left: window.pageXOffset + left,
+        top: window.pageYOffset + top,
+      };
     }
   }
 
@@ -143,7 +142,7 @@ export class TablePopupBody extends Component<Props, State> {
     const selectionAreaBound = this.getSelectionAreaBound();
 
     return html`
-      <div>
+      <div aria-label="${i18n.get('Insert table')}">
         <div
           class="${cls('table-selection')}"
           ref=${(el: HTMLElement) => (this.refs.tableEl = el)}

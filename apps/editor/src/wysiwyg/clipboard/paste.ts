@@ -2,6 +2,7 @@ import { Schema, Node, Slice, Fragment, NodeType } from 'prosemirror-model';
 
 import { isFromMso, convertMsoParagraphsToList } from '@/wysiwyg/clipboard/pasteMsoList';
 import { getTableContentFromSlice } from '@/wysiwyg/helper/table';
+import { ALTERNATIVE_TAG_FOR_BR } from '@/utils/constants';
 
 const START_FRAGMENT_COMMENT = '<!--StartFragment-->';
 const END_FRAGMENT_COMMENT = '<!--EndFragment-->';
@@ -14,7 +15,7 @@ function getContentBetweenFragmentComments(html: string) {
     html = html.slice(startFragmentIndex + START_FRAGMENT_COMMENT.length, endFragmentIndex);
   }
 
-  return html;
+  return html.replace(/<br[^>]*>/g, ALTERNATIVE_TAG_FOR_BR);
 }
 
 function convertMsoTableToCompletedTable(html: string) {
@@ -135,10 +136,15 @@ function createTableBody(tableBodyRows: Node[], maxColumnCount: number, schema: 
   return schema.nodes.tableBody.create(null, copiedRows);
 }
 
-function createTableFromPastingTable(rows: Node[], schema: Schema, startFromBody: boolean) {
+function createTableFromPastingTable(
+  rows: Node[],
+  schema: Schema,
+  startFromBody: boolean,
+  isInTable: boolean
+) {
   const columnCount = getMaxColumnCount(rows);
 
-  if (startFromBody) {
+  if (startFromBody && isInTable) {
     return schema.nodes.table.create(null, [createTableBody(rows, columnCount, schema)]);
   }
 
@@ -154,17 +160,18 @@ function createTableFromPastingTable(rows: Node[], schema: Schema, startFromBody
   return schema.nodes.table.create(null, nodes);
 }
 
-export function changePastedSlice(slice: Slice, schema: Schema) {
+export function changePastedSlice(slice: Slice, schema: Schema, isInTable: boolean) {
   const nodes: Node[] = [];
+  const { content, openStart, openEnd } = slice;
 
-  slice.content.forEach((node) => {
+  content.forEach((node) => {
     if (node.type.name === 'table') {
       const tableContent = getTableContentFromSlice(new Slice(Fragment.from(node), 0, 0));
 
       if (tableContent) {
         const rows = createRowsFromPastingTable(tableContent);
         const startFromBody = tableContent.firstChild!.type.name === 'tableBody';
-        const table = createTableFromPastingTable(rows, schema, startFromBody);
+        const table = createTableFromPastingTable(rows, schema, startFromBody, isInTable);
 
         nodes.push(table);
       }
@@ -173,5 +180,5 @@ export function changePastedSlice(slice: Slice, schema: Schema) {
     }
   });
 
-  return new Slice(Fragment.from(nodes), 0, 0);
+  return new Slice(Fragment.from(nodes), openStart, openEnd);
 }
