@@ -42,4 +42,13 @@ describe('smart task', () => {
 
     expect(getTextContent(mde)).toBe('* [x] aaa');
   });
+
+  it('should not emit script error and apply smart task when cursor position is not in the task list', () => {
+    mde.setMarkdown('*  *aaa*');
+    mde.setSelection([1, 4], [1, 4]);
+
+    dispatchKeyup();
+
+    expect(getTextContent(mde)).toBe('*  *aaa*');
+  });
 });

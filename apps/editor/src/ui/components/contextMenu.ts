@@ -61,7 +61,11 @@ export class ContextMenu extends Component<Props, State> {
 
             menuItem.push(
               html`
-                <li onClick=${handleClick} class="menu-item${disabled ? ' disabled' : ''}">
+                <li
+                  onClick=${handleClick}
+                  class="menu-item${disabled ? ' disabled' : ''}"
+                  aria-role="menuitem"
+                >
                   <span class="${className}">${label}</span>
                 </li>
               `
@@ -81,7 +85,7 @@ export class ContextMenu extends Component<Props, State> {
   render() {
     const style = { display: this.state.pos ? 'block' : 'none', ...this.state.pos };
 
-    return html`<div class="${cls('context-menu')}" style=${style}>
+    return html`<div class="${cls('context-menu')}" style=${style} aria-role="menu">
       ${this.getMenuGroupElements()}
     </div>`;
   }

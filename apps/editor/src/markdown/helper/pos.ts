@@ -1,5 +1,5 @@
 import { AllSelection, Selection } from 'prosemirror-state';
-import { ProsemirrorNode } from 'prosemirror-model';
+import { ProsemirrorNode, ResolvedPos } from 'prosemirror-model';
 import { Sourcepos, MdPos } from '@toast-ui/toastmark';
 import { isWidgetNode } from '@/widget/widgetNode';
 
@@ -12,18 +12,8 @@ export function resolveSelectionPos(selection: Selection) {
   return [from, to];
 }
 
-export function getEditorToMdLine(
-  from: number,
-  to: number,
-  doc: ProsemirrorNode
-): [number, number] {
-  const fragment = doc.content;
-  const { childCount } = fragment;
-
-  const startLine = Math.min(fragment.findIndex(from).index + 1, childCount);
-  const endLine = from === to ? startLine : Math.min(fragment.findIndex(to).index + 1, childCount);
-
-  return [startLine, endLine];
+function getMdLine(resolvedPos: ResolvedPos) {
+  return resolvedPos.index(0) + 1;
 }
 
 export function getWidgetNodePos(node: ProsemirrorNode, chPos: number, direction: 1 | -1 = 1) {
@@ -42,7 +32,8 @@ export function getWidgetNodePos(node: ProsemirrorNode, chPos: number, direction
 export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from): Sourcepos {
   const collapsed = from === to;
   const startResolvedPos = doc.resolve(from);
-  const lineRange = getEditorToMdLine(from, to, doc);
+  const startLine = getMdLine(startResolvedPos);
+  let endLine = startLine;
 
   const startOffset = startResolvedPos.start(1);
   let endOffset = startOffset;
@@ -51,7 +42,8 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
     // prevent the end offset from pointing to the root document position
     const endResolvedPos = doc.resolve(to === doc.content.size ? to - 1 : to);
 
-    endOffset = endResolvedPos.start();
+    endOffset = endResolvedPos.start(1);
+    endLine = getMdLine(endResolvedPos);
 
     // To resolve the end offset excluding document tag size
     if (endResolvedPos.pos === doc.content.size) {
@@ -63,8 +55,8 @@ export function getEditorToMdPos(doc: ProsemirrorNode, from: number, to = from):
   const endCh = Math.max(to - endOffset + 1, 1);
 
   return [
-    [lineRange[0], startCh + getWidgetNodePos(doc.child(lineRange[0] - 1), startCh, -1)],
-    [lineRange[1], endCh + getWidgetNodePos(doc.child(lineRange[1] - 1), endCh, -1)],
+    [startLine, startCh + getWidgetNodePos(doc.child(startLine - 1), startCh, -1)],
+    [endLine, endCh + getWidgetNodePos(doc.child(endLine - 1), endCh, -1)],
   ];
 }
 

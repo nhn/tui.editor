@@ -87,6 +87,7 @@ export default abstract class EditorBase implements Base {
       keymap({
         'Mod-z': undo(),
         'Shift-Mod-z': redo(),
+        'Shift-Enter': baseKeymap.Enter,
         ...baseKeymap,
       }),
       history(),
@@ -168,21 +169,25 @@ export default abstract class EditorBase implements Base {
     });
   }
 
-  moveCursorToStart() {
+  moveCursorToStart(focus: boolean) {
     const { tr } = this.view.state;
 
     this.view.dispatch(tr.setSelection(createTextSelection(tr, 1)).scrollIntoView());
-    this.focus();
+    if (focus) {
+      this.focus();
+    }
   }
 
-  moveCursorToEnd() {
+  moveCursorToEnd(focus: boolean) {
     const { tr } = this.view.state;
 
     this.view.dispatch(
       tr.setSelection(createTextSelection(tr, tr.doc.content.size - 1)).scrollIntoView()
     );
 
-    this.focus();
+    if (focus) {
+      this.focus();
+    }
   }
 
   setScrollTop(top: number) {

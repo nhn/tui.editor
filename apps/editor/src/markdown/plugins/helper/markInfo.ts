@@ -190,7 +190,11 @@ function customBlock(node: MdNode, start: MdPos, end: MdPos) {
 
   if (info) {
     marks.push(
-      markInfo(addOffsetPos(start, 2), addOffsetPos(start, syntaxLength + info.length), META)
+      markInfo(
+        addOffsetPos(start, syntaxEnd),
+        addOffsetPos(start, syntaxLength + info.length),
+        META
+      )
     );
   }
 

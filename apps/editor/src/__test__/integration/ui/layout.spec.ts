@@ -57,7 +57,9 @@ function getMdPreviewTab() {
 }
 
 function getScrollSyncWrapper() {
-  return getElement('.scroll-sync')!.parentElement;
+  const scrollSync = getElement('.scroll-sync');
+
+  return scrollSync ? scrollSync.parentElement : null;
 }
 
 function clickMdWriteTab() {
@@ -168,14 +170,14 @@ describe('layout component', () => {
       expect(wwSwitch).not.toHaveClass('active');
     });
 
-    it('should hide scrollSync when previewStyle is tab regardless of changing editor mode', () => {
+    it('should not render scrollSync when previewStyle is tab regardless of changing editor mode', () => {
       const scrollSyncWrapper = getScrollSyncWrapper();
 
-      expect(scrollSyncWrapper).toHaveStyle({ display: 'none' });
+      expect(scrollSyncWrapper).toBeNull();
 
       em.emit('changeMode', 'wysiwyg');
 
-      expect(scrollSyncWrapper).toHaveStyle({ display: 'none' });
+      expect(scrollSyncWrapper).toBeNull();
     });
 
     it('should show scrollSync when previewStyle is vertical on only markdown mode', () => {
@@ -255,12 +257,12 @@ describe('layout component', () => {
 
       clickMdPreviewTab();
 
-      expect(scrollSyncWrapper).toHaveStyle({ display: 'none' });
+      expect(scrollSyncWrapper).toBeNull();
       expect(getElement(`.${cls('toolbar-icons')}`)).toBeDisabled();
 
       clickMdWriteTab();
 
-      expect(scrollSyncWrapper).toHaveStyle({ display: 'none' });
+      expect(scrollSyncWrapper).toBeNull();
       expect(getElement(`.${cls('toolbar-icons')}`)).not.toBeDisabled();
     });
 

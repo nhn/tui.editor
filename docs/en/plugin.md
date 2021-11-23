@@ -56,7 +56,7 @@ import chart from '@toast-ui/editor-plugin-chart';
 ```
 ### Via Contents Delivery Network (CDN)
 
-Each plugin is available over the CDN powered by [TOAST Cloud](https://www.toast.com). 
+Each plugin is available over the CDN powered by [NHN Cloud](https://www.toast.com). 
 
 ```html
 ...
@@ -203,7 +203,7 @@ interface PluginInfo {
 }
 ```
 
-#### toHTMLRenderers, toMarkdownRenderers
+#### toHTMLRenderers
 
 `toHTMLRenderers` object can change the rendering results of elements when rendered in the Markdown Preview or when converted from Markdown Editor to WYSIWYG Editor. It is same as the [customHTMLRenderer](https://github.com/nhn/tui.editor/blob/master/docs/en/custom-html-renderer.md) option in the editor.
 

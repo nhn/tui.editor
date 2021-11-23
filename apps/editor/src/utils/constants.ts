@@ -16,3 +16,6 @@ export const CLOSE_TAG = `</(${TAG_NAME})\\s*[>]`;
 export const HTML_TAG = `(?:${OPEN_TAG}|${CLOSE_TAG})`;
 
 export const reHTMLTag = new RegExp(`^${HTML_TAG}`, 'i');
+export const reBR = /<br\s*\/*>/i;
+
+export const ALTERNATIVE_TAG_FOR_BR = '</p><p>';

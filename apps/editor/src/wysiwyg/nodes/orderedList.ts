@@ -15,7 +15,7 @@ export class OrderedList extends NodeSchema {
   get schema() {
     return {
       content: 'listItem+',
-      group: 'block listGroup',
+      group: 'block',
       attrs: {
         order: { default: 1 },
         rawHTML: { default: null },

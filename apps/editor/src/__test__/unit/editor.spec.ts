@@ -1,5 +1,5 @@
 import '@/i18n/en-us';
-import { oneLineTrim, stripIndents } from 'common-tags';
+import { oneLineTrim, stripIndents, source } from 'common-tags';
 import { Emitter } from '@t/event';
 import { EditorOptions } from '@t/editor';
 import type { OpenTagToken } from '@toast-ui/toastmark';
@@ -74,7 +74,7 @@ describe('editor', () => {
       it('basic', () => {
         editor.setMarkdown('# heading\n* bullet');
 
-        const result = stripIndents`
+        const result = oneLineTrim`
           <h1>heading</h1>
           <ul>
             <li>
@@ -94,6 +94,28 @@ describe('editor', () => {
         editor.getHTML();
 
         expect(spy).not.toHaveBeenCalled();
+      });
+
+      it('should be the same as wysiwyg contents', () => {
+        const input = source`
+          <p>first line</p>
+          <p>second line</p>
+          <p><br>\nthird line</p>
+          <p><br>\n<br>\nfourth line</p>
+        `;
+        const expected = oneLineTrim`
+          <p>first line</p>
+          <p>second line</p>
+          <p><br></p>
+          <p>third line</p>
+          <p><br></p>
+          <p><br></p>
+          <p>fourth line</p>
+        `;
+
+        editor.setHTML(input);
+
+        expect(editor.getHTML()).toBe(expected);
       });
     });
 
@@ -123,13 +145,24 @@ describe('editor', () => {
       expect(editor.getCurrentPreviewStyle()).toBe('vertical');
     });
 
-    it('setMarkdown()', () => {
-      editor.setMarkdown('# heading');
+    describe('setMarkdown()', () => {
+      it('basic', () => {
+        editor.setMarkdown('# heading');
 
-      expect(mdEditor).toContainHTML(
-        `<div><span class="${HEADING_CLS}"><span class="${DELIM_CLS}">#</span> heading</span></div>`
-      );
-      expect(getPreviewHTML()).toBe('<h1>heading</h1>');
+        expect(mdEditor).toContainHTML(
+          `<div><span class="${HEADING_CLS}"><span class="${DELIM_CLS}">#</span> heading</span></div>`
+        );
+        expect(getPreviewHTML()).toBe('<h1>heading</h1>');
+      });
+
+      it('should parse the CRLF properly in markdown', () => {
+        editor.setMarkdown('# heading\r\nCRLF');
+
+        expect(mdEditor).toContainHTML(
+          `<div><span class="${HEADING_CLS}"><span class="${DELIM_CLS}">#</span> heading</span></div><div>CRLF</div>`
+        );
+        expect(getPreviewHTML()).toBe('<h1>heading</h1><p>CRLF</p>');
+      });
     });
 
     describe('setHTML()', () => {
@@ -147,6 +180,59 @@ describe('editor', () => {
 
         expect(mdEditor).toContainHTML('<div>a</div><div>b</div>');
         expect(getPreviewHTML()).toBe('<p>a<br>b</p>');
+      });
+
+      it('should parse the br tag with the paragraph block to separate between blocks in wysiwyg', () => {
+        editor.setHTML(
+          '<h1>test title</h1><p><strong>test bold</strong><br><em>test italic</em><br>normal text</p>'
+        );
+        editor.changeMode('wysiwyg');
+
+        const expected = oneLineTrim`
+          <h1>test title</h1>
+          <p><strong>test bold</strong></p>
+          <p><em>test italic</em></p>
+          <p>normal text</p>
+        `;
+
+        expect(wwEditor).toContainHTML(expected);
+      });
+
+      it('should parse the br tag with the paragraph block to separate between blocks', () => {
+        const input = source`
+          <p>first line</p>
+          <p>second line</p>
+          <p><br>\nthird line</p>
+          <p><br>\n<br>\nfourth line</p>
+        `;
+        const expected = oneLineTrim`
+          <p>first line<br>second line</p>
+          <p>third line</p>
+          <p><br>fourth line</p>
+        `;
+
+        editor.setHTML(input);
+
+        expect(getPreviewHTML()).toBe(expected);
+      });
+
+      it('should be parsed with the same content when calling setHTML() with getHTML() API result', () => {
+        const input = source`
+          <p>first line</p>
+          <p>second line</p>
+          <p><br>\nthird line</p>
+          <p><br>\n<br>\nfourth line</p>
+        `;
+
+        editor.setHTML(input);
+
+        const mdEditorHTML = mdEditor.innerHTML;
+        const mdPreviewHTML = getPreviewHTML();
+
+        editor.setHTML(editor.getHTML());
+
+        expect(mdEditor).toContainHTML(mdEditorHTML);
+        expect(getPreviewHTML()).toBe(mdPreviewHTML);
       });
     });
 
@@ -374,6 +460,13 @@ describe('editor', () => {
         editor.replaceSelection('Replaced', 1, 7);
 
         expect(wwEditor).toContainHTML('<p>Replaced</p><p>line2</p>');
+      });
+
+      it('should parse the CRLF properly in markdown', () => {
+        editor.replaceSelection('text\r\nCRLF');
+
+        expect(mdEditor).toContainHTML('<div>ltext</div><div>CRLFe2</div>');
+        expect(getPreviewHTML()).toBe('<p>ltext<br>CRLFe2</p>');
       });
     });
 
@@ -806,7 +899,7 @@ describe('editor', () => {
           },
         });
 
-        expect(getPreviewHTML()).toBe('<p><a href="nhn.com" target="_blank">Hello</a></p>');
+        expect(getPreviewHTML()).toBe('<p><a target="_blank" href="nhn.com">Hello</a></p>');
       });
 
       it('should render html block node regardless of the sanitizer', () => {
@@ -820,7 +913,7 @@ describe('editor', () => {
         });
 
         const result = oneLineTrim`
-          <iframe width="420" height="315" src="https://www.youtube.com/embed/XyenY12fzAk"></iframe>
+          <iframe src="https://www.youtube.com/embed/XyenY12fzAk" height="315" width="420"></iframe>
           <p>test</p>
         `;
 
@@ -842,6 +935,24 @@ describe('editor', () => {
         const result = oneLineTrim`
           <iframe width="420" height="315" src="https://www.youtube.com/embed/XyenY12fzAk" class="html-block"></iframe>
           <p>test</p>
+        `;
+
+        expect(wwEditor.innerHTML).toContain(result);
+      });
+
+      it('should keep the html attributes with an empty string after changing the mode', () => {
+        createEditor({
+          el: container,
+          initialValue: '<iframe width="" height="" src=""></iframe>',
+          previewHighlight: false,
+          // add iframe html block renderer
+          customHTMLRenderer: createHTMLrenderer(),
+        });
+
+        editor.changeMode('wysiwyg');
+
+        const result = oneLineTrim`
+          <iframe width="" height="" src="" class="html-block"></iframe>
         `;
 
         expect(wwEditor.innerHTML).toContain(result);

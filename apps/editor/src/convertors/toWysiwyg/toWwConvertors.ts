@@ -27,10 +27,11 @@ import { ToWwConvertorMap } from '@t/convertor';
 import { createWidgetContent, getWidgetContent } from '@/widget/rules';
 import { getChildrenHTML, getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
 import { includes } from '@/utils/common';
-import { reHTMLTag } from '@/utils/constants';
+import { reBR, reHTMLTag } from '@/utils/constants';
+import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 
 function isBRTag(node: MdNode) {
-  return node.type === 'htmlInline' && /<br ?\/?>/.test(node.literal!);
+  return node.type === 'htmlInline' && reBR.test(node.literal!);
 }
 
 function addRawHTMLAttributeToDOM(parent: Node) {
@@ -308,11 +309,12 @@ const toWwConvertors: ToWwConvertorMap = {
     const [, openTagName, , closeTagName] = matched;
     const typeName = (openTagName || closeTagName).toLowerCase();
     const markType = state.schema.marks[typeName];
+    const sanitizedHTML = sanitizeHTML(html);
 
     // for user defined html schema
     if (markType?.spec.attrs!.htmlInline) {
       if (openTagName) {
-        const htmlAttrs = getHTMLAttrsByHTMLString(html);
+        const htmlAttrs = getHTMLAttrsByHTMLString(sanitizedHTML);
 
         state.openMark(markType.create({ htmlAttrs }));
       } else {
@@ -334,15 +336,16 @@ const toWwConvertors: ToWwConvertorMap = {
     const [, openTagName, , closeTagName] = matched;
     const typeName = (openTagName || closeTagName).toLowerCase();
     const nodeType = state.schema.nodes[typeName];
+    const sanitizedHTML = sanitizeHTML(html);
 
     // for user defined html schema
     if (nodeType?.spec.attrs!.htmlBlock) {
-      const htmlAttrs = getHTMLAttrsByHTMLString(html);
+      const htmlAttrs = getHTMLAttrsByHTMLString(sanitizedHTML);
       const childrenHTML = getChildrenHTML(node, typeName);
 
       state.addNode(nodeType, { htmlAttrs, childrenHTML });
     } else {
-      container.innerHTML = html;
+      container.innerHTML = sanitizedHTML;
       addRawHTMLAttributeToDOM(container);
 
       state.convertByDOMParser(container as HTMLElement);
