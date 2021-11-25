@@ -171,7 +171,7 @@ export default class WysiwygEditor extends EditorBase {
             (ev as ClipboardEvent).clipboardData || (window as WindowWithClipboard).clipboardData;
           const items = clipboardData?.items;
 
-          if (items?.length === 1) {
+          if (items) {
             const imageBlob = pasteImageOnly(items);
 
             if (imageBlob) {
