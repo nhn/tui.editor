@@ -48,7 +48,10 @@ export class Heading extends NodeSchema {
   }
 
   commands(): EditorCommand {
-    return (payload) => (state, dispatch) =>
-      setBlockType(state.schema.nodes.heading, payload)(state, dispatch);
+    return (payload) => (state, dispatch) => {
+      const nodeType = state.schema.nodes[payload!.level ? 'heading' : 'paragraph'];
+
+      return setBlockType(nodeType, payload)(state, dispatch);
+    };
   }
 }
