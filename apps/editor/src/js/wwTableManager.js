@@ -783,12 +783,7 @@ class WwTableManager {
       while (td && tr.length) {
         tdContent = tr.shift();
 
-        if (tdContent.length) {
-          td.textContent = tdContent;
-        } else {
-          td.innerHTML = brString;
-        }
-
+        td.innerHTML = tdContent.length ? tdContent : brString;
         td = domUtils.getTableCellByDirection(td, 'next');
       }
 
@@ -810,7 +805,7 @@ class WwTableManager {
       const trData = [];
 
       toArray(tr.children).forEach(cell => {
-        trData.push(cell.textContent);
+        trData.push(cell.innerHTML);
       });
 
       if (trData.length) {
