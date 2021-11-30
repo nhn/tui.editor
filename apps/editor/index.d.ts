@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Editor v2.5.3
+// Type definitions for TOAST UI Editor v2.5.4
 // TypeScript Version: 3.2.2
 
 /// <reference types="codemirror" />
@@ -229,7 +229,7 @@ declare namespace toastui {
   }
 
   export interface ConvertorClass {
-    new(em: EventManager, options: ConvertorOptions): Convertor;
+    new (em: EventManager, options: ConvertorOptions): Convertor;
   }
 
   export interface ConvertorOptions {
@@ -279,7 +279,7 @@ declare namespace toastui {
     customHTMLRenderer?: CustomHTMLRenderer;
     referenceDefinition?: boolean;
     customHTMLSanitizer?: CustomHTMLSanitizer;
-    frontMatter?: boolean
+    frontMatter?: boolean;
   }
 
   interface MarkdownEditorOptions {
