@@ -132,6 +132,16 @@ function makeListFromParagraphs(paras) {
   return makeList(rootChildren);
 }
 
+function hasMsoListStyle(node) {
+    const styleAttr = node.getAttribute('style');
+
+    if (styleAttr) {
+        return MSO_STYLE_LIST_RX.test(styleAttr);
+    }
+
+    return false
+}
+
 function isMsoListParagraphEnd(node) {
   while (node) {
     if (domUtils.isElemNode(node)) {
@@ -140,7 +150,7 @@ function isMsoListParagraphEnd(node) {
     node = node.nextSibling;
   }
 
-  return node ? !MSO_CLASS_NAME_LIST_RX.test(node.className) : true;
+  return node ? !MSO_CLASS_NAME_LIST_RX.test(node.className) || !hasMsoListStyle(node) : true;
 }
 
 /**
@@ -150,7 +160,7 @@ function isMsoListParagraphEnd(node) {
 export function convertMsoParagraphsToList(container) {
   let paras = [];
 
-  domUtils.findAll(container, MSO_CLASS_NAME_LIST_PARA).forEach(para => {
+  domUtils.findAll(container, MSO_CLASS_NAME_LIST_PARA).filter(node => hasMsoListStyle(node)).forEach(para => {
     const msoListParaEnd = isMsoListParagraphEnd(para.nextSibling);
 
     paras.push(para);
