@@ -133,13 +133,9 @@ function makeListFromParagraphs(paras) {
 }
 
 function hasMsoListStyle(node) {
-    const styleAttr = node.getAttribute('style');
+  const styleAttr = node.getAttribute('style');
 
-    if (styleAttr) {
-        return MSO_STYLE_LIST_RX.test(styleAttr);
-    }
-
-    return false
+  return styleAttr ? MSO_STYLE_LIST_RX.test(styleAttr) : false;
 }
 
 function isMsoListParagraphEnd(node) {
@@ -160,26 +156,29 @@ function isMsoListParagraphEnd(node) {
 export function convertMsoParagraphsToList(container) {
   let paras = [];
 
-  domUtils.findAll(container, MSO_CLASS_NAME_LIST_PARA).filter(node => hasMsoListStyle(node)).forEach(para => {
-    const msoListParaEnd = isMsoListParagraphEnd(para.nextSibling);
+  domUtils
+    .findAll(container, MSO_CLASS_NAME_LIST_PARA)
+    .filter(node => hasMsoListStyle(node))
+    .forEach(para => {
+      const msoListParaEnd = isMsoListParagraphEnd(para.nextSibling);
 
-    paras.push(para);
+      paras.push(para);
 
-    if (msoListParaEnd) {
-      const list = makeListFromParagraphs(paras);
-      const { nextSibling } = para;
+      if (msoListParaEnd) {
+        const list = makeListFromParagraphs(paras);
+        const { nextSibling } = para;
 
-      if (nextSibling) {
-        domUtils.insertBefore(list, nextSibling);
-      } else {
-        domUtils.append(container, list);
+        if (nextSibling) {
+          domUtils.insertBefore(list, nextSibling);
+        } else {
+          domUtils.append(container, list);
+        }
+
+        paras = [];
       }
 
-      paras = [];
-    }
-
-    domUtils.remove(para);
-  });
+      domUtils.remove(para);
+    });
 
   return container;
 }
