@@ -221,6 +221,7 @@ class ToastUIEditorCore {
       toastMark: this.toastMark,
       useCommandShortcut,
       mdPlugins,
+      autofocus: this.options.autofocus,
     });
 
     this.preview = new MarkdownPreview(this.eventEmitter, {
