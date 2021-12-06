@@ -32,7 +32,7 @@
     "eslint-config-tui": "^4.0.0",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-react": "^7.22.0",
-    "eslint-plugin-vue": "^7.7.0",
+    "eslint-plugin-vue": "^8.2.0",
     "eslint-webpack-plugin": "^2.5.2",
     "filemanager-webpack-plugin": "^4.0.0",
     "html-webpack-plugin": "^5.3.1",
