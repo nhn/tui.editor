@@ -39,6 +39,7 @@ You can use Toast UI Editor for Vue as a ECMAScript module or a CommonJS module.
 - ES Modules
 
 ```js
+import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 
 import { Editor } from '@toast-ui/vue-editor';
@@ -47,6 +48,7 @@ import { Editor } from '@toast-ui/vue-editor';
 - CommonJS
 
 ```js
+require('codemirror/lib/codemirror.css');
 require('@toast-ui/editor/dist/toastui-editor.css');
 
 const { Editor } = require('@toast-ui/vue-editor');
@@ -65,6 +67,7 @@ First implement `<editor/>` in the template.
 And then add `Editor` to the `components` in your component or Vue instance like this:
 
 ```js
+import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 
 import { Editor } from '@toast-ui/vue-editor';
@@ -79,6 +82,7 @@ export default {
 or
 
 ```js
+import 'codemirror/lib/codemirror.css';
 import '@toast-ui/editor/dist/toastui-editor.css';
 
 import { Editor } from '@toast-ui/vue-editor';
@@ -130,6 +134,7 @@ const defaultOptions = {
   />
 </template>
 <script>
+  import 'codemirror/lib/codemirror.css';
   import '@toast-ui/editor/dist/toastui-editor.css';
 
   import { Editor } from '@toast-ui/vue-editor';
@@ -161,6 +166,7 @@ First, you need to assign `ref` attribute of `<editor/>` and then you can use `i
   <editor ref="toastuiEditor" />
 </template>
 <script>
+  import 'codemirror/lib/codemirror.css';
   import '@toast-ui/editor/dist/toastui-editor.css';
 
   import { Editor } from '@toast-ui/vue-editor';
