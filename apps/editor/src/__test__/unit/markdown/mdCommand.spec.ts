@@ -535,6 +535,15 @@ describe('bulletList command', () => {
 
     expect(getPreviewHTML()).toBe(result);
   });
+
+  it('should add bullet list syntax to empty line after heading node', () => {
+    mde.setMarkdown('# heading\n');
+
+    mde.setSelection([2, 1], [2, 1]);
+    cmd.exec('bulletList');
+
+    expect(getTextContent(mde)).toBe('# heading\n* ');
+  });
 });
 
 describe('orderedList command', () => {
@@ -731,6 +740,15 @@ describe('orderedList command', () => {
     execUndo();
 
     expect(getPreviewHTML()).toBe(result);
+  });
+
+  it('should add ordered list syntax to empty line after heading node', () => {
+    mde.setMarkdown('# heading\n');
+
+    mde.setSelection([2, 1], [2, 1]);
+    cmd.exec('orderedList');
+
+    expect(getTextContent(mde)).toBe('# heading\n1. ');
   });
 });
 
