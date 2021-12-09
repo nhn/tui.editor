@@ -12,6 +12,31 @@ const reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-
 const reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
 const reEscapePairedChars = /[*_~`]/g;
 
+const XMLSPECIAL = '[&<>"]';
+const reXmlSpecial = new RegExp(XMLSPECIAL, 'g');
+
+function replaceUnsafeChar(char: string) {
+  switch (char) {
+    case '&':
+      return '&amp;';
+    case '<':
+      return '&lt;';
+    case '>':
+      return '&gt;';
+    case '"':
+      return '&quot;';
+    default:
+      return char;
+  }
+}
+
+export function escapeXml(text: string) {
+  if (reXmlSpecial.test(text)) {
+    return text.replace(reXmlSpecial, replaceUnsafeChar);
+  }
+  return text;
+}
+
 export function sendHostName() {
   sendHostname('editor', 'UA-129966929-1');
 }

@@ -1,7 +1,7 @@
 import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
-import { encodeMarkdownText } from '@/utils/encoder';
+import { escapeXml } from '@/utils/common';
 import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 
 import { EditorCommand } from '@t/spec';
@@ -63,7 +63,7 @@ export class Image extends NodeSchema {
       }
 
       const node = schema.nodes.image.createAndFill({
-        imageUrl: encodeMarkdownText(imageUrl),
+        imageUrl: escapeXml(imageUrl),
         ...(altText && { altText }),
       });
 
