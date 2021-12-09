@@ -161,7 +161,7 @@ describe('Convertor', () => {
       const expected = source`
         ![](imgUrl)
         ![altText](imgUrl)
-        ![altText](img\\*Url)
+        ![altText](img*Url)
     	`;
 
       assertConverting(markdown, expected);
@@ -172,11 +172,13 @@ describe('Convertor', () => {
         [](url)foo
         [text](url)
         [text](ur*l)
+        [Editor](https://github.com/nhn_test/tui.editor)
     	`;
       const expected = source`
         foo
         [text](url)
-        [text](ur\\*l)
+        [text](ur*l)
+        [Editor](https://github.com/nhn_test/tui.editor)
     	`;
 
       assertConverting(markdown, expected);
