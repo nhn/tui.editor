@@ -24,8 +24,11 @@ import { getTextContent } from '../helper/query';
 
 type CommandType = 'bullet' | 'ordered' | 'task';
 
-function cannotBeListNode({ type }: MdNode) {
-  return type === 'codeBlock' || type === 'heading' || type.indexOf('table') !== -1;
+function cannotBeListNode({ type, sourcepos }: MdNode, line: number) {
+  // eslint-disable-next-line prefer-destructuring
+  const startLine = sourcepos![0][0];
+
+  return line <= startLine && (type === 'codeBlock' || type === 'heading' || type.match('table'));
 }
 
 interface RangeInfo {
@@ -135,7 +138,7 @@ export class ListItem extends Mark {
       for (let line = startLine; line <= endLine; line += 1) {
         const mdNode: MdNode = toastMark.findFirstNodeAtLine(line)!;
 
-        if (mdNode && cannotBeListNode(mdNode)) {
+        if (mdNode && cannotBeListNode(mdNode, line)) {
           break;
         }
 
