@@ -85,6 +85,15 @@ describe('wysiwyg commands', () => {
 
       expect(wwe.getHTML()).toBe('<h6>foo</h6>');
     });
+
+    it('should change heading element to paragraph with level 0', () => {
+      setTextToEditor('foo');
+
+      cmd.exec('selectAll');
+      cmd.exec('heading', { level: 0 });
+
+      expect(wwe.getHTML()).toBe('foo');
+    });
   });
 
   describe('hr command', () => {
