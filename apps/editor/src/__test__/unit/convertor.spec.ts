@@ -284,6 +284,21 @@ describe('Convertor', () => {
       assertConverting(markdown, `${expected}\n`);
     });
 
+    it('should normalize wrong table syntax when converting', () => {
+      const markdown = source`
+        | col1 | col2 | col3 |
+        | --- | --- |
+        | cell1 | cell2 | cell3 |
+      `;
+      const expected = source`
+        | col1 | col2 | col3 |
+        | ---- | ---- | ---- |
+        | cell1 | cell2 |  |
+      `;
+
+      assertConverting(markdown, `${expected}\n`);
+    });
+
     it('task', () => {
       const markdown = source`
         * [ ] foo

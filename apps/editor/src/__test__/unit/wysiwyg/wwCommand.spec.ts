@@ -92,7 +92,7 @@ describe('wysiwyg commands', () => {
       cmd.exec('selectAll');
       cmd.exec('heading', { level: 0 });
 
-      expect(wwe.getHTML()).toBe('foo');
+      expect(wwe.getHTML()).toBe('<p>foo</p>');
     });
   });
 
