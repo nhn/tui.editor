@@ -284,7 +284,7 @@ describe('Convertor', () => {
       assertConverting(markdown, `${expected}\n`);
     });
 
-    it('should normalized wrong table syntax when converting', () => {
+    it('should normalize wrong table syntax when converting', () => {
       const markdown = source`
         | col1 | col2 | col3 |
         | --- | --- |

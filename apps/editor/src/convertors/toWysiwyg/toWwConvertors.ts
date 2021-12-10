@@ -249,7 +249,7 @@ const toWwConvertors: ToWwConvertorMap = {
         if (table.columns.length > startIdx) {
           const { align } = table.columns[startIdx];
 
-          attrs = { ...(node as TableCellMdNode).attrs };
+          attrs = (node as TableCellMdNode).attrs ?? {};
 
           if (align) {
             attrs.align = align;
