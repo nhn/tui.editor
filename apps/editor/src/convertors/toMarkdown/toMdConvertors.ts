@@ -4,7 +4,7 @@ import isUndefined from 'tui-code-snippet/type/isUndefined';
 
 import { nodeTypeWriters, write } from './toMdNodeTypeWriters';
 
-import { repeat, escape, quote } from '@/utils/common';
+import { repeat, escape, quote, escapeXml } from '@/utils/common';
 
 import {
   ToMdConvertorMap,
@@ -168,7 +168,7 @@ export const toMdConvertors: ToMdConvertorMap = {
   image({ node }) {
     const { attrs } = node;
     const altText = escape(attrs.altText || '');
-    const imageUrl = escape(attrs.imageUrl);
+    const imageUrl = escapeXml(attrs.imageUrl);
     const altAttr = altText ? ` alt="${altText}"` : '';
 
     return {
@@ -237,7 +237,7 @@ export const toMdConvertors: ToMdConvertorMap = {
 
   link({ node }, { entering }) {
     const { attrs } = node;
-    const linkUrl = escape(attrs.linkUrl);
+    const linkUrl = escapeXml(attrs.linkUrl);
     const { rawHTML } = attrs;
 
     if (entering) {
