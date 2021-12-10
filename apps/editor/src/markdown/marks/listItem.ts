@@ -28,10 +28,7 @@ function cannotBeListNode({ type, sourcepos }: MdNode, line: number) {
   // eslint-disable-next-line prefer-destructuring
   const startLine = sourcepos![0][0];
 
-  return (
-    line <= startLine &&
-    (type === 'codeBlock' || type === 'heading' || type.indexOf('table') !== -1)
-  );
+  return line <= startLine && (type === 'codeBlock' || type === 'heading' || type.match('table'));
 }
 
 interface RangeInfo {
