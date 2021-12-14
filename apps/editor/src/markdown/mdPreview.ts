@@ -87,13 +87,21 @@ class MarkdownPreview {
 
     this.initEvent(highlight);
     this.initContentSection();
+
+    // To prevent overflowing contents in the viewer
+    if (this.isViewer) {
+      this.previewContent.style.overflowWrap = 'break-word';
+    }
   }
 
   private initContentSection() {
     this.previewContent = createElementWith(
       `<div class="${cls('contents')}"></div>`
     ) as HTMLElement;
-    this.el!.appendChild(this.previewContent);
+
+    if (!this.isViewer) {
+      this.el!.appendChild(this.previewContent);
+    }
   }
 
   private toggleActive(active: boolean) {
@@ -102,6 +110,10 @@ class MarkdownPreview {
 
   private initEvent(highlight: boolean) {
     this.eventEmitter.listen('updatePreview', this.update.bind(this));
+
+    if (this.isViewer) {
+      return;
+    }
 
     if (highlight) {
       this.eventEmitter.listen('changeToolbarState', ({ mdNode, cursorPos }) => {

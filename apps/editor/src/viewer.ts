@@ -120,7 +120,7 @@ class ToastUIEditorViewer {
       isViewer: true,
     });
 
-    on(this.preview.el!, 'mousedown', this.toggleTask.bind(this));
+    on(this.preview.previewContent!, 'mousedown', this.toggleTask.bind(this));
 
     if (initialValue) {
       this.setMarkdown(initialValue);
