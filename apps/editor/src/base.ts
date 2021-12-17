@@ -30,8 +30,6 @@ export default abstract class EditorBase implements Base {
 
   context!: Context;
 
-  autofocus!: Boolean;
-
   schema!: Schema;
 
   keymaps!: Plugin[];

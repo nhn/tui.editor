@@ -44,7 +44,6 @@ interface MarkdownOptions {
   toastMark: ToastMark;
   useCommandShortcut?: boolean;
   mdPlugins?: PluginProp[];
-  autofocus?: boolean;
 }
 
 const EVENT_TYPE = 'cut';
@@ -60,13 +59,12 @@ export default class MdEditor extends EditorBase {
   constructor(eventEmitter: Emitter, options: MarkdownOptions) {
     super(eventEmitter);
 
-    const { toastMark, useCommandShortcut = true, mdPlugins = [], autofocus = true } = options;
+    const { toastMark, useCommandShortcut = true, mdPlugins = [] } = options;
 
     this.editorType = 'markdown';
     this.el.classList.add('md-mode');
     this.toastMark = toastMark;
     this.extraPlugins = mdPlugins;
-    this.autofocus = autofocus;
     this.specs = this.createSpecs();
     this.schema = this.createSchema();
     this.context = this.createContext();
@@ -75,17 +73,18 @@ export default class MdEditor extends EditorBase {
     this.commands = this.createCommands();
     this.specs.setContext({ ...this.context, view: this.view });
     this.createClipboard();
-    this.eventEmitter.listen('changePreviewTabWrite', (isMounted) =>
-      this.toggleActive(true, isMounted)
+    // To prevent unnecessary focus setting during initial rendering
+    this.eventEmitter.listen('changePreviewTabWrite', (isMarkdownTabMounted) =>
+      this.toggleActive(true, isMarkdownTabMounted)
     );
     this.eventEmitter.listen('changePreviewTabPreview', () => this.toggleActive(false));
     this.initEvent();
   }
 
-  private toggleActive(active: boolean, isMounted?: boolean) {
+  private toggleActive(active: boolean, isMarkdownTabMounted?: boolean) {
     toggleClass(this.el!, 'active', active);
     if (active) {
-      if (!(isMounted && !this.autofocus)) {
+      if (!isMarkdownTabMounted) {
         this.focus();
       }
     } else {
