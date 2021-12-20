@@ -74,7 +74,7 @@ export default class MdEditor extends EditorBase {
     this.specs.setContext({ ...this.context, view: this.view });
     this.createClipboard();
     // To prevent unnecessary focus setting during initial rendering
-    this.eventEmitter.listen('changePreviewTabWrite', (isMarkdownTabMounted) =>
+    this.eventEmitter.listen('changePreviewTabWrite', (isMarkdownTabMounted?: boolean) =>
       this.toggleActive(true, isMarkdownTabMounted)
     );
     this.eventEmitter.listen('changePreviewTabPreview', () => this.toggleActive(false));
