@@ -42,6 +42,7 @@ import { cls, replaceBRWithEmptyBlock } from './utils/dom';
 import { sanitizeHTML } from './sanitizer/htmlSanitizer';
 import { createHTMLSchemaMap } from './wysiwyg/nodes/html';
 import { getHTMLRenderConvertors } from './markdown/htmlRenderConvertors';
+import { buildQuery } from './queries/queryManager';
 
 /**
  * ToastUIEditorCore
@@ -273,6 +274,7 @@ class ToastUIEditorCore {
     this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
     this.addInitEvent();
     this.addInitCommand(mdCommands, wwCommands);
+    buildQuery(this);
 
     if (this.options.hooks) {
       forEachOwnProperties(this.options.hooks, (fn, key) => this.addHook(key, fn));

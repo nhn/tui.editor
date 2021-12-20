@@ -232,7 +232,7 @@ class MarkdownPreview {
   }
 
   getElement() {
-    return this.el;
+    return this.el!;
   }
 
   getHTML() {

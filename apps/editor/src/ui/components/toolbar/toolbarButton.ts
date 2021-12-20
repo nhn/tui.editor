@@ -54,17 +54,20 @@ export class ToolbarButtonComp extends Component<Props> {
   };
 
   private execCommand = () => {
-    const { item, execCommand, setPopupInfo, getBound } = this.props;
+    const { item, execCommand, setPopupInfo, getBound, eventEmitter } = this.props;
     const { command, name, popup } = item;
 
     if (command) {
       execCommand(command);
     } else {
       const popupName = popup ? 'customPopupBody' : name;
+      const [initialValues] = eventEmitter.emit('query', 'getPopupInitialValues', { popupName });
+
       const info = createPopupInfo(popupName, {
         el: this.refs.el,
         pos: getBound(this.refs.el),
         popup,
+        initialValues,
       });
 
       if (info) {
