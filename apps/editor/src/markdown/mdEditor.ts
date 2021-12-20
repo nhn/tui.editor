@@ -73,15 +73,20 @@ export default class MdEditor extends EditorBase {
     this.commands = this.createCommands();
     this.specs.setContext({ ...this.context, view: this.view });
     this.createClipboard();
-    this.eventEmitter.listen('changePreviewTabWrite', () => this.toggleActive(true));
+    // To prevent unnecessary focus setting during initial rendering
+    this.eventEmitter.listen('changePreviewTabWrite', (isMarkdownTabMounted) =>
+      this.toggleActive(true, isMarkdownTabMounted)
+    );
     this.eventEmitter.listen('changePreviewTabPreview', () => this.toggleActive(false));
     this.initEvent();
   }
 
-  private toggleActive(active: boolean) {
+  private toggleActive(active: boolean, isMarkdownTabMounted?: boolean) {
     toggleClass(this.el!, 'active', active);
     if (active) {
-      this.focus();
+      if (!isMarkdownTabMounted) {
+        this.focus();
+      }
     } else {
       this.blur();
     }

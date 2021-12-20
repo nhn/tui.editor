@@ -271,7 +271,7 @@ export class Toolbar extends Component<Props, State> {
 
   mounted() {
     if (this.props.previewStyle === 'tab') {
-      this.props.eventEmitter.emit('changePreviewTabWrite');
+      this.props.eventEmitter.emit('changePreviewTabWrite', true);
     }
     // classify toolbar and dropdown toolbar after DOM has been rendered
     this.setState(this.classifyToolbarItems());
