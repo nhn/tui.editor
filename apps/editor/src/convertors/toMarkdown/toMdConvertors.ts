@@ -277,7 +277,8 @@ export const toMdConvertors: ToMdConvertorMap = {
     const closeTag = `</${tagName}>`;
 
     Object.keys(attrs).forEach((attrName) => {
-      openTag += ` ${attrName}="${attrs[attrName]}"`;
+      // To prevent broken converting when attributes has double quote string
+      openTag += ` ${attrName}="${attrs[attrName].replace(/"/g, "'")}"`;
     });
     openTag += '>';
 
