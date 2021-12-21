@@ -101,9 +101,18 @@ export default class MdEditor extends EditorBase {
       const items = clipboardData && clipboardData.items;
 
       if (items) {
-        const imageBlob = pasteImageOnly(items);
+        let containsRtf = false;
+        for (var i = 0; i < items.length; i++) {
+          const item = items[i];
+          if (item.kind === 'string' && item.type === 'text/rtf') {
+            containsRtf = true;
+            break;
+          }
+        }
 
-        if (imageBlob) {
+        const imageBlob = pasteImageOnly(items);
+        // if it contains rtf, it's most likely copy paste from office -> no image
+        if (imageBlob && !containsRtf) {
           ev.preventDefault();
           emitImageBlobHook(this.eventEmitter, imageBlob, ev.type);
         }

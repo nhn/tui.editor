@@ -172,12 +172,23 @@ export default class WysiwygEditor extends EditorBase {
           const items = clipboardData?.items;
 
           if (items) {
-            const imageBlob = pasteImageOnly(items);
+            let containsRtf = false;
+            for (var i = 0; i < items.length; i++) {
+              const item = items[i];
+              if (item.kind === 'string' && item.type === 'text/rtf') {
+                containsRtf = true;
+                break;
+              }
+            }
+            // if it contains rtf, it's most likely copy paste from office -> no image
+            if (!containsRtf) {
+              const imageBlob = pasteImageOnly(items);
 
-            if (imageBlob) {
-              ev.preventDefault();
+              if (imageBlob) {
+                ev.preventDefault();
 
-              emitImageBlobHook(this.eventEmitter, imageBlob, ev.type);
+                emitImageBlobHook(this.eventEmitter, imageBlob, ev.type);
+              }
             }
           }
           return false;
