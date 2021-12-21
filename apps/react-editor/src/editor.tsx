@@ -1,6 +1,6 @@
 import React from 'react';
-import Editor from '@toast-ui/editor';
-import { EditorProps, EventNames } from '../index';
+import Editor, { EventMap } from '@toast-ui/editor';
+import type { EditorProps, EventNames } from '../index';
 
 export default class extends React.Component<EditorProps> {
   rootEl = React.createRef<HTMLDivElement>();
@@ -26,13 +26,24 @@ export default class extends React.Component<EditorProps> {
       });
   }
 
+  getInitEvents() {
+    return Object.keys(this.props)
+      .filter((key) => /^on[A-Z][a-zA-Z]+/.test(key))
+      .reduce((acc: Record<string, EventMap[keyof EventMap]>, key) => {
+        const eventName = (key[2].toLowerCase() + key.slice(3)) as keyof EventMap;
+
+        acc[eventName] = this.props[key as EventNames];
+
+        return acc;
+      }, {});
+  }
+
   componentDidMount() {
     this.editorInst = new Editor({
       el: this.rootEl.current!,
       ...this.props,
+      events: this.getInitEvents(),
     });
-
-    this.bindEventHandlers(this.props);
   }
 
   shouldComponentUpdate(nextProps: EditorProps) {

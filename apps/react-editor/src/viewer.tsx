@@ -1,6 +1,5 @@
 import React from 'react';
-// @ts-ignore
-import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
+import Viewer, { EventMap } from '@toast-ui/editor/dist/toastui-editor-viewer';
 import { ViewerProps, EventNames } from '../index';
 
 export default class ViewerComponent extends React.Component<ViewerProps> {
@@ -27,13 +26,24 @@ export default class ViewerComponent extends React.Component<ViewerProps> {
       });
   }
 
+  getInitEvents() {
+    return Object.keys(this.props)
+      .filter((key) => /^on[A-Z][a-zA-Z]+/.test(key))
+      .reduce((acc: Record<string, EventMap[keyof EventMap]>, key) => {
+        const eventName = (key[2].toLowerCase() + key.slice(3)) as keyof EventMap;
+
+        acc[eventName] = this.props[key as EventNames];
+
+        return acc;
+      }, {});
+  }
+
   componentDidMount() {
     this.viewerInst = new Viewer({
       el: this.rootEl.current!,
       ...this.props,
+      events: this.getInitEvents(),
     });
-
-    this.bindEventHandlers(this.props);
   }
 
   shouldComponentUpdate(nextProps: ViewerProps) {
