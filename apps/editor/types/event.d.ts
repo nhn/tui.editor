@@ -38,6 +38,7 @@ export type EventTypes =
   | 'mixinTableOffsetMapPrototype'
   | 'setFocusedNode'
   | 'removePopupWidget'
+  | 'query'
   // provide event for user
   | 'openPopup'
   | 'closePopup'
