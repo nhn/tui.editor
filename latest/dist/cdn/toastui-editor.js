@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.1.1 | Wed Oct 27 2021
+ * @version 3.1.2 | Mon Dec 27 2021
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -3391,6 +3391,28 @@ var reEscapeChars = /[>(){}[\]+-.!#|]/g;
 var reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-.:/]*)>/g;
 var reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
 var reEscapePairedChars = /[*_~`]/g;
+var XMLSPECIAL = '[&<>"]';
+var reXmlSpecial = new RegExp(XMLSPECIAL, 'g');
+function replaceUnsafeChar(char) {
+    switch (char) {
+        case '&':
+            return '&amp;';
+        case '<':
+            return '&lt;';
+        case '>':
+            return '&gt;';
+        case '"':
+            return '&quot;';
+        default:
+            return char;
+    }
+}
+function escapeXml(text) {
+    if (reXmlSpecial.test(text)) {
+        return text.replace(reXmlSpecial, replaceUnsafeChar);
+    }
+    return text;
+}
 function sendHostName() {
     sendHostname_default()('editor', 'UA-129966929-1');
 }
@@ -6167,9 +6189,11 @@ var ThematicBreak = /** @class */ (function (_super) {
 
 
 
-function cannotBeListNode(_a) {
-    var type = _a.type;
-    return type === 'codeBlock' || type === 'heading' || type.indexOf('table') !== -1;
+function cannotBeListNode(_a, line) {
+    var type = _a.type, sourcepos = _a.sourcepos;
+    // eslint-disable-next-line prefer-destructuring
+    var startLine = sourcepos[0][0];
+    return line <= startLine && (type === 'codeBlock' || type === 'heading' || type.match('table'));
 }
 var ListItem = /** @class */ (function (_super) {
     __extends(ListItem, _super);
@@ -6272,7 +6296,7 @@ var ListItem = /** @class */ (function (_super) {
             var skipLines = [];
             for (var line = startLine; line <= endLine; line += 1) {
                 var mdNode = toastMark.findFirstNodeAtLine(line);
-                if (mdNode && cannotBeListNode(mdNode)) {
+                if (mdNode && cannotBeListNode(mdNode, line)) {
                     break;
                 }
                 // to skip unnecessary processing
@@ -7014,15 +7038,20 @@ var MdEditor = /** @class */ (function (_super) {
         _this.commands = _this.createCommands();
         _this.specs.setContext(__assign(__assign({}, _this.context), { view: _this.view }));
         _this.createClipboard();
-        _this.eventEmitter.listen('changePreviewTabWrite', function () { return _this.toggleActive(true); });
+        // To prevent unnecessary focus setting during initial rendering
+        _this.eventEmitter.listen('changePreviewTabWrite', function (isMarkdownTabMounted) {
+            return _this.toggleActive(true, isMarkdownTabMounted);
+        });
         _this.eventEmitter.listen('changePreviewTabPreview', function () { return _this.toggleActive(false); });
         _this.initEvent();
         return _this;
     }
-    MdEditor.prototype.toggleActive = function (active) {
+    MdEditor.prototype.toggleActive = function (active, isMarkdownTabMounted) {
         toggleClass(this.el, 'active', active);
         if (active) {
-            this.focus();
+            if (!isMarkdownTabMounted) {
+                this.focus();
+            }
         }
         else {
             this.blur();
@@ -12202,8 +12231,8 @@ var C_BACKSLASH$1 = 92;
 var reBackslashOrAmp = /[\\&]/;
 var ESCAPABLE = '[!"#$%&\'()*+,./:;<=>?@[\\\\\\]^_`{|}~-]';
 var reEntityOrEscapedChar = new RegExp("\\\\" + ESCAPABLE + "|" + ENTITY, 'gi');
-var XMLSPECIAL = '[&<>"]';
-var reXmlSpecial = new RegExp(XMLSPECIAL, 'g');
+var esm_XMLSPECIAL = '[&<>"]';
+var esm_reXmlSpecial = new RegExp(esm_XMLSPECIAL, 'g');
 var unescapeChar = function (s) {
     if (s.charCodeAt(0) === C_BACKSLASH$1) {
         return s.charAt(1);
@@ -12225,7 +12254,7 @@ function normalizeURI(uri) {
         return uri;
     }
 }
-function replaceUnsafeChar(s) {
+function esm_replaceUnsafeChar(s) {
     switch (s) {
         case '&':
             return '&amp;';
@@ -12239,9 +12268,9 @@ function replaceUnsafeChar(s) {
             return s;
     }
 }
-function escapeXml(s) {
-    if (reXmlSpecial.test(s)) {
-        return s.replace(reXmlSpecial, replaceUnsafeChar);
+function esm_escapeXml(s) {
+    if (esm_reXmlSpecial.test(s)) {
+        return s.replace(esm_reXmlSpecial, esm_replaceUnsafeChar);
     }
     return s;
 }
@@ -15848,7 +15877,7 @@ var baseConvertors = {
         var infoWords = infoStr ? infoStr.split(/\s+/) : [];
         var codeClassNames = [];
         if (infoWords.length > 0 && infoWords[0].length > 0) {
-            codeClassNames.push("language-" + escapeXml(infoWords[0]));
+            codeClassNames.push("language-" + esm_escapeXml(infoWords[0]));
         }
         return [
             { type: 'openTag', tagName: 'pre', outerNewLine: true },
@@ -15865,7 +15894,7 @@ var baseConvertors = {
             return {
                 type: 'openTag',
                 tagName: 'a',
-                attributes: esm_assign({ href: escapeXml(destination) }, (title && { title: escapeXml(title) })),
+                attributes: esm_assign({ href: esm_escapeXml(destination) }, (title && { title: esm_escapeXml(title) })),
             };
         }
         return { type: 'closeTag', tagName: 'a' };
@@ -15878,7 +15907,7 @@ var baseConvertors = {
             type: 'openTag',
             tagName: 'img',
             selfClose: true,
-            attributes: esm_assign({ src: escapeXml(destination), alt: getChildrenText(node) }, (title && { title: escapeXml(title) })),
+            attributes: esm_assign({ src: esm_escapeXml(destination), alt: getChildrenText(node) }, (title && { title: esm_escapeXml(title) })),
         };
     },
     customBlock: function (node, context, convertors) {
@@ -16217,7 +16246,7 @@ var Renderer = /** @class */ (function () {
         }
     };
     Renderer.prototype.renderTextNode = function (node) {
-        this.buffer.push(escapeXml(node.content));
+        this.buffer.push(esm_escapeXml(node.content));
     };
     Renderer.prototype.renderRawHtmlNode = function (node) {
         this.addOuterNewLine(node);
@@ -16725,10 +16754,16 @@ var MarkdownPreview = /** @class */ (function () {
         this.sanitizer = sanitizer;
         this.initEvent(highlight);
         this.initContentSection();
+        // To prevent overflowing contents in the viewer
+        if (this.isViewer) {
+            this.previewContent.style.overflowWrap = 'break-word';
+        }
     }
     MarkdownPreview.prototype.initContentSection = function () {
         this.previewContent = createElementWith("<div class=\"" + cls('contents') + "\"></div>");
-        this.el.appendChild(this.previewContent);
+        if (!this.isViewer) {
+            this.el.appendChild(this.previewContent);
+        }
     };
     MarkdownPreview.prototype.toggleActive = function (active) {
         toggleClass(this.el, 'active', active);
@@ -16736,6 +16771,9 @@ var MarkdownPreview = /** @class */ (function () {
     MarkdownPreview.prototype.initEvent = function (highlight) {
         var _this = this;
         this.eventEmitter.listen('updatePreview', this.update.bind(this));
+        if (this.isViewer) {
+            return;
+        }
         if (highlight) {
             this.eventEmitter.listen('changeToolbarState', function (_a) {
                 var mdNode = _a.mdNode, cursorPos = _a.cursorPos;
@@ -18124,6 +18162,7 @@ var CustomBlockView = /** @class */ (function () {
             if (_this.innerEditorView) {
                 throw new Error('The editor is already opened.');
             }
+            _this.dom.draggable = false;
             _this.wrapper.style.display = 'none';
             _this.innerViewContainer.style.display = 'block';
             _this.innerEditorView = new external_commonjs_prosemirror_view_commonjs2_prosemirror_view_amd_prosemirror_view_.EditorView(_this.innerViewContainer, {
@@ -19140,7 +19179,8 @@ var heading_Heading = /** @class */ (function (_super) {
     });
     Heading.prototype.commands = function () {
         return function (payload) { return function (state, dispatch) {
-            return (0,external_commonjs_prosemirror_commands_commonjs2_prosemirror_commands_amd_prosemirror_commands_.setBlockType)(state.schema.nodes.heading, payload)(state, dispatch);
+            var nodeType = state.schema.nodes[payload.level ? 'heading' : 'paragraph'];
+            return (0,external_commonjs_prosemirror_commands_commonjs2_prosemirror_commands_amd_prosemirror_commands_.setBlockType)(nodeType, payload)(state, dispatch);
         }; };
     };
     return Heading;
@@ -20317,7 +20357,7 @@ var Image = /** @class */ (function (_super) {
             if (!imageUrl) {
                 return false;
             }
-            var node = schema.nodes.image.createAndFill(__assign({ imageUrl: encodeMarkdownText(imageUrl) }, (altText && { altText: altText })));
+            var node = schema.nodes.image.createAndFill(__assign({ imageUrl: escapeXml(imageUrl) }, (altText && { altText: altText })));
             dispatch(tr.replaceSelectionWith(node).scrollIntoView());
             return true;
         }; };
@@ -20576,6 +20616,7 @@ var strike_Strike = /** @class */ (function (_super) {
 
 
 
+
 var link_Link = /** @class */ (function (_super) {
     __extends(Link, _super);
     function Link(linkAttributes) {
@@ -20627,7 +20668,7 @@ var link_Link = /** @class */ (function (_super) {
             var empty = selection.empty, from = selection.from, to = selection.to;
             if (from && to && linkUrl) {
                 var attrs = {
-                    linkUrl: encodeMarkdownText(linkUrl),
+                    linkUrl: escapeXml(linkUrl),
                     linkText: escapeMarkdownText(linkText),
                 };
                 var mark = schema.mark('link', attrs);
@@ -21132,6 +21173,7 @@ var eventTypeList = [
     'mixinTableOffsetMapPrototype',
     'setFocusedNode',
     'removePopupWidget',
+    'query',
     // provide event for user
     'openPopup',
     'closePopup',
@@ -21776,32 +21818,37 @@ var toWwConvertors = {
         }
     },
     tableCell: function (state, node, _a) {
+        var _b;
         var entering = _a.entering;
-        if (!node.ignored) {
-            var hasParaNode = function (childNode) {
-                return childNode && (htmlToWwConvertors_isInlineNode(childNode) || isCustomHTMLInlineNode(state, childNode));
-            };
-            if (entering) {
-                var _b = state.schema.nodes, tableHeadCell = _b.tableHeadCell, tableBodyCell = _b.tableBodyCell, paragraph = _b.paragraph;
-                var tablePart = node.parent.parent;
-                var cell = tablePart.type === 'tableHead' ? tableHeadCell : tableBodyCell;
+        var _c = state.schema.nodes, tableHeadCell = _c.tableHeadCell, tableBodyCell = _c.tableBodyCell, paragraph = _c.paragraph;
+        var tablePart = node.parent.parent;
+        var cell = tablePart.type === 'tableHead' ? tableHeadCell : tableBodyCell;
+        var hasParaNode = function (childNode) {
+            return childNode && (htmlToWwConvertors_isInlineNode(childNode) || isCustomHTMLInlineNode(state, childNode));
+        };
+        if (entering) {
+            var attrs = null;
+            if (!node.ignored) {
                 var table = tablePart.parent;
-                var align = table.columns[node.startIdx].align;
-                var attrs = __assign({}, node.attrs);
-                if (align) {
-                    attrs.align = align;
-                }
-                state.openNode(cell, attrs);
-                if (hasParaNode(node.firstChild)) {
-                    state.openNode(paragraph);
+                var startIdx = node.startIdx;
+                if (table.columns.length > startIdx) {
+                    var align = table.columns[startIdx].align;
+                    attrs = (_b = node.attrs) !== null && _b !== void 0 ? _b : {};
+                    if (align) {
+                        attrs.align = align;
+                    }
                 }
             }
-            else {
-                if (hasParaNode(node.lastChild)) {
-                    state.closeNode();
-                }
+            state.openNode(cell, attrs);
+            if (hasParaNode(node.firstChild)) {
+                state.openNode(paragraph);
+            }
+        }
+        else {
+            if (hasParaNode(node.lastChild)) {
                 state.closeNode();
             }
+            state.closeNode();
         }
     },
     strike: function (state, _, _a, customAttrs) {
@@ -22435,7 +22482,7 @@ var toMdConvertors = {
         var node = _a.node;
         var attrs = node.attrs;
         var altText = common_escape(attrs.altText || '');
-        var imageUrl = common_escape(attrs.imageUrl);
+        var imageUrl = escapeXml(attrs.imageUrl);
         var altAttr = altText ? " alt=\"" + altText + "\"" : '';
         return {
             rawHTML: attrs.rawHTML ? "<" + attrs.rawHTML + " src=\"" + imageUrl + "\"" + altAttr + ">" : null,
@@ -22503,7 +22550,7 @@ var toMdConvertors = {
         var node = _a.node;
         var entering = _b.entering;
         var attrs = node.attrs;
-        var linkUrl = common_escape(attrs.linkUrl);
+        var linkUrl = escapeXml(attrs.linkUrl);
         var rawHTML = attrs.rawHTML;
         if (entering) {
             return {
@@ -22540,7 +22587,8 @@ var toMdConvertors = {
         var openTag = "<" + tagName;
         var closeTag = "</" + tagName + ">";
         Object.keys(attrs).forEach(function (attrName) {
-            openTag += " " + attrName + "=\"" + attrs[attrName] + "\"";
+            // To prevent broken converting when attributes has double quote string
+            openTag += " " + attrName + "=\"" + attrs[attrName].replace(/"/g, "'") + "\"";
         });
         openTag += '>';
         if (node.attrs.htmlInline) {
@@ -23109,7 +23157,7 @@ var ToastUIEditorViewer = /** @class */ (function () {
             customParser: markdownParsers,
         });
         this.preview = new mdPreview(this.eventEmitter, __assign(__assign({}, rendererOptions), { isViewer: true }));
-        on_default()(this.preview.el, 'mousedown', this.toggleTask.bind(this));
+        on_default()(this.preview.previewContent, 'mousedown', this.toggleTask.bind(this));
         if (initialValue) {
             this.setMarkdown(initialValue);
         }
@@ -23544,7 +23592,21 @@ var ScrollSync = /** @class */ (function () {
 }());
 
 
+;// CONCATENATED MODULE: ./src/queries/queryManager.ts
+var queryMap = {
+    getPopupInitialValues: function (editor, payload) {
+        var popupName = payload.popupName;
+        return popupName === 'link' ? { linkText: editor.getSelectedText() } : {};
+    },
+};
+function buildQuery(editor) {
+    editor.eventEmitter.listen('query', function (query, payload) {
+        return queryMap[query](editor, payload);
+    });
+}
+
 ;// CONCATENATED MODULE: ./src/editorCore.ts
+
 
 
 
@@ -23707,6 +23769,7 @@ var ToastUIEditorCore = /** @class */ (function () {
         this.scrollSync = new ScrollSync(this.mdEditor, this.preview, this.eventEmitter);
         this.addInitEvent();
         this.addInitCommand(mdCommands, wwCommands);
+        buildQuery(this);
         if (this.options.hooks) {
             forEachOwnProperties_default()(this.options.hooks, function (fn, key) { return _this.addHook(key, fn); });
         }
@@ -25974,6 +26037,10 @@ var CustomPopupBody = /** @class */ (function (_super) {
         // append the custom popup body element
         this.refs.el.appendChild(this.props.body);
     };
+    CustomPopupBody.prototype.updated = function (prevProps) {
+        // update custom popup element
+        this.refs.el.replaceChild(this.props.body, prevProps.body);
+    };
     CustomPopupBody.prototype.render = function () {
         var _this = this;
         return template(customPopupBody_templateObject_1 || (customPopupBody_templateObject_1 = __makeTemplateObject(["<div ref=", "></div>"], ["<div ref=", "></div>"])), function (el) { return (_this.refs.el = el); });
@@ -26371,17 +26438,19 @@ var ToolbarButtonComp = /** @class */ (function (_super) {
             _this.props.showTooltip(_this.refs.el);
         };
         _this.execCommand = function () {
-            var _a = _this.props, item = _a.item, execCommand = _a.execCommand, setPopupInfo = _a.setPopupInfo, getBound = _a.getBound;
+            var _a = _this.props, item = _a.item, execCommand = _a.execCommand, setPopupInfo = _a.setPopupInfo, getBound = _a.getBound, eventEmitter = _a.eventEmitter;
             var command = item.command, name = item.name, popup = item.popup;
             if (command) {
                 execCommand(command);
             }
             else {
                 var popupName = popup ? 'customPopupBody' : name;
+                var initialValues = eventEmitter.emit('query', 'getPopupInitialValues', { popupName: popupName })[0];
                 var info = createPopupInfo(popupName, {
                     el: _this.refs.el,
                     pos: getBound(_this.refs.el),
                     popup: popup,
+                    initialValues: initialValues,
                 });
                 if (info) {
                     setPopupInfo(info);
@@ -26749,7 +26818,7 @@ var Toolbar = /** @class */ (function (_super) {
     };
     Toolbar.prototype.mounted = function () {
         if (this.props.previewStyle === 'tab') {
-            this.props.eventEmitter.emit('changePreviewTabWrite');
+            this.props.eventEmitter.emit('changePreviewTabWrite', true);
         }
         // classify toolbar and dropdown toolbar after DOM has been rendered
         this.setState(this.classifyToolbarItems());

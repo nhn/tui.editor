@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.1.1 | Wed Oct 27 2021
+ * @version 3.1.2 | Mon Dec 27 2021
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -12090,6 +12090,28 @@ var common_reEscapeChars = /[>(){}[\]+-.!#|]/g;
 var reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-.:/]*)>/g;
 var reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
 var reEscapePairedChars = /[*_~`]/g;
+var common_XMLSPECIAL = '[&<>"]';
+var common_reXmlSpecial = new RegExp(common_XMLSPECIAL, 'g');
+function common_replaceUnsafeChar(char) {
+    switch (char) {
+        case '&':
+            return '&amp;';
+        case '<':
+            return '&lt;';
+        case '>':
+            return '&gt;';
+        case '"':
+            return '&quot;';
+        default:
+            return char;
+    }
+}
+function common_escapeXml(text) {
+    if (common_reXmlSpecial.test(text)) {
+        return text.replace(common_reXmlSpecial, common_replaceUnsafeChar);
+    }
+    return text;
+}
 function sendHostName() {
     sendHostname('editor', 'UA-129966929-1');
 }
@@ -13237,10 +13259,16 @@ var MarkdownPreview = /** @class */ (function () {
         this.sanitizer = sanitizer;
         this.initEvent(highlight);
         this.initContentSection();
+        // To prevent overflowing contents in the viewer
+        if (this.isViewer) {
+            this.previewContent.style.overflowWrap = 'break-word';
+        }
     }
     MarkdownPreview.prototype.initContentSection = function () {
         this.previewContent = createElementWith("<div class=\"" + cls('contents') + "\"></div>");
-        this.el.appendChild(this.previewContent);
+        if (!this.isViewer) {
+            this.el.appendChild(this.previewContent);
+        }
     };
     MarkdownPreview.prototype.toggleActive = function (active) {
         toggleClass(this.el, 'active', active);
@@ -13248,6 +13276,9 @@ var MarkdownPreview = /** @class */ (function () {
     MarkdownPreview.prototype.initEvent = function (highlight) {
         var _this = this;
         this.eventEmitter.listen('updatePreview', this.update.bind(this));
+        if (this.isViewer) {
+            return;
+        }
         if (highlight) {
             this.eventEmitter.listen('changeToolbarState', function (_a) {
                 var mdNode = _a.mdNode, cursorPos = _a.cursorPos;
@@ -13842,6 +13873,7 @@ var eventTypeList = [
     'mixinTableOffsetMapPrototype',
     'setFocusedNode',
     'removePopupWidget',
+    'query',
     // provide event for user
     'openPopup',
     'closePopup',
@@ -14127,7 +14159,7 @@ var ToastUIEditorViewer = /** @class */ (function () {
             customParser: markdownParsers,
         });
         this.preview = new mdPreview(this.eventEmitter, tslib_es6_assign(tslib_es6_assign({}, rendererOptions), { isViewer: true }));
-        on_default()(this.preview.el, 'mousedown', this.toggleTask.bind(this));
+        on_default()(this.preview.previewContent, 'mousedown', this.toggleTask.bind(this));
         if (initialValue) {
             this.setMarkdown(initialValue);
         }
