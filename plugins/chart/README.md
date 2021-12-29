@@ -131,6 +131,8 @@ To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be incl
 </head>
 <body>
   ...
+  <!-- Chart -->
+  <script src="https://uicdn.toast.com/chart/latest/toastui-chart.min.js"></script>
   <!-- Editor -->
   <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
   <!-- Editor's Plugin -->

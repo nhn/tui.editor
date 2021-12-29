@@ -113,6 +113,8 @@ To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be incl
 </head>
 <body>
   ...
+  <!-- Color Picker -->
+  <script src="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.js"></script>
   <!-- Editor -->
   <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
   <!-- Editor's Plugin -->

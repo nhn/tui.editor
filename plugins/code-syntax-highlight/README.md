@@ -57,7 +57,7 @@ $ npm install @toast-ui/editor-plugin-code-syntax-highlight
 ### Import Plugin
 
 Along with the plugin, the plugin's dependency style must be imported. 
-The `code-syntax-highlight` plugin has [`Prism.js`](https://prismjs.com/) as a dependency, and you need to add a CSS file of `Prism.js`.
+The `code-syntax-highlight` plugin has [`prismjs`](https://prismjs.com/) as a dependency, and you need to add a CSS file of `prismjs`.
 
 #### ES Modules
 
@@ -79,9 +79,9 @@ const codeSyntaxHighlight = require('@toast-ui/editor-plugin-code-syntax-highlig
 
 ### Create Instance
 
-When you set up a plugin function, you must set it with an option. The option has `highlighter`, and you need to import [`Prism.js`](https://www.npmjs.com/package/prismjs) before creating an instance and set it to the value of that option.
+When you set up a plugin function, you must set it with an option. The option has `highlighter`, and you need to import [`prismjs`](https://www.npmjs.com/package/prismjs) before creating an instance and set it to the value of that option.
 
-The main bundle file of `Prism.js` contains just several language pack it supports. So we provides the bundle file(`toastui-editor-plugin-code-syntax-highlight-all.js`) to import all languages you need in `Prism.js`.
+The main bundle file of `prismjs` contains just several language pack it supports. So we provides the bundle file(`toastui-editor-plugin-code-syntax-highlight-all.js`) to import all languages you need in `prismjs`.
 
 #### Basic
 
@@ -89,29 +89,32 @@ The main bundle file of `Prism.js` contains just several language pack it suppor
 
 ```js
 // ...
+import 'prismjs/themes/prism.css';
+import '@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css';
+
 import Editor from '@toast-ui/editor';
 import codeSyntaxHighlight from '@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight-all.js';
 
 
 const editor = new Editor({
   // ...
-  plugins: [[codeSyntaxHighlight, { highlighter: Prism }]]
+  plugins: [codeSyntaxHighlight]
 });
 ```
 
 ##### Import Only Languages ​​You Need
 
-You need to import the language files you want to use in the code block and register them in the `Prism.js` object. A list of available language files can be found [here](https://github.com/PrismJS/prism/tree/master/components).
+You need to import the language files you want to use in the code block and register them in the `prismjs` object. A list of available language files can be found [here](https://github.com/PrismJS/prism/tree/master/components).
 
 ```js
 // ...
 import 'prismjs/themes/prism.css';
 import '@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css';
 
-// Step 1. Import Prism.js
+// Step 1. Import prismjs
 import Prism from 'prismjs';
 
-// Step 2. Import language files of Prism.js that you need
+// Step 2. Import language files of prismjs that you need
 import 'prismjs/components/prism-clojure.js';
 
 import Editor from '@toast-ui/editor';
@@ -125,18 +128,19 @@ const editor = new Editor({
 
 #### With Viewer
 
-As with creating an editor instance, you need to import `Prism.js` and pass it to the `highlighter` option.
+As with creating an editor instance, you need to import `prismjs` and pass it to the `highlighter` option.
 
 ```js
 // ...
 import 'prismjs/themes/prism.css';
 import '@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css';
 
+// Import prismjs
+import Prism from 'prismjs';
+
 import Viewer from '@toast-ui/editor/dist/toastui-editor-viewer';
 import codeSyntaxHighlight from '@toast-ui/editor-plugin-code-syntax-highlight';
 
-// Import Prism.js
-// ...
 
 const viewer = new Viewer({
   // ...
@@ -151,11 +155,11 @@ or
 import 'prismjs/themes/prism.css';
 import '@toast-ui/editor-plugin-code-syntax-highlight/dist/toastui-editor-plugin-code-syntax-highlight.css';
 
+// Import prismjs
+import Prism from 'prismjs';
+
 import Editor from '@toast-ui/editor';
 import codeSyntaxHighlight from '@toast-ui/editor-plugin-code-syntax-highlight';
-
-// Import Prism.js
-// ...
 
 const viewer = Editor.factory({
   // ...
@@ -174,11 +178,11 @@ To use the plugin, the CDN files(CSS, Script) of `@toast-ui/editor` must be incl
 
 #### Basic
 
-First, include the editor file. And include the plugin file as needed. If you want to include all language files provided by `Prism.js`, see the first title(_Include All Languages_). If you want to register and use only the languages ​​you need, see the second title(_Include Only Languages ​​You Need_).
+First, include the editor file. And include the plugin file as needed. If you want to include all language files provided by `prismjs`, see the first title(_Include All Languages_). If you want to register and use only the languages ​​you need, see the second title(_Include Only Languages ​​You Need_).
 
 ##### Include All Languages
 
-By including the **all** version of the plugin, all languages ​​of `Prism.js` are available in the code block.
+By including the **all** version of the plugin, all languages ​​of `prismjs` are available in the code block.
 
 ```html
 ...
@@ -217,9 +221,9 @@ const instance = new Editor({
 
 ##### Include Only Languages ​​You Need
 
-If you include the **normal** version of the plugin, only the languages ​​you need are available. At this time, you should also include the language files of `Prism.js`, and if you only include it, the languages ​​available to the plugin are registered.
+If you include the **normal** version of the plugin, only the languages ​​you need are available. At this time, you should also include the language files of `prismjs`, and if you only include it, the languages ​​available to the plugin are registered.
 
-> Note : The CDN provided by `Prism.js` contains several language files. If you want to add other language files, you can use [cdnjs](https://cdnjs.com/libraries/prism) to add each language file or upload a file containing only the language you need on [this page](https://prismjs.com/download.html).
+> Note : The CDN provided by `prismjs` contains several language files. If you want to add other language files, you can use [cdnjs](https://cdnjs.com/libraries/prism) to add each language file or upload a file containing only the language you need on [this page](https://prismjs.com/download.html).
 
 ```html
 ...
@@ -235,13 +239,11 @@ If you include the **normal** version of the plugin, only the languages ​​yo
   />
   ...
 </head>
-  ...
-</head>
 <body>
   ...
   <!-- Editor -->
   <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-  <!-- Prism.js Languages -->
+  <!-- prismjs Languages -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/components/prism-clojure.min.js"></script>
   <!-- Editor's Plugin -->
@@ -253,7 +255,7 @@ If you include the **normal** version of the plugin, only the languages ​​yo
 
 #### With Viewer
 
-The way to include the plugin and the language files of `Prism.js` is the same as above.
+The way to include the plugin and the language files of `prismjs` is the same as above.
 
 ##### Use Option of Editor
 
@@ -274,9 +276,24 @@ Include the Viewer file instead of the Editor.
 
 ```html
 ...
+<head>
+  ...
+  <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.23.0/themes/prism.min.css"
+  />
+  <link
+    rel="stylesheet"
+    href="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight.min.css"
+  />
+  ...
+</head>
 <body>
   ...
+  <!-- Viewer -->
   <script src="https://uicdn.toast.com/editor/latest/toastui-editor-viewer.min.js"></script>
+  <!-- Viewer's Plugin -->
+  <script src="https://uicdn.toast.com/editor-plugin-code-syntax-highlight/latest/toastui-editor-plugin-code-syntax-highlight-all.min.js"></script>
   ...
 </body>
 ...
