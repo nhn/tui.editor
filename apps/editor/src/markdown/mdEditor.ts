@@ -103,11 +103,13 @@ export default class MdEditor extends EditorBase {
 
       if (items) {
         const containRtfItem = toArray(items).some(item => item.kind === 'string' && item.type === 'text/rtf');
-        const imageBlob = pasteImageOnly(items);
         // if it contains rtf, it's most likely copy paste from office -> no image
-        if (imageBlob && !containRtfItem) {
-          ev.preventDefault();
-          emitImageBlobHook(this.eventEmitter, imageBlob, ev.type);
+        if (!containRtfItem) {
+          const imageBlob = pasteImageOnly(items);
+          if (imageBlob) {
+            ev.preventDefault();
+            emitImageBlobHook(this.eventEmitter, imageBlob, ev.type);
+          }
         }
       }
     });
