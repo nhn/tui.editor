@@ -30,6 +30,7 @@ import { widgetNodeView } from '@/widget/widgetNode';
 import { cls } from '@/utils/dom';
 import { includes } from '@/utils/common';
 import { isInTableNode } from '@/wysiwyg/helper/node';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -172,16 +173,9 @@ export default class WysiwygEditor extends EditorBase {
           const items = clipboardData?.items;
 
           if (items) {
-            let containsRtf = false;
-            for (var i = 0; i < items.length; i++) {
-              const item = items[i];
-              if (item.kind === 'string' && item.type === 'text/rtf') {
-                containsRtf = true;
-                break;
-              }
-            }
+            const containRtfItem = toArray(items).some(item => item.kind === 'string' && item.type === 'text/rtf');
             // if it contains rtf, it's most likely copy paste from office -> no image
-            if (!containsRtf) {
+            if (!containRtfItem) {
               const imageBlob = pasteImageOnly(items);
 
               if (imageBlob) {

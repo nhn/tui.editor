@@ -35,6 +35,7 @@ import { smartTask } from './plugins/smartTask';
 import { createNodesWithWidget, unwrapWidgetSyntax } from '@/widget/rules';
 import { Widget, widgetNodeView } from '@/widget/widgetNode';
 import { PluginProp } from '@t/plugin';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -101,18 +102,10 @@ export default class MdEditor extends EditorBase {
       const items = clipboardData && clipboardData.items;
 
       if (items) {
-        let containsRtf = false;
-        for (var i = 0; i < items.length; i++) {
-          const item = items[i];
-          if (item.kind === 'string' && item.type === 'text/rtf') {
-            containsRtf = true;
-            break;
-          }
-        }
-
+        const containRtfItem = toArray(items).some(item => item.kind === 'string' && item.type === 'text/rtf');
         const imageBlob = pasteImageOnly(items);
         // if it contains rtf, it's most likely copy paste from office -> no image
-        if (imageBlob && !containsRtf) {
+        if (imageBlob && !containRtfItem) {
           ev.preventDefault();
           emitImageBlobHook(this.eventEmitter, imageBlob, ev.type);
         }
