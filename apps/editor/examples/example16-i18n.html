@@ -30,6 +30,9 @@
     <script src="../dist/cdn/toastui-editor-all.js"></script>
     <script src="../dist/cdn/i18n/ko-kr.js"></script>
     <script type="text/babel" class="code-js">
+      // In order to set the desired multilingual in ESM environment, you should import our language module as below.
+      // import '@toast-ui/editor/dist/i18n/ko-kr';
+
       const editor = new toastui.Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
