@@ -1,6 +1,7 @@
 import { EditorView, NodeView } from 'prosemirror-view';
 import { Node as ProsemirrorNode, Slice, Fragment, Mark, Schema } from 'prosemirror-model';
 import isNumber from 'tui-code-snippet/type/isNumber';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 import EditorBase from '@/base';
 import { getWwCommands } from '@/commands/wwCommands';
@@ -30,7 +31,6 @@ import { widgetNodeView } from '@/widget/widgetNode';
 import { cls } from '@/utils/dom';
 import { includes } from '@/utils/common';
 import { isInTableNode } from '@/wysiwyg/helper/node';
-import toArray from 'tui-code-snippet/collection/toArray';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -173,7 +173,10 @@ export default class WysiwygEditor extends EditorBase {
           const items = clipboardData?.items;
 
           if (items) {
-            const containRtfItem = toArray(items).some(item => item.kind === 'string' && item.type === 'text/rtf');
+            const containRtfItem = toArray(items).some(
+              (item) => item.kind === 'string' && item.type === 'text/rtf'
+            );
+
             // if it contains rtf, it's most likely copy paste from office -> no image
             if (!containRtfItem) {
               const imageBlob = pasteImageOnly(items);

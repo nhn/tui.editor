@@ -3,6 +3,9 @@ import { EditorView } from 'prosemirror-view';
 import { Fragment, Slice } from 'prosemirror-model';
 import { ReplaceAroundStep } from 'prosemirror-transform';
 import { MdPos, ToastMark } from '@toast-ui/toastmark';
+
+import toArray from 'tui-code-snippet/collection/toArray';
+
 import { MdContext } from '@t/spec';
 import { Emitter } from '@t/event';
 import { WidgetStyle } from '@t/editor';
@@ -35,7 +38,6 @@ import { smartTask } from './plugins/smartTask';
 import { createNodesWithWidget, unwrapWidgetSyntax } from '@/widget/rules';
 import { Widget, widgetNodeView } from '@/widget/widgetNode';
 import { PluginProp } from '@t/plugin';
-import toArray from 'tui-code-snippet/collection/toArray';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -102,10 +104,14 @@ export default class MdEditor extends EditorBase {
       const items = clipboardData && clipboardData.items;
 
       if (items) {
-        const containRtfItem = toArray(items).some(item => item.kind === 'string' && item.type === 'text/rtf');
+        const containRtfItem = toArray(items).some(
+          (item) => item.kind === 'string' && item.type === 'text/rtf'
+        );
+
         // if it contains rtf, it's most likely copy paste from office -> no image
         if (!containRtfItem) {
           const imageBlob = pasteImageOnly(items);
+
           if (imageBlob) {
             ev.preventDefault();
             emitImageBlobHook(this.eventEmitter, imageBlob, ev.type);
