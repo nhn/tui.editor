@@ -1,6 +1,7 @@
 import { EditorView, NodeView } from 'prosemirror-view';
 import { Node as ProsemirrorNode, Slice, Fragment, Mark, Schema } from 'prosemirror-model';
 import isNumber from 'tui-code-snippet/type/isNumber';
+import toArray from 'tui-code-snippet/collection/toArray';
 
 import EditorBase from '@/base';
 import { getWwCommands } from '@/commands/wwCommands';
@@ -171,13 +172,20 @@ export default class WysiwygEditor extends EditorBase {
             (ev as ClipboardEvent).clipboardData || (window as WindowWithClipboard).clipboardData;
           const items = clipboardData?.items;
 
-          if (items?.length === 1) {
-            const imageBlob = pasteImageOnly(items);
+          if (items) {
+            const containRtfItem = toArray(items).some(
+              (item) => item.kind === 'string' && item.type === 'text/rtf'
+            );
 
-            if (imageBlob) {
-              ev.preventDefault();
+            // if it contains rtf, it's most likely copy paste from office -> no image
+            if (!containRtfItem) {
+              const imageBlob = pasteImageOnly(items);
 
-              emitImageBlobHook(this.eventEmitter, imageBlob, ev.type);
+              if (imageBlob) {
+                ev.preventDefault();
+
+                emitImageBlobHook(this.eventEmitter, imageBlob, ev.type);
+              }
             }
           }
           return false;

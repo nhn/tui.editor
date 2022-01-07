@@ -3,6 +3,9 @@ import { EditorView } from 'prosemirror-view';
 import { Fragment, Slice } from 'prosemirror-model';
 import { ReplaceAroundStep } from 'prosemirror-transform';
 import { MdPos, ToastMark } from '@toast-ui/toastmark';
+
+import toArray from 'tui-code-snippet/collection/toArray';
+
 import { MdContext } from '@t/spec';
 import { Emitter } from '@t/event';
 import { WidgetStyle } from '@t/editor';
@@ -101,11 +104,18 @@ export default class MdEditor extends EditorBase {
       const items = clipboardData && clipboardData.items;
 
       if (items) {
-        const imageBlob = pasteImageOnly(items);
+        const containRtfItem = toArray(items).some(
+          (item) => item.kind === 'string' && item.type === 'text/rtf'
+        );
 
-        if (imageBlob) {
-          ev.preventDefault();
-          emitImageBlobHook(this.eventEmitter, imageBlob, ev.type);
+        // if it contains rtf, it's most likely copy paste from office -> no image
+        if (!containRtfItem) {
+          const imageBlob = pasteImageOnly(items);
+
+          if (imageBlob) {
+            ev.preventDefault();
+            emitImageBlobHook(this.eventEmitter, imageBlob, ev.type);
+          }
         }
       }
     });
