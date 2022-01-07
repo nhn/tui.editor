@@ -7,6 +7,7 @@ import { optionsMixin } from './mixin/option';
 
 export default {
   name: 'ToastuiEditorViewer',
+  emits: ['rendered'],
   mixins: [optionsMixin],
   props: {
     height: {
@@ -20,9 +21,24 @@ export default {
     },
   },
   mounted() {
-    const options = { ...this.computedOptions, el: this.$refs.toastuiEditorViewer };
+    const options = {
+      ...this.computedOptions,
+      el: this.$refs.toastuiEditorViewer,
+    };
 
     this.editor = new Viewer(options);
+    this.$emit('rendered', { viewer: this.$refs.toastuiEditorViewer });
+  },
+  updated() {
+    const options = {
+      ...this.computedOptions,
+      el: this.$refs.toastuiEditorViewer,
+    };
+
+    options.initialValue = this.initialValue;
+    this.editor = new Viewer(options);
+
+    this.$emit('rendered', { viewer: this.$refs.toastuiEditorViewer });
   },
   methods: {
     getRootElement() {

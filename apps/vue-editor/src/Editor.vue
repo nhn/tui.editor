@@ -38,6 +38,15 @@ export default {
 
     this.editor = new Editor(options);
   },
+  updated() {
+    const options = {
+      ...this.computedOptions,
+      el: this.$refs.toastuiEditor,
+    };
+
+    options.initialValue = this.initialValue;
+    this.editor = new Editor(options);
+  },
   methods: {
     getRootElement() {
       return this.$refs.toastuiEditor;

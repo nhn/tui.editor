@@ -1,39 +1,41 @@
 {
   "name": "@toast-ui/vue-editor",
-  "version": "3.1.2",
+  "version": "3.1.1",
   "description": "TOAST UI Editor for Vue",
+  "author": "NHN. FE Development Lab <dl_javascript@nhn.com>",
+  "scripts": {
+    "build": "webpack build",
+    "lint": "eslint .",
+    "serve": "vite --open",
+    "preview": "vite preview --open --port 8080",
+    "build:v": "vite build --out-dir dist"
+  },
   "main": "dist/toastui-vue-editor.js",
-  "module": "dist/esm/index.js",
   "files": [
     "dist",
     "index.d.ts"
   ],
-  "scripts": {
-    "lint": "eslint .",
-    "serve": "snowpack dev",
-    "build": "webpack build && rollup -c"
+  "dependencies": {
+    "@toast-ui/editor": "^3.1.1",
+    "vue": "^3.1.0-0"
   },
-  "homepage": "https://ui.toast.com",
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^1.9.4",
+    "@vue/compiler-sfc": "^3.0.11",
+    "vite": "^2.6.14",
+    "vue": "^3.1.0-0",
+    "vue-loader": "^16.8.3",
+    "webpack": "^5.64.0",
+    "webpack-cli": "^4.9.1"
+  },
   "bugs": {
     "url": "https://github.com/nhn/tui.editor/issues"
   },
-  "author": "NHN. FE Development Lab <dl_javascript@nhn.com>",
+  "homepage": "https://ui.toast.com",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/nhn/tui.editor.git",
     "directory": "apps/vue-editor"
-  },
-  "license": "MIT",
-  "devDependencies": {
-    "vue": "^2.5.0",
-    "vue-loader": "^15.9.6",
-    "vue-template-compiler": "^2.6.12",
-    "@morgul/snowpack-plugin-vue2": "^0.4.0"
-  },
-  "peerDependencies": {
-    "vue": "^2.5.0"
-  },
-  "dependencies": {
-    "@toast-ui/editor": "^3.1.2"
   }
 }
