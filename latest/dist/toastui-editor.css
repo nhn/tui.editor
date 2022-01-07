@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.1.2 | Mon Dec 27 2021
+ * @version 3.1.2 | Fri Jan 07 2022
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
