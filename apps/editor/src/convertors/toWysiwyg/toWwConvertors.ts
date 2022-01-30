@@ -233,40 +233,34 @@ const toWwConvertors: ToWwConvertorMap = {
   },
 
   tableCell(state, node, { entering }) {
-    const { tableHeadCell, tableBodyCell, paragraph } = state.schema.nodes;
-    const tablePart = node.parent!.parent!;
-    const cell = tablePart.type === 'tableHead' ? tableHeadCell : tableBodyCell;
-    const hasParaNode = (childNode: MdNode | null) =>
-      childNode && (isInlineNode(childNode) || isCustomHTMLInlineNode(state, childNode));
+    if (!(node as TableCellMdNode).ignored) {
+      const hasParaNode = (childNode: MdNode | null) =>
+        childNode && (isInlineNode(childNode) || isCustomHTMLInlineNode(state, childNode));
 
-    if (entering) {
-      let attrs: Record<string, string | number> | null = null;
+      if (entering) {
+        const { tableHeadCell, tableBodyCell, paragraph } = state.schema.nodes;
+        const tablePart = node.parent!.parent!;
+        const cell = tablePart.type === 'tableHead' ? tableHeadCell : tableBodyCell;
 
-      if (!(node as TableCellMdNode).ignored) {
         const table = tablePart.parent as TableMdNode;
-        const { startIdx } = node as TableCellMdNode;
+        const { align } = table.columns[(node as TableCellMdNode).startIdx] || {};
+        const attrs: Record<string, string | number> = { ...(node as TableCellMdNode).attrs };
 
-        if (table.columns.length > startIdx) {
-          const { align } = table.columns[startIdx];
-
-          attrs = (node as TableCellMdNode).attrs ?? {};
-
-          if (align) {
-            attrs.align = align;
-          }
+        if (align) {
+          attrs.align = align;
         }
-      }
 
-      state.openNode(cell, attrs);
+        state.openNode(cell, attrs);
 
-      if (hasParaNode(node.firstChild)) {
-        state.openNode(paragraph);
-      }
-    } else {
-      if (hasParaNode(node.lastChild)) {
+        if (hasParaNode(node.firstChild)) {
+          state.openNode(paragraph);
+        }
+      } else {
+        if (hasParaNode(node.lastChild)) {
+          state.closeNode();
+        }
         state.closeNode();
       }
-      state.closeNode();
     }
   },
 
