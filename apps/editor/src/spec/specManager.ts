@@ -83,10 +83,25 @@ export default class SpecManager {
     return specCommands;
   }
 
-  keymaps() {
+  // 1. useCommand~~ 옵션이 false 일 때 등록되면 안되는 단축키들을 분류해야 한다.
+  // 2. 분류된 애들을 useCommand~~ 옵션에 따라 단축키 등록 여부를 결정한다.
+  // 3. 'Enter', 'Tab', 'Shift-Tab', 'Delete'과 같은 애들은 seCommand~~ 옵션 상관없이 사용성을 위해 무조건 제공한다. 이외에 키들만 옵션을 통해 제어한다.
+  // 4. undo, redo는 여기서 제어가 안되므로 별도 로직 처리가 필요하다.
+  keymaps(useCommandShortcut: boolean) {
+    const defaultShortcuts = ['Enter', 'Tab', 'Shift-Tab', 'Delete'];
+
     const specKeymaps = this.specs.filter((spec) => spec.keymaps).map((spec) => spec.keymaps!());
 
-    return specKeymaps.map((keys) => keymap(keys));
+    return specKeymaps.map((keys) => {
+      if (!useCommandShortcut) {
+        Object.keys(keys).forEach((key) => {
+          if (!defaultShortcuts.includes(key)) {
+            delete keys[key];
+          }
+        });
+      }
+      return keymap(keys);
+    });
   }
 
   setContext(context: SpecContext) {
