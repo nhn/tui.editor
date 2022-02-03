@@ -352,7 +352,8 @@ const toWwConvertors: ToWwConvertorMap = {
   },
 
   customInline(state, node, { entering, skipChildren }) {
-    const { info } = node as CustomInlineMdNode;
+    console.log(node);
+    let { info } = node as CustomInlineMdNode;
     const { schema } = state;
 
     if (info.indexOf('widget') !== -1 && entering) {
@@ -363,9 +364,24 @@ const toWwConvertors: ToWwConvertorMap = {
       state.addNode(schema.nodes.widget, { info }, [
         schema.text(createWidgetContent(info, content)),
       ]);
+    } else if (entering) {
+      if (node.firstChild) {
+        info += ' ';
+      }
+      state.addText(`$$${info}`);
+    } else {
+      state.addText('$$');
     }
   },
 };
+
+// 1. 스크립트 에러 -> toastmark renderer에 세번째 인자가 넘어가지 않아 문제
+// 2. 위젯이 아닐때 커스텀 인라인을 위지윅으로 변환을 해야 한다. 텍스트로 변환 필요
+// 3. 커스텀 인라인 -> $$info text$$ $$xxx$$
+// 4. info 정보만 있는 경우 텍스트 노드가 자식으로 없어야 하지만 중복으로 등록이된다. -> 자식 노드가 unlink 되도록 파서에서 수정
+// 5. 마크다운 렌더러에서 자식 노드가 unlink가 되어서 렌더링을 하지 못함. 컨버터 문제임 -> baseConvertors에 있는 커스텀 인라인 컨버터를 수정해야 한다.
+// 6. 커스텀 인라인 마크다운 컨버터에서 자식 노드가 있는 경우 info와 텍스트를 구분하기 위해 node.firstChild 유무에 따라 공백을 추가해줌.
+// 7. 컨버팅 시에도 위 작업을 동일하게 해준다.
 
 export function createWwConvertors(customConvertors: HTMLConvertorMap) {
   const customConvertorTypes = Object.keys(customConvertors);
@@ -382,7 +398,7 @@ export function createWwConvertors(customConvertors: HTMLConvertorMap) {
 
     if (wwConvertor && !includes(['htmlBlock', 'htmlInline'], type)) {
       convertors[type] = (state, node, context) => {
-        context.origin = () => orgConvertors[type]!(node, context);
+        context.origin = () => orgConvertors[type]!(node, context, orgConvertors);
         const tokens = customConvertors[type]!(node, context) as OpenTagToken;
         let attrs;
 
