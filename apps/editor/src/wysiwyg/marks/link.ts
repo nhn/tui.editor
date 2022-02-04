@@ -2,7 +2,6 @@ import { Mark as ProsemirrorMark, DOMOutputSpecArray } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 
 import Mark from '@/spec/mark';
-import { escapeMarkdownText } from '@/utils/encoder';
 import { escapeXml } from '@/utils/common';
 import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 import { createTextNode } from '@/helper/manipulation';
@@ -27,7 +26,7 @@ export class Link extends Mark {
     return {
       attrs: {
         linkUrl: { default: '' },
-        linkText: { default: null },
+        title: { default: null },
         rawHTML: { default: null },
         ...getDefaultCustomAttrs(),
       },
@@ -39,11 +38,12 @@ export class Link extends Mark {
             const sanitizedDOM = sanitizeHTML<DocumentFragment>(dom, { RETURN_DOM_FRAGMENT: true })
               .firstChild as HTMLElement;
             const href = sanitizedDOM.getAttribute('href') || '';
+            const title = sanitizedDOM.getAttribute('title') || '';
             const rawHTML = sanitizedDOM.getAttribute('data-raw-html');
 
             return {
               linkUrl: href,
-              linkText: sanitizedDOM.textContent,
+              title,
               ...(rawHTML && { rawHTML }),
             };
           },
@@ -52,7 +52,7 @@ export class Link extends Mark {
       toDOM: ({ attrs }: ProsemirrorMark): DOMOutputSpecArray => [
         attrs.rawHTML || 'a',
         {
-          href: attrs.linkUrl,
+          href: escapeXml(attrs.linkUrl),
           ...(this.linkAttributes as DOMOutputSpecArray),
           ...getCustomAttrs(attrs),
         },
@@ -67,10 +67,7 @@ export class Link extends Mark {
       const { empty, from, to } = selection;
 
       if (from && to && linkUrl) {
-        const attrs = {
-          linkUrl: escapeXml(linkUrl),
-          linkText: escapeMarkdownText(linkText),
-        };
+        const attrs = { linkUrl };
         const mark = schema.mark('link', attrs);
 
         if (empty && linkText) {

@@ -45,7 +45,7 @@ export class Image extends NodeSchema {
         return [
           attrs.rawHTML || 'img',
           {
-            src: attrs.imageUrl,
+            src: escapeXml(attrs.imageUrl),
             ...(attrs.altText && { alt: attrs.altText }),
             ...getCustomAttrs(attrs),
           },
@@ -63,7 +63,7 @@ export class Image extends NodeSchema {
       }
 
       const node = schema.nodes.image.createAndFill({
-        imageUrl: escapeXml(imageUrl),
+        imageUrl,
         ...(altText && { altText }),
       });
 
