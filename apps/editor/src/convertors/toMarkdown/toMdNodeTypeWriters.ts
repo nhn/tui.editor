@@ -2,7 +2,7 @@ import { ProsemirrorNode } from 'prosemirror-model';
 
 import inArray from 'tui-code-snippet/array/inArray';
 
-import { repeat } from '@/utils/common';
+import { escapeTextForLink, repeat } from '@/utils/common';
 
 import {
   ToMdNodeTypeWriterMap,
@@ -60,7 +60,13 @@ function createTableHeadDelim(textContent: string, columnAlign: ColumnAlign) {
 
 export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
   text(state, { node }) {
-    state.text(node.text ?? '');
+    const text = node.text ?? '';
+
+    if ((node.marks || []).some((mark) => mark.type.name === 'link')) {
+      state.text(escapeTextForLink(text), false);
+    } else {
+      state.text(text);
+    }
   },
 
   paragraph(state, { node, parent, index = 0 }) {
