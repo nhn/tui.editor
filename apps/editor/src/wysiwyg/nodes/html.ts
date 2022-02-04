@@ -14,7 +14,7 @@ import { reHTMLTag, ATTRIBUTE } from '@/utils/constants';
 
 export function getChildrenHTML(node: MdNode, typeName: string) {
   return node
-    .literal!.replace(new RegExp(`(<\\s*${typeName}[^>]+?>)|(</${typeName}\\s*[>])`, 'ig'), '')
+    .literal!.replace(new RegExp(`(<\\s*${typeName}[^>]*>)|(</${typeName}\\s*[>])`, 'ig'), '')
     .trim();
 }
 
