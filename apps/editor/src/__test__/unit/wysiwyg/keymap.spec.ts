@@ -310,7 +310,7 @@ describe('keymap', () => {
       expect(wwe.getHTML()).toBe(expected);
     });
 
-    describe.only('exitTable keymap', () => {
+    describe('exitTable keymap', () => {
       it('should exit the table node and add paragraph', () => {
         wwe.setSelection(5, 5); // in 'foo' cell
 
