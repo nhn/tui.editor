@@ -1,8 +1,8 @@
 import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
+import { escapeTextForLink } from '@/utils/common';
 import Mark from '@/spec/mark';
-import { encodeMarkdownText, escapeMarkdownText } from '@/utils/encoder';
 import { createTextNode } from '@/helper/manipulation';
 import { resolveSelectionPos } from '../helper/pos';
 
@@ -56,8 +56,7 @@ export class Link extends Mark {
         syntax = '!';
       }
 
-      text = escapeMarkdownText(text);
-      url = encodeMarkdownText(url);
+      text = escapeTextForLink(text);
       syntax += `[${text}](${url})`;
 
       dispatch!(tr.replaceWith(from, to, createTextNode(schema, syntax)));
