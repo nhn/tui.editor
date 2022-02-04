@@ -157,11 +157,13 @@ describe('Convertor', () => {
         ![](imgUrl)
         ![altText](imgUrl)
         ![altText](img*Url)
-      `;
+        ![altText](url?key=abc&attribute=abc)
+        `;
       const expected = source`
         ![](imgUrl)
         ![altText](imgUrl)
         ![altText](img*Url)
+        ![altText](url?key=abc&attribute=abc)
     	`;
 
       assertConverting(markdown, expected);
@@ -173,12 +175,16 @@ describe('Convertor', () => {
         [text](url)
         [text](ur*l)
         [Editor](https://github.com/nhn_test/tui.editor)
-    	`;
+        [this.is_a_test_link.com](this.is_a_test_link.com)
+        [text](url?key=abc&attribute=abc)
+        `;
       const expected = source`
         foo
         [text](url)
         [text](ur*l)
         [Editor](https://github.com/nhn_test/tui.editor)
+        [this.is_a_test_link.com](this.is_a_test_link.com)
+        [text](url?key=abc&attribute=abc)
     	`;
 
       assertConverting(markdown, expected);
