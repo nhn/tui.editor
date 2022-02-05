@@ -3,8 +3,8 @@ const path = require('path');
 const webpack = require('webpack');
 const { name, version, author, license } = require('./package.json');
 
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
@@ -56,9 +56,9 @@ function getOptimizationConfig(isProduction, minify) {
       new TerserPlugin({
         parallel: true,
         extractComments: false,
-      }),
-      new CssMinimizerPlugin()
+      })
     );
+    minimizer.push(new CssMinimizerPlugin());
   }
 
   return { minimizer };
