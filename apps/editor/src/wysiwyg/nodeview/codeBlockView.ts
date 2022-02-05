@@ -34,6 +34,8 @@ export class CodeBlockView implements NodeView {
 
   private input: HTMLElement | null = null;
 
+  private timer: NodeJS.Timeout | null = null;
+
   constructor(node: ProsemirrorNode, view: EditorView, getPos: GetPos, eventEmitter: Emitter) {
     this.node = node;
     this.view = view;
@@ -101,7 +103,10 @@ export class CodeBlockView implements NodeView {
     this.input.addEventListener('blur', () => this.changeLanguage());
     this.input.addEventListener('keydown', this.handleKeydown);
 
-    setTimeout(() => this.input!.focus());
+    this.clearTimer();
+    this.timer = setTimeout(() => {
+      this.input!.focus();
+    });
   }
 
   private bindDOMEvent() {
@@ -160,6 +165,13 @@ export class CodeBlockView implements NodeView {
     }
   }
 
+  private clearTimer() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+  }
+
   stopEvent() {
     return true;
   }
@@ -176,6 +188,7 @@ export class CodeBlockView implements NodeView {
 
   destroy() {
     this.reset();
+    this.clearTimer();
 
     if (this.dom) {
       this.dom.removeEventListener('click', this.handleMousedown);
