@@ -166,7 +166,7 @@ export class Toolbar extends Component<Props, State> {
   };
 
   private openPopup = (popupName: string, initialValues = {}) => {
-    const el = document.querySelector<HTMLElement>(`.${cls('toolbar-group')} .${popupName}`)!;
+    const el = this.refs.el.querySelector<HTMLElement>(`.${cls('toolbar-group')} .${popupName}`)!;
 
     if (el) {
       const { offsetLeft, offsetTop } = getTotalOffset(

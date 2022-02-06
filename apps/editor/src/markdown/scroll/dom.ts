@@ -14,16 +14,6 @@ function isBlankLine(doc: ProsemirrorNode, index: number) {
   return !pmNode.childCount || (pmNode.childCount === 1 && !pmNode.firstChild!.text?.trim());
 }
 
-export function getNextNonBlankElement(mdNode: MdNode) {
-  let { next, parent } = mdNode;
-
-  while (!next && parent) {
-    next = parent.next;
-    parent = parent.parent;
-  }
-  return next ? document.querySelector<HTMLElement>(`[data-nodeid="${next.id}"]`) : null;
-}
-
 export function getEditorRangeHeightInfo(
   doc: ProsemirrorNode,
   mdNode: MdNode,
@@ -126,12 +116,12 @@ export function getAdditionalPos(
   return ratio * targetNodeHeight;
 }
 
-export function getParentNodeObj(mdNode: MdNode) {
-  let el = document.querySelector<HTMLElement>(`[data-nodeid="${mdNode.id}"]`);
+export function getParentNodeObj(previewContent: HTMLElement, mdNode: MdNode) {
+  let el = previewContent.querySelector<HTMLElement>(`[data-nodeid="${mdNode.id}"]`);
 
   while (!el || isStyledInlineNode(mdNode)) {
     mdNode = mdNode.parent!;
-    el = document.querySelector<HTMLElement>(`[data-nodeid="${mdNode.id}"]`);
+    el = previewContent.querySelector<HTMLElement>(`[data-nodeid="${mdNode.id}"]`);
   }
   return getNonNestableNodeObj({ mdNode, el });
 }
