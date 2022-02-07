@@ -352,8 +352,7 @@ const toWwConvertors: ToWwConvertorMap = {
   },
 
   customInline(state, node, { entering, skipChildren }) {
-    console.log(node);
-    let { info } = node as CustomInlineMdNode;
+    const { info, firstChild } = node as CustomInlineMdNode;
     const { schema } = state;
 
     if (info.indexOf('widget') !== -1 && entering) {
@@ -364,13 +363,18 @@ const toWwConvertors: ToWwConvertorMap = {
       state.addNode(schema.nodes.widget, { info }, [
         schema.text(createWidgetContent(info, content)),
       ]);
-    } else if (entering) {
-      if (node.firstChild) {
-        info += ' ';
-      }
-      state.addText(`$$${info}`);
     } else {
-      state.addText('$$');
+      let text = '$$';
+
+      if (entering) {
+        text += info;
+
+        if (firstChild) {
+          text += ' ';
+        }
+      }
+
+      state.addText(text);
     }
   },
 };

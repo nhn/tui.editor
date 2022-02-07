@@ -227,7 +227,7 @@ export const baseConvertors: HTMLConvertorMap = {
   },
 
   customInline(node, context, convertors) {
-    let { info } = node as CustomBlockNode;
+    const { info, firstChild } = node as CustomBlockNode;
     const nomalizedInfo = info.trim().toLowerCase();
     const customConvertor = convertors![nomalizedInfo];
     const { entering } = context;
@@ -242,14 +242,10 @@ export const baseConvertors: HTMLConvertorMap = {
       }
     }
 
-    if (node.firstChild) {
-      info += ' ';
-    }
-
     return entering
       ? [
           { type: 'openTag', tagName: 'span' },
-          { type: 'text', content: `$$${info}` },
+          { type: 'text', content: `$$${info}${firstChild ? ' ' : ''}` },
         ]
       : [
           { type: 'text', content: '$$' },
