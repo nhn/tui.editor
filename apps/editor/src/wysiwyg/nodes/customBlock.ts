@@ -1,5 +1,7 @@
 import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
+import { setBlockType } from 'prosemirror-commands';
 import NodeSchema from '@/spec/node';
+import { EditorCommand } from '@t/spec';
 
 export class CustomBlock extends NodeSchema {
   get name() {
@@ -30,5 +32,12 @@ export class CustomBlock extends NodeSchema {
         return ['div', { 'data-custom-info': attrs.info || null }, 0];
       },
     };
+  }
+
+  commands(): EditorCommand {
+    return (payload) => (state, dispatch) =>
+      payload?.info
+        ? setBlockType(state.schema.nodes.customBlock, payload)(state, dispatch)
+        : false;
   }
 }
