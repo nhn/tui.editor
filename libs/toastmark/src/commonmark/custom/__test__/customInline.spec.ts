@@ -35,7 +35,7 @@ describe('customInline', () => {
     const para = root.firstChild!;
     const text = para.firstChild!;
     const customInline = text.next as CustomInlineNode;
-    const emph = customInline.firstChild!;
+    const emph = customInline.lastChild!;
 
     expect(text.literal).toBe('Hello ');
     expect(customInline.info).toBe('myInline');
