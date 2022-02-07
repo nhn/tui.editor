@@ -146,17 +146,13 @@ export default abstract class EditorBase implements Base {
 
   createKeymaps(useCommandShortcut: boolean) {
     const { undo, redo } = getDefaultCommands();
-    const allKeyMaps = this.specs.keymaps(useCommandShortcut);
-    const historyKeyMap = {
+    const allKeymaps = this.specs.keymaps(useCommandShortcut);
+    const historyKeymap = {
       'Mod-z': undo(),
       'Shift-Mod-z': redo(),
     };
 
-    if (useCommandShortcut) {
-      return allKeyMaps.concat(keymap(historyKeyMap));
-    }
-
-    return allKeyMaps;
+    return useCommandShortcut ? allKeymaps.concat(keymap(historyKeymap)) : allKeymaps;
   }
 
   createCommands() {
