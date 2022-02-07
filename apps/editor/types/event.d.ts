@@ -46,6 +46,7 @@ export type EventTypes =
   | 'beforePreviewRender'
   | 'beforeConvertWysiwygToMarkdown'
   | 'load'
+  | 'loadUI'
   | 'change'
   | 'caretChange'
   | 'destroy'
