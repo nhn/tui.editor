@@ -44,6 +44,8 @@ export default abstract class EditorBase implements Base {
 
   extraPlugins!: PluginProp[];
 
+  timer: NodeJS.Timeout | null = null;
+
   constructor(eventEmitter: Emitter) {
     this.el = document.createElement('div');
     this.el.className = 'toastui-editor';
@@ -131,6 +133,13 @@ export default abstract class EditorBase implements Base {
     return rules.length ? inputRules({ rules }) : null;
   }
 
+  private clearTimer() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+  }
+
   createSchema() {
     return new Schema({
       nodes: this.specs.nodes,
@@ -151,8 +160,9 @@ export default abstract class EditorBase implements Base {
   }
 
   focus() {
+    this.clearTimer();
     // prevent the error for IE11
-    setTimeout(() => {
+    this.timer = setTimeout(() => {
       this.view.focus();
       this.view.dispatch(this.view.state.tr.scrollIntoView());
     });
@@ -163,6 +173,7 @@ export default abstract class EditorBase implements Base {
   }
 
   destroy() {
+    this.clearTimer();
     this.view.destroy();
     Object.keys(this).forEach((prop) => {
       delete this[prop as keyof this];

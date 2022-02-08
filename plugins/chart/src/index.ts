@@ -329,6 +329,15 @@ function generateId() {
   return `chart-${Math.random().toString(36).substr(2, 10)}`;
 }
 
+let timer: NodeJS.Timeout | null = null;
+
+function clearTimer() {
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+  }
+}
+
 /**
  * Chart plugin
  * @param {Object} context - plugin context for communicating with editor
@@ -349,7 +358,9 @@ export default function chartPlugin(
       chart(node: MdNode) {
         const id = generateId();
 
-        setTimeout(() => {
+        clearTimer();
+
+        timer = setTimeout(() => {
           renderChart(id, node.literal!, usageStatistics, options);
         });
         return [
