@@ -152,7 +152,10 @@ export class TableOffsetMap {
   getNodeAndPos(rowIdx: number, colIdx: number) {
     const cellInfo = this.rowInfo[rowIdx][colIdx];
 
-    return { node: this.table.nodeAt(cellInfo.offset - 1)!, pos: cellInfo.offset };
+    return {
+      node: this.table.nodeAt(cellInfo.offset - this.tableStartOffset)!,
+      pos: cellInfo.offset,
+    };
   }
 
   extendedRowspan(rowIdx: number, colIdx: number) {

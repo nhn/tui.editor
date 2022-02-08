@@ -243,7 +243,7 @@ describe('markdown merged table plugin', () => {
         <td>cell3-3</td>
         </tr>
         <tr>
-        <td colspan="3" rowspan="2">cell4-1</td>
+        <td rowspan="2" colspan="3">cell4-1</td>
         <td>cell4-2</td>
         </tr>
         <tr>
@@ -291,7 +291,7 @@ describe('markdown merged table plugin', () => {
         <td>cell3-3</td>
         </tr>
         <tr>
-        <td colspan="3" rowspan="2">cell4-1</td>
+        <td rowspan="2" colspan="3">cell4-1</td>
         <td>cell4-2</td>
         </tr>
         <tr>
@@ -352,7 +352,7 @@ describe('markdown merged table plugin', () => {
         <td>cell3-5</td>
         </tr>
         <tr>
-        <td colspan="3" rowspan="2">mergedCell4-1</td>
+        <td rowspan="2" colspan="3">mergedCell4-1</td>
         <td>cell4-2</td>
         <td>cell4-3</td>
         <td>cell4-4</td>
@@ -399,7 +399,7 @@ describe('markdown merged table plugin', () => {
         <tr>
         <td colspan="2">mergedCell1-1</td>
         <td>cell1-2</td>
-        <td colspan="2" rowspan="5">mergedCell1-3</td>
+        <td rowspan="5" colspan="2">mergedCell1-3</td>
         <td>cell1-4</td>
         <td>cell1-5</td>
         </tr>
@@ -416,7 +416,7 @@ describe('markdown merged table plugin', () => {
         <td></td>
         </tr>
         <tr>
-        <td colspan="3" rowspan="2">mergedCell4-1</td>
+        <td rowspan="2" colspan="3">mergedCell4-1</td>
         <td>cell4-2</td>
         <td></td>
         </tr>
@@ -451,7 +451,7 @@ describe('markdown merged table plugin', () => {
         <tr>
         <td colspan="2">mergedCell1-1</td>
         <td>cell1-2</td>
-        <td colspan="2" rowspan="5">mergedCell1-3</td>
+        <td rowspan="5" colspan="2">mergedCell1-3</td>
         </tr>
         <tr>
         <td rowspan="2">mergedCell2-1</td>
@@ -498,7 +498,7 @@ describe('markdown merged table plugin', () => {
         <tr>
         <td colspan="2">mergedCell1-1</td>
         <td rowspan="3">mergedCell1-2</td>
-        <td colspan="2" rowspan="5">mergedCell1-3</td>
+        <td rowspan="5" colspan="2">mergedCell1-3</td>
         </tr>
         <tr>
         <td rowspan="2">mergedCell2-1</td>
@@ -556,7 +556,7 @@ describe('markdown merged table plugin', () => {
         <td>cell3-3</td>
         </tr>
         <tr>
-        <td colspan="3" rowspan="2">foo"bar"<span style="color: red;">baz</span></td>
+        <td rowspan="2" colspan="3">foo"bar"<span style="color: red;">baz</span></td>
         <td>cell4-2</td>
         </tr>
         <tr>
