@@ -225,8 +225,12 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
     state.write(text);
   },
 
-  html(state, _, { text }) {
+  html(state, { node }, { text }) {
     state.write(text);
+
+    if (node.attrs.htmlBlock) {
+      state.closeBlock(node);
+    }
   },
 };
 
