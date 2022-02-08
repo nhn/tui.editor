@@ -615,10 +615,11 @@ class ToastUIEditorCore {
   setMinHeight(minHeight: string) {
     this.minHeight = minHeight;
 
-    const editorHeight = this.options.el.clientHeight;
-    const editorSectionHeight = document.querySelector(`.${cls('main')}`)?.clientHeight || 0;
-    const diffHeight = editorHeight - editorSectionHeight;
-
+    const { el } = this.options;
+    const editorHeight = el.clientHeight;
+    const editorSectionHeight = el.querySelector(`.${cls('main')}`)?.clientHeight || 0;
+    // 75px equals default editor ui height - the editing area height
+    const diffHeight = Math.max(editorHeight - editorSectionHeight, 75);
     let minHeightNum = parseInt(minHeight, 10);
 
     minHeightNum = Math.max(minHeightNum - diffHeight, 0);
