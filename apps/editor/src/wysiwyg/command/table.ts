@@ -151,10 +151,15 @@ export function addParagraphBeforeTable(tr: Transaction, map: TableOffsetMap, sc
   return tr.setSelection(Selection.near(tableStartPos, -1));
 }
 
-export function addParagraphAfterTable(tr: Transaction, map: TableOffsetMap, schema: Schema) {
+export function addParagraphAfterTable(
+  tr: Transaction,
+  map: TableOffsetMap,
+  schema: Schema,
+  forcedAddtion = false
+) {
   const tableEndPos = tr.doc.resolve(map.tableEndOffset);
 
-  if (!tableEndPos.nodeAfter) {
+  if (forcedAddtion || !tableEndPos.nodeAfter) {
     return addParagraph(tr, tableEndPos, schema);
   }
   return tr.setSelection(Selection.near(tableEndPos, 1));

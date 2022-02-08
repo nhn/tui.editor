@@ -420,6 +420,30 @@ export class Table extends NodeSchema {
     };
   }
 
+  private exitTable(): Command {
+    return (state, dispatch) => {
+      const { selection, tr, schema } = state;
+      const { $from } = selection;
+      const cell = findNodeBy(
+        $from,
+        ({ type }) => type.name === 'tableHeadCell' || type.name === 'tableBodyCell'
+      );
+
+      if (cell) {
+        const para = findNodeBy($from, ({ type }) => type.name === 'paragraph');
+
+        if (para) {
+          const { anchor } = getResolvedSelection(selection);
+          const map = TableOffsetMap.create(anchor)!;
+
+          dispatch!(addParagraphAfterTable(tr, map, schema, true));
+          return true;
+        }
+      }
+      return false;
+    };
+  }
+
   commands() {
     return {
       addTable: this.addTable(),
@@ -451,6 +475,8 @@ export class Table extends NodeSchema {
       'Mod-Backspace': deleteCellContent,
       Delete: deleteCellContent,
       'Mod-Delete': deleteCellContent,
+
+      'Mod-Enter': this.exitTable(),
     };
   }
 }

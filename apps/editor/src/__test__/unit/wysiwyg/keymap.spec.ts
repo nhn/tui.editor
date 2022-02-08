@@ -309,6 +309,35 @@ describe('keymap', () => {
 
       expect(wwe.getHTML()).toBe(expected);
     });
+
+    describe('exitTable keymap', () => {
+      it('should exit the table node and add paragraph', () => {
+        wwe.setSelection(5, 5); // in 'foo' cell
+
+        forceKeymapFn('table', 'exitTable');
+
+        const expected = oneLineTrim`
+          <table>
+            <thead>
+              <tr>
+                <th><p>foo</p></th>
+                <th><p>bar</p></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><p>baz</p></td>
+                <td><p>qux</p></td>
+              </tr>
+            </tbody>
+          </table>
+          <p><br></p>
+        `;
+
+        expect(wwe.getHTML()).toBe(expected);
+        expect(wwe.getSelection()).toEqual([39, 39]); // in added paragraph
+      });
+    });
   });
 
   describe('table with list and multiple lines', () => {
