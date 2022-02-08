@@ -212,8 +212,8 @@ describe('mdLikeNode', () => {
       type: 'link',
       literal: null,
       wysiwygNode: true,
-      title: 'myLinkText',
       destination: 'myLinkUrl',
+      title: null,
     });
   });
 

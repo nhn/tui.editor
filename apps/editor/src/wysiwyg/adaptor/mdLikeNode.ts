@@ -43,7 +43,7 @@ export function createMdLikeNode(node: ProsemirrorNode | Mark): MdLikeNode {
 
   const nodeTypeMap = {
     heading: { level: attrs.level },
-    link: { destination: attrs.linkUrl, title: attrs.linkText },
+    link: { destination: attrs.linkUrl, title: attrs.title },
     image: { destination: attrs.imageUrl },
     codeBlock: { info: attrs.language },
     bulletList: { type: 'list', listData: { type: 'bullet' } },

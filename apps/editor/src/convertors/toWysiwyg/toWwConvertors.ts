@@ -175,7 +175,7 @@ const toWwConvertors: ToWwConvertorMap = {
     if (entering) {
       const attrs = {
         linkUrl: destination,
-        ...(title && { linkText: title }),
+        title,
         ...customAttrs,
       };
 

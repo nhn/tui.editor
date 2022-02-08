@@ -11,6 +11,8 @@ const reEscapeChars = /[>(){}[\]+-.!#|]/g;
 const reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-.:/]*)>/g;
 const reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
 const reEscapePairedChars = /[*_~`]/g;
+const reMdImageSyntax = /!\[.*\]\(.*\)/g;
+const reEscapedCharInLinkSyntax = /[[\]]/g; //
 
 const XMLSPECIAL = '[&<>"]';
 const reXmlSpecial = new RegExp(XMLSPECIAL, 'g');
@@ -97,6 +99,22 @@ function isNeedEscapeText(text: string) {
   });
 
   return needEscape;
+}
+
+export function escapeTextForLink(text: string) {
+  const imageSyntaxRanges: [number, number][] = [];
+  let result = reMdImageSyntax.exec(text);
+
+  while (result) {
+    imageSyntaxRanges.push([result.index, result.index + result[0].length]);
+    result = reMdImageSyntax.exec(text);
+  }
+
+  return text.replace(reEscapedCharInLinkSyntax, (matched, offset) => {
+    const isDelimiter = imageSyntaxRanges.some((range) => offset > range[0] && offset < range[1]);
+
+    return isDelimiter ? matched : `\\${matched}`;
+  });
 }
 
 export function escape(text: string) {

@@ -281,7 +281,7 @@ describe('addImage command', () => {
       imageUrl: 'https://picsum.photos/200',
     });
 
-    expect(getTextContent(mde)).toBe('![mytext \\(\\)\\[\\]\\<\\>](https://picsum.photos/200)');
+    expect(getTextContent(mde)).toBe('![mytext ()\\[\\]<>](https://picsum.photos/200)');
   });
 
   it('should encode image url', () => {
@@ -290,7 +290,7 @@ describe('addImage command', () => {
       imageUrl: 'myurl ()[]<>',
     });
 
-    expect(getTextContent(mde)).toBe('![image](myurl%20%28%29%5B%5D%3C%3E)');
+    expect(getTextContent(mde)).toBe('![image](myurl ()[]<>)');
   });
 
   it('should not decode url which is already encoded', () => {
@@ -318,16 +318,7 @@ describe('addLink command', () => {
       linkUrl: 'https://ui.toast.com',
     });
 
-    expect(getTextContent(mde)).toBe('[mytext \\(\\)\\[\\]\\<\\>](https://ui.toast.com)');
-  });
-
-  it('should encode link url', () => {
-    cmd.exec('addLink', {
-      linkText: 'TOAST UI',
-      linkUrl: 'myurl ()[]<>',
-    });
-
-    expect(getTextContent(mde)).toBe('[TOAST UI](myurl%20%28%29%5B%5D%3C%3E)');
+    expect(getTextContent(mde)).toBe('[mytext ()\\[\\]<>](https://ui.toast.com)');
   });
 
   it('should not decode url which is already encoded', () => {
