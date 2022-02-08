@@ -47,10 +47,9 @@ export function connectHOC(WrappedComponent: ComponentClass) {
 
       if (item.state) {
         eventEmitter.listen('changeToolbarState', ({ toolbarState }: Payload) => {
-          // 이 아래를 수정해주세요.
-          const active = !!toolbarState[item.state!];
+          const { active, disabled } = toolbarState[item.state!] ?? {};
 
-          this.setState({ active });
+          this.setState({ active: !!active, disabled: disabled ?? this.props.disabled });
         });
       }
     }
@@ -89,6 +88,7 @@ export function connectHOC(WrappedComponent: ComponentClass) {
           showTooltip=${this.showTooltip}
           hideTooltip=${this.hideTooltip}
           getBound=${this.getBound}
+          disabled=${this.state.disabled}
         />
       `;
     }

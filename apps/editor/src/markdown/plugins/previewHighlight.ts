@@ -44,20 +44,28 @@ function getToolbarStateType(mdNode: MdNode) {
 }
 
 function getToolbarState(targetNode: MdNode) {
-  const toolbarState = {} as ToolbarStateMap;
+  const toolbarState = {
+    indent: { active: false, disabled: true },
+    outdent: { active: false, disabled: true },
+  } as ToolbarStateMap;
+
   let listEnabled = true;
 
-  // 이 아래를 수정해주세요.
   traverseParentNodes(targetNode, (mdNode) => {
     const type = getToolbarStateType(mdNode);
 
-    if (type === 'customBlock' || type === 'image' || type === 'link') {
+    if (!type) {
       return;
     }
 
     if (type === 'bulletList' || type === 'orderedList') {
+      // to apply the nearlist list state in the nested list
       if (listEnabled) {
         toolbarState[type] = { active: true };
+
+        toolbarState.indent.disabled = false;
+        toolbarState.outdent.disabled = false;
+
         listEnabled = false;
       }
     } else {
