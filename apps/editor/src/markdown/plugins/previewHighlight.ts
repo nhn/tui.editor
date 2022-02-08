@@ -1,26 +1,53 @@
 import { MdNode, MdPos } from '@toast-ui/toastmark';
 import { Plugin } from 'prosemirror-state';
 import { MdContext } from '@t/spec';
-import { ToolbarState, ToolbarStateKeys } from '@t/ui';
+import { ToolbarStateMap, ToolbarStateKeys } from '@t/ui';
 import { traverseParentNodes, isListNode } from '@/utils/markdown';
+import { includes } from '@/utils/common';
+
+const defaultToolbarStateKeys: ToolbarStateKeys[] = [
+  'taskList',
+  'orderedList',
+  'bulletList',
+  'table',
+  'strong',
+  'emph',
+  'strike',
+  'heading',
+  'thematicBreak',
+  'blockQuote',
+  'code',
+  'codeBlock',
+  'indent',
+  'outdent',
+];
 
 function getToolbarStateType(mdNode: MdNode) {
+  const { type } = mdNode;
+
   if (isListNode(mdNode)) {
     if (mdNode.listData.task) {
       return 'taskList';
     }
     return mdNode.listData.type === 'ordered' ? 'orderedList' : 'bulletList';
   }
-  if (mdNode.type.indexOf('table') !== -1) {
+
+  if (type.indexOf('table') !== -1) {
     return 'table';
   }
-  return mdNode.type;
+
+  if (!includes(defaultToolbarStateKeys, type)) {
+    return null;
+  }
+
+  return type as ToolbarStateKeys;
 }
 
 function getToolbarState(targetNode: MdNode) {
-  const toolbarState = {} as ToolbarState;
+  const toolbarState = {} as ToolbarStateMap;
   let listEnabled = true;
 
+  // 이 아래를 수정해주세요.
   traverseParentNodes(targetNode, (mdNode) => {
     const type = getToolbarStateType(mdNode);
 
@@ -30,11 +57,11 @@ function getToolbarState(targetNode: MdNode) {
 
     if (type === 'bulletList' || type === 'orderedList') {
       if (listEnabled) {
-        toolbarState[type] = true;
+        toolbarState[type] = { active: true };
         listEnabled = false;
       }
     } else {
-      toolbarState[type as ToolbarStateKeys] = true;
+      toolbarState[type as ToolbarStateKeys] = { active: true };
     }
   });
 

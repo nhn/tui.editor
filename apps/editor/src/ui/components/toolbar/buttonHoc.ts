@@ -6,7 +6,7 @@ import {
   SetItemWidth,
   ComponentClass,
   ToolbarButtonInfo,
-  ToolbarState,
+  ToolbarStateMap,
 } from '@t/ui';
 import { Emitter } from '@t/event';
 import html from '@/ui/vdom/template';
@@ -24,11 +24,12 @@ interface Props {
 }
 
 interface Payload {
-  toolbarState: ToolbarState;
+  toolbarState: ToolbarStateMap;
 }
 
 interface State {
   active: boolean;
+  disabled: boolean;
 }
 
 const TOOLTIP_INDENT = 6;
@@ -37,7 +38,7 @@ export function connectHOC(WrappedComponent: ComponentClass) {
   return class ButtonHOC extends Component<Props, State> {
     constructor(props: Props) {
       super(props);
-      this.state = { active: false };
+      this.state = { active: false, disabled: props.disabled };
       this.addEvent();
     }
 
@@ -46,6 +47,7 @@ export function connectHOC(WrappedComponent: ComponentClass) {
 
       if (item.state) {
         eventEmitter.listen('changeToolbarState', ({ toolbarState }: Payload) => {
+          // 이 아래를 수정해주세요.
           const active = !!toolbarState[item.state!];
 
           this.setState({ active });

@@ -3,7 +3,7 @@ import { Plugin, Selection } from 'prosemirror-state';
 
 import { includes } from '@/utils/common';
 
-import { ToolbarState, ToolbarStateKeys } from '@t/ui';
+import { ToolbarStateMap, ToolbarStateKeys } from '@t/ui';
 import { Emitter } from '@t/event';
 
 type ListType = 'bulletList' | 'orderedList' | 'taskList';
@@ -11,6 +11,22 @@ type ListType = 'bulletList' | 'orderedList' | 'taskList';
 const EXCEPT_TYPES = ['image', 'link', 'customBlock', 'frontMatter'];
 const MARK_TYPES = ['strong', 'strike', 'emph', 'code'];
 const LIST_TYPES: ListType[] = ['bulletList', 'orderedList', 'taskList'];
+const defaultToolbarStateKeys: ToolbarStateKeys[] = [
+  'taskList',
+  'orderedList',
+  'bulletList',
+  'table',
+  'strong',
+  'emph',
+  'strike',
+  'heading',
+  'thematicBreak',
+  'blockQuote',
+  'code',
+  'codeBlock',
+  'indent',
+  'outdent',
+];
 
 function getToolbarStateType(node: Node, parentNode: Node) {
   const type = node.type.name;
@@ -26,8 +42,8 @@ function getToolbarStateType(node: Node, parentNode: Node) {
   return type;
 }
 
-function setListNodeToolbarState(type: ToolbarStateKeys, nodeTypeState: ToolbarState) {
-  nodeTypeState[type] = true;
+function setListNodeToolbarState(type: ToolbarStateKeys, nodeTypeState: ToolbarStateMap) {
+  nodeTypeState[type] = { active: true };
 
   LIST_TYPES.filter((listName) => listName !== type).forEach((listType) => {
     if (nodeTypeState[listType]) {
@@ -36,27 +52,28 @@ function setListNodeToolbarState(type: ToolbarStateKeys, nodeTypeState: ToolbarS
   });
 }
 
-function getMarkTypeStates(from: ResolvedPos, to: ResolvedPos, schema: Schema) {
-  const markTypeState = {} as ToolbarState;
-
+function setMarkTypeStates(
+  from: ResolvedPos,
+  to: ResolvedPos,
+  schema: Schema,
+  toolbarState: ToolbarStateMap
+) {
   MARK_TYPES.forEach((type) => {
     const mark = schema.marks[type];
     const marksAtPos = from.marksAcross(to) || [];
     const foundMark = !!mark.isInSet(marksAtPos);
 
     if (foundMark) {
-      markTypeState[type as ToolbarStateKeys] = true;
+      toolbarState[type as ToolbarStateKeys] = { active: true };
     }
   });
-
-  return markTypeState;
 }
 
 function getToolbarState(selection: Selection, doc: Node, schema: Schema) {
   const { $from, $to, from, to } = selection;
-  const nodeTypeState = {} as ToolbarState;
-  let markTypeState = {} as ToolbarState;
+  const toolbarState = {} as ToolbarStateMap;
 
+  // 이 아래를 수정해주세요.
   doc.nodesBetween(from, to, (node, _, parentNode) => {
     const type = getToolbarStateType(node, parentNode);
 
@@ -65,18 +82,17 @@ function getToolbarState(selection: Selection, doc: Node, schema: Schema) {
     }
 
     if (includes(LIST_TYPES, type)) {
-      setListNodeToolbarState(type as ToolbarStateKeys, nodeTypeState);
+      setListNodeToolbarState(type as ToolbarStateKeys, toolbarState);
     } else if (type === 'paragraph' || type === 'text') {
-      markTypeState = getMarkTypeStates($from, $to, schema);
+      setMarkTypeStates($from, $to, schema, toolbarState);
     } else {
-      nodeTypeState[type as ToolbarStateKeys] = true;
+      toolbarState[type as ToolbarStateKeys] = { active: true };
     }
   });
-
-  return { ...nodeTypeState, ...markTypeState };
+  return toolbarState;
 }
 
-export function toolbarState(eventEmitter: Emitter) {
+export function toolbarStateHighlight(eventEmitter: Emitter) {
   return new Plugin({
     view() {
       return {
