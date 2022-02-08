@@ -8,6 +8,9 @@ module.exports = {
     'demo/esm': '/',
     src: '/dist',
   },
+  alias: {
+    '@t': './types',
+  },
   devOptions: {
     port: 8081,
   },

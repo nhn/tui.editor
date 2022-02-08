@@ -159,7 +159,7 @@ module.exports = (env) => {
             },
             {
               test: /\.png$/i,
-              use: 'url-loader',
+              type: 'asset/inline',
             },
           ],
         },

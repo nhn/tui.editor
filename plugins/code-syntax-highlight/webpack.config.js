@@ -5,6 +5,7 @@ const { name, version, author, license } = require('./package.json');
 
 const TerserPlugin = require('terser-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 
 const filename = `toastui-${name.replace(/@toast-ui\//, '')}`;
@@ -60,6 +61,7 @@ function getOptimizationConfig(isProduction, minify) {
         extractComments: false,
       })
     );
+    minimizer.push(new CssMinimizerPlugin());
   }
 
   return { minimizer };
