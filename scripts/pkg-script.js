@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const { spawn } = require('child_process');
+const { exit } = require('process');
 const commandLineArgs = require('command-line-args');
 const optionDefinitions = [
   { name: 'type', alias: 't', type: String },
@@ -65,9 +66,13 @@ if (!pkg) {
 if (script === 'test') {
   spawn('jest', ['--watch', '--projects', path], {
     stdio: 'inherit',
+  }).on('exit', (code) => {
+    exit(code);
   });
 } else {
   spawn('lerna', ['run', '--stream', '--scope', pkg, script], {
     stdio: 'inherit',
+  }).on('exit', (code) => {
+    exit(code);
   });
 }
