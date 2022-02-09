@@ -1068,7 +1068,7 @@ describe('default keymap', () => {
 });
 
 describe('useCommandShortcut option', () => {
-  it('should not call keymap with history command when the value is false', () => {
+  it('should not make keymaps with history command when the value is false', () => {
     const spy = jest.spyOn(keymaps, 'keymap');
 
     const useCommandShortcut = false;
