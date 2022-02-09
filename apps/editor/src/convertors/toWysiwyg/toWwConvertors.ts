@@ -329,26 +329,34 @@ const toWwConvertors: ToWwConvertorMap = {
   },
 
   htmlBlock(state, node) {
-    // 아래를 수정해주세요 (reHTMLComment 정규식 사용)
     const html = node.literal!;
     const container = document.createElement('div');
-    const matched = html.match(reHTMLTag)!;
-    const [, openTagName, , closeTagName] = matched;
-    const typeName = (openTagName || closeTagName).toLowerCase();
-    const nodeType = state.schema.nodes[typeName];
-    const sanitizedHTML = sanitizeHTML(html);
+    const isHTMLComment = reHTMLComment.test(html);
 
-    // for user defined html schema
-    if (nodeType?.spec.attrs!.htmlBlock) {
-      const htmlAttrs = getHTMLAttrsByHTMLString(sanitizedHTML);
-      const childrenHTML = getChildrenHTML(node, typeName);
-
-      state.addNode(nodeType, { htmlAttrs, childrenHTML });
+    if (isHTMLComment) {
+      state.openNode(state.schema.nodes.htmlComment);
+      state.addText(node.literal!);
+      state.closeNode();
     } else {
-      container.innerHTML = sanitizedHTML;
-      addRawHTMLAttributeToDOM(container);
+      const matched = html.match(reHTMLTag)!;
+      const [, openTagName, , closeTagName] = matched;
 
-      state.convertByDOMParser(container as HTMLElement);
+      const typeName = (openTagName || closeTagName).toLowerCase();
+      const nodeType = state.schema.nodes[typeName];
+      const sanitizedHTML = sanitizeHTML(html);
+
+      // for user defined html schema
+      if (nodeType?.spec.attrs!.htmlBlock) {
+        const htmlAttrs = getHTMLAttrsByHTMLString(sanitizedHTML);
+        const childrenHTML = getChildrenHTML(node, typeName);
+
+        state.addNode(nodeType, { htmlAttrs, childrenHTML });
+      } else {
+        container.innerHTML = sanitizedHTML;
+        addRawHTMLAttributeToDOM(container);
+
+        state.convertByDOMParser(container as HTMLElement);
+      }
     }
   },
 
