@@ -367,11 +367,7 @@ const toWwConvertors: ToWwConvertorMap = {
       let text = '$$';
 
       if (entering) {
-        text += info;
-
-        if (firstChild) {
-          text += ' ';
-        }
+        text += firstChild ? `${info} ` : info;
       }
 
       state.addText(text);
