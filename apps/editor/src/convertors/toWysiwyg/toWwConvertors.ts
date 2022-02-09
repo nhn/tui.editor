@@ -27,7 +27,7 @@ import { ToWwConvertorMap } from '@t/convertor';
 import { createWidgetContent, getWidgetContent } from '@/widget/rules';
 import { getChildrenHTML, getHTMLAttrsByHTMLString } from '@/wysiwyg/nodes/html';
 import { includes } from '@/utils/common';
-import { reBR, reHTMLTag } from '@/utils/constants';
+import { reBR, reHTMLTag, reHTMLComment } from '@/utils/constants';
 import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 
 function isBRTag(node: MdNode) {
@@ -329,6 +329,7 @@ const toWwConvertors: ToWwConvertorMap = {
   },
 
   htmlBlock(state, node) {
+    // 아래를 수정해주세요 (reHTMLComment 정규식 사용)
     const html = node.literal!;
     const container = document.createElement('div');
     const matched = html.match(reHTMLTag)!;
