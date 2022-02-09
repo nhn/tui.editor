@@ -1071,7 +1071,7 @@ describe('useCommandShortcut option', () => {
   it('should not call keymap with history command when the value is false', () => {
     const spy = jest.spyOn(keymaps, 'keymap');
 
-    const useCommandShortcut = true;
+    const useCommandShortcut = false;
     const history = {
       'Mod-z': undo,
       'Shift-Mod-z': redo,
