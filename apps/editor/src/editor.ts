@@ -46,6 +46,7 @@ class ToastUIEditor extends EditorCore {
 
       this.defaultUI.insertToolbarItem({ groupIndex, itemIndex }, item);
     });
+    this.eventEmitter.emit('loadUI', this);
   }
 
   /**

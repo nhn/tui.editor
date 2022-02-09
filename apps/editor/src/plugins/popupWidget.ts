@@ -1,9 +1,9 @@
 import { EditorView } from 'prosemirror-view';
 import { Plugin, PluginKey } from 'prosemirror-state';
 import css from 'tui-code-snippet/domUtil/css';
+import { closest, cls } from '@/utils/dom';
 import { WidgetStyle } from '@t/editor';
 import { Emitter } from '@t/event';
-
 interface Widget {
   node: HTMLElement;
   style: WidgetStyle;
@@ -11,21 +11,28 @@ interface Widget {
 }
 
 const pluginKey = new PluginKey('widget');
+const MARGIN = 5;
 
 class PopupWidget {
   private popup: HTMLElement | null = null;
 
   private eventEmitter: Emitter;
 
-  constructor(eventEmitter: Emitter) {
+  private rootEl!: HTMLElement;
+
+  constructor(view: EditorView, eventEmitter: Emitter) {
+    this.rootEl = view.dom.parentElement!;
     this.eventEmitter = eventEmitter;
     this.eventEmitter.listen('blur', this.removeWidget);
+    this.eventEmitter.listen('loadUI', () => {
+      this.rootEl = closest(view.dom.parentElement!, `.${cls('defaultUI')}`) as HTMLElement;
+    });
     this.eventEmitter.listen('removePopupWidget', this.removeWidget);
   }
 
   private removeWidget = () => {
     if (this.popup) {
-      document.body.removeChild(this.popup);
+      this.rootEl.removeChild(this.popup);
       this.popup = null;
     }
   };
@@ -39,11 +46,15 @@ class PopupWidget {
       const { node, style } = widget;
       const { top, left, bottom } = view.coordsAtPos(widget.pos);
       const height = bottom - top;
+      const rect = this.rootEl.getBoundingClientRect();
+      const relTopPos = top - rect.top;
 
-      css(node, { position: 'absolute', left: `${left}px`, opacity: '0' });
-      document.body.appendChild(node);
+      css(node, { opacity: '0' });
+      this.rootEl.appendChild(node);
       css(node, {
-        top: `${style === 'bottom' ? top + height : top - node.clientHeight - height}px`,
+        position: 'absolute',
+        left: `${left - rect.left + MARGIN}px`,
+        top: `${style === 'bottom' ? relTopPos + height - MARGIN : relTopPos - height}px`,
         opacity: '1',
       });
       this.popup = node;
@@ -67,8 +78,8 @@ export function addWidget(eventEmitter: Emitter) {
         return tr.getMeta('widget');
       },
     },
-    view() {
-      return new PopupWidget(eventEmitter);
+    view(editorView) {
+      return new PopupWidget(editorView, eventEmitter);
     },
   });
 }

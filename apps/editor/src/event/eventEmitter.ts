@@ -30,6 +30,7 @@ const eventTypeList: EventTypes[] = [
   'beforePreviewRender',
   'beforeConvertWysiwygToMarkdown',
   'load',
+  'loadUI',
   'change',
   'caretChange',
   'destroy',
