@@ -290,6 +290,17 @@ class ToastUIEditorCore {
 
   private addInitEvent() {
     this.on('needChangeMode', this.changeMode.bind(this));
+    this.on('loadUI', () => {
+      if (this.height !== 'auto') {
+        // 75px equals default editor ui height - the editing area height
+        const minHeight = `${Math.min(
+          parseInt(this.minHeight, 10),
+          parseInt(this.height, 10) - 75
+        )}px`;
+
+        this.setMinHeight(minHeight);
+      }
+    });
     addDefaultImageBlobHook(this.eventEmitter);
   }
 
@@ -589,11 +600,10 @@ class ToastUIEditorCore {
     if (isString(height)) {
       if (height === 'auto') {
         addClass(el, 'auto-height');
-        this.setMinHeight(this.getMinHeight());
       } else {
         removeClass(el, 'auto-height');
-        this.setMinHeight(height);
       }
+      this.setMinHeight(this.getMinHeight());
     }
 
     css(el, { height });
@@ -613,20 +623,22 @@ class ToastUIEditorCore {
    * @param {string} minHeight - min content height in pixel
    */
   setMinHeight(minHeight: string) {
-    this.minHeight = minHeight;
+    if (minHeight !== this.minHeight) {
+      const height = this.height || this.options.height;
 
-    const { el } = this.options;
-    const editorHeight = el.clientHeight;
-    const editorSectionHeight = el.querySelector(`.${cls('main')}`)?.clientHeight || 0;
-    // 75px equals default editor ui height - the editing area height
-    const diffHeight = Math.max(editorHeight - editorSectionHeight, 75);
-    let minHeightNum = parseInt(minHeight, 10);
+      if (height !== 'auto' && this.options.el.querySelector(`.${cls('main')}`)) {
+        // 75px equals default editor ui height - the editing area height
+        minHeight = `${Math.min(parseInt(minHeight, 10), parseInt(height, 10) - 75)}px`;
+      }
 
-    minHeightNum = Math.max(minHeightNum - diffHeight, 0);
+      const minHeightNum = parseInt(minHeight, 10);
 
-    this.wwEditor.setMinHeight(minHeightNum);
-    this.mdEditor.setMinHeight(minHeightNum);
-    this.preview.setMinHeight(minHeightNum);
+      this.minHeight = minHeight;
+
+      this.wwEditor.setMinHeight(minHeightNum);
+      this.mdEditor.setMinHeight(minHeightNum);
+      this.preview.setMinHeight(minHeightNum);
+    }
   }
 
   /**
