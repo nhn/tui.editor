@@ -268,6 +268,12 @@ export const toMdConvertors: ToMdConvertorMap = {
     };
   },
 
+  htmlComment({ node }) {
+    return {
+      text: (node as ProsemirrorNode).textContent,
+    };
+  },
+
   // html inline node, html block node
   html({ node }, { entering }) {
     const tagName = node.type.name;
