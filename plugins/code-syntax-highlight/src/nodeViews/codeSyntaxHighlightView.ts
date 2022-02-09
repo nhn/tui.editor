@@ -124,7 +124,11 @@ class CodeSyntaxHighlightView implements NodeView {
   };
 
   private openLanguageSelectBox(pos: CodeBlockPos) {
-    this.languageSelectBox = new LanguageSelectBox(this.eventEmitter, this.languages);
+    this.languageSelectBox = new LanguageSelectBox(
+      this.view.dom.parentElement!,
+      this.eventEmitter,
+      this.languages
+    );
     this.eventEmitter.emit('showCodeBlockLanguages', pos, this.node.attrs.language);
     this.languageEditing = true;
   }

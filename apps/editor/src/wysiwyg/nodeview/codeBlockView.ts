@@ -90,7 +90,7 @@ export class CodeBlockView implements NodeView {
     input.value = this.node.attrs.language;
 
     wrapper.appendChild(input);
-    document.querySelector<HTMLElement>('.toastui-editor.ww-mode')!.appendChild(wrapper);
+    this.view.dom.parentElement!.appendChild(wrapper);
     const wrpperWidth = wrapper.clientWidth;
 
     css(wrapper, {

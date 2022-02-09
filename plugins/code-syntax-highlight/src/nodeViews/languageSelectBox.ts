@@ -22,6 +22,8 @@ function getButtonsHTML(languages: string[]) {
 }
 
 export class LanguageSelectBox {
+  private rootEl: HTMLElement;
+
   private eventEmitter: Emitter;
 
   private languages: string[];
@@ -38,7 +40,8 @@ export class LanguageSelectBox {
 
   private prevStoredLanguage = '';
 
-  constructor(eventEmitter: Emitter, languages: string[]) {
+  constructor(rootEl: HTMLElement, eventEmitter: Emitter, languages: string[]) {
+    this.rootEl = rootEl;
     this.eventEmitter = eventEmitter;
     this.languages = languages;
 
@@ -55,7 +58,7 @@ export class LanguageSelectBox {
     this.createInputElement();
     this.createLanguageListElement();
 
-    document.querySelector<HTMLElement>('.toastui-editor.ww-mode')!.appendChild(this.wrapper);
+    this.rootEl.appendChild(this.wrapper);
 
     this.hide();
   }
