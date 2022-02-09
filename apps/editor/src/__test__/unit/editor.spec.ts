@@ -246,12 +246,22 @@ describe('editor', () => {
       expect(getPreviewHTML()).toBe('');
     });
 
-    it('setMinHeight()', () => {
-      editor.setMinHeight('200px');
+    describe('setMinHeight()', () => {
+      it('should set height with pixel option', () => {
+        editor.setMinHeight('200px');
 
-      expect(mdEditor).toHaveStyle({ minHeight: '200px' });
-      expect(mdPreview).toHaveStyle({ minHeight: '200px' });
-      expect(wwEditor).toHaveStyle({ minHeight: '200px' });
+        expect(mdEditor).toHaveStyle({ minHeight: '200px' });
+        expect(mdPreview).toHaveStyle({ minHeight: '200px' });
+        expect(wwEditor).toHaveStyle({ minHeight: '200px' });
+      });
+
+      it('should be less than the editor height', () => {
+        editor.setMinHeight('400px');
+
+        expect(mdEditor).toHaveStyle({ minHeight: '225px' });
+        expect(mdPreview).toHaveStyle({ minHeight: '225px' });
+        expect(wwEditor).toHaveStyle({ minHeight: '225px' });
+      });
     });
 
     describe('setHeight()', () => {
@@ -260,9 +270,9 @@ describe('editor', () => {
 
         expect(container).not.toHaveClass('auto-height');
         expect(container).toHaveStyle({ height: '300px' });
-        expect(mdEditor).toHaveStyle({ minHeight: '300px' });
-        expect(mdPreview).toHaveStyle({ minHeight: '300px' });
-        expect(wwEditor).toHaveStyle({ minHeight: '300px' });
+        expect(mdEditor).toHaveStyle({ minHeight: '200px' });
+        expect(mdPreview).toHaveStyle({ minHeight: '200px' });
+        expect(wwEditor).toHaveStyle({ minHeight: '200px' });
       });
 
       it('should set height with auto option', () => {
@@ -270,9 +280,9 @@ describe('editor', () => {
 
         expect(container).toHaveClass('auto-height');
         expect(container).toHaveStyle({ height: 'auto' });
-        expect(mdEditor).toHaveStyle({ minHeight: '300px' });
-        expect(mdPreview).toHaveStyle({ minHeight: '300px' });
-        expect(wwEditor).toHaveStyle({ minHeight: '300px' });
+        expect(mdEditor).toHaveStyle({ minHeight: '200px' });
+        expect(mdPreview).toHaveStyle({ minHeight: '200px' });
+        expect(wwEditor).toHaveStyle({ minHeight: '200px' });
       });
     });
 
