@@ -620,11 +620,11 @@ describe('custom toolbar element', () => {
   });
 
   it('should toggle active state properly when toolbar state is changed', () => {
-    em.emit('changeToolbarState', { toolbarState: { strong: true } });
+    em.emit('changeToolbarState', { toolbarState: { strong: { active: true } } });
 
     expect(onUpdatedSpy).toHaveBeenCalledWith(expect.objectContaining({ active: true }));
 
-    em.emit('changeToolbarState', { toolbarState: { strong: false } });
+    em.emit('changeToolbarState', { toolbarState: { strong: { active: false } } });
 
     expect(onUpdatedSpy).toHaveBeenCalledWith(expect.objectContaining({ active: false }));
   });
