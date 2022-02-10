@@ -15,7 +15,7 @@ export class FrontMatter extends NodeSchema {
       content: 'text*',
       group: 'block',
       code: true,
-      // defining: true,
+      defining: true,
       parseDOM: [
         {
           preserveWhitespace: 'full' as const,
