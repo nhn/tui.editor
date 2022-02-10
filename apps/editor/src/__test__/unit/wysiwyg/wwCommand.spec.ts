@@ -8,6 +8,8 @@ import CommandManager from '@/commands/commandManager';
 import { WwToDOMAdaptor } from '@/wysiwyg/adaptor/wwToDOMAdaptor';
 import { cls } from '@/utils/dom';
 
+import type { HTMLConvertorMap } from '@toast-ui/toastmark';
+
 const CODE_BLOCK_CLS = cls('ww-code-block');
 
 describe('wysiwyg commands', () => {
@@ -35,7 +37,20 @@ describe('wysiwyg commands', () => {
   }
 
   beforeEach(() => {
-    const toDOMAdaptor = new WwToDOMAdaptor({}, {});
+    const customHTMLRenderer: HTMLConvertorMap = {
+      myCustom(node) {
+        const span = document.createElement('span');
+
+        span.innerHTML = node.literal!;
+
+        return [
+          { type: 'openTag', tagName: 'div', attributes: { 'data-custom': 'myCustom' } },
+          { type: 'html', content: span.outerHTML },
+          { type: 'closeTag', tagName: 'div' },
+        ];
+      },
+    };
+    const toDOMAdaptor = new WwToDOMAdaptor({}, customHTMLRenderer);
 
     em = new EventEmitter();
     wwe = new WysiwygEditor(em, { toDOMAdaptor });
@@ -825,6 +840,49 @@ describe('wysiwyg commands', () => {
       `;
 
       expect(wwe.getHTML()).toBe(expected);
+    });
+  });
+
+  describe('customBlock command', () => {
+    it('should add customBlock element', () => {
+      cmd.exec('customBlock', { info: 'myCustom' });
+
+      expect(wwe.getHTML()).toBe(oneLineTrim`
+        <div class="toastui-editor-custom-block">
+          <div class="toastui-editor-custom-block-editor" style="display: none;"></div>
+          <div class="toastui-editor-custom-block-view">
+            <div data-custom="myCustom">
+              <span></span>
+            </div>
+            <div class="tool">
+              <span class="info">myCustom</span>
+              <button type="button"></button>
+            </div>
+          </div>
+        </div>
+      `);
+    });
+
+    it('should change customBlock element to selection', () => {
+      setTextToEditor('foo');
+
+      cmd.exec('selectAll');
+      cmd.exec('customBlock', { info: 'myCustom' });
+
+      expect(wwe.getHTML()).toBe(oneLineTrim`
+        <div class="toastui-editor-custom-block">
+          <div class="toastui-editor-custom-block-editor" style="display: none;"></div>
+          <div class="toastui-editor-custom-block-view">
+            <div data-custom="myCustom">
+              <span>foo</span>
+            </div>
+            <div class="tool">
+              <span class="info">myCustom</span>
+              <button type="button"></button>
+            </div>
+          </div>
+        </div>
+      `);
     });
   });
 });
