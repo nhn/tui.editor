@@ -37,7 +37,7 @@ export interface SpecManager {
     addedCommands?: Record<string, EditorCommand>
   ): EditorAllCommandMap<DefaultPayload>;
 
-  keymaps(): Plugin<any, any>[];
+  keymaps(useCommandShortcut: boolean): Plugin<any, any>[];
 
   setContext(context: SpecContext): void;
 }

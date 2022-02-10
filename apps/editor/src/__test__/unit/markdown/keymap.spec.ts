@@ -1,17 +1,18 @@
 import { oneLineTrim, source, stripIndent } from 'common-tags';
-import { undo } from 'prosemirror-history';
+import { redo, undo } from 'prosemirror-history';
 import {
   chainCommands,
   deleteSelection,
   joinBackward,
   selectNodeBackward,
 } from 'prosemirror-commands';
+import * as keymaps from 'prosemirror-keymap';
 import { Sourcepos, ToastMark } from '@toast-ui/toastmark';
 import MarkdownEditor from '@/markdown/mdEditor';
 import MarkdownPreview from '@/markdown/mdPreview';
 import EventEmitter from '@/event/eventEmitter';
 import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
-import { getTextContent, TestEditorWithNoneDelayHistory, removeDataAttr } from './util';
+import { getTextContent, removeDataAttr, TestEditorWithNoneDelayHistory } from './util';
 
 // @TODO: all tests should move to e2e test
 
@@ -1063,5 +1064,21 @@ describe('default keymap', () => {
     forceBackspaceKeymap();
 
     expect(getPreviewHTML()).toBe('<h1>myText</h1><p>test</p>');
+  });
+});
+
+describe('useCommandShortcut option', () => {
+  it('should not make keymaps with history command when the value is false', () => {
+    const spy = jest.spyOn(keymaps, 'keymap');
+
+    const useCommandShortcut = false;
+    const history = {
+      'Mod-z': undo,
+      'Shift-Mod-z': redo,
+    };
+
+    mde.createKeymaps(useCommandShortcut);
+
+    expect(spy).not.toHaveBeenCalledWith(history);
   });
 });

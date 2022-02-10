@@ -3,11 +3,32 @@ import { keymap } from 'prosemirror-keymap';
 import { EditorAllCommandMap, SpecContext, EditorCommand } from '@t/spec';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import { getDefaultCommands } from '@/commands/defaultCommands';
+import { includes } from '@/utils/common';
 
 import Mark from '@/spec/mark';
 import Node from '@/spec/node';
 
 type Spec = Node | Mark;
+
+const defaultCommandShortcuts = [
+  'Enter',
+  'Shift-Enter',
+  'Mod-Enter',
+  'Tab',
+  'Shift-Tab',
+  'Delete',
+  'Backspace',
+  'Mod-Delete',
+  'Mod-Backspace',
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'Mod-d',
+  'Mod-D',
+  'Alt-ArrowUp',
+  'Alt-ArrowDown',
+];
 
 export function execCommand(
   view: EditorView,
@@ -83,10 +104,19 @@ export default class SpecManager {
     return specCommands;
   }
 
-  keymaps() {
+  keymaps(useCommandShortcut: boolean) {
     const specKeymaps = this.specs.filter((spec) => spec.keymaps).map((spec) => spec.keymaps!());
 
-    return specKeymaps.map((keys) => keymap(keys));
+    return specKeymaps.map((keys) => {
+      if (!useCommandShortcut) {
+        Object.keys(keys).forEach((key) => {
+          if (!includes(defaultCommandShortcuts, key)) {
+            delete keys[key];
+          }
+        });
+      }
+      return keymap(keys);
+    });
   }
 
   setContext(context: SpecContext) {

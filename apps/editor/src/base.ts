@@ -82,13 +82,10 @@ export default abstract class EditorBase implements Base {
   }
 
   get defaultPlugins() {
-    const { undo, redo } = getDefaultCommands();
     const rules = this.createInputRules();
     const plugins = [
       ...this.keymaps,
       keymap({
-        'Mod-z': undo(),
-        'Shift-Mod-z': redo(),
         'Shift-Enter': baseKeymap.Enter,
         ...baseKeymap,
       }),
@@ -148,7 +145,14 @@ export default abstract class EditorBase implements Base {
   }
 
   createKeymaps(useCommandShortcut: boolean) {
-    return useCommandShortcut ? this.specs.keymaps() : [];
+    const { undo, redo } = getDefaultCommands();
+    const allKeymaps = this.specs.keymaps(useCommandShortcut);
+    const historyKeymap = {
+      'Mod-z': undo(),
+      'Shift-Mod-z': redo(),
+    };
+
+    return useCommandShortcut ? allKeymaps.concat(keymap(historyKeymap)) : allKeymaps;
   }
 
   createCommands() {
