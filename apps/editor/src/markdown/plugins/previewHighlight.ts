@@ -1,40 +1,75 @@
 import { MdNode, MdPos } from '@toast-ui/toastmark';
 import { Plugin } from 'prosemirror-state';
 import { MdContext } from '@t/spec';
-import { ToolbarState, ToolbarStateKeys } from '@t/ui';
+import { ToolbarStateMap, ToolbarStateKeys } from '@t/ui';
 import { traverseParentNodes, isListNode } from '@/utils/markdown';
+import { includes } from '@/utils/common';
+
+const defaultToolbarStateKeys: ToolbarStateKeys[] = [
+  'taskList',
+  'orderedList',
+  'bulletList',
+  'table',
+  'strong',
+  'emph',
+  'strike',
+  'heading',
+  'thematicBreak',
+  'blockQuote',
+  'code',
+  'codeBlock',
+  'indent',
+  'outdent',
+];
 
 function getToolbarStateType(mdNode: MdNode) {
+  const { type } = mdNode;
+
   if (isListNode(mdNode)) {
     if (mdNode.listData.task) {
       return 'taskList';
     }
     return mdNode.listData.type === 'ordered' ? 'orderedList' : 'bulletList';
   }
-  if (mdNode.type.indexOf('table') !== -1) {
+
+  if (type.indexOf('table') !== -1) {
     return 'table';
   }
-  return mdNode.type;
+
+  if (!includes(defaultToolbarStateKeys, type)) {
+    return null;
+  }
+
+  return type as ToolbarStateKeys;
 }
 
 function getToolbarState(targetNode: MdNode) {
-  const toolbarState = {} as ToolbarState;
+  const toolbarState = {
+    indent: { active: false, disabled: true },
+    outdent: { active: false, disabled: true },
+  } as ToolbarStateMap;
+
   let listEnabled = true;
 
   traverseParentNodes(targetNode, (mdNode) => {
     const type = getToolbarStateType(mdNode);
 
-    if (type === 'customBlock' || type === 'image' || type === 'link') {
+    if (!type) {
       return;
     }
 
     if (type === 'bulletList' || type === 'orderedList') {
+      // to apply the nearlist list state in the nested list
       if (listEnabled) {
-        toolbarState[type] = true;
+        toolbarState[type] = { active: true };
+
+        toolbarState.indent.disabled = false;
+        toolbarState.outdent.disabled = false;
+
         listEnabled = false;
       }
     } else {
-      toolbarState[type as ToolbarStateKeys] = true;
+      toolbarState[type as ToolbarStateKeys] = { active: true };
     }
   });
 
