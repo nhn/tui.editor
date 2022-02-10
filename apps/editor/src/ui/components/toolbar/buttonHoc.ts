@@ -88,7 +88,7 @@ export function connectHOC(WrappedComponent: ComponentClass) {
           showTooltip=${this.showTooltip}
           hideTooltip=${this.hideTooltip}
           getBound=${this.getBound}
-          disabled=${this.state.disabled}
+          disabled=${this.state.disabled || this.props.disabled}
         />
       `;
     }
