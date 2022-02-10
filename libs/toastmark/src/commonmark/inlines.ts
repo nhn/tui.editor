@@ -502,7 +502,7 @@ export class InlineParser {
               const [info] = literal.split(/\s/)!;
 
               (newNode as CustomInlineNode).info = info;
-              if (literal.length === info.length + 1) {
+              if (literal.length <= info.length) {
                 textNode.unlink();
               } else {
                 textNode.sourcepos![0][1] += info.length;

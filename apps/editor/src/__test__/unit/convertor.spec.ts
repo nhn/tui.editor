@@ -725,6 +725,22 @@ describe('Convertor', () => {
     });
   });
 
+  describe('convert custom inline', () => {
+    it('with info only', () => {
+      const markdown = source`$$custom$$`;
+      const expected = oneLineTrim`$$custom$$`;
+
+      assertConverting(markdown, expected);
+    });
+
+    it('with info and text', () => {
+      const markdown = source`$$custom inline$$`;
+      const expected = oneLineTrim`$$custom inline$$`;
+
+      assertConverting(markdown, expected);
+    });
+  });
+
   describe('sanitize when using html', () => {
     it('href attribute with link', () => {
       const markdown = source`

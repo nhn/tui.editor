@@ -352,7 +352,7 @@ const toWwConvertors: ToWwConvertorMap = {
   },
 
   customInline(state, node, { entering, skipChildren }) {
-    const { info } = node as CustomInlineMdNode;
+    const { info, firstChild } = node as CustomInlineMdNode;
     const { schema } = state;
 
     if (info.indexOf('widget') !== -1 && entering) {
@@ -363,6 +363,14 @@ const toWwConvertors: ToWwConvertorMap = {
       state.addNode(schema.nodes.widget, { info }, [
         schema.text(createWidgetContent(info, content)),
       ]);
+    } else {
+      let text = '$$';
+
+      if (entering) {
+        text += firstChild ? `${info} ` : info;
+      }
+
+      state.addText(text);
     }
   },
 };
@@ -382,7 +390,7 @@ export function createWwConvertors(customConvertors: HTMLConvertorMap) {
 
     if (wwConvertor && !includes(['htmlBlock', 'htmlInline'], type)) {
       convertors[type] = (state, node, context) => {
-        context.origin = () => orgConvertors[type]!(node, context);
+        context.origin = () => orgConvertors[type]!(node, context, orgConvertors);
         const tokens = customConvertors[type]!(node, context) as OpenTagToken;
         let attrs;
 
