@@ -1193,3 +1193,32 @@ describe('outdent command', () => {
     });
   });
 });
+
+describe('customBlock command', () => {
+  it('should add custom block syntax', () => {
+    const result = source`
+      $$myCustom
+
+      $$
+    `;
+
+    cmd.exec('customBlock', { info: 'myCustom' });
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+
+  it('should wrap the selection with custom block syntax', () => {
+    const result = source`
+      $$myCustom
+      console.log('customBlock');
+      $$
+    `;
+
+    mde.setMarkdown(`console.log('customBlock');`);
+
+    cmd.exec('selectAll');
+    cmd.exec('customBlock', { info: 'myCustom' });
+
+    expect(getTextContent(mde)).toBe(result);
+  });
+});
