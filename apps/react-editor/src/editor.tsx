@@ -15,27 +15,32 @@ export default class extends React.Component<EditorProps> {
     return this.editorInst;
   }
 
-  bindEventHandlers(props: EditorProps) {
-    Object.keys(this.props)
+  getBindingEventNames() {
+    return Object.keys(this.props)
       .filter((key) => /^on[A-Z][a-zA-Z]+/.test(key))
-      .forEach((key) => {
-        const eventName = key[2].toLowerCase() + key.slice(3);
+      .filter((key) => this.props[key as EventNames]);
+  }
 
-        this.editorInst.off(eventName);
-        this.editorInst.on(eventName, props[key as EventNames]!);
-      });
+  bindEventHandlers(props: EditorProps) {
+    this.getBindingEventNames().forEach((key) => {
+      const eventName = key[2].toLowerCase() + key.slice(3);
+
+      this.editorInst.off(eventName);
+      this.editorInst.on(eventName, props[key as EventNames]!);
+    });
   }
 
   getInitEvents() {
-    return Object.keys(this.props)
-      .filter((key) => /^on[A-Z][a-zA-Z]+/.test(key))
-      .reduce((acc: Record<string, EventMap[keyof EventMap]>, key) => {
+    return this.getBindingEventNames().reduce(
+      (acc: Record<string, EventMap[keyof EventMap]>, key) => {
         const eventName = (key[2].toLowerCase() + key.slice(3)) as keyof EventMap;
 
         acc[eventName] = this.props[key as EventNames];
 
         return acc;
-      }, {});
+      },
+      {}
+    );
   }
 
   componentDidMount() {
