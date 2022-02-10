@@ -5,7 +5,7 @@ import { EditorCommand } from '@t/spec';
 import { getRangeInfo } from '../helper/pos';
 import { createTextNode, createTextSelection } from '@/helper/manipulation';
 
-const fencedCustomBlockSyntax = '$$';
+const customBlockSyntax = '$$';
 
 export class CustomBlock extends Mark {
   get name() {
@@ -29,20 +29,16 @@ export class CustomBlock extends Mark {
         return false;
       }
 
-      const fencedCustomBlock = `${fencedCustomBlockSyntax}${payload.info}`;
+      const customBlock = `${customBlockSyntax}${payload.info}`;
+      const startNode = createTextNode(schema, customBlock);
+      const endNode = createTextNode(schema, customBlockSyntax);
 
-      const fencedStartNode = createTextNode(schema, fencedCustomBlock);
-      const fencedEndNode = createTextNode(schema, fencedCustomBlockSyntax);
-
-      tr.insert(startFromOffset, fencedStartNode).split(startFromOffset + fencedCustomBlock.length);
-      tr.split(tr.mapping.map(endToOffset)).insert(tr.mapping.map(endToOffset), fencedEndNode);
+      tr.insert(startFromOffset, startNode).split(startFromOffset + customBlock.length);
+      tr.split(tr.mapping.map(endToOffset)).insert(tr.mapping.map(endToOffset), endNode);
 
       dispatch!(
         tr.setSelection(
-          createTextSelection(
-            tr,
-            tr.mapping.map(endToOffset) - (fencedCustomBlockSyntax.length + 2)
-          )
+          createTextSelection(tr, tr.mapping.map(endToOffset) - (customBlockSyntax.length + 2))
         )
       );
 
