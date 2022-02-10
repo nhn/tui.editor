@@ -91,6 +91,10 @@ jobs:
       - name: Install
         run: |
           npm install
+      - name: Build
+        run: |
+          npm run build toastmark
+          npm run build editor
       - name: Use Node.js 10.x
         uses: actions/setup-node@v2.5.1
         with:
@@ -98,10 +102,6 @@ jobs:
       - name: Install @toast-ui/doc
         run: |
           npm i -g @toast-ui/doc
-      - name: Build
-        run: |
-          npm run build toastmark
-          npm run build editor
       - name: Run doc
         run: |
           npm run doc
