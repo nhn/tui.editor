@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.1.2 | Fri Jan 07 2022
+ * @version 3.1.3 | Thu Feb 10 2022
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -13,7 +13,7 @@
 		exports["toastui"] = factory(require("prosemirror-model"), require("prosemirror-state"), require("prosemirror-view"));
 	else
 		root["toastui"] = root["toastui"] || {}, root["toastui"]["Editor"] = factory(root[undefined], root[undefined], root[undefined]);
-})(self, function(__WEBPACK_EXTERNAL_MODULE__959__, __WEBPACK_EXTERNAL_MODULE__676__, __WEBPACK_EXTERNAL_MODULE__754__) {
+})(self, function(__WEBPACK_EXTERNAL_MODULE__43__, __WEBPACK_EXTERNAL_MODULE__814__, __WEBPACK_EXTERNAL_MODULE__311__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -2714,27 +2714,27 @@ module.exports = isUndefined;
 
 /***/ }),
 
-/***/ 959:
+/***/ 43:
 /***/ (function(module) {
 
 "use strict";
-module.exports = __WEBPACK_EXTERNAL_MODULE__959__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__43__;
 
 /***/ }),
 
-/***/ 676:
+/***/ 814:
 /***/ (function(module) {
 
 "use strict";
-module.exports = __WEBPACK_EXTERNAL_MODULE__676__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__814__;
 
 /***/ }),
 
-/***/ 754:
+/***/ 311:
 /***/ (function(module) {
 
 "use strict";
-module.exports = __WEBPACK_EXTERNAL_MODULE__754__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__311__;
 
 /***/ })
 
@@ -9061,7 +9061,7 @@ var InlineParser = /** @class */ (function () {
                             var literal = textNode.literal || '';
                             var info = literal.split(/\s/)[0];
                             newNode.info = info;
-                            if (literal.length === info.length + 1) {
+                            if (literal.length <= info.length) {
                                 textNode.unlink();
                             }
                             else {
@@ -11496,7 +11496,6 @@ function filterDisallowedTags(str) {
     }
     return str;
 }
-var CUSTOM_SYNTAX_LENGTH = 4;
 var baseConvertors = {
     heading: function (node, _a) {
         var entering = _a.entering;
@@ -11687,7 +11686,7 @@ var baseConvertors = {
         ];
     },
     customInline: function (node, context, convertors) {
-        var _a = node, sourcepos = _a.sourcepos, info = _a.info;
+        var _a = node, info = _a.info, firstChild = _a.firstChild;
         var nomalizedInfo = info.trim().toLowerCase();
         var customConvertor = convertors[nomalizedInfo];
         var entering = context.entering;
@@ -11699,13 +11698,10 @@ var baseConvertors = {
                 console.warn("[@toast-ui/editor] - The error occurred when " + nomalizedInfo + " inline node was parsed in markdown renderer: " + e);
             }
         }
-        var text = sourcepos[1][1] - sourcepos[0][1] + 1 === info.length + CUSTOM_SYNTAX_LENGTH
-            ? ''
-            : info + " ";
         return entering
             ? [
                 { type: 'openTag', tagName: 'span' },
-                { type: 'text', content: "$$" + text },
+                { type: 'text', content: "$$" + info + (firstChild ? ' ' : '') },
             ]
             : [
                 { type: 'text', content: '$$' },
@@ -12072,6 +12068,7 @@ var CLOSE_TAG = "</(" + TAG_NAME + ")\\s*[>]";
 var constants_HTML_TAG = "(?:" + constants_OPEN_TAG + "|" + CLOSE_TAG + ")";
 var reHTMLTag = new RegExp("^" + constants_HTML_TAG, 'i');
 var constants_reBR = /<br\s*\/*>/i;
+var reHTMLComment = /<! ---->|<!--(?:-?[^>-])(?:-?[^-])*-->/;
 var constants_ALTERNATIVE_TAG_FOR_BR = '</p><p>';
 
 // EXTERNAL MODULE: ../../node_modules/tui-code-snippet/type/isNull.js
@@ -12090,6 +12087,8 @@ var common_reEscapeChars = /[>(){}[\]+-.!#|]/g;
 var reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-.:/]*)>/g;
 var reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
 var reEscapePairedChars = /[*_~`]/g;
+var reMdImageSyntax = /!\[.*\]\(.*\)/g;
+var reEscapedCharInLinkSyntax = /[[\]]/g; //
 var common_XMLSPECIAL = '[&<>"]';
 var common_reXmlSpecial = new RegExp(common_XMLSPECIAL, 'g');
 function common_replaceUnsafeChar(char) {
@@ -12160,6 +12159,18 @@ function isNeedEscapeText(text) {
         return !needEscape;
     });
     return needEscape;
+}
+function escapeTextForLink(text) {
+    var imageSyntaxRanges = [];
+    var result = reMdImageSyntax.exec(text);
+    while (result) {
+        imageSyntaxRanges.push([result.index, result.index + result[0].length]);
+        result = reMdImageSyntax.exec(text);
+    }
+    return text.replace(reEscapedCharInLinkSyntax, function (matched, offset) {
+        var isDelimiter = imageSyntaxRanges.some(function (range) { return offset > range[0] && offset < range[1]; });
+        return isDelimiter ? matched : "\\" + matched;
+    });
 }
 function common_escape(text) {
     var replacer = function (matched) { return "\\" + matched; };
@@ -12817,7 +12828,7 @@ function sanitizeHTML(html, options) {
 
 function getChildrenHTML(node, typeName) {
     return node
-        .literal.replace(new RegExp("(<\\s*" + typeName + "[^>]+?>)|(</" + typeName + "\\s*[>])", 'ig'), '')
+        .literal.replace(new RegExp("(<\\s*" + typeName + "[^>]*>)|(</" + typeName + "\\s*[>])", 'ig'), '')
         .trim();
 }
 function getHTMLAttrsByHTMLString(html) {
@@ -13075,14 +13086,6 @@ function isBlankLine(doc, index) {
     var pmNode = doc.child(index);
     return !pmNode.childCount || (pmNode.childCount === 1 && !((_a = pmNode.firstChild.text) === null || _a === void 0 ? void 0 : _a.trim()));
 }
-function getNextNonBlankElement(mdNode) {
-    var next = mdNode.next, parent = mdNode.parent;
-    while (!next && parent) {
-        next = parent.next;
-        parent = parent.parent;
-    }
-    return next ? document.querySelector("[data-nodeid=\"" + next.id + "\"]") : null;
-}
 function getEditorRangeHeightInfo(doc, mdNode, children) {
     var start = getMdStartLine(mdNode) - 1;
     var end = getMdEndLine(mdNode) - 1;
@@ -13150,11 +13153,11 @@ function getAdditionalPos(scrollTop, offsetTop, height, targetNodeHeight) {
     var ratio = Math.min((scrollTop - offsetTop) / height, 1);
     return ratio * targetNodeHeight;
 }
-function getParentNodeObj(mdNode) {
-    var el = document.querySelector("[data-nodeid=\"" + mdNode.id + "\"]");
+function getParentNodeObj(previewContent, mdNode) {
+    var el = previewContent.querySelector("[data-nodeid=\"" + mdNode.id + "\"]");
     while (!el || isStyledInlineNode(mdNode)) {
         mdNode = mdNode.parent;
-        el = document.querySelector("[data-nodeid=\"" + mdNode.id + "\"]");
+        el = previewContent.querySelector("[data-nodeid=\"" + mdNode.id + "\"]");
     }
     return getNonNestableNodeObj({ mdNode: mdNode, el: el });
 }
@@ -13392,11 +13395,11 @@ var MarkdownPreview = /** @class */ (function () {
 /* harmony default export */ var mdPreview = (MarkdownPreview);
 
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-state","commonjs2":"prosemirror-state","amd":"prosemirror-state"}
-var external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_ = __webpack_require__(676);
+var external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_ = __webpack_require__(814);
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-view","commonjs2":"prosemirror-view","amd":"prosemirror-view"}
-var external_commonjs_prosemirror_view_commonjs2_prosemirror_view_amd_prosemirror_view_ = __webpack_require__(754);
+var external_commonjs_prosemirror_view_commonjs2_prosemirror_view_amd_prosemirror_view_ = __webpack_require__(311);
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-model","commonjs2":"prosemirror-model","amd":"prosemirror-model"}
-var external_commonjs_prosemirror_model_commonjs2_prosemirror_model_amd_prosemirror_model_ = __webpack_require__(959);
+var external_commonjs_prosemirror_model_commonjs2_prosemirror_model_amd_prosemirror_model_ = __webpack_require__(43);
 // EXTERNAL MODULE: ../../node_modules/tui-code-snippet/array/inArray.js
 var inArray = __webpack_require__(928);
 var inArray_default = /*#__PURE__*/__webpack_require__.n(inArray);
@@ -13685,7 +13688,10 @@ var TableOffsetMap = /** @class */ (function () {
     };
     TableOffsetMap.prototype.getNodeAndPos = function (rowIdx, colIdx) {
         var cellInfo = this.rowInfo[rowIdx][colIdx];
-        return { node: this.table.nodeAt(cellInfo.offset - 1), pos: cellInfo.offset };
+        return {
+            node: this.table.nodeAt(cellInfo.offset - this.tableStartOffset),
+            pos: cellInfo.offset,
+        };
     };
     TableOffsetMap.prototype.extendedRowspan = function (rowIdx, colIdx) {
         return false;
@@ -13881,6 +13887,7 @@ var eventTypeList = [
     'beforePreviewRender',
     'beforeConvertWysiwygToMarkdown',
     'load',
+    'loadUI',
     'change',
     'caretChange',
     'destroy',
@@ -14258,7 +14265,7 @@ var ToastUIEditorViewer = /** @class */ (function () {
 /* harmony default export */ var indexViewer = (viewer);
 
 }();
-__webpack_exports__ = __webpack_exports__.default;
+__webpack_exports__ = __webpack_exports__["default"];
 /******/ 	return __webpack_exports__;
 /******/ })()
 ;

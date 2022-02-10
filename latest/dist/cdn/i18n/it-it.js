@@ -1,6 +1,6 @@
 /*!
  * TOAST UI Editor : i18n
- * @version 3.1.2
+ * @version 3.1.3
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -13,15 +13,15 @@
 		var a = typeof exports === 'object' ? factory(require("@toast-ui/editor")) : factory(root["toastui"]["Editor"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(self, function(__WEBPACK_EXTERNAL_MODULE__974__) {
+})(self, function(__WEBPACK_EXTERNAL_MODULE__213__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ 974:
+/***/ 213:
 /***/ (function(module) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__974__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__213__;
 
 /***/ })
 
@@ -97,7 +97,7 @@ var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
 !function() {
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _editorCore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(974);
+/* harmony import */ var _editorCore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(213);
 /* harmony import */ var _editorCore__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_editorCore__WEBPACK_IMPORTED_MODULE_0__);
 /**
  * @fileoverview I18N for Italian

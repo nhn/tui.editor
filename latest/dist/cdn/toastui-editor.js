@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.1.2 | Fri Jan 07 2022
+ * @version 3.1.3 | Thu Feb 10 2022
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -13,7 +13,7 @@
 		exports["toastui"] = factory(require("prosemirror-commands"), require("prosemirror-history"), require("prosemirror-inputrules"), require("prosemirror-keymap"), require("prosemirror-model"), require("prosemirror-state"), require("prosemirror-transform"), require("prosemirror-view"));
 	else
 		root["toastui"] = root["toastui"] || {}, root["toastui"]["Editor"] = factory(root[undefined], root[undefined], root[undefined], root[undefined], root[undefined], root[undefined], root[undefined], root[undefined]);
-})(self, function(__WEBPACK_EXTERNAL_MODULE__818__, __WEBPACK_EXTERNAL_MODULE__168__, __WEBPACK_EXTERNAL_MODULE__925__, __WEBPACK_EXTERNAL_MODULE__703__, __WEBPACK_EXTERNAL_MODULE__959__, __WEBPACK_EXTERNAL_MODULE__676__, __WEBPACK_EXTERNAL_MODULE__747__, __WEBPACK_EXTERNAL_MODULE__754__) {
+})(self, function(__WEBPACK_EXTERNAL_MODULE__695__, __WEBPACK_EXTERNAL_MODULE__412__, __WEBPACK_EXTERNAL_MODULE__479__, __WEBPACK_EXTERNAL_MODULE__481__, __WEBPACK_EXTERNAL_MODULE__43__, __WEBPACK_EXTERNAL_MODULE__814__, __WEBPACK_EXTERNAL_MODULE__785__, __WEBPACK_EXTERNAL_MODULE__311__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -2961,67 +2961,67 @@ module.exports = isUndefined;
 
 /***/ }),
 
-/***/ 818:
+/***/ 695:
 /***/ (function(module) {
 
 "use strict";
-module.exports = __WEBPACK_EXTERNAL_MODULE__818__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__695__;
 
 /***/ }),
 
-/***/ 168:
+/***/ 412:
 /***/ (function(module) {
 
 "use strict";
-module.exports = __WEBPACK_EXTERNAL_MODULE__168__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__412__;
 
 /***/ }),
 
-/***/ 925:
+/***/ 479:
 /***/ (function(module) {
 
 "use strict";
-module.exports = __WEBPACK_EXTERNAL_MODULE__925__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__479__;
 
 /***/ }),
 
-/***/ 703:
+/***/ 481:
 /***/ (function(module) {
 
 "use strict";
-module.exports = __WEBPACK_EXTERNAL_MODULE__703__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__481__;
 
 /***/ }),
 
-/***/ 959:
+/***/ 43:
 /***/ (function(module) {
 
 "use strict";
-module.exports = __WEBPACK_EXTERNAL_MODULE__959__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__43__;
 
 /***/ }),
 
-/***/ 676:
+/***/ 814:
 /***/ (function(module) {
 
 "use strict";
-module.exports = __WEBPACK_EXTERNAL_MODULE__676__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__814__;
 
 /***/ }),
 
-/***/ 747:
+/***/ 785:
 /***/ (function(module) {
 
 "use strict";
-module.exports = __WEBPACK_EXTERNAL_MODULE__747__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__785__;
 
 /***/ }),
 
-/***/ 754:
+/***/ 311:
 /***/ (function(module) {
 
 "use strict";
-module.exports = __WEBPACK_EXTERNAL_MODULE__754__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__311__;
 
 /***/ })
 
@@ -3348,7 +3348,7 @@ function __classPrivateFieldSet(receiver, state, value, kind, f) {
 }
 
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-model","commonjs2":"prosemirror-model","amd":"prosemirror-model"}
-var external_commonjs_prosemirror_model_commonjs2_prosemirror_model_amd_prosemirror_model_ = __webpack_require__(959);
+var external_commonjs_prosemirror_model_commonjs2_prosemirror_model_amd_prosemirror_model_ = __webpack_require__(43);
 // EXTERNAL MODULE: ../../node_modules/tui-code-snippet/collection/forEachOwnProperties.js
 var forEachOwnProperties = __webpack_require__(956);
 var forEachOwnProperties_default = /*#__PURE__*/__webpack_require__.n(forEachOwnProperties);
@@ -3391,6 +3391,8 @@ var reEscapeChars = /[>(){}[\]+-.!#|]/g;
 var reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-.:/]*)>/g;
 var reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
 var reEscapePairedChars = /[*_~`]/g;
+var reMdImageSyntax = /!\[.*\]\(.*\)/g;
+var reEscapedCharInLinkSyntax = /[[\]]/g; //
 var XMLSPECIAL = '[&<>"]';
 var reXmlSpecial = new RegExp(XMLSPECIAL, 'g');
 function replaceUnsafeChar(char) {
@@ -3461,6 +3463,18 @@ function isNeedEscapeText(text) {
         return !needEscape;
     });
     return needEscape;
+}
+function escapeTextForLink(text) {
+    var imageSyntaxRanges = [];
+    var result = reMdImageSyntax.exec(text);
+    while (result) {
+        imageSyntaxRanges.push([result.index, result.index + result[0].length]);
+        result = reMdImageSyntax.exec(text);
+    }
+    return text.replace(reEscapedCharInLinkSyntax, function (matched, offset) {
+        var isDelimiter = imageSyntaxRanges.some(function (range) { return offset > range[0] && offset < range[1]; });
+        return isDelimiter ? matched : "\\" + matched;
+    });
 }
 function common_escape(text) {
     var replacer = function (matched) { return "\\" + matched; };
@@ -3585,19 +3599,22 @@ function getSortedNumPair(valueA, valueB) {
 }
 
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-view","commonjs2":"prosemirror-view","amd":"prosemirror-view"}
-var external_commonjs_prosemirror_view_commonjs2_prosemirror_view_amd_prosemirror_view_ = __webpack_require__(754);
+var external_commonjs_prosemirror_view_commonjs2_prosemirror_view_amd_prosemirror_view_ = __webpack_require__(311);
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-transform","commonjs2":"prosemirror-transform","amd":"prosemirror-transform"}
-var external_commonjs_prosemirror_transform_commonjs2_prosemirror_transform_amd_prosemirror_transform_ = __webpack_require__(747);
+var external_commonjs_prosemirror_transform_commonjs2_prosemirror_transform_amd_prosemirror_transform_ = __webpack_require__(785);
+// EXTERNAL MODULE: ../../node_modules/tui-code-snippet/collection/toArray.js
+var collection_toArray = __webpack_require__(990);
+var toArray_default = /*#__PURE__*/__webpack_require__.n(collection_toArray);
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-state","commonjs2":"prosemirror-state","amd":"prosemirror-state"}
-var external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_ = __webpack_require__(676);
+var external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_ = __webpack_require__(814);
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-keymap","commonjs2":"prosemirror-keymap","amd":"prosemirror-keymap"}
-var external_commonjs_prosemirror_keymap_commonjs2_prosemirror_keymap_amd_prosemirror_keymap_ = __webpack_require__(703);
+var external_commonjs_prosemirror_keymap_commonjs2_prosemirror_keymap_amd_prosemirror_keymap_ = __webpack_require__(481);
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-commands","commonjs2":"prosemirror-commands","amd":"prosemirror-commands"}
-var external_commonjs_prosemirror_commands_commonjs2_prosemirror_commands_amd_prosemirror_commands_ = __webpack_require__(818);
+var external_commonjs_prosemirror_commands_commonjs2_prosemirror_commands_amd_prosemirror_commands_ = __webpack_require__(695);
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-inputrules","commonjs2":"prosemirror-inputrules","amd":"prosemirror-inputrules"}
-var external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_ = __webpack_require__(925);
+var external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_ = __webpack_require__(479);
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-history","commonjs2":"prosemirror-history","amd":"prosemirror-history"}
-var external_commonjs_prosemirror_history_commonjs2_prosemirror_history_amd_prosemirror_history_ = __webpack_require__(168);
+var external_commonjs_prosemirror_history_commonjs2_prosemirror_history_amd_prosemirror_history_ = __webpack_require__(412);
 ;// CONCATENATED MODULE: ./src/helper/manipulation.ts
 
 
@@ -3956,450 +3973,6 @@ function placeholder(options) {
     });
 }
 
-;// CONCATENATED MODULE: ./src/plugins/popupWidget.ts
-
-
-var pluginKey = new external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.PluginKey('widget');
-var PopupWidget = /** @class */ (function () {
-    function PopupWidget(eventEmitter) {
-        var _this = this;
-        this.popup = null;
-        this.removeWidget = function () {
-            if (_this.popup) {
-                document.body.removeChild(_this.popup);
-                _this.popup = null;
-            }
-        };
-        this.eventEmitter = eventEmitter;
-        this.eventEmitter.listen('blur', this.removeWidget);
-        this.eventEmitter.listen('removePopupWidget', this.removeWidget);
-    }
-    PopupWidget.prototype.update = function (view) {
-        var widget = pluginKey.getState(view.state);
-        this.removeWidget();
-        if (widget) {
-            var node = widget.node, style = widget.style;
-            var _a = view.coordsAtPos(widget.pos), top = _a.top, left = _a.left, bottom = _a.bottom;
-            var height = bottom - top;
-            css_default()(node, { position: 'absolute', left: left + "px", opacity: '0' });
-            document.body.appendChild(node);
-            css_default()(node, {
-                top: (style === 'bottom' ? top + height : top - node.clientHeight - height) + "px",
-                opacity: '1',
-            });
-            this.popup = node;
-            view.focus();
-        }
-    };
-    PopupWidget.prototype.destroy = function () {
-        this.eventEmitter.removeEventHandler('blur', this.removeWidget);
-    };
-    return PopupWidget;
-}());
-function addWidget(eventEmitter) {
-    return new external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Plugin({
-        key: pluginKey,
-        state: {
-            init: function () {
-                return null;
-            },
-            apply: function (tr) {
-                return tr.getMeta('widget');
-            },
-        },
-        view: function () {
-            return new PopupWidget(eventEmitter);
-        },
-    });
-}
-
-// EXTERNAL MODULE: ../../node_modules/tui-code-snippet/collection/forEachArray.js
-var forEachArray = __webpack_require__(893);
-var forEachArray_default = /*#__PURE__*/__webpack_require__.n(forEachArray);
-// EXTERNAL MODULE: ../../node_modules/tui-code-snippet/collection/toArray.js
-var collection_toArray = __webpack_require__(990);
-var toArray_default = /*#__PURE__*/__webpack_require__.n(collection_toArray);
-;// CONCATENATED MODULE: ./src/helper/image.ts
-
-function addDefaultImageBlobHook(eventEmitter) {
-    eventEmitter.listen('addImageBlobHook', function (blob, callback) {
-        var reader = new FileReader();
-        reader.onload = function (_a) {
-            var target = _a.target;
-            return callback(target.result);
-        };
-        reader.readAsDataURL(blob);
-    });
-}
-function emitImageBlobHook(eventEmitter, blob, type) {
-    var hook = function (imageUrl, altText) {
-        eventEmitter.emit('command', 'addImage', {
-            imageUrl: imageUrl,
-            altText: altText || blob.name || 'image',
-        });
-    };
-    eventEmitter.emit('addImageBlobHook', blob, hook, type);
-}
-function pasteImageOnly(items) {
-    var images = toArray_default()(items).filter(function (_a) {
-        var type = _a.type;
-        return type.indexOf('image') !== -1;
-    });
-    if (images.length === 1) {
-        var item = images[0];
-        if (item) {
-            return item.getAsFile();
-        }
-    }
-    return null;
-}
-
-;// CONCATENATED MODULE: ./src/plugins/dropImage.ts
-
-
-
-function dropImage(_a) {
-    var eventEmitter = _a.eventEmitter;
-    return new external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Plugin({
-        props: {
-            handleDOMEvents: {
-                drop: function (_, ev) {
-                    var _a;
-                    var items = (_a = ev.dataTransfer) === null || _a === void 0 ? void 0 : _a.files;
-                    if (items) {
-                        forEachArray_default()(items, function (item) {
-                            if (item.type.indexOf('image') !== -1) {
-                                ev.preventDefault();
-                                ev.stopPropagation();
-                                emitImageBlobHook(eventEmitter, item, ev.type);
-                                return false;
-                            }
-                            return true;
-                        });
-                    }
-                    return true;
-                },
-            },
-        },
-    });
-}
-
-;// CONCATENATED MODULE: ./src/spec/node.ts
-var node_Node = /** @class */ (function () {
-    function Node() {
-    }
-    Object.defineProperty(Node.prototype, "type", {
-        get: function () {
-            return 'node';
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Node.prototype.setContext = function (context) {
-        this.context = context;
-    };
-    return Node;
-}());
-/* harmony default export */ var node = (node_Node);
-
-;// CONCATENATED MODULE: ./src/widget/widgetNode.ts
-
-
-
-function widgetNodeView(pmNode) {
-    var dom = document.createElement('span');
-    var node = widgetToDOM(pmNode.attrs.info, pmNode.textContent);
-    dom.className = 'tui-widget';
-    dom.appendChild(node);
-    return { dom: dom };
-}
-function isWidgetNode(pmNode) {
-    return pmNode.type.name === 'widget';
-}
-var Widget = /** @class */ (function (_super) {
-    __extends(Widget, _super);
-    function Widget() {
-        return _super !== null && _super.apply(this, arguments) || this;
-    }
-    Object.defineProperty(Widget.prototype, "name", {
-        get: function () {
-            return 'widget';
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(Widget.prototype, "schema", {
-        get: function () {
-            return {
-                attrs: {
-                    info: { default: null },
-                },
-                group: 'inline',
-                inline: true,
-                content: 'text*',
-                selectable: false,
-                atom: true,
-                toDOM: function () {
-                    return ['span', { class: 'tui-widget' }, 0];
-                },
-                parseDOM: [
-                    {
-                        tag: 'span.tui-widget',
-                        getAttrs: function (dom) {
-                            var text = dom.textContent;
-                            var _a = text.match(/\$\$(widget\d+)/), info = _a[1];
-                            return { info: info };
-                        },
-                    },
-                ],
-            };
-        },
-        enumerable: false,
-        configurable: true
-    });
-    return Widget;
-}(node));
-
-
-;// CONCATENATED MODULE: ./src/base.ts
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var EditorBase = /** @class */ (function () {
-    function EditorBase(eventEmitter) {
-        this.el = document.createElement('div');
-        this.el.className = 'toastui-editor';
-        this.eventEmitter = eventEmitter;
-        this.placeholder = { text: '' };
-    }
-    EditorBase.prototype.createState = function () {
-        return external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.EditorState.create({
-            schema: this.schema,
-            plugins: this.createPlugins(),
-        });
-    };
-    EditorBase.prototype.initEvent = function () {
-        var _a = this, eventEmitter = _a.eventEmitter, view = _a.view, editorType = _a.editorType;
-        view.dom.addEventListener('focus', function () { return eventEmitter.emit('focus', editorType); });
-        view.dom.addEventListener('blur', function () { return eventEmitter.emit('blur', editorType); });
-    };
-    EditorBase.prototype.emitChangeEvent = function (tr) {
-        this.eventEmitter.emit('caretChange', this.editorType);
-        if (tr.docChanged) {
-            this.eventEmitter.emit('change', this.editorType);
-        }
-    };
-    Object.defineProperty(EditorBase.prototype, "defaultPlugins", {
-        get: function () {
-            var _a = getDefaultCommands(), undo = _a.undo, redo = _a.redo;
-            var rules = this.createInputRules();
-            var plugins = __spreadArray(__spreadArray([], this.keymaps), [
-                (0,external_commonjs_prosemirror_keymap_commonjs2_prosemirror_keymap_amd_prosemirror_keymap_.keymap)(__assign({ 'Mod-z': undo(), 'Shift-Mod-z': redo(), 'Shift-Enter': external_commonjs_prosemirror_commands_commonjs2_prosemirror_commands_amd_prosemirror_commands_.baseKeymap.Enter }, external_commonjs_prosemirror_commands_commonjs2_prosemirror_commands_amd_prosemirror_commands_.baseKeymap)),
-                (0,external_commonjs_prosemirror_history_commonjs2_prosemirror_history_amd_prosemirror_history_.history)(),
-                placeholder(this.placeholder),
-                addWidget(this.eventEmitter),
-                dropImage(this.context),
-            ]);
-            return rules ? plugins.concat(rules) : plugins;
-        },
-        enumerable: false,
-        configurable: true
-    });
-    EditorBase.prototype.createInputRules = function () {
-        var widgetRules = getWidgetRules();
-        var rules = widgetRules.map(function (_a) {
-            var rule = _a.rule;
-            return new external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_.InputRule(rule, function (state, match, start, end) {
-                var schema = state.schema, tr = state.tr, doc = state.doc;
-                var allMatched = match.input.match(new RegExp(rule, 'g'));
-                var pos = doc.resolve(start);
-                var parent = pos.parent;
-                var count = 0;
-                if (isWidgetNode(parent)) {
-                    parent = pos.node(pos.depth - 1);
-                }
-                parent.forEach(function (child) { return isWidgetNode(child) && (count += 1); });
-                // replace the content only if the count of matched rules in whole text is greater than current widget node count
-                if (allMatched.length > count) {
-                    var content = last(allMatched);
-                    var nodes = createNodesWithWidget(content, schema);
-                    // adjust start position based on widget content
-                    return tr.replaceWith(end - content.length + 1, end, nodes);
-                }
-                return null;
-            });
-        });
-        return rules.length ? (0,external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_.inputRules)({ rules: rules }) : null;
-    };
-    EditorBase.prototype.createSchema = function () {
-        return new external_commonjs_prosemirror_model_commonjs2_prosemirror_model_amd_prosemirror_model_.Schema({
-            nodes: this.specs.nodes,
-            marks: this.specs.marks,
-        });
-    };
-    EditorBase.prototype.createKeymaps = function (useCommandShortcut) {
-        return useCommandShortcut ? this.specs.keymaps() : [];
-    };
-    EditorBase.prototype.createCommands = function () {
-        return this.specs.commands(this.view);
-    };
-    EditorBase.prototype.createPluginProps = function () {
-        var _this = this;
-        return this.extraPlugins.map(function (plugin) { return plugin(_this.eventEmitter); });
-    };
-    EditorBase.prototype.focus = function () {
-        var _this = this;
-        // prevent the error for IE11
-        setTimeout(function () {
-            _this.view.focus();
-            _this.view.dispatch(_this.view.state.tr.scrollIntoView());
-        });
-    };
-    EditorBase.prototype.blur = function () {
-        this.view.dom.blur();
-    };
-    EditorBase.prototype.destroy = function () {
-        var _this = this;
-        this.view.destroy();
-        Object.keys(this).forEach(function (prop) {
-            delete _this[prop];
-        });
-    };
-    EditorBase.prototype.moveCursorToStart = function (focus) {
-        var tr = this.view.state.tr;
-        this.view.dispatch(tr.setSelection(createTextSelection(tr, 1)).scrollIntoView());
-        if (focus) {
-            this.focus();
-        }
-    };
-    EditorBase.prototype.moveCursorToEnd = function (focus) {
-        var tr = this.view.state.tr;
-        this.view.dispatch(tr.setSelection(createTextSelection(tr, tr.doc.content.size - 1)).scrollIntoView());
-        if (focus) {
-            this.focus();
-        }
-    };
-    EditorBase.prototype.setScrollTop = function (top) {
-        this.view.dom.scrollTop = top;
-    };
-    EditorBase.prototype.getScrollTop = function () {
-        return this.view.dom.scrollTop;
-    };
-    EditorBase.prototype.setPlaceholder = function (text) {
-        this.placeholder.text = text;
-        this.view.dispatch(this.view.state.tr.scrollIntoView());
-    };
-    EditorBase.prototype.setHeight = function (height) {
-        css_default()(this.el, { height: height + "px" });
-    };
-    EditorBase.prototype.setMinHeight = function (minHeight) {
-        css_default()(this.el, { minHeight: minHeight + "px" });
-    };
-    EditorBase.prototype.getElement = function () {
-        return this.el;
-    };
-    return EditorBase;
-}());
-/* harmony default export */ var base = (EditorBase);
-
-// EXTERNAL MODULE: ../../node_modules/tui-code-snippet/type/isFunction.js
-var isFunction = __webpack_require__(294);
-var isFunction_default = /*#__PURE__*/__webpack_require__.n(isFunction);
-;// CONCATENATED MODULE: ./src/spec/specManager.ts
-
-
-
-
-function execCommand(view, command, payload) {
-    view.focus();
-    return command(payload)(view.state, view.dispatch, view);
-}
-var SpecManager = /** @class */ (function () {
-    function SpecManager(specs) {
-        this.specs = specs;
-    }
-    Object.defineProperty(SpecManager.prototype, "nodes", {
-        get: function () {
-            return this.specs
-                .filter(function (spec) { return spec.type === 'node'; })
-                .reduce(function (nodes, _a) {
-                var _b;
-                var name = _a.name, schema = _a.schema;
-                return __assign(__assign({}, nodes), (_b = {}, _b[name] = schema, _b));
-            }, {});
-        },
-        enumerable: false,
-        configurable: true
-    });
-    Object.defineProperty(SpecManager.prototype, "marks", {
-        get: function () {
-            return this.specs
-                .filter(function (spec) { return spec.type === 'mark'; })
-                .reduce(function (marks, _a) {
-                var _b;
-                var name = _a.name, schema = _a.schema;
-                return __assign(__assign({}, marks), (_b = {}, _b[name] = schema, _b));
-            }, {});
-        },
-        enumerable: false,
-        configurable: true
-    });
-    SpecManager.prototype.commands = function (view, addedCommands) {
-        var specCommands = this.specs
-            .filter(function (_a) {
-            var commands = _a.commands;
-            return commands;
-        })
-            .reduce(function (allCommands, spec) {
-            var commands = {};
-            var specCommand = spec.commands();
-            if (isFunction_default()(specCommand)) {
-                commands[spec.name] = function (payload) { return execCommand(view, specCommand, payload); };
-            }
-            else {
-                Object.keys(specCommand).forEach(function (name) {
-                    commands[name] = function (payload) { return execCommand(view, specCommand[name], payload); };
-                });
-            }
-            return __assign(__assign({}, allCommands), commands);
-        }, {});
-        var defaultCommands = getDefaultCommands();
-        Object.keys(defaultCommands).forEach(function (name) {
-            specCommands[name] = function (payload) { return execCommand(view, defaultCommands[name], payload); };
-        });
-        if (addedCommands) {
-            Object.keys(addedCommands).forEach(function (name) {
-                specCommands[name] = function (payload) { return execCommand(view, addedCommands[name], payload); };
-            });
-        }
-        return specCommands;
-    };
-    SpecManager.prototype.keymaps = function () {
-        var specKeymaps = this.specs.filter(function (spec) { return spec.keymaps; }).map(function (spec) { return spec.keymaps(); });
-        return specKeymaps.map(function (keys) { return (0,external_commonjs_prosemirror_keymap_commonjs2_prosemirror_keymap_amd_prosemirror_keymap_.keymap)(keys); });
-    };
-    SpecManager.prototype.setContext = function (context) {
-        this.specs.forEach(function (spec) {
-            spec.setContext(context);
-        });
-    };
-    return SpecManager;
-}());
-/* harmony default export */ var specManager = (SpecManager);
-
 // EXTERNAL MODULE: ../../node_modules/tui-code-snippet/type/isArray.js
 var isArray = __webpack_require__(322);
 var isArray_default = /*#__PURE__*/__webpack_require__.n(isArray);
@@ -4423,6 +3996,7 @@ var CLOSE_TAG = "</(" + TAG_NAME + ")\\s*[>]";
 var HTML_TAG = "(?:" + OPEN_TAG + "|" + CLOSE_TAG + ")";
 var reHTMLTag = new RegExp("^" + HTML_TAG, 'i');
 var reBR = /<br\s*\/*>/i;
+var reHTMLComment = /<! ---->|<!--(?:-?[^>-])(?:-?[^-])*-->/;
 var ALTERNATIVE_TAG_FOR_BR = '</p><p>';
 
 ;// CONCATENATED MODULE: ./src/utils/dom.ts
@@ -4645,6 +4219,500 @@ function replaceBRWithEmptyBlock(html) {
     });
     return replacedHTML;
 }
+
+;// CONCATENATED MODULE: ./src/plugins/popupWidget.ts
+
+
+
+var pluginKey = new external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.PluginKey('widget');
+var MARGIN = 5;
+var PopupWidget = /** @class */ (function () {
+    function PopupWidget(view, eventEmitter) {
+        var _this = this;
+        this.popup = null;
+        this.removeWidget = function () {
+            if (_this.popup) {
+                _this.rootEl.removeChild(_this.popup);
+                _this.popup = null;
+            }
+        };
+        this.rootEl = view.dom.parentElement;
+        this.eventEmitter = eventEmitter;
+        this.eventEmitter.listen('blur', this.removeWidget);
+        this.eventEmitter.listen('loadUI', function () {
+            _this.rootEl = closest(view.dom.parentElement, "." + cls('defaultUI'));
+        });
+        this.eventEmitter.listen('removePopupWidget', this.removeWidget);
+    }
+    PopupWidget.prototype.update = function (view) {
+        var widget = pluginKey.getState(view.state);
+        this.removeWidget();
+        if (widget) {
+            var node = widget.node, style = widget.style;
+            var _a = view.coordsAtPos(widget.pos), top = _a.top, left = _a.left, bottom = _a.bottom;
+            var height = bottom - top;
+            var rect = this.rootEl.getBoundingClientRect();
+            var relTopPos = top - rect.top;
+            css_default()(node, { opacity: '0' });
+            this.rootEl.appendChild(node);
+            css_default()(node, {
+                position: 'absolute',
+                left: left - rect.left + MARGIN + "px",
+                top: (style === 'bottom' ? relTopPos + height - MARGIN : relTopPos - height) + "px",
+                opacity: '1',
+            });
+            this.popup = node;
+            view.focus();
+        }
+    };
+    PopupWidget.prototype.destroy = function () {
+        this.eventEmitter.removeEventHandler('blur', this.removeWidget);
+    };
+    return PopupWidget;
+}());
+function addWidget(eventEmitter) {
+    return new external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Plugin({
+        key: pluginKey,
+        state: {
+            init: function () {
+                return null;
+            },
+            apply: function (tr) {
+                return tr.getMeta('widget');
+            },
+        },
+        view: function (editorView) {
+            return new PopupWidget(editorView, eventEmitter);
+        },
+    });
+}
+
+// EXTERNAL MODULE: ../../node_modules/tui-code-snippet/collection/forEachArray.js
+var forEachArray = __webpack_require__(893);
+var forEachArray_default = /*#__PURE__*/__webpack_require__.n(forEachArray);
+;// CONCATENATED MODULE: ./src/helper/image.ts
+
+function addDefaultImageBlobHook(eventEmitter) {
+    eventEmitter.listen('addImageBlobHook', function (blob, callback) {
+        var reader = new FileReader();
+        reader.onload = function (_a) {
+            var target = _a.target;
+            return callback(target.result);
+        };
+        reader.readAsDataURL(blob);
+    });
+}
+function emitImageBlobHook(eventEmitter, blob, type) {
+    var hook = function (imageUrl, altText) {
+        eventEmitter.emit('command', 'addImage', {
+            imageUrl: imageUrl,
+            altText: altText || blob.name || 'image',
+        });
+    };
+    eventEmitter.emit('addImageBlobHook', blob, hook, type);
+}
+function pasteImageOnly(items) {
+    var images = toArray_default()(items).filter(function (_a) {
+        var type = _a.type;
+        return type.indexOf('image') !== -1;
+    });
+    if (images.length === 1) {
+        var item = images[0];
+        if (item) {
+            return item.getAsFile();
+        }
+    }
+    return null;
+}
+
+;// CONCATENATED MODULE: ./src/plugins/dropImage.ts
+
+
+
+function dropImage(_a) {
+    var eventEmitter = _a.eventEmitter;
+    return new external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Plugin({
+        props: {
+            handleDOMEvents: {
+                drop: function (_, ev) {
+                    var _a;
+                    var items = (_a = ev.dataTransfer) === null || _a === void 0 ? void 0 : _a.files;
+                    if (items) {
+                        forEachArray_default()(items, function (item) {
+                            if (item.type.indexOf('image') !== -1) {
+                                ev.preventDefault();
+                                ev.stopPropagation();
+                                emitImageBlobHook(eventEmitter, item, ev.type);
+                                return false;
+                            }
+                            return true;
+                        });
+                    }
+                    return true;
+                },
+            },
+        },
+    });
+}
+
+;// CONCATENATED MODULE: ./src/spec/node.ts
+var node_Node = /** @class */ (function () {
+    function Node() {
+    }
+    Object.defineProperty(Node.prototype, "type", {
+        get: function () {
+            return 'node';
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Node.prototype.setContext = function (context) {
+        this.context = context;
+    };
+    return Node;
+}());
+/* harmony default export */ var node = (node_Node);
+
+;// CONCATENATED MODULE: ./src/widget/widgetNode.ts
+
+
+
+function widgetNodeView(pmNode) {
+    var dom = document.createElement('span');
+    var node = widgetToDOM(pmNode.attrs.info, pmNode.textContent);
+    dom.className = 'tui-widget';
+    dom.appendChild(node);
+    return { dom: dom };
+}
+function isWidgetNode(pmNode) {
+    return pmNode.type.name === 'widget';
+}
+var Widget = /** @class */ (function (_super) {
+    __extends(Widget, _super);
+    function Widget() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Object.defineProperty(Widget.prototype, "name", {
+        get: function () {
+            return 'widget';
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(Widget.prototype, "schema", {
+        get: function () {
+            return {
+                attrs: {
+                    info: { default: null },
+                },
+                group: 'inline',
+                inline: true,
+                content: 'text*',
+                selectable: false,
+                atom: true,
+                toDOM: function () {
+                    return ['span', { class: 'tui-widget' }, 0];
+                },
+                parseDOM: [
+                    {
+                        tag: 'span.tui-widget',
+                        getAttrs: function (dom) {
+                            var text = dom.textContent;
+                            var _a = text.match(/\$\$(widget\d+)/), info = _a[1];
+                            return { info: info };
+                        },
+                    },
+                ],
+            };
+        },
+        enumerable: false,
+        configurable: true
+    });
+    return Widget;
+}(node));
+
+
+;// CONCATENATED MODULE: ./src/base.ts
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var EditorBase = /** @class */ (function () {
+    function EditorBase(eventEmitter) {
+        this.timer = null;
+        this.el = document.createElement('div');
+        this.el.className = 'toastui-editor';
+        this.eventEmitter = eventEmitter;
+        this.placeholder = { text: '' };
+    }
+    EditorBase.prototype.createState = function () {
+        return external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.EditorState.create({
+            schema: this.schema,
+            plugins: this.createPlugins(),
+        });
+    };
+    EditorBase.prototype.initEvent = function () {
+        var _a = this, eventEmitter = _a.eventEmitter, view = _a.view, editorType = _a.editorType;
+        view.dom.addEventListener('focus', function () { return eventEmitter.emit('focus', editorType); });
+        view.dom.addEventListener('blur', function () { return eventEmitter.emit('blur', editorType); });
+    };
+    EditorBase.prototype.emitChangeEvent = function (tr) {
+        this.eventEmitter.emit('caretChange', this.editorType);
+        if (tr.docChanged) {
+            this.eventEmitter.emit('change', this.editorType);
+        }
+    };
+    Object.defineProperty(EditorBase.prototype, "defaultPlugins", {
+        get: function () {
+            var rules = this.createInputRules();
+            var plugins = __spreadArray(__spreadArray([], this.keymaps), [
+                (0,external_commonjs_prosemirror_keymap_commonjs2_prosemirror_keymap_amd_prosemirror_keymap_.keymap)(__assign({ 'Shift-Enter': external_commonjs_prosemirror_commands_commonjs2_prosemirror_commands_amd_prosemirror_commands_.baseKeymap.Enter }, external_commonjs_prosemirror_commands_commonjs2_prosemirror_commands_amd_prosemirror_commands_.baseKeymap)),
+                (0,external_commonjs_prosemirror_history_commonjs2_prosemirror_history_amd_prosemirror_history_.history)(),
+                placeholder(this.placeholder),
+                addWidget(this.eventEmitter),
+                dropImage(this.context),
+            ]);
+            return rules ? plugins.concat(rules) : plugins;
+        },
+        enumerable: false,
+        configurable: true
+    });
+    EditorBase.prototype.createInputRules = function () {
+        var widgetRules = getWidgetRules();
+        var rules = widgetRules.map(function (_a) {
+            var rule = _a.rule;
+            return new external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_.InputRule(rule, function (state, match, start, end) {
+                var schema = state.schema, tr = state.tr, doc = state.doc;
+                var allMatched = match.input.match(new RegExp(rule, 'g'));
+                var pos = doc.resolve(start);
+                var parent = pos.parent;
+                var count = 0;
+                if (isWidgetNode(parent)) {
+                    parent = pos.node(pos.depth - 1);
+                }
+                parent.forEach(function (child) { return isWidgetNode(child) && (count += 1); });
+                // replace the content only if the count of matched rules in whole text is greater than current widget node count
+                if (allMatched.length > count) {
+                    var content = last(allMatched);
+                    var nodes = createNodesWithWidget(content, schema);
+                    // adjust start position based on widget content
+                    return tr.replaceWith(end - content.length + 1, end, nodes);
+                }
+                return null;
+            });
+        });
+        return rules.length ? (0,external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_.inputRules)({ rules: rules }) : null;
+    };
+    EditorBase.prototype.clearTimer = function () {
+        if (this.timer) {
+            clearTimeout(this.timer);
+            this.timer = null;
+        }
+    };
+    EditorBase.prototype.createSchema = function () {
+        return new external_commonjs_prosemirror_model_commonjs2_prosemirror_model_amd_prosemirror_model_.Schema({
+            nodes: this.specs.nodes,
+            marks: this.specs.marks,
+        });
+    };
+    EditorBase.prototype.createKeymaps = function (useCommandShortcut) {
+        var _a = getDefaultCommands(), undo = _a.undo, redo = _a.redo;
+        var allKeymaps = this.specs.keymaps(useCommandShortcut);
+        var historyKeymap = {
+            'Mod-z': undo(),
+            'Shift-Mod-z': redo(),
+        };
+        return useCommandShortcut ? allKeymaps.concat((0,external_commonjs_prosemirror_keymap_commonjs2_prosemirror_keymap_amd_prosemirror_keymap_.keymap)(historyKeymap)) : allKeymaps;
+    };
+    EditorBase.prototype.createCommands = function () {
+        return this.specs.commands(this.view);
+    };
+    EditorBase.prototype.createPluginProps = function () {
+        var _this = this;
+        return this.extraPlugins.map(function (plugin) { return plugin(_this.eventEmitter); });
+    };
+    EditorBase.prototype.focus = function () {
+        var _this = this;
+        this.clearTimer();
+        // prevent the error for IE11
+        this.timer = setTimeout(function () {
+            _this.view.focus();
+            _this.view.dispatch(_this.view.state.tr.scrollIntoView());
+        });
+    };
+    EditorBase.prototype.blur = function () {
+        this.view.dom.blur();
+    };
+    EditorBase.prototype.destroy = function () {
+        var _this = this;
+        this.clearTimer();
+        this.view.destroy();
+        Object.keys(this).forEach(function (prop) {
+            delete _this[prop];
+        });
+    };
+    EditorBase.prototype.moveCursorToStart = function (focus) {
+        var tr = this.view.state.tr;
+        this.view.dispatch(tr.setSelection(createTextSelection(tr, 1)).scrollIntoView());
+        if (focus) {
+            this.focus();
+        }
+    };
+    EditorBase.prototype.moveCursorToEnd = function (focus) {
+        var tr = this.view.state.tr;
+        this.view.dispatch(tr.setSelection(createTextSelection(tr, tr.doc.content.size - 1)).scrollIntoView());
+        if (focus) {
+            this.focus();
+        }
+    };
+    EditorBase.prototype.setScrollTop = function (top) {
+        this.view.dom.scrollTop = top;
+    };
+    EditorBase.prototype.getScrollTop = function () {
+        return this.view.dom.scrollTop;
+    };
+    EditorBase.prototype.setPlaceholder = function (text) {
+        this.placeholder.text = text;
+        this.view.dispatch(this.view.state.tr.scrollIntoView());
+    };
+    EditorBase.prototype.setHeight = function (height) {
+        css_default()(this.el, { height: height + "px" });
+    };
+    EditorBase.prototype.setMinHeight = function (minHeight) {
+        css_default()(this.el, { minHeight: minHeight + "px" });
+    };
+    EditorBase.prototype.getElement = function () {
+        return this.el;
+    };
+    return EditorBase;
+}());
+/* harmony default export */ var base = (EditorBase);
+
+// EXTERNAL MODULE: ../../node_modules/tui-code-snippet/type/isFunction.js
+var isFunction = __webpack_require__(294);
+var isFunction_default = /*#__PURE__*/__webpack_require__.n(isFunction);
+;// CONCATENATED MODULE: ./src/spec/specManager.ts
+
+
+
+
+
+var defaultCommandShortcuts = [
+    'Enter',
+    'Shift-Enter',
+    'Mod-Enter',
+    'Tab',
+    'Shift-Tab',
+    'Delete',
+    'Backspace',
+    'Mod-Delete',
+    'Mod-Backspace',
+    'ArrowUp',
+    'ArrowDown',
+    'ArrowLeft',
+    'ArrowRight',
+    'Mod-d',
+    'Mod-D',
+    'Alt-ArrowUp',
+    'Alt-ArrowDown',
+];
+function execCommand(view, command, payload) {
+    view.focus();
+    return command(payload)(view.state, view.dispatch, view);
+}
+var SpecManager = /** @class */ (function () {
+    function SpecManager(specs) {
+        this.specs = specs;
+    }
+    Object.defineProperty(SpecManager.prototype, "nodes", {
+        get: function () {
+            return this.specs
+                .filter(function (spec) { return spec.type === 'node'; })
+                .reduce(function (nodes, _a) {
+                var _b;
+                var name = _a.name, schema = _a.schema;
+                return __assign(__assign({}, nodes), (_b = {}, _b[name] = schema, _b));
+            }, {});
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(SpecManager.prototype, "marks", {
+        get: function () {
+            return this.specs
+                .filter(function (spec) { return spec.type === 'mark'; })
+                .reduce(function (marks, _a) {
+                var _b;
+                var name = _a.name, schema = _a.schema;
+                return __assign(__assign({}, marks), (_b = {}, _b[name] = schema, _b));
+            }, {});
+        },
+        enumerable: false,
+        configurable: true
+    });
+    SpecManager.prototype.commands = function (view, addedCommands) {
+        var specCommands = this.specs
+            .filter(function (_a) {
+            var commands = _a.commands;
+            return commands;
+        })
+            .reduce(function (allCommands, spec) {
+            var commands = {};
+            var specCommand = spec.commands();
+            if (isFunction_default()(specCommand)) {
+                commands[spec.name] = function (payload) { return execCommand(view, specCommand, payload); };
+            }
+            else {
+                Object.keys(specCommand).forEach(function (name) {
+                    commands[name] = function (payload) { return execCommand(view, specCommand[name], payload); };
+                });
+            }
+            return __assign(__assign({}, allCommands), commands);
+        }, {});
+        var defaultCommands = getDefaultCommands();
+        Object.keys(defaultCommands).forEach(function (name) {
+            specCommands[name] = function (payload) { return execCommand(view, defaultCommands[name], payload); };
+        });
+        if (addedCommands) {
+            Object.keys(addedCommands).forEach(function (name) {
+                specCommands[name] = function (payload) { return execCommand(view, addedCommands[name], payload); };
+            });
+        }
+        return specCommands;
+    };
+    SpecManager.prototype.keymaps = function (useCommandShortcut) {
+        var specKeymaps = this.specs.filter(function (spec) { return spec.keymaps; }).map(function (spec) { return spec.keymaps(); });
+        return specKeymaps.map(function (keys) {
+            if (!useCommandShortcut) {
+                Object.keys(keys).forEach(function (key) {
+                    if (!common_includes(defaultCommandShortcuts, key)) {
+                        delete keys[key];
+                    }
+                });
+            }
+            return (0,external_commonjs_prosemirror_keymap_commonjs2_prosemirror_keymap_amd_prosemirror_keymap_.keymap)(keys);
+        });
+    };
+    SpecManager.prototype.setContext = function (context) {
+        this.specs.forEach(function (spec) {
+            spec.setContext(context);
+        });
+    };
+    return SpecManager;
+}());
+/* harmony default export */ var specManager = (SpecManager);
 
 ;// CONCATENATED MODULE: ./src/markdown/helper/pos.ts
 
@@ -5121,34 +5189,61 @@ function getMarkForAdding(node, toastMark) {
 ;// CONCATENATED MODULE: ./src/markdown/plugins/previewHighlight.ts
 
 
+
+var defaultToolbarStateKeys = [
+    'taskList',
+    'orderedList',
+    'bulletList',
+    'table',
+    'strong',
+    'emph',
+    'strike',
+    'heading',
+    'thematicBreak',
+    'blockQuote',
+    'code',
+    'codeBlock',
+    'indent',
+    'outdent',
+];
 function getToolbarStateType(mdNode) {
+    var type = mdNode.type;
     if (isListNode(mdNode)) {
         if (mdNode.listData.task) {
             return 'taskList';
         }
         return mdNode.listData.type === 'ordered' ? 'orderedList' : 'bulletList';
     }
-    if (mdNode.type.indexOf('table') !== -1) {
+    if (type.indexOf('table') !== -1) {
         return 'table';
     }
-    return mdNode.type;
+    if (!common_includes(defaultToolbarStateKeys, type)) {
+        return null;
+    }
+    return type;
 }
 function getToolbarState(targetNode) {
-    var toolbarState = {};
+    var toolbarState = {
+        indent: { active: false, disabled: true },
+        outdent: { active: false, disabled: true },
+    };
     var listEnabled = true;
     traverseParentNodes(targetNode, function (mdNode) {
         var type = getToolbarStateType(mdNode);
-        if (type === 'customBlock' || type === 'image' || type === 'link') {
+        if (!type) {
             return;
         }
         if (type === 'bulletList' || type === 'orderedList') {
+            // to apply the nearlist list state in the nested list
             if (listEnabled) {
-                toolbarState[type] = true;
+                toolbarState[type] = { active: true };
+                toolbarState.indent.disabled = false;
+                toolbarState.outdent.disabled = false;
                 listEnabled = false;
             }
         }
         else {
-            toolbarState[type] = true;
+            toolbarState[type] = { active: true };
         }
     });
     return toolbarState;
@@ -6616,57 +6711,6 @@ var Code = /** @class */ (function (_super) {
 }(mark));
 
 
-;// CONCATENATED MODULE: ./src/utils/encoder.ts
-var encoderList = [
-    {
-        regExp: /\(/g,
-        encoded: '%28',
-        escaped: '\\(',
-    },
-    {
-        regExp: /\)/g,
-        encoded: '%29',
-        escaped: '\\)',
-    },
-    {
-        regExp: /\[/g,
-        encoded: '%5B',
-        escaped: '\\[',
-    },
-    {
-        regExp: /\]/g,
-        encoded: '%5D',
-        escaped: '\\]',
-    },
-    {
-        regExp: /</g,
-        encoded: '%3C',
-        escaped: '\\<',
-    },
-    {
-        regExp: />/g,
-        encoded: '%3E',
-        escaped: '\\>',
-    },
-    {
-        regExp: / /g,
-        encoded: '%20',
-        escaped: ' ',
-    },
-];
-function escapeMarkdownText(text) {
-    return encoderList.reduce(function (result, _a) {
-        var regExp = _a.regExp, escaped = _a.escaped;
-        return result.replace(regExp, escaped);
-    }, text);
-}
-function encodeMarkdownText(text) {
-    return encoderList.reduce(function (result, _a) {
-        var regExp = _a.regExp, encoded = _a.encoded;
-        return result.replace(regExp, encoded);
-    }, text);
-}
-
 ;// CONCATENATED MODULE: ./src/markdown/marks/link.ts
 
 
@@ -6723,8 +6767,7 @@ var Link = /** @class */ (function (_super) {
                 url = imageUrl;
                 syntax = '!';
             }
-            text = escapeMarkdownText(text);
-            url = encodeMarkdownText(url);
+            text = escapeTextForLink(text);
             syntax += "[" + text + "](" + url + ")";
             dispatch(tr.replaceWith(from, to, createTextNode(schema, syntax)));
             return true;
@@ -6910,6 +6953,9 @@ var Html = /** @class */ (function (_super) {
 
 
 
+
+
+var customBlockSyntax = '$$';
 var CustomBlock = /** @class */ (function (_super) {
     __extends(CustomBlock, _super);
     function CustomBlock() {
@@ -6933,6 +6979,22 @@ var CustomBlock = /** @class */ (function (_super) {
         enumerable: false,
         configurable: true
     });
+    CustomBlock.prototype.commands = function () {
+        return function (payload) { return function (state, dispatch) {
+            var selection = state.selection, schema = state.schema, tr = state.tr;
+            var _a = getRangeInfo(selection), startFromOffset = _a.startFromOffset, endToOffset = _a.endToOffset;
+            if (!(payload === null || payload === void 0 ? void 0 : payload.info)) {
+                return false;
+            }
+            var customBlock = "" + customBlockSyntax + payload.info;
+            var startNode = createTextNode(schema, customBlock);
+            var endNode = createTextNode(schema, customBlockSyntax);
+            tr.insert(startFromOffset, startNode).split(startFromOffset + customBlock.length);
+            tr.split(tr.mapping.map(endToOffset)).insert(tr.mapping.map(endToOffset), endNode);
+            dispatch(tr.setSelection(createTextSelection(tr, tr.mapping.map(endToOffset) - (customBlockSyntax.length + 2))));
+            return true;
+        }; };
+    };
     return CustomBlock;
 }(mark));
 
@@ -7019,6 +7081,7 @@ function smartTask(_a) {
 
 
 
+
 var EVENT_TYPE = 'cut';
 var reLineEnding = /\r\n|\n|\r/;
 var MdEditor = /** @class */ (function (_super) {
@@ -7065,10 +7128,14 @@ var MdEditor = /** @class */ (function (_super) {
             var clipboardData = ev.clipboardData || window.clipboardData;
             var items = clipboardData && clipboardData.items;
             if (items) {
-                var imageBlob = pasteImageOnly(items);
-                if (imageBlob) {
-                    ev.preventDefault();
-                    emitImageBlobHook(_this.eventEmitter, imageBlob, ev.type);
+                var containRtfItem = toArray_default()(items).some(function (item) { return item.kind === 'string' && item.type === 'text/rtf'; });
+                // if it contains rtf, it's most likely copy paste from office -> no image
+                if (!containRtfItem) {
+                    var imageBlob = pasteImageOnly(items);
+                    if (imageBlob) {
+                        ev.preventDefault();
+                        emitImageBlobHook(_this.eventEmitter, imageBlob, ev.type);
+                    }
                 }
             }
         });
@@ -13315,7 +13382,7 @@ var InlineParser = /** @class */ (function () {
                             var literal = textNode.literal || '';
                             var info = literal.split(/\s/)[0];
                             newNode.info = info;
-                            if (literal.length === info.length + 1) {
+                            if (literal.length <= info.length) {
                                 textNode.unlink();
                             }
                             else {
@@ -15750,7 +15817,6 @@ function filterDisallowedTags(str) {
     }
     return str;
 }
-var CUSTOM_SYNTAX_LENGTH = 4;
 var baseConvertors = {
     heading: function (node, _a) {
         var entering = _a.entering;
@@ -15941,7 +16007,7 @@ var baseConvertors = {
         ];
     },
     customInline: function (node, context, convertors) {
-        var _a = node, sourcepos = _a.sourcepos, info = _a.info;
+        var _a = node, info = _a.info, firstChild = _a.firstChild;
         var nomalizedInfo = info.trim().toLowerCase();
         var customConvertor = convertors[nomalizedInfo];
         var entering = context.entering;
@@ -15953,13 +16019,10 @@ var baseConvertors = {
                 console.warn("[@toast-ui/editor] - The error occurred when " + nomalizedInfo + " inline node was parsed in markdown renderer: " + e);
             }
         }
-        var text = sourcepos[1][1] - sourcepos[0][1] + 1 === info.length + CUSTOM_SYNTAX_LENGTH
-            ? ''
-            : info + " ";
         return entering
             ? [
                 { type: 'openTag', tagName: 'span' },
-                { type: 'text', content: "$$" + text },
+                { type: 'text', content: "$$" + info + (firstChild ? ' ' : '') },
             ]
             : [
                 { type: 'text', content: '$$' },
@@ -16312,7 +16375,7 @@ function sanitizeHTML(html, options) {
 
 function getChildrenHTML(node, typeName) {
     return node
-        .literal.replace(new RegExp("(<\\s*" + typeName + "[^>]+?>)|(</" + typeName + "\\s*[>])", 'ig'), '')
+        .literal.replace(new RegExp("(<\\s*" + typeName + "[^>]*>)|(</" + typeName + "\\s*[>])", 'ig'), '')
         .trim();
 }
 function getHTMLAttrsByHTMLString(html) {
@@ -16570,14 +16633,6 @@ function isBlankLine(doc, index) {
     var pmNode = doc.child(index);
     return !pmNode.childCount || (pmNode.childCount === 1 && !((_a = pmNode.firstChild.text) === null || _a === void 0 ? void 0 : _a.trim()));
 }
-function getNextNonBlankElement(mdNode) {
-    var next = mdNode.next, parent = mdNode.parent;
-    while (!next && parent) {
-        next = parent.next;
-        parent = parent.parent;
-    }
-    return next ? document.querySelector("[data-nodeid=\"" + next.id + "\"]") : null;
-}
 function getEditorRangeHeightInfo(doc, mdNode, children) {
     var start = getMdStartLine(mdNode) - 1;
     var end = getMdEndLine(mdNode) - 1;
@@ -16645,11 +16700,11 @@ function getAdditionalPos(scrollTop, offsetTop, height, targetNodeHeight) {
     var ratio = Math.min((scrollTop - offsetTop) / height, 1);
     return ratio * targetNodeHeight;
 }
-function getParentNodeObj(mdNode) {
-    var el = document.querySelector("[data-nodeid=\"" + mdNode.id + "\"]");
+function getParentNodeObj(previewContent, mdNode) {
+    var el = previewContent.querySelector("[data-nodeid=\"" + mdNode.id + "\"]");
     while (!el || isStyledInlineNode(mdNode)) {
         mdNode = mdNode.parent;
-        el = document.querySelector("[data-nodeid=\"" + mdNode.id + "\"]");
+        el = previewContent.querySelector("[data-nodeid=\"" + mdNode.id + "\"]");
     }
     return getNonNestableNodeObj({ mdNode: mdNode, el: el });
 }
@@ -17383,7 +17438,10 @@ var TableOffsetMap = /** @class */ (function () {
     };
     TableOffsetMap.prototype.getNodeAndPos = function (rowIdx, colIdx) {
         var cellInfo = this.rowInfo[rowIdx][colIdx];
-        return { node: this.table.nodeAt(cellInfo.offset - 1), pos: cellInfo.offset };
+        return {
+            node: this.table.nodeAt(cellInfo.offset - this.tableStartOffset),
+            pos: cellInfo.offset,
+        };
     };
     TableOffsetMap.prototype.extendedRowspan = function (rowIdx, colIdx) {
         return false;
@@ -18075,7 +18133,6 @@ function task() {
 ;// CONCATENATED MODULE: ./src/wysiwyg/plugins/toolbarState.ts
 
 
-
 var EXCEPT_TYPES = ['image', 'link', 'customBlock', 'frontMatter'];
 var MARK_TYPES = ['strong', 'strike', 'emph', 'code'];
 var LIST_TYPES = ['bulletList', 'orderedList', 'taskList'];
@@ -18090,47 +18147,49 @@ function toolbarState_getToolbarStateType(node, parentNode) {
     return type;
 }
 function setListNodeToolbarState(type, nodeTypeState) {
-    nodeTypeState[type] = true;
+    nodeTypeState[type] = { active: true };
     LIST_TYPES.filter(function (listName) { return listName !== type; }).forEach(function (listType) {
         if (nodeTypeState[listType]) {
             delete nodeTypeState[listType];
         }
     });
 }
-function getMarkTypeStates(from, to, schema) {
-    var markTypeState = {};
+function setMarkTypeStates(from, to, schema, toolbarState) {
     MARK_TYPES.forEach(function (type) {
         var mark = schema.marks[type];
         var marksAtPos = from.marksAcross(to) || [];
         var foundMark = !!mark.isInSet(marksAtPos);
         if (foundMark) {
-            markTypeState[type] = true;
+            toolbarState[type] = { active: true };
         }
     });
-    return markTypeState;
 }
 function toolbarState_getToolbarState(selection, doc, schema) {
     var $from = selection.$from, $to = selection.$to, from = selection.from, to = selection.to;
-    var nodeTypeState = {};
-    var markTypeState = {};
+    var toolbarState = {
+        indent: { active: false, disabled: true },
+        outdent: { active: false, disabled: true },
+    };
     doc.nodesBetween(from, to, function (node, _, parentNode) {
         var type = toolbarState_getToolbarStateType(node, parentNode);
         if (common_includes(EXCEPT_TYPES, type)) {
             return;
         }
         if (common_includes(LIST_TYPES, type)) {
-            setListNodeToolbarState(type, nodeTypeState);
+            setListNodeToolbarState(type, toolbarState);
+            toolbarState.indent.disabled = false;
+            toolbarState.outdent.disabled = false;
         }
         else if (type === 'paragraph' || type === 'text') {
-            markTypeState = getMarkTypeStates($from, $to, schema);
+            setMarkTypeStates($from, $to, schema, toolbarState);
         }
         else {
-            nodeTypeState[type] = true;
+            toolbarState[type] = { active: true };
         }
     });
-    return __assign(__assign({}, nodeTypeState), markTypeState);
+    return toolbarState;
 }
-function toolbarState(eventEmitter) {
+function toolbarStateHighlight(eventEmitter) {
     return new external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Plugin({
         view: function () {
             return {
@@ -18417,6 +18476,7 @@ var CodeBlockView = /** @class */ (function () {
         this.dom = null;
         this.contentDOM = null;
         this.input = null;
+        this.timer = null;
         this.handleMousedown = function (ev) {
             var target = ev.target;
             var style = getComputedStyle(target, ':after');
@@ -18472,7 +18532,7 @@ var CodeBlockView = /** @class */ (function () {
         input.type = 'text';
         input.value = this.node.attrs.language;
         wrapper.appendChild(input);
-        document.querySelector('.toastui-editor.ww-mode').appendChild(wrapper);
+        this.view.dom.parentElement.appendChild(wrapper);
         var wrpperWidth = wrapper.clientWidth;
         css_default()(wrapper, {
             top: top + 10 + "px",
@@ -18482,7 +18542,10 @@ var CodeBlockView = /** @class */ (function () {
         this.input = input;
         this.input.addEventListener('blur', function () { return _this.changeLanguage(); });
         this.input.addEventListener('keydown', this.handleKeydown);
-        setTimeout(function () { return _this.input.focus(); });
+        this.clearTimer();
+        this.timer = setTimeout(function () {
+            _this.input.focus();
+        });
     };
     CodeBlockView.prototype.bindDOMEvent = function () {
         if (this.dom) {
@@ -18515,6 +18578,12 @@ var CodeBlockView = /** @class */ (function () {
             removeNode(parent);
         }
     };
+    CodeBlockView.prototype.clearTimer = function () {
+        if (this.timer) {
+            clearTimeout(this.timer);
+            this.timer = null;
+        }
+    };
     CodeBlockView.prototype.stopEvent = function () {
         return true;
     };
@@ -18527,6 +18596,7 @@ var CodeBlockView = /** @class */ (function () {
     };
     CodeBlockView.prototype.destroy = function () {
         this.reset();
+        this.clearTimer();
         if (this.dom) {
             this.dom.removeEventListener('click', this.handleMousedown);
         }
@@ -19632,9 +19702,10 @@ function addParagraphBeforeTable(tr, map, schema) {
     }
     return tr.setSelection(external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Selection.near(tableStartPos, -1));
 }
-function addParagraphAfterTable(tr, map, schema) {
+function addParagraphAfterTable(tr, map, schema, forcedAddtion) {
+    if (forcedAddtion === void 0) { forcedAddtion = false; }
     var tableEndPos = tr.doc.resolve(map.tableEndOffset);
-    if (!tableEndPos.nodeAfter) {
+    if (forcedAddtion || !tableEndPos.nodeAfter) {
         return addParagraph(tr, tableEndPos, schema);
     }
     return tr.setSelection(external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Selection.near(tableEndPos, 1));
@@ -20056,6 +20127,29 @@ var table_Table = /** @class */ (function (_super) {
             return false;
         };
     };
+    Table.prototype.exitTable = function () {
+        return function (state, dispatch) {
+            var selection = state.selection, tr = state.tr, schema = state.schema;
+            var $from = selection.$from;
+            var cell = findNodeBy($from, function (_a) {
+                var type = _a.type;
+                return type.name === 'tableHeadCell' || type.name === 'tableBodyCell';
+            });
+            if (cell) {
+                var para = findNodeBy($from, function (_a) {
+                    var type = _a.type;
+                    return type.name === 'paragraph';
+                });
+                if (para) {
+                    var anchor = getResolvedSelection(selection).anchor;
+                    var map = TableOffsetMap.create(anchor);
+                    dispatch(addParagraphAfterTable(tr, map, schema, true));
+                    return true;
+                }
+            }
+            return false;
+        };
+    };
     Table.prototype.commands = function () {
         return {
             addTable: this.addTable(),
@@ -20082,6 +20176,7 @@ var table_Table = /** @class */ (function (_super) {
             'Mod-Backspace': deleteCellContent,
             Delete: deleteCellContent,
             'Mod-Delete': deleteCellContent,
+            'Mod-Enter': this.exitTable(),
         };
     };
     return Table;
@@ -20342,7 +20437,7 @@ var Image = /** @class */ (function (_super) {
                     var attrs = _a.attrs;
                     return [
                         attrs.rawHTML || 'img',
-                        __assign(__assign({ src: attrs.imageUrl }, (attrs.altText && { alt: attrs.altText })), getCustomAttrs(attrs)),
+                        __assign(__assign({ src: escapeXml(attrs.imageUrl) }, (attrs.altText && { alt: attrs.altText })), getCustomAttrs(attrs)),
                     ];
                 },
             };
@@ -20357,7 +20452,7 @@ var Image = /** @class */ (function (_super) {
             if (!imageUrl) {
                 return false;
             }
-            var node = schema.nodes.image.createAndFill(__assign({ imageUrl: escapeXml(imageUrl) }, (altText && { altText: altText })));
+            var node = schema.nodes.image.createAndFill(__assign({ imageUrl: imageUrl }, (altText && { altText: altText })));
             dispatch(tr.replaceSelectionWith(node).scrollIntoView());
             return true;
         }; };
@@ -20616,7 +20711,6 @@ var strike_Strike = /** @class */ (function (_super) {
 
 
 
-
 var link_Link = /** @class */ (function (_super) {
     __extends(Link, _super);
     function Link(linkAttributes) {
@@ -20635,7 +20729,7 @@ var link_Link = /** @class */ (function (_super) {
         get: function () {
             var _this = this;
             return {
-                attrs: __assign({ linkUrl: { default: '' }, linkText: { default: null }, rawHTML: { default: null } }, getDefaultCustomAttrs()),
+                attrs: __assign({ linkUrl: { default: '' }, title: { default: null }, rawHTML: { default: null } }, getDefaultCustomAttrs()),
                 inclusive: false,
                 parseDOM: [
                     {
@@ -20644,8 +20738,9 @@ var link_Link = /** @class */ (function (_super) {
                             var sanitizedDOM = sanitizeHTML(dom, { RETURN_DOM_FRAGMENT: true })
                                 .firstChild;
                             var href = sanitizedDOM.getAttribute('href') || '';
+                            var title = sanitizedDOM.getAttribute('title') || '';
                             var rawHTML = sanitizedDOM.getAttribute('data-raw-html');
-                            return __assign({ linkUrl: href, linkText: sanitizedDOM.textContent }, (rawHTML && { rawHTML: rawHTML }));
+                            return __assign({ linkUrl: href, title: title }, (rawHTML && { rawHTML: rawHTML }));
                         },
                     },
                 ],
@@ -20653,7 +20748,7 @@ var link_Link = /** @class */ (function (_super) {
                     var attrs = _a.attrs;
                     return [
                         attrs.rawHTML || 'a',
-                        __assign(__assign({ href: attrs.linkUrl }, _this.linkAttributes), getCustomAttrs(attrs)),
+                        __assign(__assign({ href: escapeXml(attrs.linkUrl) }, _this.linkAttributes), getCustomAttrs(attrs)),
                     ];
                 },
             };
@@ -20667,10 +20762,7 @@ var link_Link = /** @class */ (function (_super) {
             var schema = state.schema, tr = state.tr, selection = state.selection;
             var empty = selection.empty, from = selection.from, to = selection.to;
             if (from && to && linkUrl) {
-                var attrs = {
-                    linkUrl: escapeXml(linkUrl),
-                    linkText: escapeMarkdownText(linkText),
-                };
+                var attrs = { linkUrl: linkUrl };
                 var mark = schema.mark('link', attrs);
                 if (empty && linkText) {
                     var node = createTextNode(schema, linkText, mark);
@@ -20756,6 +20848,7 @@ var code_Code = /** @class */ (function (_super) {
 ;// CONCATENATED MODULE: ./src/wysiwyg/nodes/customBlock.ts
 
 
+
 var customBlock_CustomBlock = /** @class */ (function (_super) {
     __extends(CustomBlock, _super);
     function CustomBlock() {
@@ -20797,6 +20890,13 @@ var customBlock_CustomBlock = /** @class */ (function (_super) {
         enumerable: false,
         configurable: true
     });
+    CustomBlock.prototype.commands = function () {
+        return function (payload) { return function (state, dispatch) {
+            return (payload === null || payload === void 0 ? void 0 : payload.info)
+                ? (0,external_commonjs_prosemirror_commands_commonjs2_prosemirror_commands_amd_prosemirror_commands_.setBlockType)(state.schema.nodes.customBlock, payload)(state, dispatch)
+                : false;
+        }; };
+    };
     return CustomBlock;
 }(node));
 
@@ -20823,8 +20923,10 @@ var FrontMatter = /** @class */ (function (_super) {
                 content: 'text*',
                 group: 'block',
                 code: true,
+                defining: true,
                 parseDOM: [
                     {
+                        preserveWhitespace: 'full',
                         tag: 'div[data-front-matter]',
                     },
                 ],
@@ -20854,7 +20956,58 @@ var FrontMatter = /** @class */ (function (_super) {
 }(node));
 
 
+;// CONCATENATED MODULE: ./src/wysiwyg/nodes/htmlComment.ts
+
+
+
+var HTMLComment = /** @class */ (function (_super) {
+    __extends(HTMLComment, _super);
+    function HTMLComment() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Object.defineProperty(HTMLComment.prototype, "name", {
+        get: function () {
+            return 'htmlComment';
+        },
+        enumerable: false,
+        configurable: true
+    });
+    Object.defineProperty(HTMLComment.prototype, "schema", {
+        get: function () {
+            return {
+                content: 'text*',
+                group: 'block',
+                code: true,
+                defining: true,
+                parseDOM: [{ preserveWhitespace: 'full', tag: 'div[data-html-comment]' }],
+                toDOM: function () {
+                    return ['div', { 'data-html-comment': 'true' }, 0];
+                },
+            };
+        },
+        enumerable: false,
+        configurable: true
+    });
+    HTMLComment.prototype.commands = function () {
+        return function () { return function (state, dispatch, view) {
+            var $from = state.selection.$from;
+            if (view.endOfTextblock('down') && $from.node().type.name === 'htmlComment') {
+                return (0,external_commonjs_prosemirror_commands_commonjs2_prosemirror_commands_amd_prosemirror_commands_.exitCode)(state, dispatch);
+            }
+            return false;
+        }; };
+    };
+    HTMLComment.prototype.keymaps = function () {
+        return {
+            Enter: this.commands()(),
+        };
+    };
+    return HTMLComment;
+}(node));
+
+
 ;// CONCATENATED MODULE: ./src/wysiwyg/specCreator.ts
+
 
 
 
@@ -20908,10 +21061,12 @@ function createSpecs(linkAttributes) {
         new customBlock_CustomBlock(),
         new FrontMatter(),
         new Widget(),
+        new HTMLComment(),
     ]);
 }
 
 ;// CONCATENATED MODULE: ./src/wysiwyg/wwEditor.ts
+
 
 
 
@@ -20977,7 +21132,7 @@ var WysiwygEditor = /** @class */ (function (_super) {
             tableSelection(),
             tableContextMenu(this.eventEmitter),
             task(),
-            toolbarState(this.eventEmitter)
+            toolbarStateHighlight(this.eventEmitter)
         ], this.createPluginProps()));
     };
     WysiwygEditor.prototype.createPluginNodeViews = function () {
@@ -21028,11 +21183,15 @@ var WysiwygEditor = /** @class */ (function (_super) {
                 paste: function (_, ev) {
                     var clipboardData = ev.clipboardData || window.clipboardData;
                     var items = clipboardData === null || clipboardData === void 0 ? void 0 : clipboardData.items;
-                    if ((items === null || items === void 0 ? void 0 : items.length) === 1) {
-                        var imageBlob = pasteImageOnly(items);
-                        if (imageBlob) {
-                            ev.preventDefault();
-                            emitImageBlobHook(_this.eventEmitter, imageBlob, ev.type);
+                    if (items) {
+                        var containRtfItem = toArray_default()(items).some(function (item) { return item.kind === 'string' && item.type === 'text/rtf'; });
+                        // if it contains rtf, it's most likely copy paste from office -> no image
+                        if (!containRtfItem) {
+                            var imageBlob = pasteImageOnly(items);
+                            if (imageBlob) {
+                                ev.preventDefault();
+                                emitImageBlobHook(_this.eventEmitter, imageBlob, ev.type);
+                            }
                         }
                     }
                     return false;
@@ -21181,6 +21340,7 @@ var eventTypeList = [
     'beforePreviewRender',
     'beforeConvertWysiwygToMarkdown',
     'load',
+    'loadUI',
     'change',
     'caretChange',
     'destroy',
@@ -21762,7 +21922,7 @@ var toWwConvertors = {
         var link = state.schema.marks.link;
         var _b = node, destination = _b.destination, title = _b.title;
         if (entering) {
-            var attrs = __assign(__assign({ linkUrl: destination }, (title && { linkText: title })), customAttrs);
+            var attrs = __assign({ linkUrl: destination, title: title }, customAttrs);
             state.openMark(link.create(attrs));
         }
         else {
@@ -21818,37 +21978,32 @@ var toWwConvertors = {
         }
     },
     tableCell: function (state, node, _a) {
-        var _b;
         var entering = _a.entering;
-        var _c = state.schema.nodes, tableHeadCell = _c.tableHeadCell, tableBodyCell = _c.tableBodyCell, paragraph = _c.paragraph;
-        var tablePart = node.parent.parent;
-        var cell = tablePart.type === 'tableHead' ? tableHeadCell : tableBodyCell;
-        var hasParaNode = function (childNode) {
-            return childNode && (htmlToWwConvertors_isInlineNode(childNode) || isCustomHTMLInlineNode(state, childNode));
-        };
-        if (entering) {
-            var attrs = null;
-            if (!node.ignored) {
+        if (!node.ignored) {
+            var hasParaNode = function (childNode) {
+                return childNode && (htmlToWwConvertors_isInlineNode(childNode) || isCustomHTMLInlineNode(state, childNode));
+            };
+            if (entering) {
+                var _b = state.schema.nodes, tableHeadCell = _b.tableHeadCell, tableBodyCell = _b.tableBodyCell, paragraph = _b.paragraph;
+                var tablePart = node.parent.parent;
+                var cell = tablePart.type === 'tableHead' ? tableHeadCell : tableBodyCell;
                 var table = tablePart.parent;
-                var startIdx = node.startIdx;
-                if (table.columns.length > startIdx) {
-                    var align = table.columns[startIdx].align;
-                    attrs = (_b = node.attrs) !== null && _b !== void 0 ? _b : {};
-                    if (align) {
-                        attrs.align = align;
-                    }
+                var align = (table.columns[node.startIdx] || {}).align;
+                var attrs = __assign({}, node.attrs);
+                if (align) {
+                    attrs.align = align;
+                }
+                state.openNode(cell, attrs);
+                if (hasParaNode(node.firstChild)) {
+                    state.openNode(paragraph);
                 }
             }
-            state.openNode(cell, attrs);
-            if (hasParaNode(node.firstChild)) {
-                state.openNode(paragraph);
-            }
-        }
-        else {
-            if (hasParaNode(node.lastChild)) {
+            else {
+                if (hasParaNode(node.lastChild)) {
+                    state.closeNode();
+                }
                 state.closeNode();
             }
-            state.closeNode();
         }
     },
     strike: function (state, _, _a, customAttrs) {
@@ -21911,26 +22066,34 @@ var toWwConvertors = {
     htmlBlock: function (state, node) {
         var html = node.literal;
         var container = document.createElement('div');
-        var matched = html.match(reHTMLTag);
-        var openTagName = matched[1], closeTagName = matched[3];
-        var typeName = (openTagName || closeTagName).toLowerCase();
-        var nodeType = state.schema.nodes[typeName];
-        var sanitizedHTML = sanitizeHTML(html);
-        // for user defined html schema
-        if (nodeType === null || nodeType === void 0 ? void 0 : nodeType.spec.attrs.htmlBlock) {
-            var htmlAttrs = getHTMLAttrsByHTMLString(sanitizedHTML);
-            var childrenHTML = getChildrenHTML(node, typeName);
-            state.addNode(nodeType, { htmlAttrs: htmlAttrs, childrenHTML: childrenHTML });
+        var isHTMLComment = reHTMLComment.test(html);
+        if (isHTMLComment) {
+            state.openNode(state.schema.nodes.htmlComment);
+            state.addText(node.literal);
+            state.closeNode();
         }
         else {
-            container.innerHTML = sanitizedHTML;
-            addRawHTMLAttributeToDOM(container);
-            state.convertByDOMParser(container);
+            var matched = html.match(reHTMLTag);
+            var openTagName = matched[1], closeTagName = matched[3];
+            var typeName = (openTagName || closeTagName).toLowerCase();
+            var nodeType = state.schema.nodes[typeName];
+            var sanitizedHTML = sanitizeHTML(html);
+            // for user defined html schema
+            if (nodeType === null || nodeType === void 0 ? void 0 : nodeType.spec.attrs.htmlBlock) {
+                var htmlAttrs = getHTMLAttrsByHTMLString(sanitizedHTML);
+                var childrenHTML = getChildrenHTML(node, typeName);
+                state.addNode(nodeType, { htmlAttrs: htmlAttrs, childrenHTML: childrenHTML });
+            }
+            else {
+                container.innerHTML = sanitizedHTML;
+                addRawHTMLAttributeToDOM(container);
+                state.convertByDOMParser(container);
+            }
         }
     },
     customInline: function (state, node, _a) {
         var entering = _a.entering, skipChildren = _a.skipChildren;
-        var info = node.info;
+        var _b = node, info = _b.info, firstChild = _b.firstChild;
         var schema = state.schema;
         if (info.indexOf('widget') !== -1 && entering) {
             var content = getWidgetContent(node);
@@ -21938,6 +22101,13 @@ var toWwConvertors = {
             state.addNode(schema.nodes.widget, { info: info }, [
                 schema.text(createWidgetContent(info, content)),
             ]);
+        }
+        else {
+            var text = '$$';
+            if (entering) {
+                text += firstChild ? info + " " : info;
+            }
+            state.addText(text);
         }
     },
 };
@@ -21954,7 +22124,7 @@ function createWwConvertors(customConvertors) {
         var wwConvertor = toWwConvertors[type];
         if (wwConvertor && !common_includes(['htmlBlock', 'htmlInline'], type)) {
             convertors[type] = function (state, node, context) {
-                context.origin = function () { return orgConvertors[type](node, context); };
+                context.origin = function () { return orgConvertors[type](node, context, orgConvertors); };
                 var tokens = customConvertors[type](node, context);
                 var attrs;
                 if (tokens) {
@@ -22152,7 +22322,13 @@ var nodeTypeWriters = {
     text: function (state, _a) {
         var _b;
         var node = _a.node;
-        state.text((_b = node.text) !== null && _b !== void 0 ? _b : '');
+        var text = (_b = node.text) !== null && _b !== void 0 ? _b : '';
+        if ((node.marks || []).some(function (mark) { return mark.type.name === 'link'; })) {
+            state.text(escapeTextForLink(text), false);
+        }
+        else {
+            state.text(text);
+        }
     },
     paragraph: function (state, _a) {
         var node = _a.node, parent = _a.parent, _b = _a.index, index = _b === void 0 ? 0 : _b;
@@ -22317,9 +22493,19 @@ var nodeTypeWriters = {
         var text = _a.text;
         state.write(text);
     },
-    html: function (state, _, _a) {
-        var text = _a.text;
+    html: function (state, _a, _b) {
+        var node = _a.node;
+        var text = _b.text;
         state.write(text);
+        if (node.attrs.htmlBlock) {
+            state.closeBlock(node);
+        }
+    },
+    htmlComment: function (state, _a, _b) {
+        var node = _a.node;
+        var text = _b.text;
+        state.write(text);
+        state.closeBlock(node);
     },
 };
 function write(type, _a) {
@@ -22481,13 +22667,13 @@ var toMdConvertors = {
     image: function (_a) {
         var node = _a.node;
         var attrs = node.attrs;
-        var altText = common_escape(attrs.altText || '');
-        var imageUrl = escapeXml(attrs.imageUrl);
-        var altAttr = altText ? " alt=\"" + altText + "\"" : '';
+        var rawHTML = attrs.rawHTML, altText = attrs.altText;
+        var imageUrl = attrs.imageUrl.replace(/&amp;/g, '&');
+        var altAttr = altText ? " alt=\"" + escapeXml(altText) + "\"" : '';
         return {
-            rawHTML: attrs.rawHTML ? "<" + attrs.rawHTML + " src=\"" + imageUrl + "\"" + altAttr + ">" : null,
+            rawHTML: rawHTML ? "<" + rawHTML + " src=\"" + escapeXml(imageUrl) + "\"" + altAttr + ">" : null,
             attrs: {
-                altText: altText,
+                altText: escapeTextForLink(altText || ''),
                 imageUrl: imageUrl,
             },
         };
@@ -22550,17 +22736,17 @@ var toMdConvertors = {
         var node = _a.node;
         var entering = _b.entering;
         var attrs = node.attrs;
-        var linkUrl = escapeXml(attrs.linkUrl);
-        var rawHTML = attrs.rawHTML;
+        var title = attrs.title, rawHTML = attrs.rawHTML;
+        var linkUrl = attrs.linkUrl.replace(/&amp;/g, '&');
+        var titleAttr = title ? " title=\"" + escapeXml(title) + "\"" : '';
         if (entering) {
             return {
                 delim: '[',
-                rawHTML: rawHTML ? "<" + rawHTML + " href=\"" + linkUrl + "\">" : null,
+                rawHTML: rawHTML ? "<" + rawHTML + " href=\"" + escapeXml(linkUrl) + "\"" + titleAttr + ">" : null,
             };
         }
-        var linkText = attrs.title ? " " + quote(attrs.linkText) : '';
         return {
-            delim: "](" + linkText + linkUrl + ")",
+            delim: "](" + linkUrl + (title ? " " + quote(escapeTextForLink(title)) : '') + ")",
             rawHTML: getCloseRawHTML(rawHTML),
         };
     },
@@ -22576,6 +22762,12 @@ var toMdConvertors = {
         return {
             delim: delim,
             rawHTML: rawHTML,
+        };
+    },
+    htmlComment: function (_a) {
+        var node = _a.node;
+        return {
+            text: node.textContent,
         };
     },
     // html inline node, html block node
@@ -23290,7 +23482,7 @@ function createMdLikeNode(node) {
     };
     var nodeTypeMap = {
         heading: { level: attrs.level },
-        link: { destination: attrs.linkUrl, title: attrs.linkText },
+        link: { destination: attrs.linkUrl, title: attrs.title },
         image: { destination: attrs.imageUrl },
         codeBlock: { info: attrs.language },
         bulletList: { type: 'list', listData: { type: 'bullet' } },
@@ -23443,6 +23635,7 @@ var ScrollSync = /** @class */ (function () {
         this.latestPreviewScrollTop = null;
         this.blockedScroll = null;
         this.active = true;
+        this.timer = null;
         var previewRoot = preview.previewContent, previewEl = preview.el;
         this.previewRoot = previewRoot;
         this.previewEl = previewEl;
@@ -23455,10 +23648,11 @@ var ScrollSync = /** @class */ (function () {
     ScrollSync.prototype.addScrollSyncEvent = function () {
         var _this = this;
         this.eventEmitter.listen('afterPreviewRender', function () {
+            _this.clearTimer();
             // Immediately after the 'afterPreviewRender' event has occurred,
             // browser rendering is not yet complete.
             // So the size of elements can not be accurately measured.
-            setTimeout(function () {
+            _this.timer = setTimeout(function () {
                 _this.syncPreviewScrollTop(true);
             }, 200);
         });
@@ -23485,7 +23679,7 @@ var ScrollSync = /** @class */ (function () {
         var pos = this.mdEditor.getSelection();
         var firstMdNode = this.toastMark.findFirstNodeAtLine(pos[0][0]);
         var previewHeight = this.previewEl.clientHeight;
-        var el = getParentNodeObj(firstMdNode).el;
+        var el = getParentNodeObj(this.previewRoot, firstMdNode).el;
         var totalOffsetTop = getTotalOffsetTop(el, this.previewRoot) || el.offsetTop;
         var nodeHeight = el.clientHeight;
         // multiply 0.5 for calculating the position in the middle of preview area
@@ -23517,7 +23711,7 @@ var ScrollSync = /** @class */ (function () {
                 targetScrollTop = scrollTopByEditing;
             }
             else {
-                var _d = getParentNodeObj(firstMdNode), el = _d.el, mdNode = _d.mdNode;
+                var _d = getParentNodeObj(this.previewRoot, firstMdNode), el = _d.el, mdNode = _d.mdNode;
                 var _e = getEditorRangeHeightInfo(doc, mdNode, children), height = _e.height, rect = _e.rect;
                 var totalOffsetTop = getTotalOffsetTop(el, previewRoot) || el.offsetTop;
                 var nodeHeight = el.clientHeight;
@@ -23545,7 +23739,7 @@ var ScrollSync = /** @class */ (function () {
             }
             var children = dom.children;
             var mdNodeId = Number(targetNode.getAttribute('data-nodeid'));
-            var _b = getParentNodeObj(toastMark.findNodeById(mdNodeId)), mdNode = _b.mdNode, el = _b.el;
+            var _b = getParentNodeObj(this.previewRoot, toastMark.findNodeById(mdNodeId)), mdNode = _b.mdNode, el = _b.el;
             var mdNodeStartLine = getMdStartLine(mdNode);
             targetScrollTop = children[mdNodeStartLine - 1].offsetTop;
             var height = getEditorRangeHeightInfo(state.doc, mdNode, children).height;
@@ -23584,7 +23778,14 @@ var ScrollSync = /** @class */ (function () {
         };
         animate(curScrollTop, targetScrollTop, syncCallbacks);
     };
+    ScrollSync.prototype.clearTimer = function () {
+        if (this.timer) {
+            clearTimeout(this.timer);
+            this.timer = null;
+        }
+    };
     ScrollSync.prototype.destroy = function () {
+        this.clearTimer();
         this.eventEmitter.removeEventHandler('scroll');
         this.eventEmitter.removeEventHandler('afterPreviewRender');
     };
@@ -23780,7 +23981,15 @@ var ToastUIEditorCore = /** @class */ (function () {
         this.moveCursorToStart(this.options.autofocus);
     }
     ToastUIEditorCore.prototype.addInitEvent = function () {
+        var _this = this;
         this.on('needChangeMode', this.changeMode.bind(this));
+        this.on('loadUI', function () {
+            if (_this.height !== 'auto') {
+                // 75px equals default editor ui height - the editing area height
+                var minHeight = Math.min(parseInt(_this.minHeight, 10), parseInt(_this.height, 10) - 75) + "px";
+                _this.setMinHeight(minHeight);
+            }
+        });
         addDefaultImageBlobHook(this.eventEmitter);
     };
     ToastUIEditorCore.prototype.addInitCommand = function (mdCommands, wwCommands) {
@@ -24052,12 +24261,11 @@ var ToastUIEditorCore = /** @class */ (function () {
         if (isString_default()(height)) {
             if (height === 'auto') {
                 addClass_default()(el, 'auto-height');
-                this.setMinHeight(this.getMinHeight());
             }
             else {
                 removeClass_default()(el, 'auto-height');
-                this.setMinHeight(height);
             }
+            this.setMinHeight(this.getMinHeight());
         }
         css_default()(el, { height: height });
         this.height = height;
@@ -24074,16 +24282,18 @@ var ToastUIEditorCore = /** @class */ (function () {
      * @param {string} minHeight - min content height in pixel
      */
     ToastUIEditorCore.prototype.setMinHeight = function (minHeight) {
-        var _a;
-        this.minHeight = minHeight;
-        var editorHeight = this.options.el.clientHeight;
-        var editorSectionHeight = ((_a = document.querySelector("." + cls('main'))) === null || _a === void 0 ? void 0 : _a.clientHeight) || 0;
-        var diffHeight = editorHeight - editorSectionHeight;
-        var minHeightNum = parseInt(minHeight, 10);
-        minHeightNum = Math.max(minHeightNum - diffHeight, 0);
-        this.wwEditor.setMinHeight(minHeightNum);
-        this.mdEditor.setMinHeight(minHeightNum);
-        this.preview.setMinHeight(minHeightNum);
+        if (minHeight !== this.minHeight) {
+            var height = this.height || this.options.height;
+            if (height !== 'auto' && this.options.el.querySelector("." + cls('main'))) {
+                // 75px equals default editor ui height - the editing area height
+                minHeight = Math.min(parseInt(minHeight, 10), parseInt(height, 10) - 75) + "px";
+            }
+            var minHeightNum = parseInt(minHeight, 10);
+            this.minHeight = minHeight;
+            this.wwEditor.setMinHeight(minHeightNum);
+            this.mdEditor.setMinHeight(minHeightNum);
+            this.preview.setMinHeight(minHeightNum);
+        }
     };
     /**
      * Get minimum height of editor content
@@ -26223,6 +26433,7 @@ function createDefaultToolbarItemInfo(type) {
                 className: 'indent',
                 command: 'indent',
                 tooltip: i18n.get('Indent'),
+                state: 'indent',
             };
             break;
         case 'outdent':
@@ -26231,6 +26442,7 @@ function createDefaultToolbarItemInfo(type) {
                 className: 'outdent',
                 command: 'outdent',
                 tooltip: i18n.get('Outdent'),
+                state: 'outdent',
             };
             break;
         case 'scrollSync':
@@ -26395,7 +26607,7 @@ function connectHOC(WrappedComponent) {
             _this.hideTooltip = function () {
                 css_default()(_this.props.tooltipRef.current, 'display', 'none');
             };
-            _this.state = { active: false };
+            _this.state = { active: false, disabled: props.disabled };
             _this.addEvent();
             return _this;
         }
@@ -26404,9 +26616,10 @@ function connectHOC(WrappedComponent) {
             var _a = this.props, item = _a.item, eventEmitter = _a.eventEmitter;
             if (item.state) {
                 eventEmitter.listen('changeToolbarState', function (_a) {
+                    var _b;
                     var toolbarState = _a.toolbarState;
-                    var active = !!toolbarState[item.state];
-                    _this.setState({ active: active });
+                    var _c = (_b = toolbarState[item.state]) !== null && _b !== void 0 ? _b : {}, active = _c.active, disabled = _c.disabled;
+                    _this.setState({ active: !!active, disabled: disabled !== null && disabled !== void 0 ? disabled : _this.props.disabled });
                 });
             }
         };
@@ -26415,7 +26628,7 @@ function connectHOC(WrappedComponent) {
             return { left: offsetLeft, top: el.offsetHeight + offsetTop };
         };
         ButtonHOC.prototype.render = function () {
-            return template(buttonHoc_templateObject_1 || (buttonHoc_templateObject_1 = __makeTemplateObject(["\n        <", "\n          ...", "\n          active=", "\n          showTooltip=", "\n          hideTooltip=", "\n          getBound=", "\n        />\n      "], ["\n        <", "\n          ...", "\n          active=", "\n          showTooltip=", "\n          hideTooltip=", "\n          getBound=", "\n        />\n      "])), WrappedComponent, this.props, this.state.active, this.showTooltip, this.hideTooltip, this.getBound);
+            return template(buttonHoc_templateObject_1 || (buttonHoc_templateObject_1 = __makeTemplateObject(["\n        <", "\n          ...", "\n          active=", "\n          showTooltip=", "\n          hideTooltip=", "\n          getBound=", "\n          disabled=", "\n        />\n      "], ["\n        <", "\n          ...", "\n          active=", "\n          showTooltip=", "\n          hideTooltip=", "\n          getBound=", "\n          disabled=", "\n        />\n      "])), WrappedComponent, this.props, this.state.active, this.showTooltip, this.hideTooltip, this.getBound, this.state.disabled || this.props.disabled);
         };
         return ButtonHOC;
     }(Component));
@@ -26670,7 +26883,7 @@ var Toolbar = /** @class */ (function (_super) {
         };
         _this.openPopup = function (popupName, initialValues) {
             if (initialValues === void 0) { initialValues = {}; }
-            var el = document.querySelector("." + cls('toolbar-group') + " ." + popupName);
+            var el = _this.refs.el.querySelector("." + cls('toolbar-group') + " ." + popupName);
             if (el) {
                 var _a = getTotalOffset(el, closest(el, "." + cls('toolbar'))), offsetLeft = _a.offsetLeft, offsetTop = _a.offsetTop;
                 var info = createPopupInfo(popupName, {
@@ -27036,6 +27249,7 @@ var ToastUIEditor = /** @class */ (function (_super) {
             var groupIndex = toolbarItem.groupIndex, itemIndex = toolbarItem.itemIndex, item = toolbarItem.item;
             _this.defaultUI.insertToolbarItem({ groupIndex: groupIndex, itemIndex: itemIndex }, item);
         });
+        _this.eventEmitter.emit('loadUI', _this);
         return _this;
     }
     /**
@@ -27143,7 +27357,7 @@ editorCore.setLanguage(['en', 'en-US'], {
 
 
 }();
-__webpack_exports__ = __webpack_exports__.default;
+__webpack_exports__ = __webpack_exports__["default"];
 /******/ 	return __webpack_exports__;
 /******/ })()
 ;
