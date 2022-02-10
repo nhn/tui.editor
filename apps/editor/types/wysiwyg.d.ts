@@ -23,7 +23,8 @@ export type WwNodeType =
   | 'customBlock'
   | 'frontMatter'
   | 'widget'
-  | 'html';
+  | 'html'
+  | 'htmlComment';
 
 export type WwMarkType = 'strong' | 'emph' | 'strike' | 'link' | 'code' | 'html';
 

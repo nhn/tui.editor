@@ -238,6 +238,11 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
       state.closeBlock(node);
     }
   },
+
+  htmlComment(state, { node }, { text }) {
+    state.write(text);
+    state.closeBlock(node);
+  },
 };
 
 export function write(

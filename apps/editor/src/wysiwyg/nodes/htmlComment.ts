@@ -5,9 +5,9 @@ import NodeSchema from '@/spec/node';
 
 import { EditorCommand } from '@t/spec';
 
-export class FrontMatter extends NodeSchema {
+export class HTMLComment extends NodeSchema {
   get name() {
-    return 'frontMatter';
+    return 'htmlComment';
   }
 
   get schema() {
@@ -16,14 +16,9 @@ export class FrontMatter extends NodeSchema {
       group: 'block',
       code: true,
       defining: true,
-      parseDOM: [
-        {
-          preserveWhitespace: 'full' as const,
-          tag: 'div[data-front-matter]',
-        },
-      ],
+      parseDOM: [{ preserveWhitespace: 'full' as const, tag: 'div[data-html-comment]' }],
       toDOM(): DOMOutputSpecArray {
-        return ['div', { 'data-front-matter': 'true' }, 0];
+        return ['div', { 'data-html-comment': 'true' }, 0];
       },
     };
   }
@@ -32,7 +27,7 @@ export class FrontMatter extends NodeSchema {
     return () => (state, dispatch, view) => {
       const { $from } = state.selection;
 
-      if (view!.endOfTextblock('down') && $from.node().type.name === 'frontMatter') {
+      if (view!.endOfTextblock('down') && $from.node().type.name === 'htmlComment') {
         return exitCode(state, dispatch);
       }
 

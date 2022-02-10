@@ -515,6 +515,19 @@ describe('Convertor', () => {
 
       assertConverting(markdown, expected);
     });
+
+    it('should convert html comment', () => {
+      const markdown = source`
+        <!--
+        foo
+
+        bar
+        baz
+        -->
+      `;
+
+      assertConverting(markdown, markdown);
+    });
   });
 
   describe('convert inline html', () => {

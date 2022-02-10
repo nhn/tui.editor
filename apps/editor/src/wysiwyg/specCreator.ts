@@ -27,6 +27,7 @@ import { CustomBlock } from './nodes/customBlock';
 import { FrontMatter } from './nodes/frontMatter';
 import { LinkAttributes } from '@t/editor';
 import { Widget } from '@/widget/widgetNode';
+import { HTMLComment } from './nodes/htmlComment';
 
 export function createSpecs(linkAttributes: LinkAttributes) {
   return new SpecManager([
@@ -55,5 +56,6 @@ export function createSpecs(linkAttributes: LinkAttributes) {
     new CustomBlock(),
     new FrontMatter(),
     new Widget(),
+    new HTMLComment(),
   ]);
 }
