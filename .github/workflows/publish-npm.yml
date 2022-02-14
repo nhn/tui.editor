@@ -115,8 +115,8 @@ jobs:
           npm run build editor
       - name: Create Tag
         run: |
-          git config --local user.email 'js87zz.lee@nhn.com'
-          git config --local user.name 'js87zz'
+          git config --local user.email 'jw.lee@nhn.com'
+          git config --local user.name 'jwlee1108'
           git tag editor@${{ steps.check.outputs.committed-version }}
       - name: Push Tag
         run: |

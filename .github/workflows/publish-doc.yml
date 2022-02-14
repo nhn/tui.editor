@@ -118,8 +118,8 @@ jobs:
           ref: gh-pages
       - name: Commit files
         run: |
-          git config --local user.email 'js87zz.lee@nhn.com'
-          git config --local user.name 'js87zz'
+          git config --local user.email 'jw.lee@nhn.com'
+          git config --local user.name 'jwlee1108'
           rm -rf ${{ steps.check.outputs.committed-version }}
           rm -rf latest
           git add .
