@@ -24,7 +24,7 @@ export function emitImageBlobHook(eventEmitter: Emitter, blob: File, type: strin
 }
 
 export function pasteImageOnly(items: DataTransferItemList) {
-  const images = toArray(items).filter(({ type }) => type.indexOf('image') !== -1);
+  const images = toArray(items).filter(({ kind, type }) => 'file' === kind && type.indexOf('image') !== -1);
 
   if (images.length === 1) {
     const [item] = images;
