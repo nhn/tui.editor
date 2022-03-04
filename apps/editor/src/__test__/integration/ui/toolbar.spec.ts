@@ -5,10 +5,16 @@ import html from '@/ui/vdom/template';
 import { render } from '@/ui/vdom/renderer';
 import { Toolbar } from '@/ui/components/toolbar/toolbar';
 import { cls } from '@/utils/dom';
+import { fireEvent, getByLabelText, getByText, screen } from '@testing-library/dom';
+import { Editor } from '../../../index';
 import '@/i18n/en-us';
 
 function getElement(selector: string) {
   return document.querySelector<HTMLElement>(selector)!;
+}
+
+function getPopUpElement() {
+  return getElement(`.${cls('popup')}`);
 }
 
 function assertToContainElement(el: HTMLElement | string) {
@@ -103,39 +109,39 @@ describe('default toolbar', () => {
     destroy();
   });
 
-  it('should be rendered properly', () => {
-    const toolbarButtonSelectors = [
-      '.heading',
-      '.bold',
-      '.italic',
-      '.strike',
-      '.hrline',
-      '.quote',
-      '.bullet-list',
-      '.ordered-list',
-      '.task-list',
-      '.indent',
-      '.outdent',
-      '.table',
-      '.image',
-      '.link',
-      '.code',
-      '.codeblock',
-      '.scroll-sync',
-    ];
+  // it('should be rendered properly', () => {
+  //   const toolbarButtonSelectors = [
+  //     '.heading',
+  //     '.bold',
+  //     '.italic',
+  //     '.strike',
+  //     '.hrline',
+  //     '.quote',
+  //     '.bullet-list',
+  //     '.ordered-list',
+  //     '.task-list',
+  //     '.indent',
+  //     '.outdent',
+  //     '.table',
+  //     '.image',
+  //     '.link',
+  //     '.code',
+  //     '.codeblock',
+  //     '.scroll-sync',
+  //   ];
 
-    toolbarButtonSelectors.forEach((selector) => {
-      assertToContainElement(selector);
-    });
-  });
+  //   toolbarButtonSelectors.forEach((selector) => {
+  //     assertToContainElement(selector);
+  //   });
+  // });
 
-  it('should show tooltip when mouseover on toolbar button', () => {
-    dispatchMouseover('.bold');
+  // it('should show tooltip when mouseover on toolbar button', () => {
+  //   dispatchMouseover('.bold');
 
-    const tooltip = getElement(`.${cls('tooltip')}`);
+  //   const tooltip = getElement(`.${cls('tooltip')}`);
 
-    expect(tooltip).toHaveStyle({ display: 'block' });
-  });
+  //   expect(tooltip).toHaveStyle({ display: 'block' });
+  // });
 
   it('should trigger command event when clicking toolbar button', () => {
     const spy = jest.fn();
@@ -148,16 +154,16 @@ describe('default toolbar', () => {
     expect(spy).toHaveBeenCalledWith('bold', undefined);
   });
 
-  it('should hide the popup when clicking X button on popup', () => {
-    dispatchClick('.link');
+  // it('should hide the popup when clicking X button on popup', () => {
+  //   dispatchClick('.link');
 
-    const linkPopup = getElement(`.${cls('popup-add-link')}`);
-    const closeBtn = getElement(`.${cls('popup-add-link')} .${cls('close-button')}`);
+  //   const linkPopup = getElement(`.${cls('popup-add-link')}`);
+  //   const closeBtn = getElement(`.${cls('popup-add-link')} .${cls('close-button')}`);
 
-    closeBtn.click();
+  //   closeBtn.click();
 
-    expect(linkPopup).toHaveStyle({ display: 'none' });
-  });
+  //   expect(linkPopup).toHaveStyle({ display: 'none' });
+  // });
 
   describe('scroll sync button', () => {
     it('should toggle state when clicking scroll sync button', () => {
@@ -186,13 +192,13 @@ describe('default toolbar', () => {
   });
 
   describe('heading button', () => {
-    it('should show the popup when clicking heading button', () => {
-      dispatchClick('.heading');
+    // it('should show the popup when clicking heading button', () => {
+    //   dispatchClick('.heading');
 
-      const headingPopup = getElement(`.${cls('popup-add-heading')}`);
+    //   const headingPopup = getElement(`.${cls('popup-add-heading')}`);
 
-      expect(headingPopup).toHaveStyle({ display: 'block' });
-    });
+    //   expect(headingPopup).toHaveStyle({ display: 'block' });
+    // });
 
     it('should trigger command event when clicking heading popup button', () => {
       const spy = jest.fn();
@@ -206,69 +212,69 @@ describe('default toolbar', () => {
     });
   });
 
-  describe('link button', () => {
-    it('should show the popup when clicking link button', () => {
-      dispatchClick('.link');
+  // describe('link button', () => {
+  //   it('should show the popup when clicking link button', () => {
+  //     dispatchClick('.link');
 
-      const linkPopup = getElement(`.${cls('popup-add-link')}`);
+  //     const linkPopup = getElement(`.${cls('popup-add-link')}`);
 
-      expect(linkPopup).toHaveStyle({ display: 'block' });
-    });
+  //     expect(linkPopup).toHaveStyle({ display: 'block' });
+  //   });
 
-    it('should hide popup when clicking Cancel button', () => {
-      dispatchClick('.link');
-      dispatchClick(`.${cls('popup-add-link')} .${cls('close-button')}`);
+  //   it('should hide popup when clicking Cancel button', () => {
+  //     dispatchClick('.link');
+  //     dispatchClick(`.${cls('popup-add-link')} .${cls('close-button')}`);
 
-      const linkPopup = getElement(`.${cls('popup-add-link')}`);
+  //     const linkPopup = getElement(`.${cls('popup-add-link')}`);
 
-      expect(linkPopup).toHaveStyle({ display: 'none' });
-    });
+  //     expect(linkPopup).toHaveStyle({ display: 'none' });
+  //   });
 
-    it('should trigger command event when clicking OK button', () => {
-      const spy = jest.fn();
+  //   it('should trigger command event when clicking OK button', () => {
+  //     const spy = jest.fn();
 
-      em.listen('command', spy);
+  //     em.listen('command', spy);
 
-      dispatchClick('.link');
+  //     dispatchClick('.link');
 
-      const urlText = getElement(
-        `.${cls('popup-add-link #toastuiLinkUrlInput')}`
-      ) as HTMLInputElement;
-      const linkText = getElement(
-        `.${cls('popup-add-link #toastuiLinkTextInput')}`
-      ) as HTMLInputElement;
+  //     const urlText = getElement(
+  //       `.${cls('popup-add-link #toastuiLinkUrlInput')}`
+  //     ) as HTMLInputElement;
+  //     const linkText = getElement(
+  //       `.${cls('popup-add-link #toastuiLinkTextInput')}`
+  //     ) as HTMLInputElement;
 
-      urlText.value = 'https://ui.toast.com';
-      linkText.value = 'toastui';
+  //     urlText.value = 'https://ui.toast.com';
+  //     linkText.value = 'toastui';
 
-      dispatchClick(`.${cls('popup-add-link')} .${cls('ok-button')}`);
+  //     dispatchClick(`.${cls('popup-add-link')} .${cls('ok-button')}`);
 
-      expect(spy).toHaveBeenCalledWith('addLink', {
-        linkText: 'toastui',
-        linkUrl: 'https://ui.toast.com',
-      });
-    });
+  //     expect(spy).toHaveBeenCalledWith('addLink', {
+  //       linkText: 'toastui',
+  //       linkUrl: 'https://ui.toast.com',
+  //     });
+  //   });
 
-    it('should add wrong class when url or text are not filled out', () => {
-      dispatchClick('.link');
+  //   it('should add wrong class when url or text are not filled out', () => {
+  //     dispatchClick('.link');
 
-      const urlText = getElement(
-        `.${cls('popup-add-link #toastuiLinkUrlInput')}`
-      ) as HTMLInputElement;
-      const linkText = getElement(
-        `.${cls('popup-add-link #toastuiLinkTextInput')}`
-      ) as HTMLInputElement;
+  //     const urlText = getElement(
+  //       `.${cls('popup-add-link #toastuiLinkUrlInput')}`
+  //     ) as HTMLInputElement;
+  //     const linkText = getElement(
+  //       `.${cls('popup-add-link #toastuiLinkTextInput')}`
+  //     ) as HTMLInputElement;
 
-      dispatchClick(`.${cls('popup-add-link')} .${cls('ok-button')}`);
+  //     dispatchClick(`.${cls('popup-add-link')} .${cls('ok-button')}`);
 
-      expect(urlText).toHaveClass('wrong');
+  //     expect(urlText).toHaveClass('wrong');
 
-      urlText.value = 'https://ui.toast.com';
-      dispatchClick(`.${cls('popup-add-link')} .${cls('ok-button')}`);
+  //     urlText.value = 'https://ui.toast.com';
+  //     dispatchClick(`.${cls('popup-add-link')} .${cls('ok-button')}`);
 
-      expect(linkText).toHaveClass('wrong');
-    });
-  });
+  //     expect(linkText).toHaveClass('wrong');
+  //   });
+  // });
 
   describe('image button', () => {
     it('should show the popup when clicking image button', () => {
@@ -794,6 +800,272 @@ describe('event', () => {
 
       expect(urlText).toHaveValue('http://test.com');
       expect(linkText).toHaveValue('foo');
+    });
+  });
+});
+
+describe('default toolbar2', () => {
+  const toolbarButtonLables = [
+    'Headings',
+    'Bold',
+    'Italic',
+    'Strike',
+    'Line',
+    'Blockquote',
+    'Unordered list',
+    'Ordered list',
+    'Task',
+    'Indent',
+    'Outdent',
+    'Insert table',
+    'Insert image',
+    'Insert link',
+    'Inline code',
+    'Insert codeBlock',
+  ];
+
+  let el: HTMLDivElement, editor: Editor;
+
+  beforeEach(() => {
+    el = document.createElement('div');
+
+    editor = new Editor({
+      el,
+      previewStyle: 'vertical',
+      height: '400px',
+      initialEditType: 'markdown',
+    });
+
+    document.body.appendChild(el);
+
+    em = new EventEmitter();
+  });
+
+  afterEach(() => {
+    editor.destroy();
+    document.body.removeChild(el);
+  });
+
+  it('should be rendered properly', () => {
+    const toolbarButtonSelectors = [
+      '.heading',
+      '.bold',
+      '.italic',
+      '.strike',
+      '.hrline',
+      '.quote',
+      '.bullet-list',
+      '.ordered-list',
+      '.task-list',
+      '.indent',
+      '.outdent',
+      '.table',
+      '.image',
+      '.link',
+      '.code',
+      '.codeblock',
+      '.scroll-sync',
+    ];
+
+    toolbarButtonSelectors.forEach((selector) => {
+      assertToContainElement(selector);
+    });
+  });
+
+  it('should show tooltip when mouseover on toolbar button', () => {
+    const mouseover = new MouseEvent('mouseover');
+
+    fireEvent(screen.getByLabelText('Headings'), mouseover);
+
+    const tooltip = screen.getByText('Headings').parentElement;
+
+    expect(tooltip).toHaveStyle({ display: 'block' });
+    expect(tooltip).toHaveClass(cls('tooltip'));
+  });
+
+  it('should hide the popup when clicking X button on popup', () => {
+    const linkBtn = screen.getByLabelText('Insert link');
+
+    linkBtn.click();
+
+    const linkPopup = getElement(`.${cls('popup-add-link')}`);
+    const closeBtn = getByText(linkPopup, 'Cancel');
+
+    closeBtn.click();
+
+    expect(linkPopup).toHaveStyle({ display: 'none' });
+  });
+
+  // ???
+  // describe('scroll sync button', () => {
+  //   it('should toggle state when clicking scroll sync button', () => {
+  //     const scrollSyncSwitch = getElement('.scroll-sync input');
+
+  //     expect(scrollSyncSwitch).toHaveProperty('checked', true);
+
+  //     dispatchClick('.scroll-sync');
+
+  //     expect(scrollSyncSwitch).toHaveProperty('checked', false);
+  //   });
+  // });
+
+  describe('Headings button', () => {
+    let headingPopup: HTMLElement;
+    let hedingButton: HTMLElement;
+
+    beforeEach(() => {
+      headingPopup = getPopUpElement();
+      hedingButton = screen.getByLabelText('Headings');
+
+      hedingButton.click();
+    });
+
+    it('should show the popup when clicking Headings button', () => {
+      expect(headingPopup).toHaveClass(cls('popup-add-heading'));
+      expect(headingPopup).toHaveStyle({ display: 'block' });
+    });
+
+    ['1', '2', '3', '4', '5', '6'].forEach((level) => {
+      const mdHeadingOfLevel = '#'.repeat(parseInt(level, 10));
+
+      it(`should active heading button when click heading level ${level}`, () => {
+        getByText(headingPopup, `Heading ${level}`).click();
+
+        expect(hedingButton).toHaveClass('active');
+      });
+
+      it(`should add heading to document when click heading level ${level}`, () => {
+        getByText(headingPopup, `Heading ${level}`).click();
+
+        expect(editor.getMarkdown()).toBe(`${mdHeadingOfLevel} `);
+      });
+    });
+  });
+
+  describe('link button', () => {
+    let linkPopup: HTMLElement;
+    let linkButton: HTMLElement;
+
+    beforeEach(() => {
+      linkPopup = getPopUpElement();
+      linkButton = screen.getByLabelText('Insert link');
+
+      linkButton.click();
+    });
+
+    it('should show the popup when clicking link button', () => {
+      expect(linkPopup).toHaveClass(cls('popup-add-link'));
+      expect(linkPopup).toHaveStyle({ display: 'block' });
+    });
+
+    it('should hide popup when clicking Cancel button', () => {
+      const closeBtn = getByText(linkPopup, 'Cancel');
+
+      closeBtn.click();
+
+      expect(linkPopup).toHaveStyle({ display: 'none' });
+    });
+
+    it('should add link to document when clicking OK button', () => {
+      const urlText = getByText(linkPopup, 'URL').nextElementSibling as HTMLInputElement;
+      const linkText = getByText(linkPopup, 'Link text').nextElementSibling as HTMLInputElement;
+      const OkBtn = getByText(linkPopup, 'OK');
+
+      urlText.value = 'https://ui.toast.com';
+      linkText.value = 'toastui';
+
+      OkBtn.click();
+
+      expect(editor.getMarkdown()).toBe('[toastui](https://ui.toast.com)');
+    });
+
+    it('should add wrong class when url or text are not filled out', () => {
+      const urlText = getByText(linkPopup, 'URL').nextElementSibling as HTMLInputElement;
+      const linkText = getByText(linkPopup, 'Link text').nextElementSibling as HTMLInputElement;
+      const OkBtn = getByText(linkPopup, 'OK');
+
+      OkBtn.click();
+
+      expect(urlText).toHaveClass('wrong');
+
+      urlText.value = 'https://ui.toast.com';
+      OkBtn.click();
+
+      expect(linkText).toHaveClass('wrong');
+    });
+  });
+
+  describe('image button', () => {
+    let imagePopup: HTMLElement;
+    let imageButton: HTMLElement;
+
+    beforeEach(() => {
+      imagePopup = getPopUpElement();
+      imageButton = screen.getByLabelText('Insert image');
+
+      imageButton.click();
+    });
+
+    it('should show the popup when clicking image button', () => {
+      expect(imagePopup).toHaveClass(cls('popup-add-image'));
+      expect(imagePopup).toHaveStyle({ display: 'block' });
+    });
+
+    it('should hide popup when clicking Cancel button', () => {
+      const closeBtn = getByText(imagePopup, 'Cancel');
+
+      closeBtn.click();
+
+      expect(imagePopup).toHaveStyle({ display: 'none' });
+    });
+
+    it('should toggle tab when clicking the file or url tab', () => {
+      const fileTabBtn = getByLabelText(imagePopup, 'File');
+      const urlTabBtn = getByLabelText(imagePopup, 'URL');
+
+      urlTabBtn.click();
+
+      expect(fileTabBtn).not.toHaveClass('active');
+      expect(urlTabBtn).toHaveClass('active');
+
+      fileTabBtn.click();
+
+      expect(fileTabBtn).toHaveClass('active');
+      expect(urlTabBtn).not.toHaveClass('active');
+    });
+
+    it('should add image to document when clicking OK button', () => {
+      getByLabelText(imagePopup, 'URL').click();
+
+      const urlText = getByText(imagePopup, 'Image URL').nextElementSibling as HTMLInputElement;
+      const descriptionText = getByText(imagePopup, 'Description')
+        .nextElementSibling as HTMLInputElement;
+      const OkBtn = getByText(imagePopup, 'OK');
+
+      urlText.value = 'myImageUrl';
+      descriptionText.value = 'image';
+
+      OkBtn.click();
+
+      expect(editor.getMarkdown()).toBe('![image](myImageUrl)');
+    });
+
+    it('should add wrong class when url or text are not filled out', () => {
+      getByLabelText(imagePopup, 'URL').click();
+
+      const urlText = getByText(imagePopup, 'Image URL').nextElementSibling as HTMLInputElement;
+      const descriptionText = getByText(imagePopup, 'Description')
+        .nextElementSibling as HTMLInputElement;
+      const OkBtn = getByText(imagePopup, 'OK');
+
+      OkBtn.click();
+
+      expect(urlText).toHaveClass('wrong');
+
+      urlText.value = 'myImageUrl';
+      OkBtn.click();
+
+      expect(descriptionText).toHaveClass('wrong');
     });
   });
 });
