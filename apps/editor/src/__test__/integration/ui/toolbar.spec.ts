@@ -1,8 +1,3 @@
-import { VNode } from '@t/ui';
-import EventEmitter from '@/event/eventEmitter';
-import html from '@/ui/vdom/template';
-import { render } from '@/ui/vdom/renderer';
-import { Toolbar } from '@/ui/components/toolbar/toolbar';
 import { cls } from '@/utils/dom';
 import { fireEvent, getByLabelText, getByText, screen } from '@testing-library/dom';
 import { Editor } from '../../../index';
@@ -14,12 +9,6 @@ function getElement(selector: string) {
 
 function getPopUpElement() {
   return getElement(`.${cls('popup')}`);
-}
-
-function dispatchClick(selector: string) {
-  const el = getElement(selector)!;
-
-  el.click();
 }
 
 function fireMousemoveEvent(el: HTMLElement, x: number, y: number) {
@@ -45,129 +34,7 @@ function fireMouseoverEvent(el: HTMLElement) {
   fireEvent(el, mouseover);
 }
 
-describe('Toolbar unit', () => {
-  let em: EventEmitter, container: HTMLElement, destroy: () => void;
-
-  describe('default toolbar', () => {
-    beforeEach(() => {
-      const toolbarItems = [
-        ['heading', 'bold', 'italic', 'strike'],
-        ['hr', 'quote'],
-        ['ul', 'ol', 'task', 'indent', 'outdent'],
-        ['table', 'image', 'link'],
-        ['code', 'codeblock'],
-        ['scrollSync'],
-      ];
-
-      container = document.createElement('div');
-      document.body.appendChild(container);
-
-      em = new EventEmitter();
-
-      destroy = render(
-        container,
-        html`
-          <${Toolbar}
-            eventEmitter=${em}
-            previewStyle="vertical"
-            toolbarItems=${toolbarItems}
-            editorType="markdown"
-          />
-        ` as VNode
-      );
-    });
-
-    afterEach(() => {
-      destroy();
-    });
-
-    it('should trigger command event when clicking toolbar button', () => {
-      const spy = jest.fn();
-
-      em.listen('command', spy);
-
-      dispatchClick('.bold');
-
-      // eslint-disable-next-line no-undefined
-      expect(spy).toHaveBeenCalledWith('bold', undefined);
-    });
-
-    describe('scroll sync button', () => {
-      it('should trigger command event with state', () => {
-        const spy = jest.fn();
-
-        em.listen('command', spy);
-
-        dispatchClick('.scroll-sync');
-
-        expect(spy).toHaveBeenCalledWith('toggleScrollSync', { active: false });
-
-        dispatchClick('.scroll-sync');
-
-        expect(spy).toHaveBeenCalledWith('toggleScrollSync', { active: true });
-      });
-    });
-  });
-
-  describe('event', () => {
-    beforeEach(() => {
-      const toolbarItems = [['image', 'link']];
-
-      container = document.createElement('div');
-      document.body.appendChild(container);
-
-      em = new EventEmitter();
-
-      destroy = render(
-        container,
-        html`
-          <${Toolbar}
-            eventEmitter=${em}
-            previewStyle="vertical"
-            toolbarItems=${toolbarItems}
-            editorType="wysiwyg"
-          />
-        ` as VNode
-      );
-    });
-
-    afterEach(() => {
-      destroy();
-    });
-
-    describe('openPopup, closePopup', () => {
-      it('should open and close popup corresponding to name', () => {
-        em.emit('openPopup', 'image');
-
-        const imagePopup = getElement(`.${cls('popup-add-image')}`);
-
-        expect(imagePopup).toHaveStyle({ display: 'block' });
-
-        em.emit('closePopup');
-
-        expect(imagePopup).toHaveStyle({ display: 'none' });
-      });
-
-      it('should render popup with initial values', () => {
-        const initialValues = { linkUrl: 'http://test.com', linkText: 'foo' };
-
-        em.emit('openPopup', 'link', initialValues);
-
-        const urlText = getElement(
-          `.${cls('popup-add-link #toastuiLinkUrlInput')}`
-        ) as HTMLInputElement;
-        const linkText = getElement(
-          `.${cls('popup-add-link #toastuiLinkTextInput')}`
-        ) as HTMLInputElement;
-
-        expect(urlText).toHaveValue('http://test.com');
-        expect(linkText).toHaveValue('foo');
-      });
-    });
-  });
-});
-
-describe('default toolbar integration', () => {
+describe('Default toolbar', () => {
   let el: HTMLDivElement, editor: Editor;
 
   beforeEach(() => {
@@ -213,6 +80,16 @@ describe('default toolbar integration', () => {
     expect(document.body).toContainElement(getElement('.scroll-sync'));
   });
 
+  it('should trigger command event when clicking toolbar button', () => {
+    const spy = jest.fn();
+
+    editor.eventEmitter.listen('command', spy);
+    screen.getByLabelText('Bold').click();
+
+    // eslint-disable-next-line no-undefined
+    expect(spy).toHaveBeenCalledWith('bold', undefined);
+  });
+
   it('should show tooltip when mouseover on toolbar button', () => {
     fireMouseoverEvent(screen.getByLabelText('Headings'));
 
@@ -231,6 +108,20 @@ describe('default toolbar integration', () => {
       scrollSyncSwitch.click();
 
       expect(scrollSyncSwitch).not.toHaveClass('active');
+    });
+
+    it('should trigger command event with state', () => {
+      const spy = jest.fn();
+
+      editor.eventEmitter.listen('command', spy);
+
+      getElement('.scroll-sync').click();
+
+      expect(spy).toHaveBeenCalledWith('toggleScrollSync', { active: false });
+
+      getElement('.scroll-sync').click();
+
+      expect(spy).toHaveBeenCalledWith('toggleScrollSync', { active: true });
     });
   });
 
@@ -459,7 +350,7 @@ describe('default toolbar integration', () => {
   });
 });
 
-describe('custom toobar button integration', () => {
+describe('Custom toobar button', () => {
   let el: HTMLDivElement, editor: Editor;
 
   function createCustomButtonWithPopup() {
@@ -473,6 +364,14 @@ describe('custom toobar button integration', () => {
       <option value="5">5</option>
       <option value="6">6</option>
     `;
+
+    body.addEventListener('change', (ev) => {
+      editor.eventEmitter.emit('command', 'heading', {
+        level: Number((ev.target as HTMLSelectElement).value),
+      });
+      editor.eventEmitter.emit('closePopup');
+      (ev.target as HTMLSelectElement).value = '1';
+    });
 
     return {
       name: 'myToolbarWithPopup',
@@ -550,6 +449,18 @@ describe('custom toobar button integration', () => {
 
     expect(customPopup).toHaveStyle({ display: 'block', width: 'auto' });
     expect(customPopup).toHaveClass('my-popup');
+  });
+
+  it('should operate properly when event is triggered in popup', () => {
+    screen.getByLabelText('L!').click();
+
+    const customPopup = getElement('.my-popup');
+    const select = customPopup.querySelector('select')!;
+
+    select.value = '3';
+    fireEvent(select, new Event('change'));
+
+    expect(editor.getMarkdown()).toBe('### ');
   });
 });
 
@@ -638,5 +549,53 @@ describe('API', () => {
     editor.removeToolbarItem('bold');
 
     expect(screen.queryByLabelText('Bold')).toBeNull();
+  });
+});
+
+describe('Event', () => {
+  let el: HTMLDivElement, editor: Editor;
+
+  beforeEach(() => {
+    el = document.createElement('div');
+
+    editor = new Editor({
+      el,
+      previewStyle: 'vertical',
+      height: '400px',
+      initialEditType: 'markdown',
+    });
+
+    document.body.appendChild(el);
+  });
+
+  afterEach(() => {
+    editor.destroy();
+    document.body.removeChild(el);
+  });
+
+  describe('openPopup, closePopup', () => {
+    it('should open and close popup corresponding to name', () => {
+      editor.eventEmitter.emit('openPopup', 'image');
+
+      const imagePopup = getElement(`.${cls('popup-add-image')}`);
+
+      expect(imagePopup).toHaveStyle({ display: 'block' });
+
+      editor.eventEmitter.emit('closePopup');
+
+      expect(imagePopup).toHaveStyle({ display: 'none' });
+    });
+
+    it('should render popup with initial values', () => {
+      const initialValues = { linkUrl: 'http://test.com', linkText: 'foo' };
+
+      editor.eventEmitter.emit('openPopup', 'link', initialValues);
+
+      const urlText = screen.getByText('URL').nextElementSibling as HTMLInputElement;
+      const linkText = screen.getByText('Link text').nextElementSibling as HTMLInputElement;
+
+      expect(urlText).toHaveValue('http://test.com');
+      expect(linkText).toHaveValue('foo');
+    });
   });
 });
