@@ -206,22 +206,21 @@ describe('layout component', () => {
       expect(tabSection).toHaveStyle({ display: 'block' });
     });
 
-    // @todo check this spec
-    // it('should hide markdown tab when changeMode is triggered', () => {
-    //   editor = new Editor({
-    //     el: container,
-    //     previewStyle: 'tab',
-    //     hideModeSwitch: false,
-    //     initialEditType: 'markdown',
-    //   });
-    //
-    //   const tabSection = getElement(`.${cls('md-tab-container')}`)!;
-    //
-    //   expect(tabSection).toHaveStyle({ display: 'block' });
-    //
-    //   em.emit('changeMode', 'wysiwyg');
-    //   expect(tabSection).toHaveStyle({ display: 'none' });
-    // });
+    it('should hide markdown tab when changeMode is triggered', () => {
+      editor = new Editor({
+        el: container,
+        previewStyle: 'tab',
+        initialEditType: 'markdown',
+      });
+      em = editor.eventEmitter;
+
+      const tabSection = getElement(`.${cls('md-tab-container')}`)!;
+
+      expect(tabSection).toHaveStyle({ display: 'block' });
+
+      em.emit('changeMode', 'wysiwyg');
+      expect(tabSection).toHaveStyle({ display: 'none' });
+    });
 
     it('should display the markdown editor or preview by clicking markdown tab', () => {
       expect(getMdWriteTab()).toHaveClass('active');
@@ -266,22 +265,23 @@ describe('layout component', () => {
       expect(getElement(`.${cls('toolbar-icons')}`)).not.toBeDisabled();
     });
 
-    // @todo check this spec
-    // it('should enable the toolbar items when changeMode is triggered', () => {
-    //   editor = new Editor({
-    //     el: container,
-    //     previewStyle: 'vertical',
-    //     initialEditType: 'markdown',
-    //   });
-    //   clickMdPreviewTab();
-    //
-    //   em.emit('changeMode', 'wysiwyg');
-    //   expect(getElement(`.${cls('toolbar-icons')}`)).not.toBeDisabled();
-    //
-    //   em.emit('changeMode', 'markdown');
-    //   expect(getElement(`.${cls('toolbar-icons')}`)).not.toBeDisabled();
-    //   expect(getMdWriteTab()).toHaveClass('active');
-    // });
+    it('should enable the toolbar items when changeMode is triggered', () => {
+      editor = new Editor({
+        el: container,
+        previewStyle: 'tab',
+        initialEditType: 'markdown',
+      });
+      em = editor.eventEmitter;
+
+      clickMdPreviewTab();
+
+      em.emit('changeMode', 'wysiwyg');
+      expect(getElement(`.${cls('toolbar-icons')}`)).not.toBeDisabled();
+
+      em.emit('changeMode', 'markdown');
+      expect(getElement(`.${cls('toolbar-icons')}`)).not.toBeDisabled();
+      expect(getMdWriteTab()).toHaveClass('active');
+    });
 
     it('should enable the toolbar items when changePreviewStyle is triggered', () => {
       clickMdPreviewTab();
