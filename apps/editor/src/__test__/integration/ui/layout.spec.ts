@@ -1,10 +1,8 @@
-import { Layout } from '@/ui/components/layout';
-import { render } from '@/ui/vdom/renderer';
-import { VNode } from '@/ui/vdom/vnode';
-import html from '@/ui/vdom/template';
-import EventEmitter from '@/event/eventEmitter';
 import { cls } from '@/utils/dom';
 import '@/i18n/en-us';
+import { Editor } from '@/index';
+import { Emitter } from '@t/event';
+import { screen } from '@testing-library/dom';
 
 const EDITOR_CLASS = 'toastui-editor';
 
@@ -33,11 +31,11 @@ function getWwEditor() {
 }
 
 function getMdSwitch() {
-  return getElements(`.${cls('mode-switch')} .tab-item`)![0];
+  return screen.getByText('Markdown')!;
 }
 
 function getWwSwitch() {
-  return getElements(`.${cls('mode-switch')} .tab-item`)![1];
+  return screen.getByText('WYSIWYG')!;
 }
 
 function clickMdSwitch() {
@@ -75,45 +73,25 @@ function assertToContainElement(el: HTMLElement) {
 }
 
 describe('layout component', () => {
-  let em: EventEmitter, container: HTMLElement, destroy: () => void;
+  let container: HTMLElement;
+  let editor: Editor;
+  let em: Emitter;
 
   beforeEach(() => {
-    const mdEditor = document.createElement('div');
-    const mdPreview = document.createElement('div');
-    const wwEditor = document.createElement('div');
-
-    mdEditor.className = EDITOR_CLASS;
-    mdPreview.className = cls('md-preview');
-    wwEditor.className = EDITOR_CLASS;
-
-    const dummySlot = {
-      mdEditor,
-      mdPreview,
-      wwEditor,
-    };
-
     container = document.createElement('div');
+    editor = new Editor({
+      el: container,
+      previewStyle: 'vertical',
+      height: '400px',
+      initialEditType: 'markdown',
+    });
+    em = editor.eventEmitter;
     document.body.appendChild(container);
-
-    em = new EventEmitter();
-
-    destroy = render(
-      container,
-      html`
-        <${Layout}
-          eventEmitter=${em}
-          slots=${dummySlot}
-          hideModeSwitch=${false}
-          toolbarItems=${[['bold', 'italic', 'strike'], ['scrollSync']]}
-          previewStyle="tab"
-          editorType="markdown"
-        />
-      ` as VNode
-    );
   });
 
   afterEach(() => {
-    destroy();
+    editor.destroy();
+    document.body.removeChild(container);
   });
 
   it('render default ui properly', () => {
@@ -128,12 +106,10 @@ describe('layout component', () => {
   it('show/hide editor', () => {
     const layout = getElement(`.${cls('defaultUI')}`);
 
-    em.emit('hide');
-
+    editor.hide();
     expect(layout).toHaveClass('hidden');
 
-    em.emit('show');
-
+    editor.show();
     expect(layout).not.toHaveClass('hidden');
   });
 
@@ -144,11 +120,9 @@ describe('layout component', () => {
       em.listen('needChangeMode', spy);
 
       clickWwSwitch();
-
       expect(spy).toHaveBeenCalledWith('wysiwyg');
 
       clickMdSwitch();
-
       expect(spy).toHaveBeenCalledWith('markdown');
     });
 
@@ -170,7 +144,28 @@ describe('layout component', () => {
       expect(wwSwitch).not.toHaveClass('active');
     });
 
+    it('should change layout when clicking the switch button', () => {
+      const editorArea = getEditorMain();
+      const mdSwitch = getMdSwitch();
+      const wwSwitch = getWwSwitch();
+
+      clickWwSwitch();
+      expect(editorArea).toHaveClass(cls('ww-mode'));
+      expect(wwSwitch).toHaveClass('active');
+      expect(mdSwitch).not.toHaveClass('active');
+
+      clickMdSwitch();
+      expect(editorArea).toHaveClass(cls('md-mode'));
+      expect(mdSwitch).toHaveClass('active');
+      expect(wwSwitch).not.toHaveClass('active');
+    });
+
     it('should not render scrollSync when previewStyle is tab regardless of changing editor mode', () => {
+      editor = new Editor({
+        el: container,
+        previewStyle: 'tab',
+      });
+
       const scrollSyncWrapper = getScrollSyncWrapper();
 
       expect(scrollSyncWrapper).toBeNull();
@@ -180,27 +175,25 @@ describe('layout component', () => {
       expect(scrollSyncWrapper).toBeNull();
     });
 
+    // @todo It needs to break test by each event (changePreviewStyle, changeMode)
     it('should show scrollSync when previewStyle is vertical on only markdown mode', () => {
-      em.emit('changePreviewStyle', 'vertical');
       const scrollSyncWrapper = getScrollSyncWrapper();
 
+      em.emit('changePreviewStyle', 'vertical');
       expect(scrollSyncWrapper).toHaveStyle({ display: 'inline-block' });
 
       em.emit('changeMode', 'wysiwyg');
-
       expect(getElement('.scroll-sync')).toBeNull();
     });
 
     it('should show scrollSync when previewStyle is changed on only markdown mode', () => {
+      const scrollSyncWrapper = getScrollSyncWrapper();
+
       em.emit('changeMode', 'wysiwyg');
       em.emit('changePreviewStyle', 'vertical');
-
       expect(getElement('.scroll-sync')).toBeNull();
 
       em.emit('changeMode', 'markdown');
-
-      const scrollSyncWrapper = getScrollSyncWrapper();
-
       expect(scrollSyncWrapper).toHaveStyle({ display: 'inline-block' });
     });
   });
@@ -209,20 +202,25 @@ describe('layout component', () => {
     it('should hide markdown tab when changePreviewStyle is triggered', () => {
       const tabSection = getElement(`.${cls('md-tab-container')}`)!;
 
-      expect(tabSection).toHaveStyle({ display: 'block' });
-
-      em.emit('changePreviewStyle', 'vertical');
-
       expect(tabSection).toHaveStyle({ display: 'none' });
+
+      em.emit('changePreviewStyle', 'tab');
+      expect(tabSection).toHaveStyle({ display: 'block' });
     });
 
     it('should hide markdown tab when changeMode is triggered', () => {
+      editor = new Editor({
+        el: container,
+        previewStyle: 'tab',
+        initialEditType: 'markdown',
+      });
+      em = editor.eventEmitter;
+
       const tabSection = getElement(`.${cls('md-tab-container')}`)!;
 
       expect(tabSection).toHaveStyle({ display: 'block' });
 
       em.emit('changeMode', 'wysiwyg');
-
       expect(tabSection).toHaveStyle({ display: 'none' });
     });
 
@@ -244,15 +242,18 @@ describe('layout component', () => {
       em.listen('changePreviewTabPreview', spy2);
 
       clickMdPreviewTab();
-
       expect(spy2).toHaveBeenCalledTimes(1);
 
       clickMdWriteTab();
-
       expect(spy1).toHaveBeenCalledTimes(1);
     });
 
     it('should enable/disable the toolbar items by clicking markdown tab', () => {
+      editor = new Editor({
+        el: container,
+        previewStyle: 'tab',
+        initialEditType: 'markdown',
+      });
       const scrollSyncWrapper = getScrollSyncWrapper();
 
       clickMdPreviewTab();
@@ -267,23 +268,26 @@ describe('layout component', () => {
     });
 
     it('should enable the toolbar items when changeMode is triggered', () => {
+      editor = new Editor({
+        el: container,
+        previewStyle: 'tab',
+        initialEditType: 'markdown',
+      });
+      em = editor.eventEmitter;
+
       clickMdPreviewTab();
 
       em.emit('changeMode', 'wysiwyg');
-
       expect(getElement(`.${cls('toolbar-icons')}`)).not.toBeDisabled();
 
       em.emit('changeMode', 'markdown');
-
       expect(getElement(`.${cls('toolbar-icons')}`)).not.toBeDisabled();
       expect(getMdWriteTab()).toHaveClass('active');
     });
 
     it('should enable the toolbar items when changePreviewStyle is triggered', () => {
       clickMdPreviewTab();
-
       em.emit('changePreviewStyle', 'vertical');
-
       expect(getElement(`.${cls('toolbar-icons')}`)).not.toBeDisabled();
     });
   });
@@ -293,9 +297,7 @@ describe('layout component', () => {
       const contextMenu = getElement(`.${cls('context-menu')}`);
 
       expect(contextMenu).toHaveStyle({ display: 'none' });
-
       em.emit('contextmenu', { pos: { left: 10, top: 10 }, menuGroups: [[{ label: 'test' }]] });
-
       expect(contextMenu).toHaveStyle({ display: 'block' });
     });
   });
