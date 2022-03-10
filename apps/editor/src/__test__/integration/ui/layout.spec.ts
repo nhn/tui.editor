@@ -2,6 +2,7 @@ import { cls } from '@/utils/dom';
 import '@/i18n/en-us';
 import { Editor } from '@/index';
 import { Emitter } from '@t/event';
+import { screen } from '@testing-library/dom';
 
 const EDITOR_CLASS = 'toastui-editor';
 
@@ -30,11 +31,11 @@ function getWwEditor() {
 }
 
 function getMdSwitch() {
-  return getElements(`.${cls('mode-switch')} .tab-item`)![0];
+  return screen.getByText('Markdown')!;
 }
 
 function getWwSwitch() {
-  return getElements(`.${cls('mode-switch')} .tab-item`)![1];
+  return screen.getByText('WYSIWYG')!;
 }
 
 function clickMdSwitch() {
@@ -174,6 +175,7 @@ describe('layout component', () => {
       expect(scrollSyncWrapper).toBeNull();
     });
 
+    // @todo It needs to break test by each event (changePreviewStyle, changeMode)
     it('should show scrollSync when previewStyle is vertical on only markdown mode', () => {
       const scrollSyncWrapper = getScrollSyncWrapper();
 
