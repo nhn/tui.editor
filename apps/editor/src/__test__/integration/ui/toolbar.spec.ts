@@ -1,59 +1,17 @@
-import isString from 'tui-code-snippet/type/isString';
-import { VNode } from '@t/ui';
-import EventEmitter from '@/event/eventEmitter';
-import html from '@/ui/vdom/template';
-import { render } from '@/ui/vdom/renderer';
-import { Toolbar } from '@/ui/components/toolbar/toolbar';
 import { cls } from '@/utils/dom';
+import { fireEvent, getByLabelText, getByText, screen } from '@testing-library/dom';
+import { Editor } from '@/index';
 import '@/i18n/en-us';
 
 function getElement(selector: string) {
   return document.querySelector<HTMLElement>(selector)!;
 }
 
-function assertToContainElement(el: HTMLElement | string) {
-  if (isString(el)) {
-    el = getElement(el)!;
-  }
-  expect(document.body).toContainElement(el);
+function getPopUpElement() {
+  return getElement(`.${cls('popup')}`);
 }
 
-function assertToNotContainElement(el: HTMLElement | string) {
-  if (isString(el)) {
-    el = getElement(el)!;
-  }
-  expect(document.body).not.toContainElement(el);
-}
-
-function dispatchClick(selector: string) {
-  const el = getElement(selector)!;
-
-  el.click();
-}
-
-function dispatchSelectChange(selector: string, value: string) {
-  const event = new Event('change', {
-    bubbles: true,
-    cancelable: true,
-  });
-  const el = getElement(selector)! as HTMLSelectElement;
-
-  el.value = value;
-
-  el.dispatchEvent(event);
-}
-
-function dispatchMouseover(selector: string) {
-  const event = new MouseEvent('mouseover', {
-    bubbles: true,
-    cancelable: true,
-  });
-  const el = getElement(selector)!;
-
-  el.dispatchEvent(event);
-}
-
-function dispatchMousemove(selector: string, x: number, y: number) {
+function fireMousemoveEvent(el: HTMLElement, x: number, y: number) {
   const event = new MouseEvent('mousemove', {
     bubbles: true,
     cancelable: true,
@@ -64,235 +22,222 @@ function dispatchMousemove(selector: string, x: number, y: number) {
   // @ts-ignore
   event.pageY = y;
 
-  const el = getElement(selector)!;
-
-  el.dispatchEvent(event);
+  fireEvent(el, event);
 }
-let em: EventEmitter, container: HTMLElement, destroy: () => void;
 
-describe('default toolbar', () => {
+function fireMouseoverEvent(el: HTMLElement) {
+  const mouseover = new MouseEvent('mouseover', {
+    bubbles: true,
+    cancelable: true,
+  });
+
+  fireEvent(el, mouseover);
+}
+
+describe('Default toolbar', () => {
+  let el: HTMLDivElement, editor: Editor;
+
   beforeEach(() => {
-    const toolbarItems = [
-      ['heading', 'bold', 'italic', 'strike'],
-      ['hr', 'quote'],
-      ['ul', 'ol', 'task', 'indent', 'outdent'],
-      ['table', 'image', 'link'],
-      ['code', 'codeblock'],
-      ['scrollSync'],
-    ];
+    el = document.createElement('div');
 
-    container = document.createElement('div');
-    document.body.appendChild(container);
+    editor = new Editor({
+      el,
+      previewStyle: 'vertical',
+      height: '400px',
+      initialEditType: 'markdown',
+    });
 
-    em = new EventEmitter();
-
-    destroy = render(
-      container,
-      html`
-        <${Toolbar}
-          eventEmitter=${em}
-          previewStyle="vertical"
-          toolbarItems=${toolbarItems}
-          editorType="markdown"
-        />
-      ` as VNode
-    );
+    document.body.appendChild(el);
   });
 
   afterEach(() => {
-    destroy();
+    editor.destroy();
+    document.body.removeChild(el);
   });
 
   it('should be rendered properly', () => {
-    const toolbarButtonSelectors = [
-      '.heading',
-      '.bold',
-      '.italic',
-      '.strike',
-      '.hrline',
-      '.quote',
-      '.bullet-list',
-      '.ordered-list',
-      '.task-list',
-      '.indent',
-      '.outdent',
-      '.table',
-      '.image',
-      '.link',
-      '.code',
-      '.codeblock',
-      '.scroll-sync',
-    ];
-
-    toolbarButtonSelectors.forEach((selector) => {
-      assertToContainElement(selector);
+    [
+      'Headings',
+      'Bold',
+      'Italic',
+      'Italic',
+      'Line',
+      'Blockquote',
+      'Unordered list',
+      'Ordered list',
+      'Task',
+      'Indent',
+      'Outdent',
+      'Insert table',
+      'Insert image',
+      'Insert link',
+      'Inline code',
+      'Insert codeBlock',
+    ].forEach((label) => {
+      expect(screen.queryByLabelText(label)).not.toBeNull();
     });
-  });
 
-  it('should show tooltip when mouseover on toolbar button', () => {
-    dispatchMouseover('.bold');
-
-    const tooltip = getElement(`.${cls('tooltip')}`);
-
-    expect(tooltip).toHaveStyle({ display: 'block' });
+    expect(document.body).toContainElement(getElement('.scroll-sync'));
   });
 
   it('should trigger command event when clicking toolbar button', () => {
     const spy = jest.fn();
 
-    em.listen('command', spy);
-
-    dispatchClick('.bold');
+    editor.eventEmitter.listen('command', spy);
+    screen.getByLabelText('Bold').click();
 
     // eslint-disable-next-line no-undefined
     expect(spy).toHaveBeenCalledWith('bold', undefined);
   });
 
-  it('should hide the popup when clicking X button on popup', () => {
-    dispatchClick('.link');
+  it('should show tooltip when mouseover on toolbar button', () => {
+    fireMouseoverEvent(screen.getByLabelText('Headings'));
 
-    const linkPopup = getElement(`.${cls('popup-add-link')}`);
-    const closeBtn = getElement(`.${cls('popup-add-link')} .${cls('close-button')}`);
+    const tooltip = screen.getByText('Headings').parentElement;
 
-    closeBtn.click();
-
-    expect(linkPopup).toHaveStyle({ display: 'none' });
+    expect(tooltip).toHaveStyle({ display: 'block' });
+    expect(tooltip).toHaveClass(cls('tooltip'));
   });
 
   describe('scroll sync button', () => {
-    it('should toggle state when clicking scroll sync button', () => {
-      const scrollSyncSwitch = getElement('.scroll-sync input');
+    it('should toggle active state when clicking scroll sync button', () => {
+      const scrollSyncSwitch = getElement('.scroll-sync');
 
-      expect(scrollSyncSwitch).toHaveProperty('checked', true);
+      expect(scrollSyncSwitch).toHaveClass('active');
 
-      dispatchClick('.scroll-sync');
+      scrollSyncSwitch.click();
 
-      expect(scrollSyncSwitch).toHaveProperty('checked', false);
+      expect(scrollSyncSwitch).not.toHaveClass('active');
     });
 
     it('should trigger command event with state', () => {
       const spy = jest.fn();
 
-      em.listen('command', spy);
+      editor.eventEmitter.listen('command', spy);
 
-      dispatchClick('.scroll-sync');
+      getElement('.scroll-sync').click();
 
       expect(spy).toHaveBeenCalledWith('toggleScrollSync', { active: false });
 
-      dispatchClick('.scroll-sync');
+      getElement('.scroll-sync').click();
 
       expect(spy).toHaveBeenCalledWith('toggleScrollSync', { active: true });
     });
   });
 
-  describe('heading button', () => {
-    it('should show the popup when clicking heading button', () => {
-      dispatchClick('.heading');
+  describe('Headings button', () => {
+    let headingPopup: HTMLElement;
+    let hedingButton: HTMLElement;
 
-      const headingPopup = getElement(`.${cls('popup-add-heading')}`);
+    beforeEach(() => {
+      headingPopup = getPopUpElement();
+      hedingButton = screen.getByLabelText('Headings');
 
+      hedingButton.click();
+    });
+
+    it('should show the popup when clicking Headings button', () => {
+      expect(headingPopup).toHaveClass(cls('popup-add-heading'));
       expect(headingPopup).toHaveStyle({ display: 'block' });
     });
 
-    it('should trigger command event when clicking heading popup button', () => {
-      const spy = jest.fn();
+    ['1', '2', '3', '4', '5', '6'].forEach((level) => {
+      const mdHeadingOfLevel = '#'.repeat(parseInt(level, 10));
 
-      em.listen('command', spy);
+      it(`should active heading button when click heading level ${level}`, () => {
+        getByText(headingPopup, `Heading ${level}`).click();
 
-      dispatchClick('.heading');
-      dispatchClick(`.${cls('popup-add-heading [data-level="2"]')}`);
+        expect(hedingButton).toHaveClass('active');
+      });
 
-      expect(spy).toHaveBeenCalledWith('heading', { level: 2 });
+      it(`should add heading to document when click heading level ${level}`, () => {
+        getByText(headingPopup, `Heading ${level}`).click();
+
+        expect(editor.getMarkdown()).toBe(`${mdHeadingOfLevel} `);
+      });
     });
   });
 
   describe('link button', () => {
+    let linkPopup: HTMLElement;
+    let linkButton: HTMLElement;
+
+    beforeEach(() => {
+      linkPopup = getPopUpElement();
+      linkButton = screen.getByLabelText('Insert link');
+
+      linkButton.click();
+    });
+
     it('should show the popup when clicking link button', () => {
-      dispatchClick('.link');
-
-      const linkPopup = getElement(`.${cls('popup-add-link')}`);
-
+      expect(linkPopup).toHaveClass(cls('popup-add-link'));
       expect(linkPopup).toHaveStyle({ display: 'block' });
     });
 
     it('should hide popup when clicking Cancel button', () => {
-      dispatchClick('.link');
-      dispatchClick(`.${cls('popup-add-link')} .${cls('close-button')}`);
+      const closeBtn = getByText(linkPopup, 'Cancel');
 
-      const linkPopup = getElement(`.${cls('popup-add-link')}`);
+      closeBtn.click();
 
       expect(linkPopup).toHaveStyle({ display: 'none' });
     });
 
-    it('should trigger command event when clicking OK button', () => {
-      const spy = jest.fn();
-
-      em.listen('command', spy);
-
-      dispatchClick('.link');
-
-      const urlText = getElement(
-        `.${cls('popup-add-link #toastuiLinkUrlInput')}`
-      ) as HTMLInputElement;
-      const linkText = getElement(
-        `.${cls('popup-add-link #toastuiLinkTextInput')}`
-      ) as HTMLInputElement;
+    it('should add link to document when clicking OK button', () => {
+      const urlText = getByText(linkPopup, 'URL').nextElementSibling as HTMLInputElement;
+      const linkText = getByText(linkPopup, 'Link text').nextElementSibling as HTMLInputElement;
+      const OkBtn = getByText(linkPopup, 'OK');
 
       urlText.value = 'https://ui.toast.com';
       linkText.value = 'toastui';
 
-      dispatchClick(`.${cls('popup-add-link')} .${cls('ok-button')}`);
+      OkBtn.click();
 
-      expect(spy).toHaveBeenCalledWith('addLink', {
-        linkText: 'toastui',
-        linkUrl: 'https://ui.toast.com',
-      });
+      expect(editor.getMarkdown()).toBe('[toastui](https://ui.toast.com)');
     });
 
     it('should add wrong class when url or text are not filled out', () => {
-      dispatchClick('.link');
+      const urlText = getByText(linkPopup, 'URL').nextElementSibling as HTMLInputElement;
+      const linkText = getByText(linkPopup, 'Link text').nextElementSibling as HTMLInputElement;
+      const OkBtn = getByText(linkPopup, 'OK');
 
-      const urlText = getElement(
-        `.${cls('popup-add-link #toastuiLinkUrlInput')}`
-      ) as HTMLInputElement;
-      const linkText = getElement(
-        `.${cls('popup-add-link #toastuiLinkTextInput')}`
-      ) as HTMLInputElement;
-
-      dispatchClick(`.${cls('popup-add-link')} .${cls('ok-button')}`);
+      OkBtn.click();
 
       expect(urlText).toHaveClass('wrong');
 
       urlText.value = 'https://ui.toast.com';
-      dispatchClick(`.${cls('popup-add-link')} .${cls('ok-button')}`);
+      OkBtn.click();
 
       expect(linkText).toHaveClass('wrong');
     });
   });
 
   describe('image button', () => {
+    let imagePopup: HTMLElement;
+    let imageButton: HTMLElement;
+
+    beforeEach(() => {
+      imagePopup = getPopUpElement();
+      imageButton = screen.getByLabelText('Insert image');
+
+      imageButton.click();
+    });
+
     it('should show the popup when clicking image button', () => {
-      dispatchClick('.image');
-
-      const imagePopup = getElement(`.${cls('popup-add-image')}`);
-
+      expect(imagePopup).toHaveClass(cls('popup-add-image'));
       expect(imagePopup).toHaveStyle({ display: 'block' });
     });
 
     it('should hide popup when clicking Cancel button', () => {
-      dispatchClick('.image');
-      dispatchClick(`.${cls('popup-add-image')} .${cls('close-button')}`);
+      const closeBtn = getByText(imagePopup, 'Cancel');
 
-      const imagePopup = getElement(`.${cls('popup-add-image')}`);
+      closeBtn.click();
 
       expect(imagePopup).toHaveStyle({ display: 'none' });
     });
 
     it('should toggle tab when clicking the file or url tab', () => {
-      dispatchClick('.image');
-
-      const fileTabBtn = getElement(`.${cls('popup-add-image .active')}`);
-      const urlTabBtn = fileTabBtn.nextSibling as HTMLButtonElement;
+      const fileTabBtn = getByLabelText(imagePopup, 'File');
+      const urlTabBtn = getByLabelText(imagePopup, 'URL');
 
       urlTabBtn.click();
 
@@ -305,75 +250,109 @@ describe('default toolbar', () => {
       expect(urlTabBtn).not.toHaveClass('active');
     });
 
-    it('should trigger command event when clicking OK button', () => {
-      const spy = jest.fn();
+    it('should add image to document when clicking OK button', () => {
+      getByLabelText(imagePopup, 'URL').click();
 
-      em.listen('command', spy);
-
-      dispatchClick('.image');
-
-      const fileTabBtn = getElement(`.${cls('popup-add-image .active')}`);
-      const urlTabBtn = fileTabBtn.nextSibling as HTMLButtonElement;
-      const urlText = getElement(
-        `.${cls('popup-add-image #toastuiImageUrlInput')}`
-      ) as HTMLInputElement;
-      const descriptionText = getElement(
-        `.${cls('popup-add-image #toastuiAltTextInput')}`
-      ) as HTMLInputElement;
-
-      urlTabBtn.click();
+      const urlText = getByText(imagePopup, 'Image URL').nextElementSibling as HTMLInputElement;
+      const descriptionText = getByText(imagePopup, 'Description')
+        .nextElementSibling as HTMLInputElement;
+      const OkBtn = getByText(imagePopup, 'OK');
 
       urlText.value = 'myImageUrl';
       descriptionText.value = 'image';
 
-      dispatchClick(`.${cls('popup-add-image')} .${cls('ok-button')}`);
+      OkBtn.click();
 
-      expect(spy).toHaveBeenCalledWith('addImage', { altText: 'image', imageUrl: 'myImageUrl' });
+      expect(editor.getMarkdown()).toBe('![image](myImageUrl)');
     });
 
     it('should add wrong class when url or text are not filled out', () => {
-      dispatchClick('.image');
+      const fileText = getByText(imagePopup, 'Select image file')
+        .nextElementSibling as HTMLInputElement;
+      const urlText = getByText(imagePopup, 'Image URL').nextElementSibling as HTMLInputElement;
+      const OkBtn = getByText(imagePopup, 'OK');
 
-      const fileTabBtn = getElement('.toastui-editor-popup-add-image .active');
-      const urlTabBtn = fileTabBtn.nextSibling as HTMLButtonElement;
+      OkBtn.click();
 
-      urlTabBtn.click();
+      expect(fileText).toHaveClass('wrong');
 
-      const urlText = getElement(
-        '.toastui-editor-popup-add-image #toastuiImageUrlInput'
-      ) as HTMLInputElement;
+      getByLabelText(imagePopup, 'URL').click();
 
-      dispatchClick('.toastui-editor-popup-add-image .toastui-editor-ok-button');
+      OkBtn.click();
 
       expect(urlText).toHaveClass('wrong');
     });
   });
 
   describe('table button', () => {
+    let tablePopup: HTMLElement;
+    let tableButton: HTMLElement;
+
+    beforeEach(() => {
+      tablePopup = getPopUpElement();
+      tableButton = screen.getByLabelText('Insert table');
+
+      tableButton.click();
+    });
+
     it('should show the popup when clicking table button', () => {
-      dispatchClick('.table');
-
-      const tablePopup = getElement(`.${cls('popup-add-table')}`);
-
+      expect(tablePopup).toHaveClass(cls('popup-add-table'));
       expect(tablePopup).toHaveStyle({ display: 'block' });
     });
 
-    it('should trigger command event when selecting the area and clicking it', () => {
-      const spy = jest.fn();
+    it('should add table to document when selecting the area and clicking it', () => {
+      const tableSelection = tablePopup.querySelector(`.${cls('table-selection')}`)! as HTMLElement;
 
-      em.listen('command', spy);
+      fireMousemoveEvent(tableSelection, 100, 60);
+      tableSelection.click();
 
-      dispatchClick('.table');
-
-      dispatchMousemove(`.${cls('table-selection')}`, 100, 60);
-      dispatchClick(`.${cls('table-selection')}`);
-
-      expect(spy).toHaveBeenCalledWith('addTable', { columnCount: 6, rowCount: 4 });
+      expect(editor.getMarkdown()).toBe(
+        '\n|  |  |  |  |  |  |\n| --- | --- | --- | --- | --- | --- |\n|  |  |  |  |  |  |\n|  |  |  |  |  |  |\n|  |  |  |  |  |  |'
+      );
     });
+  });
+
+  it('should active indent/outdent button when only ordered or bullet list actived', () => {
+    const bulletListBtn = screen.getByLabelText('Unordered list');
+    const orderedListBtn = screen.getByLabelText('Ordered list');
+    const indentBtn = screen.getByLabelText('Indent');
+    const outdentBtn = screen.getByLabelText('Outdent');
+
+    bulletListBtn.click();
+
+    expect(indentBtn).not.toBeDisabled();
+    expect(outdentBtn).not.toBeDisabled();
+
+    orderedListBtn.click();
+
+    expect(indentBtn).not.toBeDisabled();
+    expect(outdentBtn).not.toBeDisabled();
+
+    editor.reset();
+    expect(indentBtn).toBeDisabled();
+    expect(outdentBtn).toBeDisabled();
+  });
+
+  it('should change tab mode when changing markdown tab mode', () => {
+    editor.changePreviewStyle('tab');
+    const writeTab = screen.getByLabelText('Write');
+    const previewTab = screen.getByLabelText('Preview');
+
+    previewTab.click();
+
+    expect(writeTab).not.toHaveClass('active');
+    expect(previewTab).toHaveClass('active');
+
+    writeTab.click();
+
+    expect(writeTab).toHaveClass('active');
+    expect(previewTab).not.toHaveClass('active');
   });
 });
 
-describe('custom button toolbar', () => {
+describe('Custom toobar button', () => {
+  let el: HTMLDivElement, editor: Editor;
+
   function createCustomButtonWithPopup() {
     const body = document.createElement('select');
 
@@ -385,9 +364,12 @@ describe('custom button toolbar', () => {
       <option value="5">5</option>
       <option value="6">6</option>
     `;
+
     body.addEventListener('change', (ev) => {
-      em.emit('command', 'heading', { level: Number((ev.target as HTMLSelectElement).value) });
-      em.emit('closePopup');
+      editor.eventEmitter.emit('command', 'heading', {
+        level: Number((ev.target as HTMLSelectElement).value),
+      });
+      editor.eventEmitter.emit('closePopup');
       (ev.target as HTMLSelectElement).value = '1';
     });
 
@@ -416,33 +398,27 @@ describe('custom button toolbar', () => {
   const customButtonWithPopup = createCustomButtonWithPopup();
 
   beforeEach(() => {
-    const toolbarItems = [[customButton, customButtonWithPopup]];
+    el = document.createElement('div');
 
-    container = document.createElement('div');
-    document.body.appendChild(container);
+    editor = new Editor({
+      el,
+      previewStyle: 'vertical',
+      height: '400px',
+      initialEditType: 'markdown',
+      toolbarItems: [[customButton, customButtonWithPopup]],
+    });
 
-    em = new EventEmitter();
-
-    destroy = render(
-      container,
-      html`
-        <${Toolbar}
-          eventEmitter=${em}
-          previewStyle="vertical"
-          toolbarItems=${toolbarItems}
-          editorType="markdown"
-        />
-      ` as VNode
-    );
+    document.body.appendChild(el);
   });
 
   afterEach(() => {
-    destroy();
+    editor.destroy();
+    document.body.removeChild(el);
   });
 
   it('should be rendered properly', () => {
-    const customToolbar1 = getElement('.my-toolbar');
-    const customToolbar2 = getElement('.my-toolbar-with-popup');
+    const customToolbar1 = screen.getByLabelText('B!');
+    const customToolbar2 = screen.getByLabelText('L!');
 
     expect(customToolbar1).toHaveTextContent('B!');
     expect(customToolbar1).toHaveStyle({ color: '#222', width: '40px' });
@@ -452,26 +428,22 @@ describe('custom button toolbar', () => {
   });
 
   it('should show tooltip when mouseover on toolbar button', () => {
-    dispatchMouseover('.my-toolbar');
+    fireMouseoverEvent(screen.getByLabelText('B!'));
 
     const tooltip = getElement(`.${cls('tooltip')}`);
 
     expect(tooltip).toHaveStyle({ display: 'block' });
+    expect(tooltip).toHaveTextContent('B!');
   });
 
-  it('should trigger command event when clicking button', () => {
-    const spy = jest.fn();
+  it('should add text that matched command to document event when clicking button', () => {
+    screen.getByLabelText('B!').click();
 
-    em.listen('command', spy);
-
-    dispatchClick('.my-toolbar');
-
-    // eslint-disable-next-line no-undefined
-    expect(spy).toHaveBeenCalledWith('bold', undefined);
+    expect(editor.getMarkdown()).toBe('****');
   });
 
   it('should show the popup when clicking button with popup option', () => {
-    dispatchClick('.my-toolbar-with-popup');
+    screen.getByLabelText('L!').click();
 
     const customPopup = getElement('.my-popup');
 
@@ -480,209 +452,48 @@ describe('custom button toolbar', () => {
   });
 
   it('should operate properly when event is triggered in popup', () => {
-    const spy = jest.fn();
-
-    em.listen('command', spy);
-
-    dispatchClick('.my-toolbar-with-popup');
-    dispatchClick('select');
-    dispatchSelectChange('select', '3');
-
-    expect(spy).toHaveBeenCalledWith('heading', { level: 3 });
-  });
-});
-
-describe('custom toolbar element', () => {
-  const onUpdatedSpy = jest.fn();
-
-  function createCustomItem() {
-    const el = document.createElement('div');
-
-    el.className = 'my-toolbar';
-    el.textContent = 'custom1';
-
-    return {
-      el,
-      name: 'myToolbar',
-      tooltip: 'custom1!',
-      state: 'strong',
-      onUpdated: onUpdatedSpy,
-    };
-  }
-
-  function createCustomItemWithPopup() {
-    const el = document.createElement('div');
-
-    el.textContent = 'custom2';
-
-    const body = document.createElement('select');
-
-    body.innerHTML = `
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-      <option value="6">6</option>
-    `;
-    body.addEventListener('change', (ev) => {
-      em.emit('command', 'heading', { level: Number((ev.target as HTMLSelectElement).value) });
-      em.emit('closePopup');
-      (ev.target as HTMLSelectElement).value = '1';
-    });
-
-    el.className = 'my-toolbar-with-popup';
-
-    return {
-      el,
-      name: 'myToolbarWithPopup',
-      tooltip: 'custom2!',
-      popup: {
-        body,
-        className: 'my-popup',
-        style: { width: 'auto' },
-      },
-    };
-  }
-
-  function clickMarkdownWriteTab() {
-    document.querySelectorAll<HTMLElement>('.tab-item')![0].click();
-  }
-
-  function clickMarkdownPreviewTab() {
-    document.querySelectorAll<HTMLElement>('.tab-item')![1].click();
-  }
-
-  const customItem = createCustomItem();
-  const customItemWithPopup = createCustomItemWithPopup();
-
-  beforeEach(() => {
-    const toolbarItems = [[customItem, customItemWithPopup]];
-
-    container = document.createElement('div');
-    document.body.appendChild(container);
-
-    onUpdatedSpy.mockReset();
-    em = new EventEmitter();
-
-    destroy = render(
-      container,
-      html`
-        <${Toolbar}
-          eventEmitter=${em}
-          previewStyle="tab"
-          toolbarItems=${toolbarItems}
-          editorType="markdown"
-        />
-      ` as VNode
-    );
-  });
-
-  afterEach(() => {
-    destroy();
-  });
-
-  it('should be rendered properly', () => {
-    const customToolbar1 = getElement('.my-toolbar');
-    const customToolbar2 = getElement('.my-toolbar-with-popup');
-
-    expect(customToolbar1).toHaveTextContent('custom1');
-    expect(customToolbar2).toHaveTextContent('custom2');
-  });
-
-  it('should show tooltip when mouseover on toolbar button', () => {
-    dispatchMouseover('.my-toolbar');
-
-    const tooltip = getElement(`.${cls('tooltip')}`);
-
-    expect(tooltip).toHaveStyle({ display: 'block' });
-  });
-
-  it('should show the popup when clicking custom toolbar item with popup option', () => {
-    dispatchClick('.my-toolbar-with-popup');
+    screen.getByLabelText('L!').click();
 
     const customPopup = getElement('.my-popup');
+    const select = customPopup.querySelector('select')!;
 
-    expect(customPopup).toHaveStyle({ display: 'block', width: 'auto' });
-    expect(customPopup).toHaveClass('my-popup');
-  });
+    select.value = '3';
+    fireEvent(select, new Event('change'));
 
-  it('should operate properly when event is triggered in popup', () => {
-    const spy = jest.fn();
-
-    em.listen('command', spy);
-
-    dispatchClick('.my-toolbar-with-popup');
-    dispatchClick('select');
-    dispatchSelectChange('select', '3');
-
-    expect(spy).toHaveBeenCalledWith('heading', { level: 3 });
-  });
-
-  it('should toggle active state properly when toolbar state is changed', () => {
-    em.emit('changeToolbarState', { toolbarState: { strong: { active: true } } });
-
-    expect(onUpdatedSpy).toHaveBeenCalledWith(expect.objectContaining({ active: true }));
-
-    em.emit('changeToolbarState', { toolbarState: { strong: { active: false } } });
-
-    expect(onUpdatedSpy).toHaveBeenCalledWith(expect.objectContaining({ active: false }));
-  });
-
-  it('should toggle disabled state when changing markdown tab mode', () => {
-    em.emit('changePreviewStyle', 'tab');
-
-    // change markdown tab mode to preview tab
-    clickMarkdownPreviewTab();
-
-    expect(onUpdatedSpy).toHaveBeenCalledWith(expect.objectContaining({ disabled: true }));
-
-    // change markdown tab mode to write tab
-    clickMarkdownWriteTab();
-
-    expect(onUpdatedSpy).toHaveBeenCalledWith(expect.objectContaining({ disabled: false }));
+    expect(editor.getMarkdown()).toBe('### ');
   });
 });
 
 describe('API', () => {
-  let ref: Toolbar | null;
-
   function getToolbarItems() {
     return getElement(`.${cls('defaultUI-toolbar')}`).querySelectorAll('button:not(.more)');
   }
 
+  let el: HTMLDivElement, editor: Editor;
+
   beforeEach(() => {
     const toolbarItems = [['heading', 'bold', 'italic', 'strike']];
 
-    container = document.createElement('div');
-    document.body.appendChild(container);
+    el = document.createElement('div');
 
-    em = new EventEmitter();
+    editor = new Editor({
+      el,
+      previewStyle: 'vertical',
+      height: '400px',
+      initialEditType: 'markdown',
+      toolbarItems,
+    });
 
-    destroy = render(
-      container,
-      html`
-        <${Toolbar}
-          ref=${(toolbar: Toolbar) => (ref = toolbar)}
-          eventEmitter=${em}
-          previewStyle="vertical"
-          toolbarItems=${toolbarItems}
-          editorType="markdown"
-        />
-      ` as VNode
-    );
-    jest
-      .spyOn(getElement(`.${cls('defaultUI-toolbar')}`), 'clientWidth', 'get')
-      .mockImplementation(() => 500);
+    document.body.appendChild(el);
   });
 
   afterEach(() => {
-    ref = null;
-    destroy();
+    editor.destroy();
+    document.body.removeChild(el);
   });
 
   it('should insert item on calling insertToolbarItem', () => {
-    ref!.insertToolbarItem({ groupIndex: 0, itemIndex: 1 }, 'ol');
+    editor.insertToolbarItem({ groupIndex: 0, itemIndex: 1 }, 'ol');
 
     const toolbarItems = getToolbarItems();
 
@@ -696,7 +507,7 @@ describe('API', () => {
   });
 
   it('should add item on calling insertToolbarItem', () => {
-    ref!.insertToolbarItem({ groupIndex: 1, itemIndex: 1 }, 'ol');
+    editor.insertToolbarItem({ groupIndex: 1, itemIndex: 1 }, 'ol');
 
     const toolbarItems = getToolbarItems();
 
@@ -719,7 +530,7 @@ describe('API', () => {
       style: { color: '#222', width: 40 },
     };
 
-    ref!.insertToolbarItem({ groupIndex: 0, itemIndex: 1 }, customButton);
+    editor.insertToolbarItem({ groupIndex: 0, itemIndex: 1 }, customButton);
 
     const toolbarItems = getToolbarItems();
 
@@ -735,47 +546,42 @@ describe('API', () => {
   });
 
   it('should remove item on calling removeToolbarItem', () => {
-    ref!.removeToolbarItem('bold');
+    editor.removeToolbarItem('bold');
 
-    assertToNotContainElement('.bold');
+    expect(screen.queryByLabelText('Bold')).toBeNull();
   });
 });
 
-describe('event', () => {
+describe('Event', () => {
+  let el: HTMLDivElement, editor: Editor;
+
   beforeEach(() => {
-    const toolbarItems = [['image', 'link']];
+    el = document.createElement('div');
 
-    container = document.createElement('div');
-    document.body.appendChild(container);
+    editor = new Editor({
+      el,
+      previewStyle: 'vertical',
+      height: '400px',
+      initialEditType: 'markdown',
+    });
 
-    em = new EventEmitter();
-
-    destroy = render(
-      container,
-      html`
-        <${Toolbar}
-          eventEmitter=${em}
-          previewStyle="vertical"
-          toolbarItems=${toolbarItems}
-          editorType="wysiwyg"
-        />
-      ` as VNode
-    );
+    document.body.appendChild(el);
   });
 
   afterEach(() => {
-    destroy();
+    editor.destroy();
+    document.body.removeChild(el);
   });
 
   describe('openPopup, closePopup', () => {
     it('should open and close popup corresponding to name', () => {
-      em.emit('openPopup', 'image');
+      editor.eventEmitter.emit('openPopup', 'image');
 
       const imagePopup = getElement(`.${cls('popup-add-image')}`);
 
       expect(imagePopup).toHaveStyle({ display: 'block' });
 
-      em.emit('closePopup');
+      editor.eventEmitter.emit('closePopup');
 
       expect(imagePopup).toHaveStyle({ display: 'none' });
     });
@@ -783,14 +589,10 @@ describe('event', () => {
     it('should render popup with initial values', () => {
       const initialValues = { linkUrl: 'http://test.com', linkText: 'foo' };
 
-      em.emit('openPopup', 'link', initialValues);
+      editor.eventEmitter.emit('openPopup', 'link', initialValues);
 
-      const urlText = getElement(
-        `.${cls('popup-add-link #toastuiLinkUrlInput')}`
-      ) as HTMLInputElement;
-      const linkText = getElement(
-        `.${cls('popup-add-link #toastuiLinkTextInput')}`
-      ) as HTMLInputElement;
+      const urlText = screen.getByText('URL').nextElementSibling as HTMLInputElement;
+      const linkText = screen.getByText('Link text').nextElementSibling as HTMLInputElement;
 
       expect(urlText).toHaveValue('http://test.com');
       expect(linkText).toHaveValue('foo');
