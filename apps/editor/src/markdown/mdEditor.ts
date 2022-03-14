@@ -30,7 +30,7 @@ import { Strike } from './marks/strike';
 import { Emph } from './marks/emph';
 import { Code } from './marks/code';
 import { Link } from './marks/link';
-import { Delimiter, TaskDelimiter, MarkedText, Meta, TableCell } from './marks/simpleMark';
+import { Delimiter, MarkedText, Meta, TableCell, TaskDelimiter } from './marks/simpleMark';
 import { Html } from './marks/html';
 import { CustomBlock } from './marks/customBlock';
 import { getEditorToMdPos, getMdToEditorPos } from './helper/pos';
@@ -253,7 +253,7 @@ export default class MdEditor extends EditorBase {
 
           this.eventEmitter.emit('updatePreview', editResult);
 
-          tr.setMeta('editResult', editResult).scrollIntoView();
+          tr.setMeta('editResult', editResult);
         }
       });
     }
