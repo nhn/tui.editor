@@ -322,7 +322,7 @@ return {
 };
 ```
 
-Like the code above, you can set which items to add to the `toolbarItems` array. Each option object has 3 properties: `groupIndex`, `itemIndex`, and item`.
+Like the code above, you can set which items to add to the `toolbarItems` array. Each option object has 3 properties: `groupIndex`, `itemIndex`, and `item`.
 
 * `groupIndex`: Toolbar group index to add toolbar item.
 * `itemIndex`: Toolbar item index in group.
