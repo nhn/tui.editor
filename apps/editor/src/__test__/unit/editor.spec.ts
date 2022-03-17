@@ -117,6 +117,17 @@ describe('editor', () => {
 
         expect(editor.getHTML()).toBe(expected);
       });
+
+      it('placeholder should be removed', () => {
+        editor.changeMode('wysiwyg');
+        editor.setPlaceholder('placeholder');
+
+        const result = oneLineTrim`
+          <p><br></p>
+        `;
+
+        expect(editor.getHTML()).toBe(result);
+      });
     });
 
     it('changeMode()', () => {

@@ -112,6 +112,8 @@ class ToastUIEditorCore {
 
   private scrollSync: ScrollSync;
 
+  private placeholder?: string;
+
   eventEmitter: Emitter;
 
   protected options: Required<EditorOptions>;
@@ -501,8 +503,18 @@ class ToastUIEditorCore {
         this.wwEditor.setModel(wwNode!);
       }
     });
+    const html = this.wwEditor.view.dom.innerHTML;
 
-    return this.wwEditor.view.dom.innerHTML;
+    if (this.placeholder) {
+      const rePlaceholder = new RegExp(
+        `<span class="placeholder[^>]+>${this.placeholder}</span>`,
+        'i'
+      );
+
+      return html.replace(rePlaceholder, '');
+    }
+
+    return html;
   }
 
   /**
@@ -793,6 +805,7 @@ class ToastUIEditorCore {
    * @param {string} placeholder - placeholder to set
    */
   setPlaceholder(placeholder: string) {
+    this.placeholder = placeholder;
     this.mdEditor.setPlaceholder(placeholder);
     this.wwEditor.setPlaceholder(placeholder);
   }
