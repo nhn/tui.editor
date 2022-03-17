@@ -363,7 +363,7 @@ Plugin functions can use some information with `context` parameters to define th
 * `eventEmitter`: It is the same as `eventEmitter` in an editor. It is used to communicate with the editor.
 * `usageStatistics`: It decides whether to collect the plugin as GA for `@toast-ui/editor`.
 * `i18n`: It is an instance for adding i18n.
-* `pmState`: Some modules of [prosmirror-state] (https://prosemirror.net/docs/ref/#state).
+* `pmState`: Some modules of [prosmirror-state](https://prosemirror.net/docs/ref/#state).
 * `pmView`: Some modules of [prosemirror-view](https://prosemirror.net/docs/ref/#view).
 * `pmModel`: Some modules of [prosemirror-model](https://prosemirror.net/docs/ref/#model).
 
