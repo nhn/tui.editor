@@ -1,6 +1,6 @@
 /**
  * @fileoverview Implements i18n
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  */
 import extend from 'tui-code-snippet/object/extend';
 import Map from '../utils/map';

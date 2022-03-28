@@ -4,6 +4,7 @@
   "description": "GFM  Markdown Wysiwyg Editor - Productive and Extensible",
   "keywords": [
     "nhn",
+    "nhn cloud",
     "toast",
     "toastui",
     "toast-ui",
@@ -47,7 +48,7 @@
     "dist/i18n",
     "types"
   ],
-  "author": "NHN FE Development Lab <dl_javascript@nhn.com>",
+  "author": "NHN Cloud FE Development Lab <dl_javascript@nhn.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
