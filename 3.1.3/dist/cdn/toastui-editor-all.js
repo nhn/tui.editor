@@ -1,7 +1,7 @@
 /*!
  * @toast-ui/editor
- * @version 3.1.3 | Thu Feb 10 2022
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ * @version 3.1.3 | Fri Apr 01 2022
+ * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -31312,7 +31312,7 @@ var map_Map = /** @class */ (function () {
 ;// CONCATENATED MODULE: ./src/i18n/i18n.ts
 /**
  * @fileoverview Implements i18n
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  */
 
 
@@ -37534,7 +37534,12 @@ var ToastUIEditorCore = /** @class */ (function () {
                 _this.wwEditor.setModel(wwNode);
             }
         });
-        return this.wwEditor.view.dom.innerHTML;
+        var html = this.wwEditor.view.dom.innerHTML;
+        if (this.placeholder) {
+            var rePlaceholder = new RegExp("<span class=\"placeholder[^>]+>" + this.placeholder + "</span>", 'i');
+            return html.replace(rePlaceholder, '');
+        }
+        return html;
     };
     /**
      * Insert text
@@ -37790,6 +37795,7 @@ var ToastUIEditorCore = /** @class */ (function () {
      * @param {string} placeholder - placeholder to set
      */
     ToastUIEditorCore.prototype.setPlaceholder = function (placeholder) {
+        this.placeholder = placeholder;
         this.mdEditor.setPlaceholder(placeholder);
         this.wwEditor.setPlaceholder(placeholder);
     };
@@ -40651,7 +40657,7 @@ var editor_templateObject_1;
 ;// CONCATENATED MODULE: ./src/i18n/en-us.ts
 /**
  * @fileoverview I18N for English
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  */
 
 editorCore.setLanguage(['en', 'en-US'], {

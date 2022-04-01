@@ -1,7 +1,7 @@
 /**
  * @toast-ui/editor : viewer
- * @version 3.1.3 | Thu Feb 10 2022
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ * @version 3.1.3 | Fri Apr 01 2022
+ * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 
@@ -11976,7 +11976,7 @@ var Map$1 = /** @class */ (function () {
 
 /**
  * @fileoverview Implements i18n
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  */
 var DEFAULT_CODE = 'en-US';
 /**

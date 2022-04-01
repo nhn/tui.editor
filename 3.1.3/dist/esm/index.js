@@ -1,7 +1,7 @@
 /**
  * @toast-ui/editor
- * @version 3.1.3 | Thu Feb 10 2022
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ * @version 3.1.3 | Fri Apr 01 2022
+ * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 
@@ -16617,7 +16617,7 @@ var Map$1 = /** @class */ (function () {
 
 /**
  * @fileoverview Implements i18n
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  */
 var DEFAULT_CODE = 'en-US';
 /**
@@ -22523,7 +22523,12 @@ var ToastUIEditorCore = /** @class */ (function () {
                 _this.wwEditor.setModel(wwNode);
             }
         });
-        return this.wwEditor.view.dom.innerHTML;
+        var html = this.wwEditor.view.dom.innerHTML;
+        if (this.placeholder) {
+            var rePlaceholder = new RegExp("<span class=\"placeholder[^>]+>" + this.placeholder + "</span>", 'i');
+            return html.replace(rePlaceholder, '');
+        }
+        return html;
     };
     /**
      * Insert text
@@ -22779,6 +22784,7 @@ var ToastUIEditorCore = /** @class */ (function () {
      * @param {string} placeholder - placeholder to set
      */
     ToastUIEditorCore.prototype.setPlaceholder = function (placeholder) {
+        this.placeholder = placeholder;
         this.mdEditor.setPlaceholder(placeholder);
         this.wwEditor.setPlaceholder(placeholder);
     };
@@ -25638,7 +25644,7 @@ var templateObject_1;
 
 /**
  * @fileoverview I18N for English
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  */
 ToastUIEditorCore.setLanguage(['en', 'en-US'], {
     Markdown: 'Markdown',

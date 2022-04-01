@@ -1,7 +1,7 @@
 /*!
  * TOAST UI Editor : i18n
  * @version 3.1.3
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -129,8 +129,8 @@ _editorCore__WEBPACK_IMPORTED_MODULE_0___default().setLanguage(['de', 'de-DE'], 
     Heading: 'Titel',
     'Image URL': 'Bild URL',
     'Select image file': 'Grafik auswählen',
-    'Choose a file': 'Wähle eine datei',
-    'No file': 'Keine datei',
+    'Choose a file': 'Wähle eine Datei',
+    'No file': 'Keine Datei',
     Description: 'Beschreibung',
     OK: 'OK',
     More: 'Mehr',

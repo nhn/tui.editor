@@ -1,7 +1,7 @@
 /**
  * @toast-ui/editor : i18n
- * @version 3.1.3 | Thu Feb 10 2022
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ * @version 3.1.3 | Fri Apr 01 2022
+ * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 
@@ -9,7 +9,7 @@ import Editor from '@toast-ui/editor';
 
 /**
  * @fileoverview I18N for English
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  */
 Editor.setLanguage(['en', 'en-US'], {
     Markdown: 'Markdown',

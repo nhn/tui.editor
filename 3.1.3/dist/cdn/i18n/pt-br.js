@@ -1,7 +1,7 @@
 /*!
  * TOAST UI Editor : i18n
  * @version 3.1.3
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {

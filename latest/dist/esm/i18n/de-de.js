@@ -1,7 +1,7 @@
 /**
  * @toast-ui/editor : i18n
- * @version 3.1.3 | Thu Feb 10 2022
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ * @version 3.1.3 | Fri Apr 01 2022
+ * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 
@@ -36,8 +36,8 @@ Editor.setLanguage(['de', 'de-DE'], {
     Heading: 'Titel',
     'Image URL': 'Bild URL',
     'Select image file': 'Grafik auswählen',
-    'Choose a file': 'Wähle eine datei',
-    'No file': 'Keine datei',
+    'Choose a file': 'Wähle eine Datei',
+    'No file': 'Keine Datei',
     Description: 'Beschreibung',
     OK: 'OK',
     More: 'Mehr',
