@@ -1,6 +1,6 @@
 /**
  * @fileoverview I18N for Japanese
- * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  */
 import Editor from '../editorCore';
 

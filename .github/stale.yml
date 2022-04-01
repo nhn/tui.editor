@@ -12,7 +12,7 @@ exemptLabels:
   - Feature
   - Enhancement
   - Bug
-  - NHN
+  - NHN Cloud
 
 # Label to use when marking as stale
 staleLabel: inactive

@@ -22,7 +22,7 @@
  Author Greg Kindel (twitter @gkindel), 2014
  */
 /**
- * @modifier NHN FE Development Lab <dl_javascript@nhn.com>
+ * @modifier NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  */
 
 'use strict';
@@ -83,7 +83,7 @@ var PRE_TOKEN = 0,
  *  });
  * @see http://www.ietf.org/rfc/rfc4180.txt
  */
-CSV.parse = function(str) {
+CSV.parse = function (str) {
   var result = (CSV.result = []);
   CSV.COLUMN_SEPARATOR =
     CSV.COLUMN_SEPARATOR instanceof RegExp
@@ -197,18 +197,18 @@ CSV.parse = function(str) {
  * node -e "c=require('CSV-JS');require('fs').createReadStream('csv.txt').pipe(c.stream()).pipe(c.stream.json()).pipe(process.stdout)"
  * @ignore
  */
-CSV.stream = function() {
+CSV.stream = function () {
   var stream = require('stream');
   var s = new stream.Transform({ objectMode: true });
   s.EOL = '\n';
   s.prior = '';
-  s.emitter = (function(s) {
-    return function(e) {
+  s.emitter = (function (s) {
+    return function (e) {
       s.push(CSV.parse(e + s.EOL));
     };
   })(s);
 
-  s._transform = function(chunk, encoding, done) {
+  s._transform = function (chunk, encoding, done) {
     var lines =
       this.prior == ''
         ? chunk.toString().split(this.EOL)
@@ -218,7 +218,7 @@ CSV.stream = function() {
     done();
   };
 
-  s._flush = function(done) {
+  s._flush = function (done) {
     if (this.prior != '') {
       this.emitter(this.prior);
       this.prior = '';
@@ -228,7 +228,7 @@ CSV.stream = function() {
   return s;
 };
 
-CSV.test_regex_separator = function(str) {
+CSV.test_regex_separator = function (str) {
   if (!(CSV.COLUMN_SEPARATOR instanceof RegExp)) {
     return false;
   }
@@ -243,18 +243,18 @@ CSV.test_regex_separator = function(str) {
   return match !== null;
 };
 
-CSV.stream.json = function() {
+CSV.stream.json = function () {
   var os = require('os');
   var stream = require('stream');
   var s = new streamTransform({ objectMode: true });
-  s._transform = function(chunk, encoding, done) {
+  s._transform = function (chunk, encoding, done) {
     s.push(JSON.stringify(chunk.toString()) + os.EOL);
     done();
   };
   return s;
 };
 
-CSV.reset = function() {
+CSV.reset = function () {
   CSV.state = null;
   CSV.token = null;
   CSV.escaped = null;
@@ -264,7 +264,7 @@ CSV.reset = function() {
   CSV.str = null;
 };
 
-CSV.next_nonspace = function() {
+CSV.next_nonspace = function () {
   var i = CSV.offset;
   var c;
   while (i < CSV.str.length) {
@@ -276,14 +276,14 @@ CSV.next_nonspace = function() {
   return null;
 };
 
-CSV.record_begin = function() {
+CSV.record_begin = function () {
   CSV.escaped = false;
   CSV.record = [];
   CSV.token_begin();
   CSV.debug('record_begin');
 };
 
-CSV.record_end = function() {
+CSV.record_end = function () {
   CSV.state = POST_RECORD;
   if (
     !(CSV.IGNORE_RECORD_LENGTH || CSV.RELAXED) &&
@@ -297,7 +297,7 @@ CSV.record_end = function() {
   CSV.record = null;
 };
 
-CSV.resolve_type = function(token) {
+CSV.resolve_type = function (token) {
   if (token.match(/^[-+]?[0-9]+(\.[0-9]+)?([eE][-+]?[0-9]+)?$/)) {
     token = parseFloat(token);
   } else if (token.match(/^(true|false)$/i)) {
@@ -310,13 +310,13 @@ CSV.resolve_type = function(token) {
   return token;
 };
 
-CSV.token_begin = function() {
+CSV.token_begin = function () {
   CSV.state = PRE_TOKEN;
   // considered using array, but http://www.sitepen.com/blog/2008/05/09/string-performance-an-analysis/
   CSV.token = '';
 };
 
-CSV.token_end = function() {
+CSV.token_end = function () {
   if (CSV.DETECT_TYPES) {
     CSV.token = CSV.resolve_type(CSV.token);
   }
@@ -325,11 +325,11 @@ CSV.token_end = function() {
   CSV.token_begin();
 };
 
-CSV.debug = function() {
+CSV.debug = function () {
   if (CSV.DEBUG) console.log(arguments);
 };
 
-CSV.dump = function(msg) {
+CSV.dump = function (msg) {
   return [
     msg,
     'at char',
@@ -339,17 +339,17 @@ CSV.dump = function(msg) {
       .substr(CSV.offset - 50, 50)
       .replace(/\r/gm, '\\r')
       .replace(/\n/gm, '\\n')
-      .replace(/\t/gm, '\\t')
+      .replace(/\t/gm, '\\t'),
   ].join(' ');
 };
 
-CSV.error = function(err) {
+CSV.error = function (err) {
   var msg = CSV.dump(err);
   CSV.reset();
   throw msg;
 };
 
-CSV.warn = function(err) {
+CSV.warn = function (err) {
   if (!CSV.DEBUG) {
     return;
   }
@@ -365,4 +365,4 @@ CSV.warn = function(err) {
   } catch (e) {}
 };
 
-export default CSV
+export default CSV;

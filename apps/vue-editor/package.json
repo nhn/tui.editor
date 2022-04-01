@@ -17,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/nhn/tui.editor/issues"
   },
-  "author": "NHN. FE Development Lab <dl_javascript@nhn.com>",
+  "author": "NHN Cloud FE Development Lab <dl_javascript@nhn.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/nhn/tui.editor.git",

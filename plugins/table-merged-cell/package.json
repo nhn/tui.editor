@@ -4,6 +4,7 @@
   "description": "TOAST UI Editor : Table Merged Cell Plugin",
   "keywords": [
     "nhn",
+    "nhn cloud",
     "toast",
     "toastui",
     "toast-ui",
@@ -19,7 +20,7 @@
     "types/index.d.ts"
   ],
   "types": "types/index.d.ts",
-  "author": "NHN FE Development Lab <dl_javascript@nhn.com>",
+  "author": "NHN Cloud FE Development Lab <dl_javascript@nhn.com>",
   "license": "MIT",
   "repository": {
     "type": "git",
