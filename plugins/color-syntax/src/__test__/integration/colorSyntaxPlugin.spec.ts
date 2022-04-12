@@ -248,4 +248,42 @@ describe('colorSyntax', () => {
       assertWwEditorHTML(expected);
     });
   });
+
+  describe('multi instances', () => {
+    let container2: HTMLElement, editor2: Editor;
+
+    beforeEach(() => {
+      container2 = document.createElement('div');
+      document.body.appendChild(container2);
+    });
+
+    afterEach(() => {
+      editor2.destroy();
+      document.body.removeChild(container2);
+    });
+    it.only('should focus to correct editor when using color syntax plugin', () => {
+      editor = new Editor({
+        el: container,
+        previewStyle: 'vertical',
+        height: '100px',
+        initialEditType: 'markdown',
+        plugins: [colorSyntaxPlugin],
+      });
+
+      editor2 = new Editor({
+        el: container2,
+        previewStyle: 'vertical',
+        height: '100px',
+        initialEditType: 'markdown',
+        plugins: [colorSyntaxPlugin],
+      });
+
+      editor2.exec('selectAll');
+      editor2.exec('color', { selectedColor: '#f0f' });
+
+      expect(document.activeElement).toBe(
+        container2.querySelector('.toastui-editor-md-container .ProseMirror')
+      );
+    });
+  });
 });
