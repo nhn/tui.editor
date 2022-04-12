@@ -147,6 +147,10 @@ class ToastUIEditorViewer {
       isPositionInBox(style, ev.offsetX, ev.offsetY)
     ) {
       toggleClass(element, TASK_CHECKED_CLASS_NAME);
+      this.eventEmitter.emit('change', {
+        source: 'viewer',
+        date: ev,
+      });
     }
   }
 
