@@ -261,7 +261,8 @@ describe('colorSyntax', () => {
       editor2.destroy();
       document.body.removeChild(container2);
     });
-    it.only('should focus to correct editor when using color syntax plugin', () => {
+
+    it('should focus to correct editor when using color syntax plugin', () => {
       editor = new Editor({
         el: container,
         previewStyle: 'vertical',
