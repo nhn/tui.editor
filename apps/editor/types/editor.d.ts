@@ -1,6 +1,8 @@
 import { Schema, NodeSpec, MarkSpec, Fragment } from 'prosemirror-model';
 import { EditorView, Decoration, DecorationSet } from 'prosemirror-view';
-import { EditorState, Plugin, Selection, TextSelection } from 'prosemirror-state';
+import { EditorState, Plugin, PluginKey, Selection, TextSelection } from 'prosemirror-state';
+import { undoInputRule, InputRule, inputRules } from 'prosemirror-inputrules';
+import { keymap } from 'prosemirror-keymap';
 import {
   HTMLConvertor,
   MdPos,
@@ -122,6 +124,10 @@ export interface PluginContext {
   i18n: I18n;
   pmState: {
     Plugin: typeof Plugin;
+    PluginKey: typeof PluginKey;
+    inputRules: typeof inputRules;
+    InputRule: typeof InputRule;
+    undoInputRule: typeof undoInputRule;
     Selection: typeof Selection;
     TextSelection: typeof TextSelection;
   };
