@@ -282,9 +282,7 @@ describe('colorSyntax', () => {
       editor2.exec('selectAll');
       editor2.exec('color', { selectedColor: '#f0f' });
 
-      expect(document.activeElement).toBe(
-        container2.querySelector('.toastui-editor-md-container .ProseMirror')
-      );
+      expect(container2).toContainElement(document.activeElement as HTMLElement);
     });
   });
 });
