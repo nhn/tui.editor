@@ -6,6 +6,7 @@ import { PluginOptions } from '@t/index';
 import { addLangs } from './i18n/langs';
 
 import './css/plugin.css';
+import { findParentByClassName } from './utils/dom';
 
 const PREFIX = 'toastui-editor-';
 
@@ -48,12 +49,19 @@ function createSelection(
     : SelectionClass.create(doc, mappedFrom, mappedTo);
 }
 
+function getCurrentEditorEl(colorPickerEl: HTMLElement, containerClassName: string) {
+  const editorDefaultEl = findParentByClassName(colorPickerEl, `${PREFIX}defaultUI`)!;
+
+  return editorDefaultEl.querySelector<HTMLElement>(`.${containerClassName} .ProseMirror`)!;
+}
+
 interface ColorPickerOption {
   container: HTMLDivElement;
   preset?: Array<string>;
   usageStatistics: boolean;
 }
 
+let containerClassName: string;
 let currentEditorEl: HTMLElement;
 
 // @TODO: add custom syntax for plugin
@@ -83,14 +91,14 @@ export default function colorSyntaxPlugin(
   const button = createApplyButton(i18n.get('OK'));
 
   eventEmitter.listen('focus', (editType) => {
-    const containerClassName = `${PREFIX}${editType === 'markdown' ? 'md' : 'ww'}-container`;
-
-    currentEditorEl = document.querySelector<HTMLElement>(`.${containerClassName} .ProseMirror`)!;
+    containerClassName = `${PREFIX}${editType === 'markdown' ? 'md' : 'ww'}-container`;
   });
 
   container.addEventListener('click', (ev) => {
     if ((ev.target as HTMLElement).getAttribute('type') === 'button') {
       const selectedColor = colorPicker.getColor();
+
+      currentEditorEl = getCurrentEditorEl(container, containerClassName);
 
       eventEmitter.emit('command', 'color', { selectedColor });
       eventEmitter.emit('closePopup');
