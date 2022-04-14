@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.1.3 | Fri Apr 01 2022
+ * @version 3.1.4 | Thu Apr 14 2022
  * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -3388,7 +3388,7 @@ var sendHostname_default = /*#__PURE__*/__webpack_require__.n(sendHostname);
 var isMac = /Mac/.test(navigator.platform);
 var reSpaceMoreThanOne = /[\u0020]+/g;
 var reEscapeChars = /[>(){}[\]+-.!#|]/g;
-var reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-.:/]*)>/g;
+var reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-.:/]*)>/g;
 var reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
 var reEscapePairedChars = /[*_~`]/g;
 var reMdImageSyntax = /!\[.*\]\(.*\)/g;
@@ -23199,11 +23199,13 @@ var Convertor = /** @class */ (function () {
 
 
 
+
 function execPlugin(plugin, eventEmitter, usageStatistics) {
-    var pmState = { Plugin: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Plugin, Selection: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Selection, TextSelection: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.TextSelection };
+    var pmState = { Plugin: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Plugin, PluginKey: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.PluginKey, Selection: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Selection, TextSelection: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.TextSelection };
     var pmView = { Decoration: external_commonjs_prosemirror_view_commonjs2_prosemirror_view_amd_prosemirror_view_.Decoration, DecorationSet: external_commonjs_prosemirror_view_commonjs2_prosemirror_view_amd_prosemirror_view_.DecorationSet };
     var pmModel = { Fragment: external_commonjs_prosemirror_model_commonjs2_prosemirror_model_amd_prosemirror_model_.Fragment };
-    var context = { eventEmitter: eventEmitter, usageStatistics: usageStatistics, pmState: pmState, pmView: pmView, pmModel: pmModel, i18n: i18n };
+    var pmRules = { InputRule: external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_.InputRule, inputRules: external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_.inputRules, undoInputRule: external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_.undoInputRule };
+    var context = { eventEmitter: eventEmitter, usageStatistics: usageStatistics, pmState: pmState, pmView: pmView, pmModel: pmModel, pmRules: pmRules, i18n: i18n };
     if (isArray_default()(plugin)) {
         var pluginFn = plugin[0], _a = plugin[1], options = _a === void 0 ? {} : _a;
         return pluginFn(context, options);
@@ -23371,6 +23373,10 @@ var ToastUIEditorViewer = /** @class */ (function () {
             element.hasAttribute(TASK_ATTR_NAME) &&
             isPositionInBox(style, ev.offsetX, ev.offsetY)) {
             toggleClass(element, TASK_CHECKED_CLASS_NAME);
+            this.eventEmitter.emit('change', {
+                source: 'viewer',
+                date: ev,
+            });
         }
     };
     /**

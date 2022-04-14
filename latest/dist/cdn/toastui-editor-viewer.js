@@ -1,19 +1,19 @@
 /*!
  * @toast-ui/editor
- * @version 3.1.3 | Fri Apr 01 2022
+ * @version 3.1.4 | Thu Apr 14 2022
  * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("prosemirror-model"), require("prosemirror-state"), require("prosemirror-view"));
+		module.exports = factory(require("prosemirror-inputrules"), require("prosemirror-model"), require("prosemirror-state"), require("prosemirror-view"));
 	else if(typeof define === 'function' && define.amd)
-		define(["prosemirror-model", "prosemirror-state", "prosemirror-view"], factory);
+		define(["prosemirror-inputrules", "prosemirror-model", "prosemirror-state", "prosemirror-view"], factory);
 	else if(typeof exports === 'object')
-		exports["toastui"] = factory(require("prosemirror-model"), require("prosemirror-state"), require("prosemirror-view"));
+		exports["toastui"] = factory(require("prosemirror-inputrules"), require("prosemirror-model"), require("prosemirror-state"), require("prosemirror-view"));
 	else
-		root["toastui"] = root["toastui"] || {}, root["toastui"]["Editor"] = factory(root[undefined], root[undefined], root[undefined]);
-})(self, function(__WEBPACK_EXTERNAL_MODULE__43__, __WEBPACK_EXTERNAL_MODULE__814__, __WEBPACK_EXTERNAL_MODULE__311__) {
+		root["toastui"] = root["toastui"] || {}, root["toastui"]["Editor"] = factory(root[undefined], root[undefined], root[undefined], root[undefined]);
+})(self, function(__WEBPACK_EXTERNAL_MODULE__479__, __WEBPACK_EXTERNAL_MODULE__43__, __WEBPACK_EXTERNAL_MODULE__814__, __WEBPACK_EXTERNAL_MODULE__311__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -2711,6 +2711,14 @@ function isUndefined(obj) {
 
 module.exports = isUndefined;
 
+
+/***/ }),
+
+/***/ 479:
+/***/ (function(module) {
+
+"use strict";
+module.exports = __WEBPACK_EXTERNAL_MODULE__479__;
 
 /***/ }),
 
@@ -12084,7 +12092,7 @@ var request_sendHostname = __webpack_require__(391);
 var isMac = /Mac/.test(navigator.platform);
 var reSpaceMoreThanOne = /[\u0020]+/g;
 var common_reEscapeChars = /[>(){}[\]+-.!#|]/g;
-var reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\/>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-.:/]*)>/g;
+var reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\>])*\/?>|<(\/)([a-zA-Z_][a-zA-Z0-9\-._]*)\s*\/?>|<!--[^-]+-->|<([a-zA-Z_][a-zA-Z0-9\-.:/]*)>/g;
 var reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
 var reEscapePairedChars = /[*_~`]/g;
 var reMdImageSyntax = /!\[.*\]\(.*\)/g;
@@ -13396,6 +13404,8 @@ var MarkdownPreview = /** @class */ (function () {
 
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-state","commonjs2":"prosemirror-state","amd":"prosemirror-state"}
 var external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_ = __webpack_require__(814);
+// EXTERNAL MODULE: external {"commonjs":"prosemirror-inputrules","commonjs2":"prosemirror-inputrules","amd":"prosemirror-inputrules"}
+var external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_ = __webpack_require__(479);
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-view","commonjs2":"prosemirror-view","amd":"prosemirror-view"}
 var external_commonjs_prosemirror_view_commonjs2_prosemirror_view_amd_prosemirror_view_ = __webpack_require__(311);
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-model","commonjs2":"prosemirror-model","amd":"prosemirror-model"}
@@ -13792,11 +13802,13 @@ function mixinTableOffsetMapPrototype(offsetMapMixin, createOffsetMapMixin) {
 
 
 
+
 function execPlugin(plugin, eventEmitter, usageStatistics) {
-    var pmState = { Plugin: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Plugin, Selection: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Selection, TextSelection: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.TextSelection };
+    var pmState = { Plugin: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Plugin, PluginKey: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.PluginKey, Selection: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Selection, TextSelection: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.TextSelection };
     var pmView = { Decoration: external_commonjs_prosemirror_view_commonjs2_prosemirror_view_amd_prosemirror_view_.Decoration, DecorationSet: external_commonjs_prosemirror_view_commonjs2_prosemirror_view_amd_prosemirror_view_.DecorationSet };
     var pmModel = { Fragment: external_commonjs_prosemirror_model_commonjs2_prosemirror_model_amd_prosemirror_model_.Fragment };
-    var context = { eventEmitter: eventEmitter, usageStatistics: usageStatistics, pmState: pmState, pmView: pmView, pmModel: pmModel, i18n: i18n };
+    var pmRules = { InputRule: external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_.InputRule, inputRules: external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_.inputRules, undoInputRule: external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_.undoInputRule };
+    var context = { eventEmitter: eventEmitter, usageStatistics: usageStatistics, pmState: pmState, pmView: pmView, pmModel: pmModel, pmRules: pmRules, i18n: i18n };
     if (isArray_default()(plugin)) {
         var pluginFn = plugin[0], _a = plugin[1], options = _a === void 0 ? {} : _a;
         return pluginFn(context, options);
@@ -14188,6 +14200,10 @@ var ToastUIEditorViewer = /** @class */ (function () {
             element.hasAttribute(TASK_ATTR_NAME) &&
             isPositionInBox(style, ev.offsetX, ev.offsetY)) {
             toggleClass(element, TASK_CHECKED_CLASS_NAME);
+            this.eventEmitter.emit('change', {
+                source: 'viewer',
+                date: ev,
+            });
         }
     };
     /**
