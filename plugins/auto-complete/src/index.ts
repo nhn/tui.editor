@@ -3,7 +3,6 @@ import { autoComplete } from '@/plugins/plugin';
 import { autoCompleteTrigger } from '@/plugins/trigger';
 import { AutoCompleteAction, PluginOptions } from '@t/index';
 import { USER_ACTIONS } from '@/constants';
-import { exitCode } from 'prosemirror-commands';
 
 function defaultReducer(options: Partial<PluginOptions>) {
   return (action: AutoCompleteAction) => {
