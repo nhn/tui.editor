@@ -18,6 +18,7 @@ const pkgMap = {
   code: '@toast-ui/editor-plugin-code-syntax-highlight',
   table: '@toast-ui/editor-plugin-table-merged-cell',
   uml: '@toast-ui/editor-plugin-uml',
+  auto: '@toast-ui/editor-plugin-dooray-auto-complete',
 };
 
 const pathMap = {
@@ -30,6 +31,7 @@ const pathMap = {
   code: 'plugins/code-syntax-highlight',
   table: 'plugins/table-merged-cell',
   uml: 'plugins/uml',
+  auto: 'plugins/auto-complete',
 };
 
 let script;
