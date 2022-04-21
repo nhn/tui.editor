@@ -2,7 +2,13 @@ import { Schema } from 'prosemirror-model';
 import { EditorState, Plugin, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { keymap } from 'prosemirror-keymap';
-import { baseKeymap } from 'prosemirror-commands';
+import {
+  baseKeymap,
+  newlineInCode,
+  createParagraphNear,
+  liftEmptyBlock,
+  splitBlock,
+} from 'prosemirror-commands';
 import { InputRule, inputRules } from 'prosemirror-inputrules';
 import { history } from 'prosemirror-history';
 import { Sourcepos } from '@toast-ui/toastmark';
@@ -20,6 +26,29 @@ import { dropImage } from './plugins/dropImage';
 import { isWidgetNode } from './widget/widgetNode';
 import { last } from './utils/common';
 import { PluginProp } from '@t/plugin';
+
+// @ts-ignore
+function chainCommands(...commands) {
+  // @ts-ignore
+  return function (state, dispatch, view) {
+    console.log('chainCommands');
+
+    for (let i = 0; i < commands.length; i += 1) {
+      const result = commands[i](state, dispatch, view);
+
+      // If the command has executed `result` will be true
+      if (result) {
+        // On creation, some commands create a closure and return
+        // an anonymous function so we can't really know their name...
+        console.log(commands[i].name || 'anonymous function');
+        return false;
+      }
+    }
+
+    console.log('no command matched!');
+    return false;
+  };
+}
 
 export default abstract class EditorBase implements Base {
   el: HTMLElement;
@@ -88,6 +117,7 @@ export default abstract class EditorBase implements Base {
       keymap({
         'Shift-Enter': baseKeymap.Enter,
         ...baseKeymap,
+        Enter: chainCommands(newlineInCode, createParagraphNear, liftEmptyBlock, splitBlock),
       }),
       history(),
       placeholder(this.placeholder),

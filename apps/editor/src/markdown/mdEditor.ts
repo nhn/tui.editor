@@ -166,12 +166,19 @@ export default class MdEditor extends EditorBase {
   }
 
   createPlugins() {
-    return this.defaultPlugins.concat([
+    return [
       syntaxHighlight(this.context),
       previewHighlight(this.context),
       smartTask(this.context),
       ...this.createPluginProps(),
-    ]);
+    ].concat(this.defaultPlugins);
+    //
+    // return this.defaultPlugins.concat([
+    //   syntaxHighlight(this.context),
+    //   previewHighlight(this.context),
+    //   smartTask(this.context),
+    //   ...this.createPluginProps(),
+    // ]);
   }
 
   createView() {

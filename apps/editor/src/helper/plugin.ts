@@ -3,6 +3,7 @@ import { Plugin, PluginKey, Selection, TextSelection } from 'prosemirror-state';
 import { inputRules, InputRule, undoInputRule } from 'prosemirror-inputrules';
 import { Decoration, DecorationSet } from 'prosemirror-view';
 import { Fragment } from 'prosemirror-model';
+import { keymap } from 'prosemirror-keymap';
 import i18n from '@/i18n/i18n';
 import { deepMergedCopy } from '@/utils/common';
 
@@ -16,7 +17,17 @@ function execPlugin(plugin: EditorPlugin, eventEmitter: Emitter, usageStatistics
   const pmView = { Decoration, DecorationSet };
   const pmModel = { Fragment };
   const pmRules = { InputRule, inputRules, undoInputRule };
-  const context = { eventEmitter, usageStatistics, pmState, pmView, pmModel, pmRules, i18n };
+  const pmKeymap = { keymap };
+  const context = {
+    eventEmitter,
+    usageStatistics,
+    pmState,
+    pmView,
+    pmModel,
+    pmRules,
+    pmKeymap,
+    i18n,
+  };
 
   if (isArray(plugin)) {
     const [pluginFn, options = {}] = plugin;
