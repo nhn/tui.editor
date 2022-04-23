@@ -97,6 +97,7 @@ export class Toolbar extends Component<Props, State> {
 
     item = createToolbarItemInfo(item);
 
+    if (!item) return console.warn(`invalid item on ${arguments.callee.name}`)
     if (group) {
       group.splice(itemIndex, 0, item);
     } else {

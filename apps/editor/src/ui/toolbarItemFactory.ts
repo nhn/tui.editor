@@ -217,7 +217,7 @@ function createDefaultToolbarItemInfo(type: string) {
     // do nothing
   }
 
-  if (info.name !== 'scrollSync') {
+  if (info && info.name !== 'scrollSync') {
     (info as ToolbarButtonInfo).className += ` ${cls('toolbar-icons')}`;
   }
 
