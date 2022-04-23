@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/editor-plugin-dooray-auto-complete",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "TOAST UI Editor : Dooray! Auto Complete Plugin",
   "keywords": [],
   "main": "dist/toastui-editor-plugin-dooray-auto-complete.js",
@@ -23,17 +23,13 @@
   "homepage": "https://ui.toast.com",
   "browserslist": "last 2 versions, not ie <= 10",
   "scripts": {
-    "lint": "eslint .",
     "test:types": "tsc",
     "test": "jest --watch",
     "test:ci": "jest",
     "serve": "snowpack dev",
     "serve:ie": "webpack serve",
-    "serve:ie:all": "webpack serve --env all",
-    "build:all": "webpack build --env all",
     "build:cdn": "webpack build --env cdn & webpack build --env cdn minify",
-    "build:cdn-all": "webpack build --env cdn all & webpack build --env cdn all minify",
-    "build": "webpack build && npm run build:cdn && npm run build:cdn-all && npm run build:all"
+    "build": "webpack build && npm run build:cdn"
   },
   "devDependencies": {
     "cross-env": "^6.0.3"
