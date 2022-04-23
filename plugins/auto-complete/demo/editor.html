@@ -4,40 +4,57 @@
     <meta charset="UTF-8" />
     <title>Editor</title>
     <!-- Editor -->
-    <link rel="stylesheet" href="http://localhost:8080/dist/cdn/toastui-editor.css" />
+    <link rel="stylesheet" href="http://0.0.0.0:8080/dist/cdn/toastui-editor.css" />
   </head>
   <body>
     <div class="code-html">
       <!-- Editor -->
       <h2>Editor</h2>
       <div id="editor"></div>
-      <!-- Editor's Viewer -->
-      <h2>Viewer</h2>
-      <div id="viewer"></div>
     </div>
     <!-- Editor -->
-    <script src="http://localhost:8080/dist/cdn/toastui-editor-all.js"></script>
+    <script src="http://0.0.0.0:8080/dist/cdn/toastui-editor-all.js"></script>
     <!-- Plugin -->
     <script src="../dist/cdn/toastui-editor-plugin-dooray-auto-complete.js"></script>
     <script class="code-js">
       const { Editor } = toastui;
       const { autoComplete } = Editor.plugin;
 
+      const list = document.createElement('div');
+      const option = {
+        reducer: function(action) {
+          switch(action.act) {
+            case 'open':
+              console.log('Open');
+              break;
+            case 'enter':
+              const tr = action.view.state.tr
+                .deleteRange(action.range.from, action.range.to)
+                .insertText(`mention action!`);
+              action.view.dispatch(tr);
+            case 'close':
+              console.log('Close');
+              break;
+            default:
+              break;
+          }
+        },
+        triggers: [
+          { name: 'mention', regex: /(@)$/, cancelWithSpace: true },
+          { name: 'task', regex: /(\[)$/, cancelWithSpace: false },
+        ]
+      }
+
       const editor = new Editor({
         el: document.querySelector('#editor'),
         previewStyle: 'vertical',
         height: '500px',
         initialValue: '',
-        plugins: [[autoComplete]],
+        useCommandShortcut: false,
+        plugins: [[autoComplete, option]],
       });
 
-      const viewer = Editor.factory({
-        el: document.querySelector('#viewer'),
-        viewer: true,
-        height: '500px',
-        initialValue: '',
-        plugins: [[autoComplete]],
-      });
+      window.editor = editor;
     </script>
   </body>
 </html>

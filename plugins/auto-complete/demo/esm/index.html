@@ -10,6 +10,7 @@
     <script type="module">
       import { Editor } from 'http://localhost:8080/dist/index.js';
       import autoComplete from '/dist/index.js';
+
       const list = document.createElement('div');
       const option = {
         reducer: function(action) {
@@ -30,7 +31,7 @@
           }
         },
         triggers: [
-          { name: 'mention', regex: /(@)$/, cancelWithSpace: true },
+          { name: 'mention', regex: /(@)$/, cancelWithSpace: true }, // /[^`(\s|\w|\d)*][\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"](@)$/
           { name: 'task', regex: /(\[)$/, cancelWithSpace: false },
         ]
       }

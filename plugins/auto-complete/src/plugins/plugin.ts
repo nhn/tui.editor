@@ -131,7 +131,7 @@ export function autoComplete(context: PluginContext, reducer: Required<PluginOpt
 
         const isCancelWithSpace = triggerType?.cancelWithSpace ?? true;
 
-        if (isCancelWithSpace && filter.length === 0 && (ev.key === ' ' || ev.key === 'Spacebar')) {
+        if (isCancelWithSpace && (ev.key === ' ' || ev.key === 'Spacebar')) {
           closeAutoComplete(view);
           view.dispatch(view.state.tr.insertText(' '));
           return true;
