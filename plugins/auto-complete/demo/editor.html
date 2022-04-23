@@ -20,27 +20,118 @@
       const { Editor } = toastui;
       const { autoComplete } = Editor.plugin;
 
-      const list = document.createElement('div');
+      const suggestionInfo = {
+        view: null,
+        open: false,
+        range: null,
+        current: 0
+      };
+
+      function createSuggestionEl() {
+        const suggestionEl = document.createElement('div');
+        suggestionEl.setAttribute('id', 'suggestion');
+        suggestionEl.innerHTML = `
+          <div>suggestion 1</div>
+          <div>suggestion 2</div>
+          <div>suggestion 3</div>
+        `;
+        suggestionEl.style.display = 'none';
+        document.body.appendChild(suggestionEl);
+
+        return suggestionEl;
+      }
+
+      function setSuggestion(el) {
+        el.style.display = suggestionInfo.open ? 'block' : 'none';
+
+        const rect = document
+          .getElementsByClassName('dooray-auto-complete')[0]
+          ?.getBoundingClientRect();
+
+        if (!rect) {
+          return;
+        }
+        // 두 번째 방법. 에디터 내부 인터페이스 사용
+        const pos = editor
+          .getCurrentModeEditor()
+          .view.coordsAtPos?.(suggestionInfo.range.from);
+
+        el.style.top = `${pos.top + pos.bottom - pos.top}px`;
+        el.style.left = `${pos.left}px`;
+
+        [...el.children].forEach((item, index) => {
+          item.classList[index === suggestionInfo.current ? 'add' : 'remove'](
+            'selected'
+          );
+        });
+      }
+
+      const suggestionEl = createSuggestionEl();
+
+
+      [...suggestionEl.children].forEach((item) => {
+        item.addEventListener('click', () => {
+          if (!suggestionInfo.view) {
+            return;
+          }
+          suggestionInfo.open = false;
+          setSuggestion(suggestionEl);
+
+          if (!suggestionInfo.range) {
+            return;
+          }
+          const tr = suggestionInfo.view.state.tr
+            .deleteRange(suggestionInfo.range.from, suggestionInfo.range.to)
+            .insertText(`select ${suggestionInfo.current + 1}`);
+          suggestionInfo.view.dispatch(tr);
+          suggestionInfo.view.focus();
+        });
+      });
+
       const option = {
         reducer: function(action) {
           switch(action.act) {
             case 'open':
-              console.log('Open');
-              break;
+              console.log('open suggestion');
+              suggestionInfo.open = true;
+              suggestionInfo.range = action.range;
+              setSuggestion(suggestionEl);
+              return true;
             case 'enter':
+              console.log('entered suggestion');
+              suggestionInfo.open = false;
+              setSuggestion(suggestionEl);
               const tr = action.view.state.tr
                 .deleteRange(action.range.from, action.range.to)
-                .insertText(`mention action!`);
+                .insertText(`select ${suggestionInfo.current + 1}`);
               action.view.dispatch(tr);
+              return true;
+            case 'ArrowUp':
+              suggestionInfo.current -= 1;
+              suggestionInfo.current += suggestionEl.children.length;
+              suggestionInfo.current %= suggestionEl.children.length;
+
+              console.log('arrow up suggestion', suggestionInfo.current);
+              setSuggestion(suggestionEl);
+              return true;
+            case 'ArrowDown':
+              suggestionInfo.current += 1;
+              suggestionInfo.current %= suggestionEl.children.length;
+
+              console.log('arrow down suggestion', suggestionInfo.current);
+              setSuggestion(suggestionEl);
+              return true;
             case 'close':
-              console.log('Close');
+              suggestionInfo.open = false;
+              setSuggestion(suggestionEl);
+              console.log('close suggestion');
               break;
             default:
               break;
           }
         },
         triggers: [
-          { name: 'mention', regex: /(@)$/, cancelWithSpace: true },
+          { name: 'mention', regex: /(@)$/, cancelWithSpace: true }, // /[^`(\s|\w|\d)*][\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"](@)$/
           { name: 'task', regex: /(\[)$/, cancelWithSpace: false },
         ]
       }
