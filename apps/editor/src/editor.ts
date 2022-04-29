@@ -5,6 +5,13 @@ import Viewer from './viewer';
 import html from './ui/vdom/template';
 import { Layout } from './ui/components/layout';
 import { render } from './ui/vdom/renderer';
+import { isNil } from './utils/common';
+import { isPositionInBox, toggleClass } from './utils/dom';
+import on from 'tui-code-snippet/domEvent/on';
+
+const TASK_ATTR_NAME = 'data-task';
+const DISABLED_TASK_ATTR_NAME = 'data-task-disabled';
+const TASK_CHECKED_CLASS_NAME = 'checked';
 
 /**
  * ToastUI Editor
@@ -12,6 +19,10 @@ import { render } from './ui/vdom/renderer';
  */
 class ToastUIEditor extends EditorCore {
   private defaultUI!: DefaultUI;
+
+  private previewContent: HTMLElement | null = null;
+
+  private container!: HTMLElement;
 
   constructor(options: EditorOptions) {
     super(options);
@@ -40,6 +51,8 @@ class ToastUIEditor extends EditorCore {
       removeToolbarItem: layoutComp.removeToolbarItem.bind(layoutComp),
       destroy,
     };
+    this.container = options.el;
+    this.useViewerOnlyMode(!!options.viewerOnlyMode);
 
     this.pluginInfo.toolbarItems?.forEach((toolbarItem) => {
       const { groupIndex, itemIndex, item } = toolbarItem;
@@ -73,6 +86,64 @@ class ToastUIEditor extends EditorCore {
    */
   removeToolbarItem(itemName: string) {
     this.defaultUI.removeToolbarItem(itemName);
+  }
+
+  /**
+   * Set markdown syntax text. If use viewerOnlyMode, set preview content to viewer.
+   * @param {string} markdown - markdown syntax text.
+   * @param {boolean} [cursorToEnd=true] - move cursor to contents end
+   */
+  setMarkdown(markdown?: string, cursorToEnd?: boolean): void {
+    super.setMarkdown(markdown, cursorToEnd);
+
+    if (!isNil(this.previewContent)) {
+      this.container.removeChild(this.previewContent);
+
+      this.previewContent = this.preview.previewContent.cloneNode(true) as HTMLElement;
+      this.container.appendChild(this.previewContent);
+    }
+  }
+
+  useViewerOnlyMode(useMode: boolean) {
+    if (useMode) {
+      if (isNil(this.previewContent)) {
+        this.hide();
+
+        this.previewContent = this.preview.previewContent.cloneNode(true) as HTMLElement;
+
+        on(this.previewContent, 'mousedown', this.toggleTask.bind(this));
+        this.container.appendChild(this.previewContent);
+      }
+    } else {
+      this.show();
+
+      if (this.previewContent) {
+        this.container.removeChild(this.previewContent);
+      }
+      this.previewContent = null;
+    }
+  }
+
+  /**
+   * Toggle task by detecting mousedown event.
+   * @param {MouseEvent} ev - event
+   * @private
+   */
+  private toggleTask(ev: MouseEvent) {
+    const element = ev.target as HTMLElement;
+    const style = getComputedStyle(element, ':before');
+
+    if (
+      !element.hasAttribute(DISABLED_TASK_ATTR_NAME) &&
+      element.hasAttribute(TASK_ATTR_NAME) &&
+      isPositionInBox(style, ev.offsetX, ev.offsetY)
+    ) {
+      toggleClass(element, TASK_CHECKED_CLASS_NAME);
+      this.eventEmitter.emit('change', {
+        source: 'viewer',
+        date: ev,
+      });
+    }
   }
 
   /**

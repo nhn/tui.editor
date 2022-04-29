@@ -94,7 +94,7 @@ class ToastUIEditorCore {
 
   private wwEditor: WysiwygEditor;
 
-  private preview: MarkdownPreview;
+  protected preview: MarkdownPreview;
 
   private convertor: Convertor;
 
