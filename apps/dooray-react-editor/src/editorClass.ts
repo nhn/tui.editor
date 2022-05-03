@@ -1,10 +1,7 @@
-import { Editor, EditorOptions } from '@toast-ui/editor';
+import { Editor } from '@toast-ui/editor';
 import { isPositionInBox, toggleClass } from './util/dom';
 import on from 'tui-code-snippet/domEvent/on';
-
-interface EditorClassOptions extends EditorOptions {
-  viewerOnlyMode?: boolean;
-}
+import { EditorClassOptions } from '../index';
 
 const TASK_ATTR_NAME = 'data-task';
 const DISABLED_TASK_ATTR_NAME = 'data-task-disabled';
