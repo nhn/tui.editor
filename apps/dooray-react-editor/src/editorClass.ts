@@ -1,4 +1,4 @@
-import { Editor } from '@toast-ui/editor';
+import Editor from '@toast-ui/editor';
 import { isPositionInBox, toggleClass } from './util/dom';
 import on from 'tui-code-snippet/domEvent/on';
 import { EditorClassOptions } from '../index';
