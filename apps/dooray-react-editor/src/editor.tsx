@@ -1,11 +1,12 @@
 import React from 'react';
-import Editor, { EventMap } from '@toast-ui/editor';
+import { EventMap } from '@toast-ui/editor';
+import EditorClass from './editorClass';
 import type { EditorProps, EventNames } from '../index';
 
 export default class extends React.Component<EditorProps> {
   rootEl = React.createRef<HTMLDivElement>();
 
-  editorInst!: Editor;
+  editorInst!: EditorClass;
 
   getRootElement() {
     return this.rootEl.current;
@@ -44,7 +45,7 @@ export default class extends React.Component<EditorProps> {
   }
 
   componentDidMount() {
-    this.editorInst = new Editor({
+    this.editorInst = new EditorClass({
       el: this.rootEl.current!,
       ...this.props,
       events: this.getInitEvents(),

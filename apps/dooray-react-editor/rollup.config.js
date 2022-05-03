@@ -5,7 +5,7 @@ import banner from 'rollup-plugin-banner';
 import { version, author, license } from './package.json';
 
 const bannerText = [
-  'TOAST UI Editor : React Wrapper',
+  'TOAST UI Editor : Dooray! React Wrapper',
   `@version ${version} | ${new Date().toDateString()}`,
   `@author ${author}`,
   `@license ${license}`,

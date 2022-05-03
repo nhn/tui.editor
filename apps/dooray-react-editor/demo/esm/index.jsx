@@ -43,9 +43,26 @@ const content = [
   '>    3. [ ] Ember',
 ].join('\n');
 
+let editor;
+
 ReactDOM.render(
   <>
-    <Editor previewStyle="vertical" initialValue={content} height="400px" />
+    <Editor
+      ref={(el) => (editor = el)}
+      previewStyle="vertical"
+      initialValue={content}
+      height="400px"
+    />
   </>,
   document.getElementById('editor')
 );
+
+window.editor = editor.getInstance();
+
+window.editor.on('change', (ev) => {
+  console.log(ev);
+});
+
+setTimeout(() => {
+  window.editor.blur();
+}, 1000);

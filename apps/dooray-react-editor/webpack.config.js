@@ -6,7 +6,7 @@ const { version, author, license } = require('./package.json');
 const config = {
   entry: './src/index.ts',
   output: {
-    filename: 'toastui-react-editor.js',
+    filename: 'toastui-dooray-react-editor.js',
     path: path.resolve(__dirname, 'dist'),
     library: {
       type: 'commonjs2',
@@ -48,7 +48,7 @@ const config = {
   plugins: [
     new webpack.BannerPlugin({
       banner: [
-        'TOAST UI Editor : React Wrapper',
+        'TOAST UI Editor : Dooray! React Wrapper',
         `@version ${version} | ${new Date().toDateString()}`,
         `@author ${author}`,
         `@license ${license}`,
