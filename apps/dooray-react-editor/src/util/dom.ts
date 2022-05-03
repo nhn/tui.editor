@@ -3,8 +3,6 @@ import hasClass from 'tui-code-snippet/domUtil/hasClass';
 import addClass from 'tui-code-snippet/domUtil/addClass';
 import removeClass from 'tui-code-snippet/domUtil/removeClass';
 
-import 'tui-code-snippet/domUtil/matches';
-
 export function isPositionInBox(style: CSSStyleDeclaration, offsetX: number, offsetY: number) {
   const left = parseInt(style.left, 10);
   const top = parseInt(style.top, 10);
