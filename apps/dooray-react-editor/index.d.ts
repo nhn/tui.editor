@@ -30,3 +30,27 @@ export class Viewer extends Component<ViewerProps> {
 
   getRootElement(): HTMLElement;
 }
+
+declare module 'tui-code-snippet/type/isUndefined' {
+  export default function isUndefined(value: unknown): value is undefined;
+}
+
+declare module 'tui-code-snippet/domEvent/on' {
+  export default function on(
+    element: Element,
+    types: string,
+    handler: (...args: any[]) => any
+  ): void;
+}
+
+declare module 'tui-code-snippet/domUtil/addClass' {
+  export default function addClass(element: Element, ...classNames: string[]): void;
+}
+
+declare module 'tui-code-snippet/domUtil/removeClass' {
+  export default function removeClass(element: Element, ...classNames: string[]): void;
+}
+
+declare module 'tui-code-snippet/domUtil/hasClass' {
+  export default function hasClass(element: Element, ...classNames: string[]): boolean;
+}
