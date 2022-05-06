@@ -21,6 +21,8 @@ export default class EditorClass extends Editor {
 
   private preview!: MarkdownPreview;
 
+  private isModified = false;
+
   constructor(options: EditorClassOptions) {
     super(options);
 
@@ -52,8 +54,11 @@ export default class EditorClass extends Editor {
         resultText = originText.replace('[x]', '[ ]');
       }
 
-      this.mdEditor.replaceSelection(resultText, start, end);
+      const editResult = this.toastMark.editMarkdown(start, end, resultText);
 
+      this.isModified = true;
+
+      this.eventEmitter.emit('updatePreview', editResult);
       this.eventEmitter.emit('change', {
         source: 'viewer',
         date: ev,
@@ -75,6 +80,10 @@ export default class EditorClass extends Editor {
         this.container.appendChild(this.previewContent);
       }
     } else {
+      if (this.isModified) {
+        this.setMarkdown(this.toastMark.lineTexts.join('\n'));
+      }
+
       this.show();
 
       if (this.previewContent) {
