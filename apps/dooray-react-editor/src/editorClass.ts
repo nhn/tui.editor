@@ -29,8 +29,8 @@ export default class EditorClass extends Editor {
     super(options);
 
     this.container = options.el;
-    this.useViewerOnlyMode(!!options.viewerOnlyMode);
     this.isAllowedToggleTask = !!options.isAllowedToggleTask;
+    this.useViewerOnlyMode(!!options.viewerOnlyMode);
   }
 
   private toggleTask(ev: MouseEvent) {
