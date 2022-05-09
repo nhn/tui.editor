@@ -69,6 +69,20 @@ export default class EditorClass extends Editor {
     }
   }
 
+  updateViewer() {
+    if (this.previewContent) {
+      this.container.removeChild(this.previewContent);
+    }
+
+    this.previewContent = this.preview.previewContent.cloneNode(true) as HTMLElement;
+
+    if (this.isAllowedToggleTask) {
+      on(this.previewContent, 'mousedown', this.toggleTask.bind(this));
+    }
+
+    this.container.appendChild(this.previewContent);
+  }
+
   useViewerOnlyMode(useMode: boolean) {
     if (useMode) {
       if (!this.previewContent) {
