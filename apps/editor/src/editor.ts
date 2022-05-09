@@ -52,7 +52,6 @@ class ToastUIEditor extends EditorCore {
       destroy,
     };
     this.container = options.el;
-    this.useViewerOnlyMode(!!options.viewerOnlyMode);
 
     this.pluginInfo.toolbarItems?.forEach((toolbarItem) => {
       const { groupIndex, itemIndex, item } = toolbarItem;
@@ -104,47 +103,27 @@ class ToastUIEditor extends EditorCore {
     }
   }
 
-  useViewerOnlyMode(useMode: boolean) {
-    if (useMode) {
-      if (isNil(this.previewContent)) {
-        this.hide();
-
-        this.previewContent = this.preview.previewContent.cloneNode(true) as HTMLElement;
-
-        on(this.previewContent, 'mousedown', this.toggleTask.bind(this));
-        this.container.appendChild(this.previewContent);
-      }
-    } else {
-      this.show();
-
-      if (this.previewContent) {
-        this.container.removeChild(this.previewContent);
-      }
-      this.previewContent = null;
-    }
-  }
-
   /**
    * Toggle task by detecting mousedown event.
    * @param {MouseEvent} ev - event
    * @private
    */
-  private toggleTask(ev: MouseEvent) {
-    const element = ev.target as HTMLElement;
-    const style = getComputedStyle(element, ':before');
-
-    if (
-      !element.hasAttribute(DISABLED_TASK_ATTR_NAME) &&
-      element.hasAttribute(TASK_ATTR_NAME) &&
-      isPositionInBox(style, ev.offsetX, ev.offsetY)
-    ) {
-      toggleClass(element, TASK_CHECKED_CLASS_NAME);
-      this.eventEmitter.emit('change', {
-        source: 'viewer',
-        date: ev,
-      });
-    }
-  }
+  // private toggleTask(ev: MouseEvent) {
+  //   const element = ev.target as HTMLElement;
+  //   const style = getComputedStyle(element, ':before');
+  //
+  //   if (
+  //     !element.hasAttribute(DISABLED_TASK_ATTR_NAME) &&
+  //     element.hasAttribute(TASK_ATTR_NAME) &&
+  //     isPositionInBox(style, ev.offsetX, ev.offsetY)
+  //   ) {
+  //     toggleClass(element, TASK_CHECKED_CLASS_NAME);
+  //     this.eventEmitter.emit('change', {
+  //       source: 'viewer',
+  //       date: ev,
+  //     });
+  //   }
+  // }
 
   /**
    * Destroy TUIEditor from document
