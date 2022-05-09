@@ -18,6 +18,7 @@ export type EventNames = keyof EventMapping;
 
 interface EditorClassOptions extends EditorOptions {
   viewerOnlyMode?: boolean;
+  isAllowedToggleTask?: boolean;
 }
 
 export type EditorProps = Omit<EditorClassOptions, 'el'> & Partial<EventMapping>;
