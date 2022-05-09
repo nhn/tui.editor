@@ -23,11 +23,14 @@ export default class EditorClass extends Editor {
 
   private isModified = false;
 
+  private isAllowedToggleTask = true;
+
   constructor(options: EditorClassOptions) {
     super(options);
 
     this.container = options.el;
     this.useViewerOnlyMode(!!options.viewerOnlyMode);
+    this.isAllowedToggleTask = !!options.isAllowedToggleTask;
   }
 
   private toggleTask(ev: MouseEvent) {
@@ -76,7 +79,10 @@ export default class EditorClass extends Editor {
 
         this.previewContent = this.preview.previewContent.cloneNode(true) as HTMLElement;
 
-        on(this.previewContent, 'mousedown', this.toggleTask.bind(this));
+        if (this.isAllowedToggleTask) {
+          on(this.previewContent, 'mousedown', this.toggleTask.bind(this));
+        }
+
         this.container.appendChild(this.previewContent);
       }
     } else {
