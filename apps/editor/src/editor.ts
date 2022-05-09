@@ -6,12 +6,6 @@ import html from './ui/vdom/template';
 import { Layout } from './ui/components/layout';
 import { render } from './ui/vdom/renderer';
 import { isNil } from './utils/common';
-import { isPositionInBox, toggleClass } from './utils/dom';
-import on from 'tui-code-snippet/domEvent/on';
-
-const TASK_ATTR_NAME = 'data-task';
-const DISABLED_TASK_ATTR_NAME = 'data-task-disabled';
-const TASK_CHECKED_CLASS_NAME = 'checked';
 
 /**
  * ToastUI Editor
