@@ -62,7 +62,3 @@ window.editor = editor.getInstance();
 window.editor.on('change', (ev) => {
   console.log(ev);
 });
-
-setTimeout(() => {
-  window.editor.blur();
-}, 1000);
