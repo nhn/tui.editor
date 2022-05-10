@@ -23,7 +23,7 @@ export default class EditorClass extends Editor {
 
   private isModified = false;
 
-  private isAllowedToggleTask = true;
+  private isAllowedToggleTask: boolean;
 
   constructor(options: EditorClassOptions) {
     super(options);
@@ -31,6 +31,15 @@ export default class EditorClass extends Editor {
     this.container = options.el;
     this.isAllowedToggleTask = !!options.isAllowedToggleTask;
     this.useViewerOnlyMode(!!options.viewerOnlyMode);
+  }
+
+  public setMarkdown(markdown: string, cursorToEnd?: boolean) {
+    super.setMarkdown(markdown, cursorToEnd);
+
+    if (this.previewContent) {
+      this.container.removeChild(this.previewContent);
+      this.setViewerContent();
+    }
   }
 
   private toggleTask(ev: MouseEvent) {
@@ -69,10 +78,9 @@ export default class EditorClass extends Editor {
     }
   }
 
-  updateViewer() {
-    if (this.previewContent) {
-      this.container.removeChild(this.previewContent);
-    }
+  private setViewerContent() {
+    // @ts-ignore
+    this.preview.removeHighlight();
 
     this.previewContent = this.preview.previewContent.cloneNode(true) as HTMLElement;
 
@@ -87,17 +95,7 @@ export default class EditorClass extends Editor {
     if (useMode) {
       if (!this.previewContent) {
         this.hide();
-
-        // @ts-ignore
-        this.preview.removeHighlight();
-
-        this.previewContent = this.preview.previewContent.cloneNode(true) as HTMLElement;
-
-        if (this.isAllowedToggleTask) {
-          on(this.previewContent, 'mousedown', this.toggleTask.bind(this));
-        }
-
-        this.container.appendChild(this.previewContent);
+        this.setViewerContent();
       }
     } else {
       if (this.isModified) {
