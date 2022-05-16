@@ -20,6 +20,7 @@ const pkgMap = {
   table: '@toast-ui/editor-plugin-table-merged-cell',
   uml: '@toast-ui/editor-plugin-uml',
   auto: '@toast-ui/editor-plugin-dooray-auto-complete',
+  doorayParser: '@toast-ui/editor-plugin-dooray-parser',
 };
 
 const pathMap = {
@@ -34,6 +35,7 @@ const pathMap = {
   table: 'plugins/table-merged-cell',
   uml: 'plugins/uml',
   auto: 'plugins/auto-complete',
+  doorayParser: 'plugins/dooray-parser',
 };
 
 let script;
