@@ -129,6 +129,10 @@ export interface TableCellMdNode extends BlockMdNode {
   attrs?: Record<string, any>;
 }
 
+export interface CustomBlockMdNode extends BlockMdNode {
+  disabledEntityParse?: boolean;
+}
+
 export interface RefDefMdNode extends BlockMdNode {
   title: string;
   dest: string;
