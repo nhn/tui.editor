@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.1.5 | Sat Apr 23 2022
+ * @version 3.1.6 | Mon May 16 2022
  * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -12710,7 +12710,10 @@ function createWidgetContent(info, text) {
 }
 function widgetToDOM(info, text) {
     var _a = widgetRuleMap[info], rule = _a.rule, toDOM = _a.toDOM;
-    text = unwrapWidgetSyntax(text).match(rule)[0];
+    var matches = unwrapWidgetSyntax(text).match(rule);
+    if (matches) {
+        text = matches[0];
+    }
     return toDOM(text);
 }
 function getWidgetRules() {
