@@ -29,7 +29,12 @@ export function createWidgetContent(info: string, text: string) {
 export function widgetToDOM(info: string, text: string) {
   const { rule, toDOM } = widgetRuleMap[info];
 
-  text = unwrapWidgetSyntax(text).match(rule)![0];
+  const matches = unwrapWidgetSyntax(text).match(rule);
+
+  if (matches) {
+    text = matches[0];
+  }
+
   return toDOM(text);
 }
 
