@@ -1,4 +1,4 @@
-import { InlineNodeType, Sourcepos } from '@t/node';
+import { InlineNodeType, Sourcepos, CustomBlockMdNode } from '@t/node';
 import { RefMap, RefLinkCandidateMap, RefDefCandidateMap, ParserOptions } from '@t/parser';
 import { Node, BlockNode, isHeading, LinkNode, createNode, text, CustomInlineNode } from './node';
 import { repeat, normalizeURI, unescapeString, ESCAPABLE, ENTITY } from './common';
@@ -1065,6 +1065,7 @@ export class InlineParser {
     if (c === -1) {
       return false;
     }
+
     switch (c) {
       case C_NEWLINE:
         res = this.parseNewline(block);
@@ -1098,7 +1099,9 @@ export class InlineParser {
         res = this.parseAutolink(block) || this.parseHtmlTag(block);
         break;
       case C_AMPERSAND:
-        res = this.parseEntity(block);
+        if (!(block as CustomBlockMdNode).disabledEntityParse) {
+          res = this.parseEntity(block);
+        }
         break;
       default:
         res = this.parseString(block);
