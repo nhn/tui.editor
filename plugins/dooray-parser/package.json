@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/editor-plugin-dooray-parser",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "TOAST UI Editor : Dooray! Parser",
   "keywords": [],
   "main": "dist/toastui-editor-plugin-dooray-parser.js",
