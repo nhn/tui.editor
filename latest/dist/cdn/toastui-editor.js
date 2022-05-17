@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.1.6 | Mon May 16 2022
+ * @version 3.1.7 | Tue May 17 2022
  * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -13935,7 +13935,9 @@ var InlineParser = /** @class */ (function () {
                 res = this.parseAutolink(block) || this.parseHtmlTag(block);
                 break;
             case C_AMPERSAND:
-                res = this.parseEntity(block);
+                if (!block.disabledEntityParse) {
+                    res = this.parseEntity(block);
+                }
                 break;
             default:
                 res = this.parseString(block);
