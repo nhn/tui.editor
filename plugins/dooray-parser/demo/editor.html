@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>Editor</title>
+    <!-- Editor -->
+    <link rel="stylesheet" href="http://0.0.0.0:8080/dist/cdn/toastui-editor.css" />
+  </head>
+  <body>
+    <div class="code-html">
+      <!-- Editor -->
+      <h2>Editor</h2>
+      <div id="editor"></div>
+    </div>
+    <!-- Editor -->
+    <script src="http://0.0.0.0:8080/dist/cdn/toastui-editor-all.js"></script>
+    <!-- Plugin -->
+    <script src="../dist/cdn/toastui-editor-plugin-dooray-parser.js"></script>
+    <script class="code-js">
+      const { Editor } = toastui;
+      const { doorayParser } = Editor.plugin;
+
+      const reWidgetRule =  /(->>|->|-\\>\\>|-\\>)?\[([^[\]]*?)]\((dooray:\/\/\d+?\/([\w-]+)\/(\d+))?(?:\s"(.+)?")?\)/g;
+      const options = {
+        reDisabledParsing: {
+          entity: reWidgetRule
+        }
+      }
+
+      const editor = new Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: '',
+        useCommandShortcut: false,
+        widgetRules: [
+          {
+            rule: reWidgetRule,
+            toDOM(text) {
+              const rule = reWidgetRule;
+              const matched = text.match(rule);
+              const span = document.createElement('span');
+
+              if (matched) {
+                const doorayLink = matched[0];
+                const [title] = doorayLink.match(/(->>|->|-\\>\\>|-\\>)?\[([^[\]]*?)]/g);
+                const [destination] = doorayLink.match(/\((dooray:\/\/\d+?\/([\w-]+)\/(\d+))?(?:\s"(.+)?")?\)/g);
+
+                span.innerHTML = `<a class="widget-anchor" href="${destination}">${title}</a>`;
+              }
+
+              return span;
+            },
+          },
+        ],
+        plugins: [[doorayParser, options]],
+      });
+
+      window.editor = editor;
+    </script>
+  </body>
+</html>

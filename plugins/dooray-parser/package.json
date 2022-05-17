@@ -1,0 +1,40 @@
+{
+  "name": "@toast-ui/editor-plugin-dooray-parser",
+  "version": "0.0.2",
+  "description": "TOAST UI Editor : Dooray! Parser",
+  "keywords": [],
+  "main": "dist/toastui-editor-plugin-dooray-parser.js",
+  "types": "types/index.d.ts",
+  "files": [
+    "dist/*.js",
+    "dist/*.css",
+    "types/index.d.ts"
+  ],
+  "author": "NHN Cloud FE Development Lab <dl_javascript@nhn.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhn/tui.editor.git",
+    "directory": "plugins/dooray-parser"
+  },
+  "bugs": {
+    "url": "https://github.com/nhn/tui.editor/issues"
+  },
+  "homepage": "https://ui.toast.com",
+  "browserslist": "last 2 versions, not ie <= 10",
+  "scripts": {
+    "test:types": "tsc",
+    "test": "jest --watch",
+    "test:ci": "jest",
+    "serve": "snowpack dev",
+    "serve:ie": "webpack serve",
+    "build:cdn": "webpack build --env cdn & webpack build --env cdn minify",
+    "build": "webpack build && npm run build:cdn"
+  },
+  "devDependencies": {
+    "cross-env": "^6.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

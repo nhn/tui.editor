@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head lang="en">
+    <meta charset="UTF-8" />
+    <title>Test to use plugin in node environment</title>
+    <style>
+      #suggestion {
+        position: absolute;
+        border-radius: 2px;
+        border: 1px solid #333;
+        min-width: 300px;
+        background-color: white;
+        padding: 10px;
+        transform: translateY(-1px);
+      }
+
+      #suggestion:hover .selected {
+        background-color: white;
+      }
+      #suggestion:hover > div:hover,
+      #suggestion .selected {
+        background-color: wheat;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="editor"></div>
+    <!-- Editor -->
+    <script type="module">
+      import { Editor } from 'http://localhost:8080/dist/index.js';
+      import doorayParser from '/dist/index.js';
+      const reWidgetRule =  /(->>|->|-\\>\\>|-\\>)?\[([^[\]]*?)]\((dooray:\/\/\d+?\/([\w-]+)\/(\d+))?(?:\s"(.+)?")?\)/g;
+      const options = {
+        reDisabledParsing: {
+          entity: reWidgetRule
+        }
+      }
+
+      const editor = new Editor({
+        el: document.querySelector('#editor'),
+        previewStyle: 'vertical',
+        height: '500px',
+        initialValue: '',
+        useCommandShortcut: false,
+        widgetRules: [
+          {
+            rule: reWidgetRule,
+            toDOM(text) {
+              const rule = reWidgetRule;
+              const matched = text.match(rule);
+              const span = document.createElement('span');
+
+              if (matched) {
+                const doorayLink = matched[0];
+                const [title] = doorayLink.match(/(->>|->|-\\>\\>|-\\>)?\[([^[\]]*?)]/g);
+                const [destination] = doorayLink.match(/\((dooray:\/\/\d+?\/([\w-]+)\/(\d+))?(?:\s"(.+)?")?\)/g);
+
+                span.innerHTML = `<a class="widget-anchor" href="${destination}">${title}</a>`;
+              }
+
+              return span;
+            },
+          },
+        ],
+        plugins: [[doorayParser, options]],
+      });
+
+      window.editor = editor;
+    </script>
+  </body>
+</html>
