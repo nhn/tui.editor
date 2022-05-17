@@ -11,3 +11,8 @@ export type RegexpForDisable = {
 export interface PluginOptions {
   reDisabledParsing: RegexpForDisable;
 }
+
+export default function doorayParserPlugin(
+  context: PluginContext,
+  options: PluginOptions
+): PluginInfo;
