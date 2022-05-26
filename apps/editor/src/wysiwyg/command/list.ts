@@ -162,7 +162,7 @@ function getBeforeLineListItem(doc: ProsemirrorNode, offset: number) {
   return findListItem(endListItemPos);
 }
 
-function toggleTaskListItems(tr: Transaction, { $from, $to }: NodeRange) {
+function changeListTypeToTask(tr: Transaction, { $from, $to }: NodeRange) {
   const startListItem = findListItem($from);
   let endListItem = findListItem($to);
 
@@ -185,7 +185,7 @@ function toggleTaskListItems(tr: Transaction, { $from, $to }: NodeRange) {
   return tr;
 }
 
-function changeListType(tr: Transaction, { $from, $to }: NodeRange, list: NodeType) {
+function changeListTypeTo(tr: Transaction, { $from, $to }: NodeRange, list: NodeType) {
   const startListItem = findListItem($from);
   let endListItem = findListItem($to);
 
@@ -216,14 +216,14 @@ function changeListType(tr: Transaction, { $from, $to }: NodeRange, list: NodeTy
   return tr;
 }
 
-export function changeList(list: NodeType): Command {
+export function changeListTo(list: NodeType): Command {
   return ({ selection, tr }, dispatch) => {
     const { $from, $to } = selection;
     const range = $from.blockRange($to);
 
     if (range) {
       const newTr = isInListNode($from)
-        ? changeListType(tr, range, list)
+        ? changeListTypeTo(tr, range, list)
         : changeToList(tr, range, list);
 
       dispatch!(newTr);
@@ -235,14 +235,14 @@ export function changeList(list: NodeType): Command {
   };
 }
 
-export function toggleTask(): Command {
+export function changeListToTask(): Command {
   return ({ selection, tr, schema }, dispatch) => {
     const { $from, $to } = selection;
     const range = $from.blockRange($to);
 
     if (range) {
       const newTr = isInListNode($from)
-        ? toggleTaskListItems(tr, range)
+        ? changeListTypeToTask(tr, range)
         : changeToList(tr, range, schema.nodes.bulletList, { task: true });
 
       dispatch!(newTr);

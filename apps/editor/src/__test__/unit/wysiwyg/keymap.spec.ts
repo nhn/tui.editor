@@ -533,5 +533,47 @@ describe('keymap', () => {
 
       expect(wwe.getHTML()).toBe(expected);
     });
+
+    it('should convert list from bullet to task', () => {
+      html = oneLineTrim`
+        <ul>
+          <li>item</li>
+        </ul>
+      `;
+
+      setContent(html);
+      wwe.setSelection(2); // in list item
+
+      forceKeymapFn('bulletList', 'toTaskList');
+
+      const expected = oneLineTrim`
+        <ul>
+          <li class="task-list-item" data-task="true"><p>item</p></li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
+
+    it('should convert list from task to bullet', () => {
+      html = oneLineTrim`
+        <ul>
+          <li class="task-list-item" data-task="true"><p>item</p></li>
+        </ul>
+      `;
+
+      setContent(html);
+      wwe.setSelection(2); // in list item
+
+      forceKeymapFn('bulletList', 'toBulletList');
+
+      const expected = oneLineTrim`
+        <ul>
+          <li><p>item</p></li>
+        </ul>
+      `;
+
+      expect(wwe.getHTML()).toBe(expected);
+    });
   });
 });

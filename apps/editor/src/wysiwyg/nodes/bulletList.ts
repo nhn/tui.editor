@@ -7,7 +7,7 @@ import {
   getCustomAttrs,
   getDefaultCustomAttrs,
 } from '@/wysiwyg/helper/node';
-import { changeList, toggleTask } from '@/wysiwyg/command/list';
+import { changeListTo, changeListToTask } from '@/wysiwyg/command/list';
 
 import { Command } from 'prosemirror-commands';
 
@@ -31,24 +31,31 @@ export class BulletList extends NodeSchema {
     };
   }
 
-  private changeList(): Command {
-    return (state, dispatch) => changeList(state.schema.nodes.bulletList)(state, dispatch);
+  private toBulletList(): Command {
+    return (state, dispatch) => changeListTo(state.schema.nodes.bulletList)(state, dispatch);
+  }
+
+  private toTaskList(): Command {
+    return changeListToTask();
   }
 
   commands() {
     return {
-      bulletList: this.changeList,
-      taskList: toggleTask,
+      bulletList: this.toBulletList,
+      taskList: changeListToTask,
     };
   }
 
   keymaps() {
-    const bulletListCommand = this.changeList();
+    const bulletListCommand = this.toBulletList();
+    const taskListCommand = this.toTaskList();
     const { indent, outdent } = getWwCommands();
 
     return {
       'Mod-u': bulletListCommand,
       'Mod-U': bulletListCommand,
+      'alt-t': taskListCommand,
+      'alt-T': taskListCommand,
       Tab: indent(),
       'Shift-Tab': outdent(),
     };

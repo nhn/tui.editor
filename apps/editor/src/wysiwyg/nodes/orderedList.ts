@@ -2,7 +2,7 @@ import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
 import { getWwCommands } from '@/commands/wwCommands';
-import { changeList } from '@/wysiwyg/command/list';
+import { changeListTo } from '@/wysiwyg/command/list';
 
 import { EditorCommand } from '@t/spec';
 import { getDefaultCustomAttrs, getCustomAttrs } from '@/wysiwyg/helper/node';
@@ -46,7 +46,7 @@ export class OrderedList extends NodeSchema {
   }
 
   commands(): EditorCommand {
-    return () => (state, dispatch) => changeList(state.schema.nodes.orderedList)(state, dispatch);
+    return () => (state, dispatch) => changeListTo(state.schema.nodes.orderedList)(state, dispatch);
   }
 
   keymaps() {
