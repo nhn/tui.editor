@@ -13,6 +13,8 @@ const reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
 const reEscapePairedChars = /[*_~`]/g;
 const reMdImageSyntax = /!\[.*\]\(.*\)/g;
 const reEscapedCharInLinkSyntax = /[[\]]/g; //
+const reEndWithSpace = /(\S*)\s$/g;
+const reStartWithSpace = /^\s(\S*)/g;
 
 const XMLSPECIAL = '[&<>"]';
 const reXmlSpecial = new RegExp(XMLSPECIAL, 'g');
@@ -256,4 +258,12 @@ export function assign(targetObj: Record<string, any>, obj: Record<string, any> 
 
 export function getSortedNumPair(valueA: number, valueB: number) {
   return valueA > valueB ? [valueB, valueA] : [valueA, valueB];
+}
+
+export function isStartWithSpace(text: string) {
+  return reStartWithSpace.test(text);
+}
+
+export function isEndWithSpace(text: string) {
+  return reEndWithSpace.test(text);
 }

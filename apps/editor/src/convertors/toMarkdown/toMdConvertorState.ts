@@ -1,6 +1,6 @@
 import { Node, Mark } from 'prosemirror-model';
 
-import { includes, escape, last } from '@/utils/common';
+import { includes, escape, last, isEndWithSpace, isStartWithSpace } from '@/utils/common';
 
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 import {
@@ -49,11 +49,44 @@ export default class ToMdConvertorState {
     return /(^|\n)$/.test(this.result);
   }
 
+  private isBeteewnSpaces(parent: Node, index: number) {
+    const { content } = parent;
+    // const frontText = content.child(index - 1).text;
+    // const rearText = content.child(index + 1).text;
+
+    const isFrontNodeEndWithSpace =
+      index === 0 || isEndWithSpace(content.child(index - 1).text ?? 'a');
+
+    if (index !== 0) {
+      console.log(index, isFrontNodeEndWithSpace);
+    }
+
+    const isRearNodeStartWithSpace =
+      index >= content.childCount - 1 || isStartWithSpace(content.child(index + 1).text ?? 'a');
+
+    if (index - 1 >= 0 && index + 1 <= content.childCount - 1) {
+      console.log(
+        isEndWithSpace(content.child(index - 1).text ?? 'a'),
+        isStartWithSpace(content.child(index + 1).text ?? 'a'),
+        isFrontNodeEndWithSpace,
+        isRearNodeStartWithSpace,
+        content
+      );
+    }
+
+    return isFrontNodeEndWithSpace && isRearNodeStartWithSpace;
+  }
+
   private markText(mark: Mark, entering: boolean, parent: Node, index: number) {
     const convertor = this.getMarkConvertor(mark);
 
     if (convertor) {
-      const { delim, rawHTML } = convertor({ node: mark, parent, index }, entering);
+      if (mark.type.name === 'strong') {
+        // debugger;
+      }
+      const betweenSpace = this.isBeteewnSpaces(parent, entering ? index : index - 1);
+
+      const { delim, rawHTML } = convertor({ node: mark, parent, index }, entering, betweenSpace);
 
       return (rawHTML as string) || (delim as string);
     }
