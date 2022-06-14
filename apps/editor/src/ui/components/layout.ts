@@ -20,6 +20,7 @@ interface Props {
   editorType: EditorType;
   toolbarItems: ToolbarItem[];
   theme: string;
+  document: Document;
 }
 
 interface State {
@@ -60,7 +61,7 @@ export class Layout extends Component<Props, State> {
   }
 
   render() {
-    const { eventEmitter, hideModeSwitch, toolbarItems, theme } = this.props;
+    const { eventEmitter, hideModeSwitch, toolbarItems, theme, document } = this.props;
     const { hide, previewStyle, editorType } = this.state;
     const displayClassName = hide ? ' hidden' : '';
     const editorTypeClassName = cls(editorType === 'markdown' ? 'md-mode' : 'ww-mode');
@@ -78,6 +79,7 @@ export class Layout extends Component<Props, State> {
           previewStyle=${previewStyle}
           toolbarItems=${toolbarItems}
           editorType=${editorType}
+          document=${document}
         />
         <div
           class="${cls('main')} ${editorTypeClassName}"
@@ -98,7 +100,7 @@ export class Layout extends Component<Props, State> {
         </div>
         ${!hideModeSwitch &&
         html`<${Switch} eventEmitter=${eventEmitter} editorType=${editorType} />`}
-        <${ContextMenu} eventEmitter=${eventEmitter} />
+        <${ContextMenu} eventEmitter=${eventEmitter} document=${document} />
       </div>
     `;
   }

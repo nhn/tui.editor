@@ -12,6 +12,7 @@ interface State {
 interface Props {
   eventEmitter: Emitter;
   execCommand: ExecCommand;
+  document: Document;
 }
 
 export class ContextMenu extends Component<Props, State> {
@@ -31,11 +32,11 @@ export class ContextMenu extends Component<Props, State> {
   }
 
   mounted() {
-    document.addEventListener('click', this.handleClickDocument);
+    this.props.document.addEventListener('click', this.handleClickDocument);
   }
 
   beforeDestroy() {
-    document.removeEventListener('click', this.handleClickDocument);
+    this.props.document.removeEventListener('click', this.handleClickDocument);
   }
 
   private handleClickDocument = (ev: MouseEvent) => {

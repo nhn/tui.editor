@@ -153,6 +153,7 @@ class ToastUIEditorCore {
         widgetRules: [],
         theme: 'light',
         autofocus: true,
+        document,
       },
       options
     );

@@ -41,6 +41,7 @@ interface Props {
   previewStyle: PreviewStyle;
   toolbarItems: ToolbarItem[];
   editorType: EditorType;
+  document: Document;
 }
 
 interface State {
@@ -343,6 +344,7 @@ export class Toolbar extends Component<Props, State> {
           <${DropdownToolbarButton}
             item=${createToolbarItemInfo('more')}
             items=${dropdownItems}
+            document=${this.props.document}
             ...${props}
           />
         </div>
@@ -352,6 +354,7 @@ export class Toolbar extends Component<Props, State> {
           eventEmitter=${eventEmitter}
           hidePopup=${this.hidePopup}
           execCommand=${this.execCommand}
+          document=${this.props.document}
         />
       </div>
     `;

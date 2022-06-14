@@ -24,6 +24,7 @@ interface Props {
   showTooltip: ShowTooltip;
   hideTooltip: HideTooltip;
   getBound: GetBound;
+  document: Document;
 }
 
 interface State {
@@ -57,7 +58,7 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
   };
 
   mounted() {
-    document.addEventListener('click', this.handleClickDocument);
+    this.props.document.addEventListener('click', this.handleClickDocument);
   }
 
   updated() {
@@ -67,7 +68,7 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
   }
 
   beforeDestroy() {
-    document.removeEventListener('click', this.handleClickDocument);
+    this.props.document.removeEventListener('click', this.handleClickDocument);
   }
 
   private showTooltip = () => {

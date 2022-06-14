@@ -15,6 +15,7 @@ interface Props {
   eventEmitter: Emitter;
   hidePopup: HidePopup;
   execCommand: ExecCommand;
+  document: Document;
 }
 
 interface State {
@@ -34,12 +35,12 @@ export class Popup extends Component<Props, State> {
   };
 
   mounted() {
-    document.addEventListener('mousedown', this.handleMousedown);
+    this.props.document.addEventListener('mousedown', this.handleMousedown);
     this.props.eventEmitter.listen('closePopup', this.props.hidePopup);
   }
 
   beforeDestroy() {
-    document.removeEventListener('mousedown', this.handleMousedown);
+    this.props.document.removeEventListener('mousedown', this.handleMousedown);
   }
 
   updated(prevProps: Props) {

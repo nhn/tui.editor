@@ -168,6 +168,7 @@ export interface EditorOptions {
   theme?: string;
   autofocus?: boolean;
   viewer?: boolean;
+  document?: Document;
 }
 
 interface Slots {
