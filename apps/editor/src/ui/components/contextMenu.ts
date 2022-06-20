@@ -33,15 +33,27 @@ export class ContextMenu extends Component<Props, State> {
 
   mounted() {
     this.props.document.addEventListener('click', this.handleClickDocument);
+    if (this.props.document !== window.document) {
+      window.document.addEventListener('click', this.resetPos);
+    }
   }
 
   beforeDestroy() {
     this.props.document.removeEventListener('click', this.handleClickDocument);
+    if (this.props.document !== window.document) {
+      window.document.removeEventListener('click', this.resetPos);
+    }
   }
+
+  private resetPos = () => {
+    this.setState({ pos: null });
+  };
 
   private handleClickDocument = (ev: MouseEvent) => {
     if (!closest(ev.target as HTMLElement, `.${cls('context-menu')}`)) {
-      this.setState({ pos: null });
+      this.resetPos();
+    } else {
+      ev.stopPropagation();
     }
   };
 
