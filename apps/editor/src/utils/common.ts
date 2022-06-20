@@ -13,8 +13,6 @@ const reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
 const reEscapePairedChars = /[*_~`]/g;
 const reMdImageSyntax = /!\[.*\]\(.*\)/g;
 const reEscapedCharInLinkSyntax = /[[\]]/g; //
-const reEndWithSpace = /(\S*)\s$/g;
-const reStartWithSpace = /^\s(\S*)/g;
 
 const XMLSPECIAL = '[&<>"]';
 const reXmlSpecial = new RegExp(XMLSPECIAL, 'g');
@@ -261,9 +259,13 @@ export function getSortedNumPair(valueA: number, valueB: number) {
 }
 
 export function isStartWithSpace(text: string) {
+  const reStartWithSpace = /^\s(\S*)/g;
+
   return reStartWithSpace.test(text);
 }
 
 export function isEndWithSpace(text: string) {
+  const reEndWithSpace = /(\S*)\s$/g;
+
   return reEndWithSpace.test(text);
 }
