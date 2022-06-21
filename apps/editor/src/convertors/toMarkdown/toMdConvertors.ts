@@ -224,20 +224,34 @@ export const toMdConvertors: ToMdConvertorMap = {
     };
   },
 
-  emph({ node }, { entering }) {
+  emph({ node }, { entering }, betweenSpace) {
     const { rawHTML } = node.attrs;
+    let delim;
+
+    if (betweenSpace) {
+      delim = '*';
+    } else {
+      delim = entering ? '<em>' : '</em>';
+    }
 
     return {
-      delim: '*',
+      delim,
       rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML),
     };
   },
 
-  strike({ node }, { entering }) {
+  strike({ node }, { entering }, betweenSpace) {
     const { rawHTML } = node.attrs;
+    let delim;
+
+    if (betweenSpace) {
+      delim = '~~';
+    } else {
+      delim = entering ? '<del>' : '</del>';
+    }
 
     return {
-      delim: '~~',
+      delim,
       rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML),
     };
   },
