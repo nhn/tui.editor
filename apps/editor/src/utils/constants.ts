@@ -20,3 +20,5 @@ export const reBR = /<br\s*\/*>/i;
 export const reHTMLComment = /<! ---->|<!--(?:-?[^>-])(?:-?[^-])*-->/;
 
 export const ALTERNATIVE_TAG_FOR_BR = '</p><p>';
+
+export const DEFAULT_TEXT_NOT_START_OR_END_WITH_SPACE = 'a';

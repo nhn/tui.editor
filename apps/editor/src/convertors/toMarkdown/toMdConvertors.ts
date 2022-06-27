@@ -210,11 +210,9 @@ export const toMdConvertors: ToMdConvertorMap = {
 
   strong({ node }, { entering }, betweenSpace) {
     const { rawHTML } = node.attrs;
-    let delim;
+    let delim = '**';
 
-    if (betweenSpace) {
-      delim = '**';
-    } else {
+    if (!betweenSpace) {
       delim = entering ? '<strong>' : '</strong>';
     }
 
@@ -226,11 +224,9 @@ export const toMdConvertors: ToMdConvertorMap = {
 
   emph({ node }, { entering }, betweenSpace) {
     const { rawHTML } = node.attrs;
-    let delim;
+    let delim = '*';
 
-    if (betweenSpace) {
-      delim = '*';
-    } else {
+    if (!betweenSpace) {
       delim = entering ? '<em>' : '</em>';
     }
 
@@ -242,11 +238,9 @@ export const toMdConvertors: ToMdConvertorMap = {
 
   strike({ node }, { entering }, betweenSpace) {
     const { rawHTML } = node.attrs;
-    let delim;
+    let delim = '~~';
 
-    if (betweenSpace) {
-      delim = '~~';
-    } else {
+    if (!betweenSpace) {
       delim = entering ? '<del>' : '</del>';
     }
 

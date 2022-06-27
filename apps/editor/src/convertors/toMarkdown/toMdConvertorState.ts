@@ -10,6 +10,7 @@ import {
   FirstDelimFn,
   InfoForPosSync,
 } from '@t/convertor';
+import { DEFAULT_TEXT_NOT_START_OR_END_WITH_SPACE } from '@/utils/constants';
 
 export default class ToMdConvertorState {
   private readonly nodeTypeConvertors: ToMdNodeTypeConvertorMap;
@@ -53,10 +54,12 @@ export default class ToMdConvertorState {
     const { content } = parent;
 
     const isFrontNodeEndWithSpace =
-      index === 0 || isEndWithSpace(content.child(index - 1).text ?? 'a');
+      index === 0 ||
+      isEndWithSpace(content.child(index - 1).text ?? DEFAULT_TEXT_NOT_START_OR_END_WITH_SPACE);
 
     const isRearNodeStartWithSpace =
-      index >= content.childCount - 1 || isStartWithSpace(content.child(index + 1).text ?? 'a');
+      index >= content.childCount - 1 ||
+      isStartWithSpace(content.child(index + 1).text ?? DEFAULT_TEXT_NOT_START_OR_END_WITH_SPACE);
 
     return isFrontNodeEndWithSpace && isRearNodeStartWithSpace;
   }
