@@ -23,6 +23,7 @@
     "@types/prosemirror-view": "^1.15.1",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "@typescript-eslint/parser": "^4.17.0",
+    "prosemirror-transform": "^1.6.0",
     "command-line-args": "^5.1.1",
     "common-tags": "^1.8.0",
     "copy-webpack-plugin": "^10.2.4",
