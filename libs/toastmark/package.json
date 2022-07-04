@@ -27,7 +27,7 @@
   "devDependencies": {
     "@types/codemirror": "5.60.5",
     "@types/mdurl": "^1.0.2",
-    "codemirror": "^5.51.0",
+    "codemirror": "^6.0.1",
     "entities": "^2.0.0",
     "mdurl": "^1.0.1"
   }
