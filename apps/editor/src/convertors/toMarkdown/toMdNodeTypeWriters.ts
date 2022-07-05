@@ -83,6 +83,9 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
       if (emptyNode && prevEmptyNode) {
         state.write('<br>\n');
       } else if (emptyNode && !prevEmptyNode && !firstChildNode) {
+        if (parent?.type.name === 'listItem') {
+          state.write('<br>');
+        }
         state.write('\n');
       } else {
         state.convertInline(node);
