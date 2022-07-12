@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.1.7 | Tue May 17 2022
+ * @version 3.1.8 | Tue Jul 12 2022
  * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -3392,7 +3392,8 @@ var reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\>])*\/?>|<(\/)([a-zA-Z_]
 var reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
 var reEscapePairedChars = /[*_~`]/g;
 var reMdImageSyntax = /!\[.*\]\(.*\)/g;
-var reEscapedCharInLinkSyntax = /[[\]]/g; //
+var reEscapedCharInLinkSyntax = /[[\]]/g;
+var reEscapeBackSlashInSentence = /(?:^|[^\\])\\(?!\\)/g;
 var XMLSPECIAL = '[&<>"]';
 var reXmlSpecial = new RegExp(XMLSPECIAL, 'g');
 function replaceUnsafeChar(char) {
@@ -3477,17 +3478,21 @@ function escapeTextForLink(text) {
     });
 }
 function common_escape(text) {
-    var replacer = function (matched) { return "\\" + matched; };
+    var aheadReplacer = function (matched) { return "\\" + matched; };
+    var behindReplacer = function (matched) { return matched + "\\"; };
     var escapedText = text.replace(reSpaceMoreThanOne, ' ');
     if (reEscapeBackSlash.test(escapedText)) {
-        escapedText = escapedText.replace(reEscapeBackSlash, replacer);
+        escapedText = escapedText.replace(reEscapeBackSlash, aheadReplacer);
     }
-    escapedText = escapedText.replace(reEscapePairedChars, replacer);
+    if (reEscapeBackSlashInSentence.test(escapedText)) {
+        escapedText = escapedText.replace(reEscapeBackSlashInSentence, behindReplacer);
+    }
+    escapedText = escapedText.replace(reEscapePairedChars, aheadReplacer);
     if (reEscapeHTML.test(escapedText)) {
-        escapedText = escapedText.replace(reEscapeHTML, replacer);
+        escapedText = escapedText.replace(reEscapeHTML, aheadReplacer);
     }
     if (isNeedEscapeText(escapedText)) {
-        escapedText = escapedText.replace(reEscapeChars, replacer);
+        escapedText = escapedText.replace(reEscapeChars, aheadReplacer);
     }
     return escapedText;
 }
@@ -3596,6 +3601,14 @@ function common_assign(targetObj, obj) {
 }
 function getSortedNumPair(valueA, valueB) {
     return valueA > valueB ? [valueB, valueA] : [valueA, valueB];
+}
+function isStartWithSpace(text) {
+    var reStartWithSpace = /^\s(\S*)/g;
+    return reStartWithSpace.test(text);
+}
+function isEndWithSpace(text) {
+    var reEndWithSpace = /(\S*)\s$/g;
+    return reEndWithSpace.test(text);
 }
 
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-view","commonjs2":"prosemirror-view","amd":"prosemirror-view"}
@@ -4001,6 +4014,7 @@ var reHTMLTag = new RegExp("^" + HTML_TAG, 'i');
 var reBR = /<br\s*\/*>/i;
 var reHTMLComment = /<! ---->|<!--(?:-?[^>-])(?:-?[^-])*-->/;
 var ALTERNATIVE_TAG_FOR_BR = '</p><p>';
+var DEFAULT_TEXT_NOT_START_OR_END_WITH_SPACE = 'a';
 
 ;// CONCATENATED MODULE: ./src/utils/dom.ts
 
@@ -22351,6 +22365,12 @@ var nodeTypeWriters = {
                 state.write('<br>\n');
             }
             else if (emptyNode && !prevEmptyNode && !firstChildNode) {
+                if ((parent === null || parent === void 0 ? void 0 : parent.type.name) === 'listItem') {
+                    var prevDelim = state.getDelim();
+                    state.setDelim('');
+                    state.write('<br>');
+                    state.setDelim(prevDelim);
+                }
                 state.write('\n');
             }
             else {
@@ -22710,30 +22730,42 @@ var toMdConvertors = {
             text: node.textContent,
         };
     },
-    strong: function (_a, _b) {
+    strong: function (_a, _b, betweenSpace) {
         var node = _a.node;
         var entering = _b.entering;
         var rawHTML = node.attrs.rawHTML;
+        var delim = '**';
+        if (!betweenSpace) {
+            delim = entering ? '<strong>' : '</strong>';
+        }
         return {
-            delim: '**',
+            delim: delim,
             rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML),
         };
     },
-    emph: function (_a, _b) {
+    emph: function (_a, _b, betweenSpace) {
         var node = _a.node;
         var entering = _b.entering;
         var rawHTML = node.attrs.rawHTML;
+        var delim = '*';
+        if (!betweenSpace) {
+            delim = entering ? '<em>' : '</em>';
+        }
         return {
-            delim: '*',
+            delim: delim,
             rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML),
         };
     },
-    strike: function (_a, _b) {
+    strike: function (_a, _b, betweenSpace) {
         var node = _a.node;
         var entering = _b.entering;
         var rawHTML = node.attrs.rawHTML;
+        var delim = '~~';
+        if (!betweenSpace) {
+            delim = entering ? '<del>' : '</del>';
+        }
         return {
-            delim: '~~',
+            delim: delim,
             rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML),
         };
     },
@@ -22840,7 +22872,7 @@ function createMarkTypeConvertors(convertors) {
     var markTypeConvertors = {};
     var markTypes = Object.keys(markTypeOptions);
     markTypes.forEach(function (type) {
-        markTypeConvertors[type] = function (nodeInfo, entering) {
+        markTypeConvertors[type] = function (nodeInfo, entering, betweenSpace) {
             var markOption = markTypeOptions[type];
             var convertor = convertors[type];
             // There are two ways to call the mark type converter
@@ -22848,7 +22880,9 @@ function createMarkTypeConvertors(convertors) {
             // When calling the converter without using `delim` and `rawHTML` values,
             // the converter is called without parameters.
             var runConvertor = convertor && nodeInfo && !isUndefined_default()(entering);
-            var params = runConvertor ? convertor(nodeInfo, { entering: entering }) : {};
+            var params = runConvertor
+                ? convertor(nodeInfo, { entering: entering }, betweenSpace)
+                : {};
             return __assign(__assign({}, params), markOption);
         };
     });
@@ -22892,6 +22926,7 @@ function createMdConvertors(customConvertors) {
 
 ;// CONCATENATED MODULE: ./src/convertors/toMarkdown/toMdConvertorState.ts
 
+
 var ToMdConvertorState = /** @class */ (function () {
     function ToMdConvertorState(_a) {
         var nodeTypeConvertors = _a.nodeTypeConvertors, markTypeConvertors = _a.markTypeConvertors;
@@ -22911,13 +22946,29 @@ var ToMdConvertorState = /** @class */ (function () {
     ToMdConvertorState.prototype.isInBlank = function () {
         return /(^|\n)$/.test(this.result);
     };
+    ToMdConvertorState.prototype.isBetweenSpaces = function (parent, index) {
+        var _a, _b;
+        var content = parent.content;
+        var isFrontNodeEndWithSpace = index === 0 ||
+            isEndWithSpace((_a = content.child(index - 1).text) !== null && _a !== void 0 ? _a : DEFAULT_TEXT_NOT_START_OR_END_WITH_SPACE);
+        var isRearNodeStartWithSpace = index >= content.childCount - 1 ||
+            isStartWithSpace((_b = content.child(index + 1).text) !== null && _b !== void 0 ? _b : DEFAULT_TEXT_NOT_START_OR_END_WITH_SPACE);
+        return isFrontNodeEndWithSpace && isRearNodeStartWithSpace;
+    };
     ToMdConvertorState.prototype.markText = function (mark, entering, parent, index) {
         var convertor = this.getMarkConvertor(mark);
         if (convertor) {
-            var _a = convertor({ node: mark, parent: parent, index: index }, entering), delim = _a.delim, rawHTML = _a.rawHTML;
+            var betweenSpace = this.isBetweenSpaces(parent, entering ? index : index - 1);
+            var _a = convertor({ node: mark, parent: parent, index: index }, entering, betweenSpace), delim = _a.delim, rawHTML = _a.rawHTML;
             return rawHTML || delim;
         }
         return '';
+    };
+    ToMdConvertorState.prototype.setDelim = function (delim) {
+        this.delim = delim;
+    };
+    ToMdConvertorState.prototype.getDelim = function () {
+        return this.delim;
     };
     ToMdConvertorState.prototype.flushClose = function (size) {
         if (!this.stopNewline && this.closed) {
@@ -22941,11 +22992,11 @@ var ToMdConvertorState = /** @class */ (function () {
         }
     };
     ToMdConvertorState.prototype.wrapBlock = function (delim, firstDelim, node, fn) {
-        var old = this.delim;
+        var old = this.getDelim();
         this.write(firstDelim || delim);
-        this.delim += delim;
+        this.setDelim(this.getDelim() + delim);
         fn();
-        this.delim = old;
+        this.setDelim(old);
         this.closeBlock(node);
     };
     ToMdConvertorState.prototype.ensureNewLine = function () {

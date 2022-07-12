@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.1.7 | Tue May 17 2022
+ * @version 3.1.8 | Tue Jul 12 2022
  * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -12080,6 +12080,7 @@ var reHTMLTag = new RegExp("^" + constants_HTML_TAG, 'i');
 var constants_reBR = /<br\s*\/*>/i;
 var reHTMLComment = /<! ---->|<!--(?:-?[^>-])(?:-?[^-])*-->/;
 var constants_ALTERNATIVE_TAG_FOR_BR = '</p><p>';
+var DEFAULT_TEXT_NOT_START_OR_END_WITH_SPACE = 'a';
 
 // EXTERNAL MODULE: ../../node_modules/tui-code-snippet/type/isNull.js
 var type_isNull = __webpack_require__(934);
@@ -12098,7 +12099,8 @@ var reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\>])*\/?>|<(\/)([a-zA-Z_]
 var reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
 var reEscapePairedChars = /[*_~`]/g;
 var reMdImageSyntax = /!\[.*\]\(.*\)/g;
-var reEscapedCharInLinkSyntax = /[[\]]/g; //
+var reEscapedCharInLinkSyntax = /[[\]]/g;
+var reEscapeBackSlashInSentence = /(?:^|[^\\])\\(?!\\)/g;
 var common_XMLSPECIAL = '[&<>"]';
 var common_reXmlSpecial = new RegExp(common_XMLSPECIAL, 'g');
 function common_replaceUnsafeChar(char) {
@@ -12183,17 +12185,21 @@ function escapeTextForLink(text) {
     });
 }
 function common_escape(text) {
-    var replacer = function (matched) { return "\\" + matched; };
+    var aheadReplacer = function (matched) { return "\\" + matched; };
+    var behindReplacer = function (matched) { return matched + "\\"; };
     var escapedText = text.replace(reSpaceMoreThanOne, ' ');
     if (reEscapeBackSlash.test(escapedText)) {
-        escapedText = escapedText.replace(reEscapeBackSlash, replacer);
+        escapedText = escapedText.replace(reEscapeBackSlash, aheadReplacer);
     }
-    escapedText = escapedText.replace(reEscapePairedChars, replacer);
+    if (reEscapeBackSlashInSentence.test(escapedText)) {
+        escapedText = escapedText.replace(reEscapeBackSlashInSentence, behindReplacer);
+    }
+    escapedText = escapedText.replace(reEscapePairedChars, aheadReplacer);
     if (reEscapeHTML.test(escapedText)) {
-        escapedText = escapedText.replace(reEscapeHTML, replacer);
+        escapedText = escapedText.replace(reEscapeHTML, aheadReplacer);
     }
     if (isNeedEscapeText(escapedText)) {
-        escapedText = escapedText.replace(common_reEscapeChars, replacer);
+        escapedText = escapedText.replace(common_reEscapeChars, aheadReplacer);
     }
     return escapedText;
 }
@@ -12302,6 +12308,14 @@ function common_assign(targetObj, obj) {
 }
 function getSortedNumPair(valueA, valueB) {
     return valueA > valueB ? [valueB, valueA] : [valueA, valueB];
+}
+function isStartWithSpace(text) {
+    var reStartWithSpace = /^\s(\S*)/g;
+    return reStartWithSpace.test(text);
+}
+function isEndWithSpace(text) {
+    var reEndWithSpace = /(\S*)\s$/g;
+    return reEndWithSpace.test(text);
 }
 
 ;// CONCATENATED MODULE: ./src/utils/dom.ts
