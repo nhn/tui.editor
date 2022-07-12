@@ -12,7 +12,8 @@ const reEscapeHTML = /<([a-zA-Z_][a-zA-Z0-9\-._]*)(\s|[^\\>])*\/?>|<(\/)([a-zA-Z
 const reEscapeBackSlash = /\\[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~\\]/g;
 const reEscapePairedChars = /[*_~`]/g;
 const reMdImageSyntax = /!\[.*\]\(.*\)/g;
-const reEscapedCharInLinkSyntax = /[[\]]/g; //
+const reEscapedCharInLinkSyntax = /[[\]]/g;
+const reEscapeBackSlashInSentence = /(?:^|[^\\])\\(?!\\)/g;
 
 const XMLSPECIAL = '[&<>"]';
 const reXmlSpecial = new RegExp(XMLSPECIAL, 'g');
@@ -118,22 +119,27 @@ export function escapeTextForLink(text: string) {
 }
 
 export function escape(text: string) {
-  const replacer = (matched: string) => `\\${matched}`;
+  const aheadReplacer = (matched: string) => `\\${matched}`;
+  const behindReplacer = (matched: string) => `${matched}\\`;
 
   let escapedText = text.replace(reSpaceMoreThanOne, ' ');
 
   if (reEscapeBackSlash.test(escapedText)) {
-    escapedText = escapedText.replace(reEscapeBackSlash, replacer);
+    escapedText = escapedText.replace(reEscapeBackSlash, aheadReplacer);
   }
 
-  escapedText = escapedText.replace(reEscapePairedChars, replacer);
+  if (reEscapeBackSlashInSentence.test(escapedText)) {
+    escapedText = escapedText.replace(reEscapeBackSlashInSentence, behindReplacer);
+  }
+
+  escapedText = escapedText.replace(reEscapePairedChars, aheadReplacer);
 
   if (reEscapeHTML.test(escapedText)) {
-    escapedText = escapedText.replace(reEscapeHTML, replacer);
+    escapedText = escapedText.replace(reEscapeHTML, aheadReplacer);
   }
 
   if (isNeedEscapeText(escapedText)) {
-    escapedText = escapedText.replace(reEscapeChars, replacer);
+    escapedText = escapedText.replace(reEscapeChars, aheadReplacer);
   }
 
   return escapedText;

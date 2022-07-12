@@ -1128,4 +1128,15 @@ describe('Convertor', () => {
 
     expect(result).toBe(`* test\\_1\n<br>\n* test\\_2`);
   });
+
+  it('should escape the backslash, which is a plain chracter in the middle of a sentence', () => {
+    const markdown = source`
+      backslash \\in the middle of a sentence
+      `;
+    const expected = source`
+      backslash \\\\in the middle of a sentence
+      `;
+
+    assertConverting(markdown, expected);
+  });
 });
