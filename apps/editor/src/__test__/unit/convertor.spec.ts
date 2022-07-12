@@ -1099,6 +1099,36 @@ describe('Convertor', () => {
     expect(result).toBe(`<strong>"test"</strong>a`);
   });
 
+  it('should convert empty line between lists of wysiwig to <br>', () => {
+    const wwNodeJson = {
+      type: 'doc',
+      content: [
+        {
+          type: 'bulletList',
+          content: [
+            {
+              type: 'listItem',
+              content: [
+                { type: 'paragraph', content: [{ type: 'text', text: 'test_1' }] },
+                { type: 'paragraph', content: [] },
+              ],
+            },
+            {
+              type: 'listItem',
+              content: [{ type: 'paragraph', content: [{ type: 'text', text: 'test_2' }] }],
+            },
+          ],
+        },
+      ],
+    };
+
+    const wwNode = Node.fromJSON(schema, wwNodeJson);
+
+    const result = convertor.toMarkdownText(wwNode);
+
+    expect(result).toBe(`* test\\_1\n<br>\n* test\\_2`);
+  });
+
   it('should escape the backslash, which is a plain chracter in the middle of a sentence', () => {
     const markdown = source`
       backslash \\in the middle of a sentence
