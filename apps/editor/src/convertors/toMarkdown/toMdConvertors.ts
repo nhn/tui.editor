@@ -208,29 +208,44 @@ export const toMdConvertors: ToMdConvertorMap = {
     };
   },
 
-  strong({ node }, { entering }) {
+  strong({ node }, { entering }, betweenSpace) {
     const { rawHTML } = node.attrs;
+    let delim = '**';
+
+    if (!betweenSpace) {
+      delim = entering ? '<strong>' : '</strong>';
+    }
 
     return {
-      delim: '**',
+      delim,
       rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML),
     };
   },
 
-  emph({ node }, { entering }) {
+  emph({ node }, { entering }, betweenSpace) {
     const { rawHTML } = node.attrs;
+    let delim = '*';
+
+    if (!betweenSpace) {
+      delim = entering ? '<em>' : '</em>';
+    }
 
     return {
-      delim: '*',
+      delim,
       rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML),
     };
   },
 
-  strike({ node }, { entering }) {
+  strike({ node }, { entering }, betweenSpace) {
     const { rawHTML } = node.attrs;
+    let delim = '~~';
+
+    if (!betweenSpace) {
+      delim = entering ? '<del>' : '</del>';
+    }
 
     return {
-      delim: '~~',
+      delim,
       rawHTML: entering ? getOpenRawHTML(rawHTML) : getCloseRawHTML(rawHTML),
     };
   },
@@ -353,7 +368,7 @@ function createMarkTypeConvertors(convertors: ToMdConvertorMap) {
   const markTypes = Object.keys(markTypeOptions) as WwMarkType[];
 
   markTypes.forEach((type) => {
-    markTypeConvertors[type] = (nodeInfo, entering) => {
+    markTypeConvertors[type] = (nodeInfo, entering, betweenSpace) => {
       const markOption = markTypeOptions[type];
       const convertor = convertors[type];
 
@@ -362,7 +377,9 @@ function createMarkTypeConvertors(convertors: ToMdConvertorMap) {
       // When calling the converter without using `delim` and `rawHTML` values,
       // the converter is called without parameters.
       const runConvertor = convertor && nodeInfo && !isUndefined(entering);
-      const params = runConvertor ? convertor!(nodeInfo as MarkInfo, { entering }) : {};
+      const params = runConvertor
+        ? convertor!(nodeInfo as MarkInfo, { entering }, betweenSpace)
+        : {};
 
       return { ...params, ...markOption };
     };

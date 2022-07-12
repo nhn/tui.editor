@@ -1,6 +1,6 @@
 import { Node, Mark } from 'prosemirror-model';
 
-import { includes, escape, last } from '@/utils/common';
+import { includes, escape, last, isEndWithSpace, isStartWithSpace } from '@/utils/common';
 
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 import {
@@ -10,6 +10,7 @@ import {
   FirstDelimFn,
   InfoForPosSync,
 } from '@t/convertor';
+import { DEFAULT_TEXT_NOT_START_OR_END_WITH_SPACE } from '@/utils/constants';
 
 export default class ToMdConvertorState {
   private readonly nodeTypeConvertors: ToMdNodeTypeConvertorMap;
@@ -49,16 +50,40 @@ export default class ToMdConvertorState {
     return /(^|\n)$/.test(this.result);
   }
 
+  private isBetweenSpaces(parent: Node, index: number) {
+    const { content } = parent;
+
+    const isFrontNodeEndWithSpace =
+      index === 0 ||
+      isEndWithSpace(content.child(index - 1).text ?? DEFAULT_TEXT_NOT_START_OR_END_WITH_SPACE);
+
+    const isRearNodeStartWithSpace =
+      index >= content.childCount - 1 ||
+      isStartWithSpace(content.child(index + 1).text ?? DEFAULT_TEXT_NOT_START_OR_END_WITH_SPACE);
+
+    return isFrontNodeEndWithSpace && isRearNodeStartWithSpace;
+  }
+
   private markText(mark: Mark, entering: boolean, parent: Node, index: number) {
     const convertor = this.getMarkConvertor(mark);
 
     if (convertor) {
-      const { delim, rawHTML } = convertor({ node: mark, parent, index }, entering);
+      const betweenSpace = this.isBetweenSpaces(parent, entering ? index : index - 1);
+
+      const { delim, rawHTML } = convertor({ node: mark, parent, index }, entering, betweenSpace);
 
       return (rawHTML as string) || (delim as string);
     }
 
     return '';
+  }
+
+  setDelim(delim: string) {
+    this.delim = delim;
+  }
+
+  getDelim() {
+    return this.delim;
   }
 
   flushClose(size?: number) {
@@ -89,12 +114,12 @@ export default class ToMdConvertorState {
   }
 
   wrapBlock(delim: string, firstDelim: string | null, node: Node, fn: () => void) {
-    const old = this.delim;
+    const old = this.getDelim();
 
     this.write(firstDelim || delim);
-    this.delim += delim;
+    this.setDelim(this.getDelim() + delim);
     fn();
-    this.delim = old;
+    this.setDelim(old);
     this.closeBlock(node);
   }
 
