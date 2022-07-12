@@ -78,6 +78,14 @@ export default class ToMdConvertorState {
     return '';
   }
 
+  setDelim(delim: string) {
+    this.delim = delim;
+  }
+
+  getDelim() {
+    return this.delim;
+  }
+
   flushClose(size?: number) {
     if (!this.stopNewline && this.closed) {
       if (!this.isInBlank()) {
