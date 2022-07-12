@@ -114,12 +114,12 @@ export default class ToMdConvertorState {
   }
 
   wrapBlock(delim: string, firstDelim: string | null, node: Node, fn: () => void) {
-    const old = this.delim;
+    const old = this.getDelim();
 
     this.write(firstDelim || delim);
-    this.delim += delim;
+    this.setDelim(this.getDelim() + delim);
     fn();
-    this.delim = old;
+    this.setDelim(old);
     this.closeBlock(node);
   }
 

@@ -1099,7 +1099,7 @@ describe('Convertor', () => {
     expect(result).toBe(`<strong>"test"</strong>a`);
   });
 
-  it('should convert empty line which is between lists of wysiwig to <br>', () => {
+  it('should convert empty line between lists of wysiwig to <br>', () => {
     const wwNodeJson = {
       type: 'doc',
       content: [
