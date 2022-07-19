@@ -13,8 +13,6 @@ const TASK_CHECKED_CLASS_NAME = 'checked';
 export default class EditorClass extends Editor {
   private previewContent: HTMLElement | null = null;
 
-  private container!: HTMLElement;
-
   private toastMark!: ToastMark;
 
   private mdEditor!: MarkdownEditor;
@@ -24,6 +22,8 @@ export default class EditorClass extends Editor {
   private isModified = false;
 
   private isAllowedToggleTask: boolean;
+
+  public container!: HTMLElement;
 
   constructor(options: EditorClassOptions) {
     super(options);
