@@ -167,6 +167,11 @@ export function autoComplete(context: PluginContext, reducer: Required<PluginOpt
         }
         return false;
       },
+      handleDOMEvents: {
+        blur(view) {
+          return closeAutoComplete(view);
+        },
+      },
     },
   });
 
