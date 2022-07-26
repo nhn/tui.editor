@@ -1,7 +1,8 @@
 import { PluginContext } from '@toast-ui/editor';
 import { isAutoCompleteMode, pluginKey } from '@/utils';
 import { TR_ACTIONS } from '@/constants';
-import type { Trigger } from '@t/index';
+import { Plugin } from 'prosemirror-state';
+import type { AutoCompleteState, Trigger } from '@t/index';
 
 const CODE_SYNTAX = '`';
 const CODE_BLOCK_CLASS = 'code-block-line-background';
@@ -12,6 +13,7 @@ export function autoCompleteTrigger(context: PluginContext, triggers: Trigger[])
     (trigger) =>
       new context.pmRules.InputRule(trigger.regex, (state, match) => {
         const decorationSet = new context.pmView.DecorationSet();
+        const plugin = pluginKey.get(state) as Plugin<AutoCompleteState>;
 
         if (isAutoCompleteMode(state.selection, decorationSet)) {
           return null;
@@ -29,6 +31,10 @@ export function autoCompleteTrigger(context: PluginContext, triggers: Trigger[])
         }
 
         if (node.textContent.includes(CODE_SYNTAX)) {
+          return null;
+        }
+
+        if (plugin.getState(state).active) {
           return null;
         }
 
