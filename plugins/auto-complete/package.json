@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/editor-plugin-dooray-auto-complete",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "TOAST UI Editor : Dooray! Auto Complete Plugin",
   "keywords": [],
   "main": "dist/toastui-editor-plugin-dooray-auto-complete.js",
