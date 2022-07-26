@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.1.8 | Tue Jul 12 2022
+ * @version 3.1.9 | Tue Jul 26 2022
  * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -23898,6 +23898,7 @@ function buildQuery(editor) {
 
 
 
+
 /**
  * ToastUIEditorCore
  * @param {Object} options Option object
@@ -24509,6 +24510,32 @@ var ToastUIEditorCore = /** @class */ (function () {
             mdPreview: this.preview.getElement(),
             wwEditor: this.wwEditor.getElement(),
         };
+    };
+    /**
+     * Convert position to match editor mode
+     * @param {number|Array.<number>} start - start position
+     * @param {number|Array.<number>} end - end position
+     * @param {string} mode - Editor mode name of want to match converted position to
+     */
+    ToastUIEditorCore.prototype.convertPosToMatchEditorMode = function (start, end, mode) {
+        var _a, _b;
+        if (end === void 0) { end = start; }
+        if (mode === void 0) { mode = this.mode; }
+        var doc = this.mdEditor.view.state.doc;
+        var isFromArray = Array.isArray(start);
+        var isToArray = Array.isArray(end);
+        var convertedFrom = start;
+        var convertedTo = end;
+        if (isFromArray !== isToArray) {
+            throw new Error('Types of arguments must be same');
+        }
+        if (mode === 'markdown' && !isFromArray && !isToArray) {
+            _a = getEditorToMdPos(doc, start, end), convertedFrom = _a[0], convertedTo = _a[1];
+        }
+        else if (mode === 'wysiwyg' && isFromArray && isToArray) {
+            _b = getMdToEditorPos(doc, start, end), convertedFrom = _b[0], convertedTo = _b[1];
+        }
+        return [convertedFrom, convertedTo];
     };
     return ToastUIEditorCore;
 }());

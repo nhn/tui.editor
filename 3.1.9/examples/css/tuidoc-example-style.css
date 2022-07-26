@@ -1,0 +1,38 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.tui-doc-description {
+  padding: 22px 52px;
+  background-color: rgba(81, 92, 230, 0.1);
+  line-height: 1.4em;
+}
+
+.tui-doc-description,
+.tui-doc-description a {
+  font-family: Arial;
+  font-size: 14px;
+  color: #515ce6;
+}
+
+.tui-doc-contents {
+  padding: 20px 52px;
+}
+
+.tui-doc-contents .btn {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 0 14px 0 15px;
+  height: 28px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #fff;
+  border: 0;
+  vertical-align: top;
+  line-height: 22px;
+  background: #777;
+  cursor: pointer;
+  border-radius: 5px;
+  outline: 0;
+}
