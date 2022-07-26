@@ -61,6 +61,27 @@ describe('editor', () => {
       document.body.removeChild(container);
     });
 
+    describe('convertPosToMatchEditorMode', () => {
+      const mdPos: [number, number] = [2, 1];
+      const wwPos = 14;
+
+      it('should convert position to match editor mode', () => {
+        editor.setMarkdown('Hello World\nwelcome to the world');
+
+        editor.changeMode('wysiwyg');
+        expect(editor.convertPosToMatchEditorMode(mdPos)).toEqual([wwPos, wwPos]);
+
+        editor.changeMode('markdown');
+        expect(editor.convertPosToMatchEditorMode(wwPos)).toEqual([mdPos, mdPos]);
+      });
+
+      it('should occurs error when types of parameters is not matched', () => {
+        expect(() => {
+          editor.convertPosToMatchEditorMode(mdPos, wwPos);
+        }).toThrowError();
+      });
+    });
+
     it('setPlaceholder()', () => {
       editor.setPlaceholder('Please input text');
 
