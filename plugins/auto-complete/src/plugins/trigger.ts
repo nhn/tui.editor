@@ -1,42 +1,41 @@
 import { PluginContext } from '@toast-ui/editor';
 import { isAutoCompleteMode, pluginKey } from '@/utils';
 import { TR_ACTIONS } from '@/constants';
-import type { Trigger } from '@t/index';
+import { EditorState, Plugin } from 'prosemirror-state';
+import type { AutoCompleteState, Trigger } from '@t/index';
 
-const CODE_SYNTAX = '`';
-const CODE_BLOCK_CLASS = 'code-block-line-background';
-const CUSTOM_BLOCK_CLASS = 'custom-block-line-background';
+const reBlockClass = /(code-block|custom-block)/;
+const reBlankChracters = /^\s*$/;
+
+function isTriggeringAutoComplete(state: EditorState, context: PluginContext) {
+  const { selection } = state.tr;
+  const { depth, parentOffset } = selection.$from;
+  const node = selection.$from.node(depth);
+  const prevCharacter = node.textContent.charAt(parentOffset - 1);
+  const plugin = pluginKey.get(state) as Plugin<AutoCompleteState>;
+  const decorationSet = new context.pmView.DecorationSet();
+
+  return (
+    reBlankChracters.test(prevCharacter) &&
+    !reBlockClass.test(node.attrs.className) &&
+    !plugin.getState(state).active &&
+    !isAutoCompleteMode(state.selection, decorationSet)
+  );
+}
 
 export function autoCompleteTrigger(context: PluginContext, triggers: Trigger[]) {
   const rules = triggers.map(
     (trigger) =>
       new context.pmRules.InputRule(trigger.regex, (state, match) => {
-        const decorationSet = new context.pmView.DecorationSet();
+        if (isTriggeringAutoComplete(state, context)) {
+          const tr = state.tr.insertText(match[1][match[1].length - 1]);
+          const meta = { act: TR_ACTIONS.ADD, trigger: match[1], triggerType: trigger };
 
-        if (isAutoCompleteMode(state.selection, decorationSet)) {
-          return null;
+          tr.setMeta(pluginKey, meta);
+          return tr;
         }
 
-        const { selection } = state.tr;
-        const { depth } = selection.$from;
-        const node = selection.$from.node(depth);
-
-        if (
-          node.attrs.className?.includes(CODE_BLOCK_CLASS) ||
-          node.attrs.className?.includes(CUSTOM_BLOCK_CLASS)
-        ) {
-          return null;
-        }
-
-        if (node.textContent.includes(CODE_SYNTAX)) {
-          return null;
-        }
-
-        const tr = state.tr.insertText(match[1][match[1].length - 1]);
-        const meta = { act: TR_ACTIONS.ADD, trigger: match[1], triggerType: trigger };
-
-        tr.setMeta(pluginKey, meta);
-        return tr;
+        return null;
       })
   );
 
