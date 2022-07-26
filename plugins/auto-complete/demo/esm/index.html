@@ -132,6 +132,12 @@
               console.log('arrow down suggestion', suggestionInfo.current);
               setSuggestion(suggestionEl);
               return true;
+            case 'ArrowLeft':
+              console.log('arrow left');
+              return true;
+            case 'ArrowRight':
+              console.log('arrow right');
+              return true;
             case 'close':
               suggestionInfo.open = false;
               setSuggestion(suggestionEl);

@@ -161,6 +161,8 @@ export function autoComplete(context: PluginContext, reducer: Required<PluginOpt
             );
           case USER_ACTIONS.UP:
           case USER_ACTIONS.DOWN:
+          case USER_ACTIONS.LEFT:
+          case USER_ACTIONS.RIGHT:
             return reducer({ ...currentAction, act: userAction });
           default:
             break;
