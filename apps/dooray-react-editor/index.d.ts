@@ -25,6 +25,8 @@ export type EditorProps = Omit<EditorClassOptions, 'el'> & Partial<EventMapping>
 export type ViewerProps = Omit<ViewerOptions, 'el'> & Partial<EventMapping>;
 
 export class EditorClass extends ToastuiEditor {
+  container: HTMLElement;
+
   useViewerOnlyMode(useMode: boolean): void;
 }
 
