@@ -266,6 +266,8 @@ export class EditorCore {
   setPlaceholder(placeholder: string): void;
 
   getEditorElements(): Slots;
+
+  convertPosToMatchEditorMode(start: EditorPos, end?: EditorPos, mode?: EditorType): EditorPos[];
 }
 
 export class Editor extends EditorCore {
