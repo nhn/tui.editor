@@ -314,7 +314,7 @@ export interface Base {
 
   createSchema(): Schema;
 
-  createKeymaps(useCommandShortcut: boolean): Plugin<any, any>[];
+  createKeymaps(useCommandShortcut: boolean): Plugin[];
 
   createCommands(): Record<string, EditorCommandFn<Record<string, any>>>;
 
