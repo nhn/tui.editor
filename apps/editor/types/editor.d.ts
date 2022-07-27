@@ -266,6 +266,8 @@ export class EditorCore {
   setPlaceholder(placeholder: string): void;
 
   getEditorElements(): Slots;
+
+  convertPosToMatchEditorMode(start: EditorPos, end?: EditorPos, mode?: EditorType): EditorPos[];
 }
 
 export class Editor extends EditorCore {
@@ -353,8 +355,6 @@ export interface Base {
   getSelection(): SelectionPos;
 
   getRangeInfoOfNode(pos?: EditorPos): NodeRangeInfo;
-
-  convertPosToMatchEditorMode(start: EditorPos, end?: EditorPos, mode?: EditorType): EditorPos[];
 }
 
 export type SchemaMap = Record<string, NodeSpec | MarkSpec>;
