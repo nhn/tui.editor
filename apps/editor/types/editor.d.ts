@@ -353,6 +353,8 @@ export interface Base {
   getSelection(): SelectionPos;
 
   getRangeInfoOfNode(pos?: EditorPos): NodeRangeInfo;
+
+  convertPosToMatchEditorMode(start: EditorPos, end?: EditorPos, mode?: EditorType): EditorPos[];
 }
 
 export type SchemaMap = Record<string, NodeSpec | MarkSpec>;
