@@ -66,3 +66,15 @@ export function splitAndExtendBlock(
     .insert(tr.mapping.map(pos), node)
     .setSelection(createTextSelection(tr, tr.mapping.map(pos) - textLen));
 }
+
+export function getNodeAt(doc: ProsemirrorNode, pos: number) {
+  let currentNodeAtPos;
+
+  try {
+    currentNodeAtPos = doc.nodeAt(pos);
+  } catch (e) {
+    currentNodeAtPos = null;
+  }
+
+  return currentNodeAtPos;
+}

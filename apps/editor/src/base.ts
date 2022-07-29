@@ -116,7 +116,7 @@ export default abstract class EditorBase implements Base {
           parent.forEach((child) => isWidgetNode(child) && (count += 1));
 
           // replace the content only if the count of matched rules in whole text is greater than current widget node count
-          if (allMatched.length > count) {
+          if (allMatched.length > count && !parent.attrs.className?.includes('line-background')) {
             const content = last(allMatched);
             const nodes = createNodesWithWidget(content, schema);
 

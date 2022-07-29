@@ -1,4 +1,4 @@
-import { Transaction } from 'prosemirror-state';
+import { EditorState, Transaction } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
 import { Fragment, Slice } from 'prosemirror-model';
 import { ReplaceAroundStep } from 'prosemirror-transform';
@@ -13,7 +13,7 @@ import EditorBase from '@/base';
 import SpecManager from '@/spec/specManager';
 import { cls, toggleClass } from '@/utils/dom';
 import { emitImageBlobHook, pasteImageOnly } from '@/helper/image';
-import { createParagraph, createTextSelection } from '@/helper/manipulation';
+import { createParagraph, createTextSelection, getNodeAt } from '@/helper/manipulation';
 import { syntaxHighlight } from './plugins/syntaxHighlight';
 import { previewHighlight } from './plugins/previewHighlight';
 import { Doc } from './nodes/doc';
@@ -38,6 +38,8 @@ import { smartTask } from './plugins/smartTask';
 import { createNodesWithWidget, unwrapWidgetSyntax } from '@/widget/rules';
 import { Widget, widgetNodeView } from '@/widget/widgetNode';
 import { PluginProp } from '@t/plugin';
+import { isNil } from '@/utils/common';
+import { undoExcuted } from '@/commands/defaultCommands';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -51,6 +53,9 @@ interface MarkdownOptions {
 
 const EVENT_TYPE = 'cut';
 const reLineEnding = /\r\n|\n|\r/;
+const reWidget = /\$\$widget\d+ (\S+)\$\$/;
+const reLineBackground = /line-background/;
+const reRollbackWidgetMarks = /(codeBlock|customBlock|code)/;
 
 export default class MdEditor extends EditorBase {
   private toastMark: ToastMark;
@@ -174,6 +179,77 @@ export default class MdEditor extends EditorBase {
     ].concat(this.defaultPlugins);
   }
 
+  private rollbackWidget(state: EditorState, docChanged: boolean) {
+    const { tr, schema } = state;
+
+    let newTr: Transaction = tr;
+    let findWidget = false;
+
+    if (docChanged) {
+      const { lineTexts } = this.toastMark;
+      const reverseLineTexts = lineTexts.slice().reverse();
+      const lineCount = lineTexts.length;
+
+      reverseLineTexts.forEach((text, reverseIndex) => {
+        const match = text.match(reWidget);
+        const index = lineCount - reverseIndex - 1;
+
+        if (match && !isNil(match.index)) {
+          const mdPos: MdPos = [index + 1, match.index + 1];
+          const [pos] = getMdToEditorPos(newTr.doc, mdPos, mdPos);
+          const node = getNodeAt(newTr.doc, pos);
+
+          const marks = node?.marks.map((mark) => mark.type.name).join(' ') ?? '';
+
+          if (node && node.type.name === 'widget' && reRollbackWidgetMarks.test(marks)) {
+            const nodes = createParagraph(
+              schema,
+              createNodesWithWidget(node.textContent.match(reWidget)![1], schema, 0, false)
+            );
+
+            const slice = new Slice(Fragment.from(nodes), 1, 1);
+
+            newTr = newTr.replaceRange(pos, pos + node.content.size + 1, slice);
+
+            findWidget = true;
+          }
+        }
+      });
+    }
+
+    return findWidget ? newTr : null;
+  }
+
+  private fromRollbackWidget({ doc, before }: Transaction) {
+    let isFromRollbackWidget = false;
+
+    if (doc.textContent.length - before.textContent.length >= 12) {
+      before.descendants((node, pos, parent) => {
+        if (isFromRollbackWidget) {
+          return false;
+        }
+
+        const currentNodeAtPos = getNodeAt(doc, pos);
+        const marks = node.marks.map((mark) => mark.type.name).join(' ');
+
+        if (
+          node.type.name === 'text' &&
+          parent.type.name !== 'widget' &&
+          reRollbackWidgetMarks.test(marks) &&
+          currentNodeAtPos?.type.name === 'widget'
+        ) {
+          isFromRollbackWidget = true;
+
+          return false;
+        }
+
+        return true;
+      });
+    }
+
+    return isFromRollbackWidget;
+  }
+
   createView() {
     return new EditorView(this.el, {
       state: this.createState(),
@@ -183,7 +259,20 @@ export default class MdEditor extends EditorBase {
         const { state } = this.view.state.applyTransaction(tr);
 
         this.view.updateState(state);
-        this.emitChangeEvent(tr);
+
+        const isFromRollbackWidget = undoExcuted && this.fromRollbackWidget(tr);
+
+        if (isFromRollbackWidget) {
+          this.commands.undo();
+        } else {
+          const newTr = this.rollbackWidget(state, tr.docChanged);
+
+          if (newTr) {
+            this.view.dispatch(newTr);
+          } else {
+            this.emitChangeEvent(tr);
+          }
+        }
       },
       handleKeyDown: (_, ev) => {
         if ((ev.metaKey || ev.ctrlKey) && ev.key.toUpperCase() === 'V') {
@@ -282,25 +371,35 @@ export default class MdEditor extends EditorBase {
     this.view.dispatch(tr.setSelection(createTextSelection(tr, from, to)).scrollIntoView());
   }
 
+  private getRangeForReplace(start?: MdPos, end?: MdPos) {
+    const { doc, selection } = this.view.state;
+    let from, to;
+
+    if (start && end) {
+      [from, to] = getMdToEditorPos(doc, start, end);
+    } else {
+      from = selection.from;
+      to = selection.to;
+    }
+
+    return [from, to];
+  }
+
   replaceSelection(text: string, start?: MdPos, end?: MdPos) {
-    let newTr;
     const { tr, schema, doc } = this.view.state;
     const lineTexts = text.split(reLineEnding);
+    const [from, to] = this.getRangeForReplace(start, end);
+    const { parent } = doc.resolve(from);
+    const parseToWidget = !parent.attrs.className?.search(reLineBackground);
+
     const nodes = lineTexts.map((lineText) =>
-      createParagraph(schema, createNodesWithWidget(lineText, schema))
+      createParagraph(schema, createNodesWithWidget(lineText, schema, 0, parseToWidget))
     );
     const slice = new Slice(Fragment.from(nodes), 1, 1);
 
     this.focus();
 
-    if (start && end) {
-      const [from, to] = getMdToEditorPos(doc, start, end);
-
-      newTr = tr.replaceRange(from, to, slice);
-    } else {
-      newTr = tr.replaceSelection(slice);
-    }
-    this.view.dispatch(newTr.scrollIntoView());
+    this.view.dispatch(tr.replaceRange(from, to, slice).scrollIntoView());
   }
 
   deleteSelection(start?: MdPos, end?: MdPos) {

@@ -225,16 +225,27 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   replaceSelection(text: string, start?: number, end?: number) {
-    const { schema, tr } = this.view.state;
+    const { state } = this.view;
+    const { schema, tr, selection } = state;
     const lineTexts = text.split('\n');
+
+    let from = start,
+      to = end;
+
+    if (!(isNumber(from) && isNumber(to))) {
+      from = selection.from;
+      to = selection.to;
+    }
+
+    const { parent } = state.doc.resolve(from);
+    const parseToWidget = !parent.attrs.className?.includes('line-background');
+
     const paras = lineTexts.map((lineText) =>
-      createParagraph(schema, createNodesWithWidget(lineText, schema))
+      createParagraph(schema, createNodesWithWidget(lineText, schema, 0, parseToWidget))
     );
+
     const slice = new Slice(Fragment.from(paras), 1, 1);
-    const newTr =
-      isNumber(start) && isNumber(end)
-        ? tr.replaceRange(start, end, slice)
-        : tr.replaceSelection(slice);
+    const newTr = tr.replaceRange(from, to, slice);
 
     this.view.dispatch(newTr);
     this.focus();

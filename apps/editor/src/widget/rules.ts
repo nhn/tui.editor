@@ -2,6 +2,7 @@ import { Schema, ProsemirrorNode } from 'prosemirror-model';
 import { CustomInlineMdNode } from '@toast-ui/toastmark';
 import { WidgetRule, WidgetRuleMap } from '@t/editor';
 import { getInlineMarkdownText } from '@/utils/markdown';
+import { reList } from '@/markdown/helper/list';
 
 let widgetRules: WidgetRule[] = [];
 
@@ -71,18 +72,22 @@ function mergeNodes(nodes: ProsemirrorNode[], text: string, schema: Schema, rule
  *  plain text -> text node(no rule for matching)
  *  #test -> widget node
  */
-export function createNodesWithWidget(text: string, schema: Schema, ruleIndex = 0) {
+export function createNodesWithWidget(
+  text: string,
+  schema: Schema,
+  ruleIndex = 0,
+  parseToWidget = true
+) {
   let nodes: ProsemirrorNode[] = [];
   const { rule } = widgetRules[ruleIndex] || {};
   const nextRuleIndex = ruleIndex + 1;
+  let contentText = parseToWidget ? unwrapWidgetSyntax(text) : text;
 
-  text = unwrapWidgetSyntax(text);
-
-  if (rule && rule.test(text)) {
+  if (rule && rule.test(contentText) && parseToWidget) {
     let index;
 
-    while ((index = text.search(rule)) !== -1) {
-      const prev = text.substring(0, index);
+    while ((index = contentText.search(rule)) !== -1) {
+      const prev = contentText.substring(0, index);
 
       // get widget node on first splitted text using next widget rule
       if (prev) {
@@ -90,25 +95,25 @@ export function createNodesWithWidget(text: string, schema: Schema, ruleIndex = 
       }
 
       // build widget node using current widget rule
-      text = text.substring(index);
+      contentText = contentText.substring(index);
 
-      const [literal] = text.match(rule)!;
+      const [literal] = contentText.match(rule)!;
       const info = `widget${ruleIndex}`;
 
       nodes.push(
         schema.nodes.widget.create({ info }, schema.text(createWidgetContent(info, literal)))
       );
-      text = text.substring(literal.length);
+      contentText = contentText.substring(literal.length);
     }
     // get widget node on last splitted text using next widget rule
-    if (text) {
+    if (contentText) {
       nodes = mergeNodes(nodes, text, schema, nextRuleIndex);
     }
-  } else if (text) {
+  } else if (contentText) {
     nodes =
       ruleIndex < widgetRules.length - 1
-        ? mergeNodes(nodes, text, schema, nextRuleIndex)
-        : [schema.text(text)];
+        ? mergeNodes(nodes, contentText, schema, nextRuleIndex)
+        : [schema.text(contentText)];
   }
 
   return nodes;
