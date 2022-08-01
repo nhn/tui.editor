@@ -21,6 +21,8 @@ import {
   CustomHTMLRenderer,
   HTMLMdNodeConvertor,
   HTMLMdNodeConvertorMap,
+  EditorPlugin,
+  SelectionPos,
 } from './editor';
 import './toastui-editor-viewer';
 
@@ -58,6 +60,8 @@ export {
   CustomHTMLRenderer,
   HTMLMdNodeConvertor,
   HTMLMdNodeConvertorMap,
+  EditorPlugin,
+  SelectionPos,
 };
 export { Dispatch } from './spec';
 export { PluginInfo, PluginNodeViews, CommandFn, PluginCommandMap } from './plugin';
