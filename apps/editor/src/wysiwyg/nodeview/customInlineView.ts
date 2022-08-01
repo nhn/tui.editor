@@ -21,7 +21,7 @@ export class CustomInlineView implements NodeView {
   }
 
   private renderCustomInline() {
-    const toDOMNode = this.toDOMAdaptor.getToDOMNode(this.node.attrs.info);
+    const toDOMNode = this.toDOMAdaptor.getToDOMNode('customInline');
 
     if (toDOMNode) {
       const node = toDOMNode(this.node);
