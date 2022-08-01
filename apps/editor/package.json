@@ -83,7 +83,7 @@
   },
   "dependencies": {
     "dompurify": "^2.3.3",
-    "prosemirror-commands": "~1.1.9",
+    "prosemirror-commands": "~1.3.0",
     "prosemirror-history": "~1.1.3",
     "prosemirror-inputrules": "~1.1.3",
     "prosemirror-keymap": "~1.1.4",
