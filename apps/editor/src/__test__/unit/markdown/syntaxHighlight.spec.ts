@@ -186,4 +186,12 @@ describe('markdown editor syntax highlight', () => {
 
     expect(html).toMatchSnapshot();
   });
+
+  it('custom inline', () => {
+    mde.setMarkdown('$$custom my custom element$$');
+
+    const html = getEditorHTML(mde);
+
+    expect(html).toMatchSnapshot();
+  });
 });

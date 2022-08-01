@@ -150,6 +150,23 @@ exports[`markdown editor syntax highlight custom block 1`] = `
 </div>
 `;
 
+exports[`markdown editor syntax highlight custom inline 1`] = `
+<div>
+  <span class="toastui-editor-md-custom-inline">
+    <span class="toastui-editor-md-delimiter">
+      $$
+    </span>
+    <span class="toastui-editor-md-meta">
+      custom
+    </span>
+    my custom element
+    <span class="toastui-editor-md-delimiter">
+      $$
+    </span>
+  </span>
+</div>
+`;
+
 exports[`markdown editor syntax highlight emph 1`] = `
 <div>
   <span class="toastui-editor-md-delimiter">
