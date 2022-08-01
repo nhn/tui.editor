@@ -196,6 +196,15 @@ export const toMdConvertors: ToMdConvertorMap = {
     };
   },
 
+  customInline({ node }) {
+    const { attrs, textContent } = node as ProsemirrorNode;
+
+    return {
+      delim: [`$$${attrs.info}`, '$$'],
+      text: textContent,
+    };
+  },
+
   frontMatter({ node }) {
     return {
       text: (node as ProsemirrorNode).textContent,

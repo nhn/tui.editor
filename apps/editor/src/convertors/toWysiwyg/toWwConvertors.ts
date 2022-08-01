@@ -361,25 +361,21 @@ const toWwConvertors: ToWwConvertorMap = {
   },
 
   customInline(state, node, { entering, skipChildren }) {
-    const { info, firstChild } = node as CustomInlineMdNode;
     const { schema } = state;
+    const { customInline, widget } = schema.nodes;
+
+    const { info, firstChild } = node as CustomInlineMdNode;
+
+    skipChildren();
 
     if (info.indexOf('widget') !== -1 && entering) {
       const content = getWidgetContent(node as CustomInlineMdNode);
 
-      skipChildren();
-
-      state.addNode(schema.nodes.widget, { info }, [
-        schema.text(createWidgetContent(info, content)),
-      ]);
+      state.addNode(widget, { info }, [schema.text(createWidgetContent(info, content))]);
     } else {
-      let text = '$$';
-
-      if (entering) {
-        text += firstChild ? `${info} ` : info;
-      }
-
-      state.addText(text);
+      state.openNode(customInline, { info });
+      state.addText(getTextWithoutTrailingNewline(firstChild?.literal || ''));
+      state.closeNode();
     }
   },
 };

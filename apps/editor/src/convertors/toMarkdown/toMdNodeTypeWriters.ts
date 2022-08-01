@@ -239,6 +239,16 @@ export const nodeTypeWriters: ToMdNodeTypeWriterMap = {
     state.write(text);
   },
 
+  customInline(state, _, { delim, text }) {
+    const [openDelim, closeDelim] = delim as string[];
+
+    state.write(openDelim);
+    if (text) {
+      state.write(` ${text}`);
+    }
+    state.write(closeDelim);
+  },
+
   html(state, { node }, { text }) {
     state.write(text);
 
