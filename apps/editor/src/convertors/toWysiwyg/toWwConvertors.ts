@@ -374,7 +374,7 @@ const toWwConvertors: ToWwConvertorMap = {
       state.addNode(widget, { info }, [schema.text(createWidgetContent(info, content))]);
     } else {
       state.openNode(customInline, { info });
-      state.addText(getTextWithoutTrailingNewline(firstChild?.literal || ''));
+      state.addText(getTextWithoutTrailingNewline(firstChild?.literal ?? ''));
       state.closeNode();
     }
   },
