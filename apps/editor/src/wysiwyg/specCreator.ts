@@ -28,6 +28,7 @@ import { FrontMatter } from './nodes/frontMatter';
 import { LinkAttributes } from '@t/editor';
 import { Widget } from '@/widget/widgetNode';
 import { HTMLComment } from './nodes/htmlComment';
+import { CustomInline } from './nodes/customInline';
 
 export function createSpecs(linkAttributes: LinkAttributes) {
   return new SpecManager([
@@ -57,5 +58,6 @@ export function createSpecs(linkAttributes: LinkAttributes) {
     new FrontMatter(),
     new Widget(),
     new HTMLComment(),
+    new CustomInline(),
   ]);
 }

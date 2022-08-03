@@ -38,6 +38,7 @@ import { smartTask } from './plugins/smartTask';
 import { createNodesWithWidget, unwrapWidgetSyntax } from '@/widget/rules';
 import { Widget, widgetNodeView } from '@/widget/widgetNode';
 import { PluginProp } from '@t/plugin';
+import { CustomInline } from './marks/customInline';
 
 interface WindowWithClipboard extends Window {
   clipboardData?: DataTransfer | null;
@@ -148,6 +149,7 @@ export default class MdEditor extends EditorBase {
       new BlockQuote(),
       new CodeBlock(),
       new CustomBlock(),
+      new CustomInline(),
       new Table(),
       new TableCell(),
       new ThematicBreak(),

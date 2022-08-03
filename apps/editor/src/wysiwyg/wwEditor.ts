@@ -17,6 +17,7 @@ import { toolbarStateHighlight } from './plugins/toolbarState';
 import { CustomBlockView } from './nodeview/customBlockView';
 import { ImageView } from './nodeview/imageView';
 import { CodeBlockView } from './nodeview/codeBlockView';
+import { CustomInlineView } from './nodeview/customInlineView';
 
 import { changePastedHTML, changePastedSlice } from './clipboard/paste';
 import { pasteToTable } from './clipboard/pasteToTable';
@@ -147,6 +148,9 @@ export default class WysiwygEditor extends EditorBase {
         },
         codeBlock(node, view, getPos) {
           return new CodeBlockView(node, view, getPos, eventEmitter);
+        },
+        customInline(node, view) {
+          return new CustomInlineView(node, view, toDOMAdaptor);
         },
         widget: widgetNodeView,
         ...this.createPluginNodeViews(),

@@ -8,6 +8,7 @@ import {
   CodeBlockMdNode,
   CustomBlockMdNode,
   ListItemMdNode,
+  CustomInlineMdNode,
 } from '@toast-ui/toastmark';
 import isFunction from 'tui-code-snippet/type/isFunction';
 import {
@@ -34,6 +35,9 @@ const TASK_DELIM = 'taskDelimiter';
 const TEXT = 'markedText';
 const HTML = 'html';
 const CUSTOM_BLOCK = 'customBlock';
+const CUSTOM_INLINE = 'customInline';
+
+const reWidgetInfo = /widget\d+/;
 
 const delimSize = {
   strong: 2,
@@ -205,6 +209,23 @@ function customBlock(node: MdNode, start: MdPos, end: MdPos) {
   return lineBackgroundMarkInfo ? marks.concat(lineBackgroundMarkInfo) : marks;
 }
 
+function customInline(node: MdNode, start: MdPos, end: MdPos) {
+  const { info } = node as CustomInlineMdNode;
+
+  const openDelimEnd = addOffsetPos(start, 2);
+  const infoEnd = addOffsetPos(openDelimEnd, info.length);
+  const closeDelimStart = addOffsetPos(end, -2);
+
+  return reWidgetInfo.test(info)
+    ? null
+    : [
+        markInfo(start, openDelimEnd, DELIM),
+        markInfo(openDelimEnd, infoEnd, META),
+        markInfo(closeDelimStart, end, DELIM),
+        markInfo(start, end, CUSTOM_INLINE),
+      ];
+}
+
 function markListItemChildren(node: MdNode, markType: MarkType) {
   const marks: MarkInfo[] = [];
 
@@ -302,6 +323,7 @@ const markNodeFuncMap = {
   blockQuote,
   item,
   customBlock,
+  customInline,
 };
 
 const simpleMarkClassNameMap = {

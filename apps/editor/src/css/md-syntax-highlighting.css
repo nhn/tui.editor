@@ -121,12 +121,18 @@
 .toastui-editor-md-custom-block {
   color: #452d6b;
 }
+.toastui-editor-md-custom-inline {
+  color: #452d6b;
+  background-color: #f9f7fd;
+}
 .toastui-editor-md-custom-block-line-background {
   background-color: #f9f7fd;
 }
-.toastui-editor-md-custom-block .toastui-editor-md-delimiter {
+.toastui-editor-md-custom-block .toastui-editor-md-delimiter,
+.toastui-editor-md-custom-inline .toastui-editor-md-delimiter {
   color: #b8b3c0;
 }
-.toastui-editor-md-custom-block .toastui-editor-md-meta {
+.toastui-editor-md-custom-block .toastui-editor-md-meta,
+.toastui-editor-md-custom-inline .toastui-editor-md-meta {
   color: #5200d0;
 }
