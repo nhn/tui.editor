@@ -35,6 +35,7 @@ export function autoComplete(context: PluginContext, reducer: Required<PluginOpt
             filter: next.filter ?? prev.filter,
             range: next.range ?? prev.range,
             triggerType: next.triggerType ?? prev.triggerType,
+            instance: context.instance,
           };
 
           if (started) {
@@ -150,6 +151,7 @@ export function autoComplete(context: PluginContext, reducer: Required<PluginOpt
           filter,
           range: { from, to },
           triggerType,
+          instance: context.instance,
         };
 
         switch (userAction) {

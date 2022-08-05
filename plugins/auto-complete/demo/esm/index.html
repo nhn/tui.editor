@@ -107,6 +107,7 @@
               suggestionInfo.open = true;
               suggestionInfo.range = action.range;
               setSuggestion(suggestionEl);
+              console.log(action.instance);
               return true;
             case 'enter':
               console.log('entered suggestion');
@@ -158,7 +159,7 @@
         previewStyle: 'vertical',
         height: '500px',
         initialValue: '',
-        useCommandShortcut: false,
+        useCommandShortcut: true,
         plugins: [[autoComplete, option]],
       });
 

@@ -1,4 +1,4 @@
-import type { PluginContext, PluginInfo } from '@toast-ui/editor';
+import type { PluginContext, PluginInfo, Editor, Viewer } from '@toast-ui/editor';
 import type { DecorationAttrs, DecorationSet, EditorView } from 'prosemirror-view';
 import { TR_ACTIONS, USER_ACTIONS } from '@/constants';
 
@@ -29,6 +29,7 @@ export type AutoCompleteAction = {
   filter?: string;
   range: Range;
   triggerType: Trigger | null;
+  instance: Editor | Viewer;
 };
 
 export default function autoCompletePlugin(
