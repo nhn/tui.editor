@@ -31,7 +31,7 @@
     "eslint": "^7.22.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-config-tui": "^4.0.0",
-    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-prettier": "^4.2.1",
     "eslint-plugin-react": "^7.22.0",
     "eslint-plugin-vue": "^8.4.1",
     "eslint-webpack-plugin": "^2.5.2",
