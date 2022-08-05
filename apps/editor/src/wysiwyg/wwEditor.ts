@@ -28,7 +28,7 @@ import { HTMLSchemaMap, LinkAttributes, WidgetStyle } from '@t/editor';
 import { NodeViewPropMap, PluginProp } from '@t/plugin';
 import { createNodesWithWidget } from '@/widget/rules';
 import { widgetNodeView } from '@/widget/widgetNode';
-import { cls } from '@/utils/dom';
+import { cls, removeProseMirrorHackNodes } from '@/utils/dom';
 import { includes } from '@/utils/common';
 import { isInTableNode } from '@/wysiwyg/helper/node';
 
@@ -207,7 +207,7 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   getHTML() {
-    return this.view.dom.innerHTML;
+    return removeProseMirrorHackNodes(this.view.dom.innerHTML);
   }
 
   getModel() {
