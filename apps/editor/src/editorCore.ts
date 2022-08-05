@@ -38,7 +38,7 @@ import { WwToDOMAdaptor } from './wysiwyg/adaptor/wwToDOMAdaptor';
 import { ScrollSync } from './markdown/scroll/scrollSync';
 import { addDefaultImageBlobHook } from './helper/image';
 import { setWidgetRules } from './widget/rules';
-import { cls, replaceBRWithEmptyBlock } from './utils/dom';
+import { cls, removeProseMirrorHackNodes, replaceBRWithEmptyBlock } from './utils/dom';
 import { sanitizeHTML } from './sanitizer/htmlSanitizer';
 import { createHTMLSchemaMap } from './wysiwyg/nodes/html';
 import { getHTMLRenderConvertors } from './markdown/htmlRenderConvertors';
@@ -506,7 +506,7 @@ class ToastUIEditorCore {
         this.wwEditor.setModel(wwNode!);
       }
     });
-    const html = this.wwEditor.view.dom.innerHTML;
+    const html = removeProseMirrorHackNodes(this.wwEditor.view.dom.innerHTML);
 
     if (this.placeholder) {
       const rePlaceholder = new RegExp(

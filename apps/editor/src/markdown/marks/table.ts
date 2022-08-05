@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { DOMOutputSpec } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
 import type { Transaction } from 'prosemirror-state';
 import { TableCellMdNode, MdNode, MdPos } from '@toast-ui/toastmark';
@@ -62,7 +62,7 @@ export class Table extends Mark {
 
   get schema() {
     return {
-      toDOM(): DOMOutputSpecArray {
+      toDOM(): DOMOutputSpec {
         return ['span', { class: clsWithMdPrefix('table') }, 0];
       },
     };

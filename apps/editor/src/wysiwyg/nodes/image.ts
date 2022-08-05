@@ -1,4 +1,4 @@
-import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import { ProsemirrorNode, DOMOutputSpec } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
 import { escapeXml } from '@/utils/common';
@@ -41,7 +41,7 @@ export class Image extends NodeSchema {
           },
         },
       ],
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         return [
           attrs.rawHTML || 'img',
           {

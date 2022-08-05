@@ -1,4 +1,4 @@
-import { Mark as ProsemirrorMark, DOMOutputSpecArray } from 'prosemirror-model';
+import { Mark as ProsemirrorMark, DOMOutputSpec } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 
 import Mark from '@/spec/mark';
@@ -49,11 +49,12 @@ export class Link extends Mark {
           },
         },
       ],
-      toDOM: ({ attrs }: ProsemirrorMark): DOMOutputSpecArray => [
+      toDOM: ({ attrs }: ProsemirrorMark): DOMOutputSpec => [
         attrs.rawHTML || 'a',
         {
           href: escapeXml(attrs.linkUrl),
-          ...(this.linkAttributes as DOMOutputSpecArray),
+          // @ts-ignore
+          ...(this.linkAttributes as DOMOutputSpec),
           ...getCustomAttrs(attrs),
         },
       ],

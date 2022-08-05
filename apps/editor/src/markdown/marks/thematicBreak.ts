@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { DOMOutputSpec } from 'prosemirror-model';
 import type { Transaction } from 'prosemirror-state';
 import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
@@ -15,7 +15,7 @@ export class ThematicBreak extends Mark {
 
   get schema() {
     return {
-      toDOM(): DOMOutputSpecArray {
+      toDOM(): DOMOutputSpec {
         return ['span', { class: clsWithMdPrefix('thematic-break') }, 0];
       },
     };

@@ -9,7 +9,7 @@ import {
   Renderer,
   TextToken,
 } from '@toast-ui/toastmark';
-import { Node as ProsemirrorNode, Mark } from 'prosemirror-model';
+import { ProsemirrorNode, Mark } from 'prosemirror-model';
 import isArray from 'tui-code-snippet/type/isArray';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { ToDOMAdaptor } from '@t/convertor';

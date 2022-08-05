@@ -175,7 +175,7 @@ export default class ToMdConvertorState {
     let trailing = '';
 
     const progress = (node: Node | null, _: number | null, index: number) => {
-      let marks = node ? node.marks : [];
+      let marks = node ? (node.marks as Mark[]) : [];
       let leading = trailing;
 
       trailing = '';

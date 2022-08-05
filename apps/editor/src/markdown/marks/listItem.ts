@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
+import { DOMOutputSpec, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 import { ListItemMdNode, MdNode } from '@toast-ui/toastmark';
@@ -52,7 +52,7 @@ export class ListItem extends Mark {
         even: { default: false },
         listStyle: { default: false },
       },
-      toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorMark): DOMOutputSpec {
         const { odd, even, listStyle } = attrs;
         let classNames = 'list-item';
 

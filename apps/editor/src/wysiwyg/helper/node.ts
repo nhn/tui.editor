@@ -1,4 +1,4 @@
-import { Node as ProsemirrorNode, ResolvedPos } from 'prosemirror-model';
+import { ProsemirrorNode, ResolvedPos } from 'prosemirror-model';
 import { includes } from '@/utils/common';
 
 type NodeAttrs = Record<string, any>;

@@ -1,5 +1,5 @@
 import type { Command } from 'prosemirror-commands';
-import type { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import type { ProsemirrorNode, DOMOutputSpec } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
 import { splitListItem } from '@/wysiwyg/command/list';
@@ -33,7 +33,7 @@ export class ListItem extends NodeSchema {
           },
         },
       ],
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         const { task, checked } = attrs;
 
         if (!task) {

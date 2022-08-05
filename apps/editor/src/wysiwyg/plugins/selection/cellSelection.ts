@@ -126,8 +126,13 @@ export default class CellSelection extends Selection {
       const copiedRow = row.copy(Fragment.from(cells));
       const targetNode = isTableHeadCell ? tableHead : tableBody;
 
+      // @ts-ignore
       targetNode.content = targetNode.content.append(Fragment.from(copiedRow));
     }
     return new Slice(createTableFragment(tableHead, tableBody), 1, 1);
+  }
+
+  toJSON() {
+    return JSON.stringify(this);
   }
 }

@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, Node as ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpec, ProsemirrorNode } from 'prosemirror-model';
 import { TextSelection, Transaction } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 
@@ -98,7 +98,7 @@ export class Table extends NodeSchema {
         ...getDefaultCustomAttrs(),
       },
       parseDOM: [createDOMInfoParsedRawHTML('table')],
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         return ['table', getCustomAttrs(attrs), 0];
       },
     };

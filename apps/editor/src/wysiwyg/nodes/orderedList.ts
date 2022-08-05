@@ -1,4 +1,4 @@
-import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import { ProsemirrorNode, DOMOutputSpec } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
 import { getWwCommands } from '@/commands/wwCommands';
@@ -35,7 +35,7 @@ export class OrderedList extends NodeSchema {
           },
         },
       ],
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         return [
           attrs.rawHTML || 'ol',
           { start: attrs.order === 1 ? null : attrs.order, ...getCustomAttrs(attrs) },

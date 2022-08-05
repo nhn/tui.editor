@@ -1,5 +1,5 @@
 import { EditorView, NodeView } from 'prosemirror-view';
-import { Node as ProsemirrorNode, Slice, Fragment, Mark, Schema } from 'prosemirror-model';
+import { ProsemirrorNode, Slice, Fragment, Mark, Schema } from 'prosemirror-model';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import toArray from 'tui-code-snippet/collection/toArray';
 
@@ -28,7 +28,7 @@ import { HTMLSchemaMap, LinkAttributes, WidgetStyle } from '@t/editor';
 import { NodeViewPropMap, PluginProp } from '@t/plugin';
 import { createNodesWithWidget } from '@/widget/rules';
 import { widgetNodeView } from '@/widget/widgetNode';
-import { cls } from '@/utils/dom';
+import { cls, removeProseMirrorHackNodes } from '@/utils/dom';
 import { includes } from '@/utils/common';
 import { isInTableNode } from '@/wysiwyg/helper/node';
 
@@ -207,7 +207,7 @@ export default class WysiwygEditor extends EditorBase {
   }
 
   getHTML() {
-    return this.view.dom.innerHTML;
+    return removeProseMirrorHackNodes(this.view.dom.innerHTML);
   }
 
   getModel() {
@@ -313,7 +313,7 @@ export default class WysiwygEditor extends EditorBase {
           isText &&
           offset <= startOffset &&
           offset + nodeSize >= startOffset &&
-          maybeHasMark(nodeMarks)
+          maybeHasMark(nodeMarks as Mark[])
         ) {
           start = start + offset;
           end = start + nodeSize;

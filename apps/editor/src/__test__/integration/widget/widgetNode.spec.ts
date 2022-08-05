@@ -92,17 +92,14 @@ describe('widgetNode', () => {
       editor.setMarkdown('@test1 @test2');
 
       const expectedEditor = oneLineTrim`
-        <div>
-          <span class="tui-widget">
-            <span><a href="www.google.com">@test1</a></span>
-          </span> 
-          <span class="tui-widget">
-            <span>
-              <a href="www.google.com">@test2</a>
-            </span>
+        <span class="tui-widget">
+          <span><a href="www.google.com">@test1</a></span>
+        </span> 
+        <span class="tui-widget">
+          <span>
+            <a href="www.google.com">@test2</a>
           </span>
-          <br>
-        </div>
+        </span>
       `;
       const expectedPreview = oneLineTrim`
         <p>
@@ -125,17 +122,14 @@ describe('widgetNode', () => {
       editor.insertText('@test1 @test2');
 
       const expectedEditor = oneLineTrim`
-        <div>
-          <span class="tui-widget">
-            <span><a href="www.google.com">@test1</a></span>
-          </span> 
-          <span class="tui-widget">
-            <span>
-              <a href="www.google.com">@test2</a>
-            </span>
+        <span class="tui-widget">
+          <span><a href="www.google.com">@test1</a></span>
+        </span> 
+        <span class="tui-widget">
+          <span>
+            <a href="www.google.com">@test2</a>
           </span>
-          <br>
-        </div>
+        </span>
       `;
       const expectedPreview = oneLineTrim`
         <p>
@@ -158,12 +152,9 @@ describe('widgetNode', () => {
       editor.replaceWithWidget([1, 1], [1, 1], '[#toast](ui.toast.com)');
 
       const expectedEditor = oneLineTrim`
-        <div>
-          <span class="tui-widget">
-            <span><a href="ui.toast.com">#toast</a></span>
-          </span>
-          <br>
-        </div>
+        <span class="tui-widget">
+          <span><a href="ui.toast.com">#toast</a></span>
+        </span>
       `;
       const expectedPreview = oneLineTrim`
         <p>
@@ -181,20 +172,17 @@ describe('widgetNode', () => {
       editor.insertText('@test1 [#toast](ui.toast.com) @test2');
 
       const expectedEditor = oneLineTrim`
-        <div>
-          <span class="tui-widget">
-            <span><a href="www.google.com">@test1</a></span>
-          </span> 
-          <span class="tui-widget">
-            <span><a href="ui.toast.com">#toast</a></span>
-          </span> 
-          <span class="tui-widget">
-            <span>
-              <a href="www.google.com">@test2</a>
-            </span>
+        <span class="tui-widget">
+          <span><a href="www.google.com">@test1</a></span>
+        </span> 
+        <span class="tui-widget">
+          <span><a href="ui.toast.com">#toast</a></span>
+        </span> 
+        <span class="tui-widget">
+          <span>
+            <a href="www.google.com">@test2</a>
           </span>
-          <br>
-        </div>
+        </span>
       `;
       const expectedPreview = oneLineTrim`
         <p>
@@ -221,17 +209,14 @@ describe('widgetNode', () => {
       editor.changeMode('wysiwyg');
 
       const expectedEditor = oneLineTrim`
-        <p>
-          <span class="tui-widget">
-            <span><a href="www.google.com">@test1</a></span>
-          </span> 
-          <span class="tui-widget">
-            <span>
-              <a href="www.google.com">@test2</a>
-            </span>
+        <span class="tui-widget">
+          <span><a href="www.google.com">@test1</a></span>
+        </span> 
+        <span class="tui-widget">
+          <span>
+            <a href="www.google.com">@test2</a>
           </span>
-          <br>
-        </p>
+        </span>
       `;
 
       expect(wwEditor).toContainHTML(expectedEditor);
@@ -241,18 +226,15 @@ describe('widgetNode', () => {
       editor.setMarkdown('@test1 $$myText @test2');
 
       const expectedEditor = oneLineTrim`
-        <div>
-          <span class="tui-widget">
-            <span><a href="www.google.com">@test1</a></span>
-          </span> 
-          $$myText 
-          <span class="tui-widget">
-            <span>
-              <a href="www.google.com">@test2</a>
-            </span>
+        <span class="tui-widget">
+          <span><a href="www.google.com">@test1</a></span>
+        </span> 
+        $$myText 
+        <span class="tui-widget">
+          <span>
+            <a href="www.google.com">@test2</a>
           </span>
-          <br>
-        </div>
+        </span>
       `;
       const expectedPreview = oneLineTrim`
         <p>
@@ -278,19 +260,16 @@ describe('widgetNode', () => {
       editor.replaceSelection('@test1 @test2', [1, 1], [1, 13]);
 
       const expectedEditor = oneLineTrim`
-        <div>
-          <span class="tui-widget">
-            <span>
-              <a href="www.google.com">@test1</a>
-            </span>
-          </span> 
-          <span class="tui-widget">
-            <span>
-              <a href="www.google.com">@test2</a>
-            </span>
+        <span class="tui-widget">
+          <span>
+            <a href="www.google.com">@test1</a>
           </span>
-          <br>
-        </div>
+        </span> 
+        <span class="tui-widget">
+          <span>
+            <a href="www.google.com">@test2</a>
+          </span>
+        </span>
       `;
       const expectedPreview = oneLineTrim`
         <p>
@@ -329,12 +308,9 @@ describe('widgetNode', () => {
       editor.replaceWithWidget(1, 1, '@test');
 
       const expectedEditor = oneLineTrim`
-        <p>
-          <span class="tui-widget">
-            <span><a href="www.google.com">@test</a></span>
-          </span>
-          <br>
-        </p>
+        <span class="tui-widget">
+          <span><a href="www.google.com">@test</a></span>
+        </span>
       `;
 
       expect(wwEditor).toContainHTML(expectedEditor);
@@ -345,12 +321,9 @@ describe('widgetNode', () => {
       editor.replaceWithWidget(1, 1, '[#toast](ui.toast.com)');
 
       const expectedEditor = oneLineTrim`
-        <p>
-          <span class="tui-widget">
-            <span><a href="ui.toast.com">#toast</a></span>
-          </span>
-          <br>
-        </p>
+        <span class="tui-widget">
+          <span><a href="ui.toast.com">#toast</a></span>
+        </span>
       `;
 
       expect(wwEditor).toContainHTML(expectedEditor);
@@ -362,17 +335,14 @@ describe('widgetNode', () => {
       editor.changeMode('markdown');
 
       const expectedEditor = oneLineTrim`
-        <div>
-          <span class="tui-widget">
-            <span><a href="www.google.com">@test1</a></span>
-          </span> 
-          <span class="tui-widget">
-            <span>
-              <a href="www.google.com">@test2</a>
-            </span>
+        <span class="tui-widget">
+          <span><a href="www.google.com">@test1</a></span>
+        </span> 
+        <span class="tui-widget">
+          <span>
+            <a href="www.google.com">@test2</a>
           </span>
-          <br>
-        </div>
+        </span>
       `;
       const expectedPreview = oneLineTrim`
         <p>
@@ -398,19 +368,16 @@ describe('widgetNode', () => {
       editor.replaceSelection('@test1 @test2', 1, 12);
 
       const expectedEditor = oneLineTrim`
-        <p>
-          <span class="tui-widget">
-            <span>
-              <a href="www.google.com">@test1</a>
-            </span>
-          </span> 
-          <span class="tui-widget">
-            <span>
-              <a href="www.google.com">@test2</a>
-            </span>
+        <span class="tui-widget">
+          <span>
+            <a href="www.google.com">@test1</a>
           </span>
-          <br>
-        </p>
+        </span> 
+        <span class="tui-widget">
+          <span>
+            <a href="www.google.com">@test2</a>
+          </span>
+        </span>
       `;
 
       expect(wwEditor).toContainHTML(expectedEditor);
@@ -422,17 +389,14 @@ describe('widgetNode', () => {
       editor.insertText('@test1 @test2');
 
       const expectedEditor = oneLineTrim`
-        <p>
-          <span class="tui-widget">
-            <span><a href="www.google.com">@test1</a></span>
-          </span> 
-          <span class="tui-widget">
-            <span>
-              <a href="www.google.com">@test2</a>
-            </span>
+        <span class="tui-widget">
+          <span><a href="www.google.com">@test1</a></span>
+        </span> 
+        <span class="tui-widget">
+          <span>
+            <a href="www.google.com">@test2</a>
           </span>
-          <br>
-        </p>
+        </span>
       `;
 
       expect(wwEditor).toContainHTML(expectedEditor);

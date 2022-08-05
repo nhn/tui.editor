@@ -3,8 +3,9 @@ import mergedTableCellPlugin from '@/index';
 
 export function assertWYSIWYGHTML(editor: Editor, html: string) {
   const wwEditorEl = editor.getEditorElements().wwEditor;
+  const wwEditorHTML = removeProseMirrorHackNodes(wwEditorEl.outerHTML);
 
-  expect(wwEditorEl.innerHTML).toContain(html);
+  expect(wwEditorHTML).toContain(html);
 }
 
 export function createEditor() {
@@ -32,4 +33,16 @@ export function createEditor() {
   });
 
   return { container, editor };
+}
+
+export function removeProseMirrorHackNodes(html: string) {
+  const reProseMirrorImage = /<img class="ProseMirror-separator" alt="">/g;
+  const reProseMirrorTrailingBreak = / class="ProseMirror-trailingBreak"/g;
+
+  let resultHTML = html;
+
+  resultHTML = resultHTML.replace(reProseMirrorImage, '');
+  resultHTML = resultHTML.replace(reProseMirrorTrailingBreak, '');
+
+  return resultHTML;
 }

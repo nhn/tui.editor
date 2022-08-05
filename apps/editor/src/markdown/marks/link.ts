@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
+import { DOMOutputSpec, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import { escapeTextForLink } from '@/utils/common';
@@ -26,7 +26,7 @@ export class Link extends Mark {
         url: { default: false },
         desc: { default: false },
       },
-      toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorMark): DOMOutputSpec {
         const { url, desc } = attrs;
         let classNames = 'link';
 

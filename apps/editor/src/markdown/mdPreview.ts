@@ -7,7 +7,13 @@ import { EditResult, MdNode, MdPos, Renderer } from '@toast-ui/toastmark';
 
 import { Emitter } from '@t/event';
 import { CustomHTMLRenderer, LinkAttributes } from '@t/editor';
-import { cls, createElementWith, removeNode, toggleClass } from '@/utils/dom';
+import {
+  cls,
+  createElementWith,
+  removeNode,
+  removeProseMirrorHackNodes,
+  toggleClass,
+} from '@/utils/dom';
 import { getHTMLRenderConvertors } from '@/markdown/htmlRenderConvertors';
 import { isInlineNode, findClosestNode, getMdStartCh } from '@/utils/markdown';
 import { findAdjacentElementToScrollTop } from './scroll/dom';
@@ -236,7 +242,7 @@ class MarkdownPreview {
   }
 
   getHTML() {
-    return this.previewContent.innerHTML;
+    return removeProseMirrorHackNodes(this.previewContent.innerHTML);
   }
 
   setHTML(html: string) {

@@ -1,5 +1,5 @@
 import { EditorView, NodeView } from 'prosemirror-view';
-import { Node as ProsemirrorNode } from 'prosemirror-model';
+import { ProsemirrorNode } from 'prosemirror-model';
 
 import isFunction from 'tui-code-snippet/type/isFunction';
 import css from 'tui-code-snippet/domUtil/css';
@@ -20,7 +20,7 @@ const WRAPPER_CLASS_NAME = 'toastui-editor-ww-code-block';
 const CODE_BLOCK_LANG_CLASS_NAME = 'toastui-editor-ww-code-block-language';
 
 export class CodeBlockView implements NodeView {
-  dom: HTMLElement | null = null;
+  dom!: HTMLElement;
 
   contentDOM: HTMLElement | null = null;
 

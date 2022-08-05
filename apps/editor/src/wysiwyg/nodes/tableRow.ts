@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpec, ProsemirrorNode } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
 import { getDefaultCustomAttrs, getCustomAttrs } from '@/wysiwyg/helper/node';
@@ -30,7 +30,7 @@ export class TableRow extends NodeSchema {
           },
         },
       ],
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         return ['tr', getCustomAttrs(attrs), 0];
       },
     };
