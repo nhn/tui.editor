@@ -1,19 +1,19 @@
 /*!
  * @toast-ui/editor
- * @version 3.1.10 | Wed Jul 27 2022
+ * @version 3.2.0 | Fri Aug 05 2022
  * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("prosemirror-inputrules"), require("prosemirror-model"), require("prosemirror-state"), require("prosemirror-view"));
+		module.exports = factory(require("prosemirror-inputrules"), require("prosemirror-keymap"), require("prosemirror-model"), require("prosemirror-state"), require("prosemirror-view"));
 	else if(typeof define === 'function' && define.amd)
-		define(["prosemirror-inputrules", "prosemirror-model", "prosemirror-state", "prosemirror-view"], factory);
+		define(["prosemirror-inputrules", "prosemirror-keymap", "prosemirror-model", "prosemirror-state", "prosemirror-view"], factory);
 	else if(typeof exports === 'object')
-		exports["toastui"] = factory(require("prosemirror-inputrules"), require("prosemirror-model"), require("prosemirror-state"), require("prosemirror-view"));
+		exports["toastui"] = factory(require("prosemirror-inputrules"), require("prosemirror-keymap"), require("prosemirror-model"), require("prosemirror-state"), require("prosemirror-view"));
 	else
-		root["toastui"] = root["toastui"] || {}, root["toastui"]["Editor"] = factory(root[undefined], root[undefined], root[undefined], root[undefined]);
-})(self, function(__WEBPACK_EXTERNAL_MODULE__479__, __WEBPACK_EXTERNAL_MODULE__43__, __WEBPACK_EXTERNAL_MODULE__814__, __WEBPACK_EXTERNAL_MODULE__311__) {
+		root["toastui"] = root["toastui"] || {}, root["toastui"]["Editor"] = factory(root[undefined], root[undefined], root[undefined], root[undefined], root[undefined]);
+})(self, function(__WEBPACK_EXTERNAL_MODULE__479__, __WEBPACK_EXTERNAL_MODULE__481__, __WEBPACK_EXTERNAL_MODULE__43__, __WEBPACK_EXTERNAL_MODULE__814__, __WEBPACK_EXTERNAL_MODULE__311__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -2719,6 +2719,14 @@ module.exports = isUndefined;
 
 "use strict";
 module.exports = __WEBPACK_EXTERNAL_MODULE__479__;
+
+/***/ }),
+
+/***/ 481:
+/***/ (function(module) {
+
+"use strict";
+module.exports = __WEBPACK_EXTERNAL_MODULE__481__;
 
 /***/ }),
 
@@ -12538,6 +12546,14 @@ function replaceBRWithEmptyBlock(html) {
     });
     return replacedHTML;
 }
+function removeProseMirrorHackNodes(html) {
+    var reProseMirrorImage = /<img class="ProseMirror-separator" alt="">/g;
+    var reProseMirrorTrailingBreak = / class="ProseMirror-trailingBreak"/g;
+    var resultHTML = html;
+    resultHTML = resultHTML.replace(reProseMirrorImage, '');
+    resultHTML = resultHTML.replace(reProseMirrorTrailingBreak, '');
+    return resultHTML;
+}
 
 // EXTERNAL MODULE: ../../node_modules/tui-code-snippet/type/isFunction.js
 var isFunction = __webpack_require__(294);
@@ -13406,7 +13422,7 @@ var MarkdownPreview = /** @class */ (function () {
         return this.el;
     };
     MarkdownPreview.prototype.getHTML = function () {
-        return this.previewContent.innerHTML;
+        return removeProseMirrorHackNodes(this.previewContent.innerHTML);
     };
     MarkdownPreview.prototype.setHTML = function (html) {
         this.previewContent.innerHTML = html;
@@ -13427,6 +13443,8 @@ var external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemir
 var external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_ = __webpack_require__(479);
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-view","commonjs2":"prosemirror-view","amd":"prosemirror-view"}
 var external_commonjs_prosemirror_view_commonjs2_prosemirror_view_amd_prosemirror_view_ = __webpack_require__(311);
+// EXTERNAL MODULE: external {"commonjs":"prosemirror-keymap","commonjs2":"prosemirror-keymap","amd":"prosemirror-keymap"}
+var external_commonjs_prosemirror_keymap_commonjs2_prosemirror_keymap_amd_prosemirror_keymap_ = __webpack_require__(481);
 // EXTERNAL MODULE: external {"commonjs":"prosemirror-model","commonjs2":"prosemirror-model","amd":"prosemirror-model"}
 var external_commonjs_prosemirror_model_commonjs2_prosemirror_model_amd_prosemirror_model_ = __webpack_require__(43);
 // EXTERNAL MODULE: ../../node_modules/tui-code-snippet/array/inArray.js
@@ -13822,22 +13840,41 @@ function mixinTableOffsetMapPrototype(offsetMapMixin, createOffsetMapMixin) {
 
 
 
-function execPlugin(plugin, eventEmitter, usageStatistics) {
+
+function execPlugin(pluginInfo) {
+    var plugin = pluginInfo.plugin, eventEmitter = pluginInfo.eventEmitter, usageStatistics = pluginInfo.usageStatistics, instance = pluginInfo.instance;
     var pmState = { Plugin: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Plugin, PluginKey: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.PluginKey, Selection: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.Selection, TextSelection: external_commonjs_prosemirror_state_commonjs2_prosemirror_state_amd_prosemirror_state_.TextSelection };
     var pmView = { Decoration: external_commonjs_prosemirror_view_commonjs2_prosemirror_view_amd_prosemirror_view_.Decoration, DecorationSet: external_commonjs_prosemirror_view_commonjs2_prosemirror_view_amd_prosemirror_view_.DecorationSet };
     var pmModel = { Fragment: external_commonjs_prosemirror_model_commonjs2_prosemirror_model_amd_prosemirror_model_.Fragment };
     var pmRules = { InputRule: external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_.InputRule, inputRules: external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_.inputRules, undoInputRule: external_commonjs_prosemirror_inputrules_commonjs2_prosemirror_inputrules_amd_prosemirror_inputrules_.undoInputRule };
-    var context = { eventEmitter: eventEmitter, usageStatistics: usageStatistics, pmState: pmState, pmView: pmView, pmModel: pmModel, pmRules: pmRules, i18n: i18n };
+    var pmKeymap = { keymap: external_commonjs_prosemirror_keymap_commonjs2_prosemirror_keymap_amd_prosemirror_keymap_.keymap };
+    var context = {
+        eventEmitter: eventEmitter,
+        usageStatistics: usageStatistics,
+        instance: instance,
+        pmState: pmState,
+        pmView: pmView,
+        pmModel: pmModel,
+        pmRules: pmRules,
+        pmKeymap: pmKeymap,
+        i18n: i18n,
+    };
     if (isArray_default()(plugin)) {
         var pluginFn = plugin[0], _a = plugin[1], options = _a === void 0 ? {} : _a;
         return pluginFn(context, options);
     }
     return plugin(context);
 }
-function getPluginInfo(plugins, eventEmitter, usageStatistics) {
+function getPluginInfo(pluginsInfo) {
+    var plugins = pluginsInfo.plugins, eventEmitter = pluginsInfo.eventEmitter, usageStatistics = pluginsInfo.usageStatistics, instance = pluginsInfo.instance;
     eventEmitter.listen('mixinTableOffsetMapPrototype', mixinTableOffsetMapPrototype);
     return (plugins !== null && plugins !== void 0 ? plugins : []).reduce(function (acc, plugin) {
-        var pluginInfoResult = execPlugin(plugin, eventEmitter, usageStatistics);
+        var pluginInfoResult = execPlugin({
+            plugin: plugin,
+            eventEmitter: eventEmitter,
+            usageStatistics: usageStatistics,
+            instance: instance,
+        });
         if (!pluginInfoResult) {
             throw new Error('The return value of the executed plugin is empty.');
         }
@@ -14166,7 +14203,12 @@ var ToastUIEditorViewer = /** @class */ (function () {
         }, options);
         this.eventEmitter = new eventEmitter();
         var linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
-        var _a = getPluginInfo(this.options.plugins, this.eventEmitter, this.options.usageStatistics) || {}, toHTMLRenderers = _a.toHTMLRenderers, markdownParsers = _a.markdownParsers;
+        var _a = getPluginInfo({
+            plugins: this.options.plugins,
+            eventEmitter: this.eventEmitter,
+            usageStatistics: this.options.usageStatistics,
+            instance: this,
+        }) || {}, toHTMLRenderers = _a.toHTMLRenderers, markdownParsers = _a.markdownParsers;
         var _b = this.options, customHTMLRenderer = _b.customHTMLRenderer, extendedAutolinks = _b.extendedAutolinks, referenceDefinition = _b.referenceDefinition, frontMatter = _b.frontMatter, customHTMLSanitizer = _b.customHTMLSanitizer;
         var rendererOptions = {
             linkAttributes: linkAttributes,
