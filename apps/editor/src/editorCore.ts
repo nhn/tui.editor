@@ -187,7 +187,7 @@ class ToastUIEditorCore {
       plugins: this.options.plugins,
       eventEmitter: this.eventEmitter,
       usageStatistics: this.options.usageStatistics,
-      editorInstance: this,
+      instance: this,
     });
     const {
       toHTMLRenderers,

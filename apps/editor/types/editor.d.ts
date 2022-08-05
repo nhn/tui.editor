@@ -124,7 +124,7 @@ export interface PluginContext {
   eventEmitter: Emitter;
   usageStatistics?: boolean;
   i18n: I18n;
-  editorInstance: Editor;
+  instance: Editor | Viewer;
   pmState: {
     Plugin: typeof Plugin;
     PluginKey: typeof PluginKey;
@@ -148,7 +148,7 @@ export type EditorPlugin = PluginFn | [PluginFn, any];
 type ContextInfo = {
   eventEmitter: Emitter;
   usageStatistics: boolean;
-  editorInstance: ToastUIEditorCore;
+  instance: Editor | Viewer;
 };
 
 export type EditorPluginInfo = ContextInfo & {

@@ -73,7 +73,12 @@ class ToastUIEditorViewer {
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
     const { toHTMLRenderers, markdownParsers } =
-      getPluginInfo(this.options.plugins, this.eventEmitter, this.options.usageStatistics) || {};
+      getPluginInfo({
+        plugins: this.options.plugins,
+        eventEmitter: this.eventEmitter,
+        usageStatistics: this.options.usageStatistics,
+        instance: this,
+      }) || {};
     const {
       customHTMLRenderer,
       extendedAutolinks,

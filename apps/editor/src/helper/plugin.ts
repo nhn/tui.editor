@@ -12,7 +12,7 @@ import { PluginInfoResult } from '@t/plugin';
 import { mixinTableOffsetMapPrototype } from '@/wysiwyg/helper/tableOffsetMap';
 
 function execPlugin(pluginInfo: EditorPluginInfo) {
-  const { plugin, eventEmitter, usageStatistics, editorInstance } = pluginInfo;
+  const { plugin, eventEmitter, usageStatistics, instance } = pluginInfo;
 
   const pmState = { Plugin, PluginKey, Selection, TextSelection };
   const pmView = { Decoration, DecorationSet };
@@ -22,7 +22,7 @@ function execPlugin(pluginInfo: EditorPluginInfo) {
   const context = {
     eventEmitter,
     usageStatistics,
-    editorInstance,
+    instance,
     pmState,
     pmView,
     pmModel,
@@ -41,7 +41,7 @@ function execPlugin(pluginInfo: EditorPluginInfo) {
 }
 
 export function getPluginInfo(pluginsInfo: EditorPluginsInfo) {
-  const { plugins, eventEmitter, usageStatistics, editorInstance } = pluginsInfo;
+  const { plugins, eventEmitter, usageStatistics, instance } = pluginsInfo;
 
   eventEmitter.listen('mixinTableOffsetMapPrototype', mixinTableOffsetMapPrototype);
 
@@ -51,7 +51,7 @@ export function getPluginInfo(pluginsInfo: EditorPluginsInfo) {
         plugin,
         eventEmitter,
         usageStatistics,
-        editorInstance,
+        instance,
       });
 
       if (!pluginInfoResult) {
