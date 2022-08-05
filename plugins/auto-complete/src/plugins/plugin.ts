@@ -55,7 +55,7 @@ export function autoComplete(context: PluginContext, reducer: Required<PluginOpt
       init() {
         return deactivateAutoCompleteState;
       },
-      apply(tr, state): AutoCompleteState {
+      apply(tr, state: AutoCompleteState): AutoCompleteState {
         const meta = tr.getMeta(pluginKey) as OpenAutoComplete;
 
         if (meta?.act === TR_ACTIONS.ADD) {
@@ -90,7 +90,7 @@ export function autoComplete(context: PluginContext, reducer: Required<PluginOpt
           return deactivateAutoCompleteState;
         }
 
-        const { active, trigger, triggerType } = state;
+        const { active, trigger, triggerType } = state as ActivateAutoCompleteState;
         const [nextDecoration] = nextDecorations.find();
         const { from, to } = nextDecoration;
         const text = tr.doc.textBetween(from, to);
