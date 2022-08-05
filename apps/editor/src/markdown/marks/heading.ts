@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
+import { DOMOutputSpec, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
@@ -22,7 +22,7 @@ export class Heading extends Mark {
         level: { default: 1 },
         seText: { default: false },
       },
-      toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorMark): DOMOutputSpec {
         const { level, seText } = attrs;
         let classNames = `heading|heading${level}`;
 

@@ -21,7 +21,7 @@ function getCustomAttrs(attrs: Record<string, any>) {
 }
 
 class CodeSyntaxHighlightView implements NodeView {
-  dom: HTMLElement | null = null;
+  dom!: HTMLElement;
 
   contentDOM: HTMLElement | null = null;
 

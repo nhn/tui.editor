@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpec, ProsemirrorNode } from 'prosemirror-model';
 import SpecNode from '@/spec/node';
 import { widgetToDOM } from './rules';
 
@@ -31,7 +31,7 @@ export class Widget extends SpecNode {
       content: 'text*',
       selectable: false,
       atom: true,
-      toDOM(): DOMOutputSpecArray {
+      toDOM(): DOMOutputSpec {
         return ['span', { class: 'tui-widget' }, 0];
       },
       parseDOM: [

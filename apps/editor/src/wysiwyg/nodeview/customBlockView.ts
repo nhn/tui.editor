@@ -1,5 +1,5 @@
 import { EditorView, NodeView } from 'prosemirror-view';
-import { Node as ProsemirrorNode } from 'prosemirror-model';
+import { ProsemirrorNode } from 'prosemirror-model';
 import { StepMap } from 'prosemirror-transform';
 import { EditorState, TextSelection, Transaction } from 'prosemirror-state';
 import { newlineInCode } from 'prosemirror-commands';

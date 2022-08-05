@@ -61,7 +61,7 @@ function getToolbarState(selection: Selection, doc: Node, schema: Schema) {
   } as ToolbarStateMap;
 
   doc.nodesBetween(from, to, (node, _, parentNode) => {
-    const type = getToolbarStateType(node, parentNode);
+    const type = getToolbarStateType(node, parentNode!);
 
     if (includes(EXCEPT_TYPES, type)) {
       return;

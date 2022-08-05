@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, Node as ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpec, ProsemirrorNode } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
 import {
@@ -26,7 +26,7 @@ export class TableHeadCell extends NodeSchema {
       },
       isolating: true,
       parseDOM: [createParsedCellDOM('th')],
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         const cellAttrs = createCellAttrs(attrs);
 
         return ['th', { ...cellAttrs, ...getCustomAttrs(attrs) }, 0];

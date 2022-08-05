@@ -1,7 +1,7 @@
 import {
-  Node as ProsemirrorNode,
+  ProsemirrorNode,
   Mark as ProsemirrorMark,
-  DOMOutputSpecArray,
+  DOMOutputSpec,
   NodeSpec,
   MarkSpec,
 } from 'prosemirror-model';
@@ -82,7 +82,7 @@ const schemaFactory = {
           },
         },
       ],
-      toDOM(node: ProsemirrorNode): DOMOutputSpecArray {
+      toDOM(node: ProsemirrorNode): DOMOutputSpec {
         const { dom, htmlAttrs } = sanitizeDOM(node, typeName, sanitizeHTML, wwToDOMAdaptor);
 
         htmlAttrs.class = htmlAttrs.class ? `${htmlAttrs.class} html-block` : 'html-block';
@@ -107,7 +107,7 @@ const schemaFactory = {
           },
         },
       ],
-      toDOM(node: ProsemirrorMark): DOMOutputSpecArray {
+      toDOM(node: ProsemirrorMark): DOMOutputSpec {
         const { htmlAttrs } = sanitizeDOM(node, typeName, sanitizeHTML, wwToDOMAdaptor);
 
         return [typeName, htmlAttrs, 0];

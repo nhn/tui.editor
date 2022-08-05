@@ -1,6 +1,6 @@
-import { DOMOutputSpecArray, ProsemirrorNode, Schema } from 'prosemirror-model';
+import { DOMOutputSpec, ProsemirrorNode, Schema } from 'prosemirror-model';
 import { Transaction, Selection } from 'prosemirror-state';
-import { chainCommands, Command, joinForward } from 'prosemirror-commands';
+import { chainCommands, joinForward, Command } from 'prosemirror-commands';
 import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Node from '@/spec/node';
@@ -87,7 +87,7 @@ export class Paragraph extends Node {
       selectable: false,
       group: 'block',
       parseDOM: [{ tag: 'div' }],
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         return attrs.className
           ? ['div', { class: clsWithMdPrefix(attrs.className) }, 0]
           : ['div', 0];

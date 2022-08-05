@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { DOMOutputSpec } from 'prosemirror-model';
 import { exitCode } from 'prosemirror-commands';
 
 import NodeSchema from '@/spec/node';
@@ -22,7 +22,7 @@ export class FrontMatter extends NodeSchema {
           tag: 'div[data-front-matter]',
         },
       ],
-      toDOM(): DOMOutputSpecArray {
+      toDOM(): DOMOutputSpec {
         return ['div', { 'data-front-matter': 'true' }, 0];
       },
     };

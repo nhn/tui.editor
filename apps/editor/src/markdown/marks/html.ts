@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { DOMOutputSpec } from 'prosemirror-model';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
 
@@ -9,7 +9,7 @@ export class Html extends Mark {
 
   get schema() {
     return {
-      toDOM(): DOMOutputSpecArray {
+      toDOM(): DOMOutputSpec {
         return ['span', { class: clsWithMdPrefix('html') }, 0];
       },
     };

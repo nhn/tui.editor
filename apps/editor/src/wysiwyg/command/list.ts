@@ -1,4 +1,4 @@
-import { Node as ProsemirrorNode, NodeType, NodeRange, Fragment, Slice } from 'prosemirror-model';
+import { ProsemirrorNode, NodeType, NodeRange, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceAroundStep, canSplit, liftTarget } from 'prosemirror-transform';
 import { Transaction, Selection } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';

@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { DOMOutputSpec } from 'prosemirror-model';
 import { Command } from 'prosemirror-commands';
 import { EditorCommand, MdSpecContext } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
@@ -19,7 +19,7 @@ export class CodeBlock extends Mark {
 
   get schema() {
     return {
-      toDOM(): DOMOutputSpecArray {
+      toDOM(): DOMOutputSpec {
         return ['span', { class: clsWithMdPrefix('code-block') }, 0];
       },
     };

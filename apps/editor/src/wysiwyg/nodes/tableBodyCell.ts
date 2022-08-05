@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, Node as ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpec, ProsemirrorNode } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
 import { createCellAttrs, createParsedCellDOM } from '@/wysiwyg/helper/node';
@@ -21,7 +21,7 @@ export class TableBodyCell extends NodeSchema {
       },
       isolating: true,
       parseDOM: [createParsedCellDOM('td')],
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         const cellAttrs = createCellAttrs(attrs);
 
         return ['td', cellAttrs, 0];

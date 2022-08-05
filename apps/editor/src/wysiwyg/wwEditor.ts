@@ -1,5 +1,5 @@
 import { EditorView, NodeView } from 'prosemirror-view';
-import { Node as ProsemirrorNode, Slice, Fragment, Mark, Schema } from 'prosemirror-model';
+import { ProsemirrorNode, Slice, Fragment, Mark, Schema } from 'prosemirror-model';
 import isNumber from 'tui-code-snippet/type/isNumber';
 import toArray from 'tui-code-snippet/collection/toArray';
 
@@ -313,7 +313,7 @@ export default class WysiwygEditor extends EditorBase {
           isText &&
           offset <= startOffset &&
           offset + nodeSize >= startOffset &&
-          maybeHasMark(nodeMarks)
+          maybeHasMark(nodeMarks as Mark[])
         ) {
           start = start + offset;
           end = start + nodeSize;
