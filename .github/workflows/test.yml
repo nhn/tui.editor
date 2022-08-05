@@ -13,7 +13,7 @@ jobs:
           node-version: '15.x'
       - name: Install
         run: |
-          npm ci
+          npm install
       - name: build toastmark
         run: |
           npm run build toastmark

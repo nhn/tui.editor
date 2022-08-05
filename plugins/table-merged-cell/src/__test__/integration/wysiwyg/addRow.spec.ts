@@ -1,14 +1,8 @@
 import { oneLineTrim } from 'common-tags';
 import Editor from '@toast-ui/editor';
-import { createEditor } from './helper/utils';
+import { assertWYSIWYGHTML, createEditor } from './helper/utils';
 
 let container: HTMLElement, editor: Editor;
-
-function assertWYSIWYGHTML(html: string) {
-  const wwEditorEl = editor.getEditorElements().wwEditor;
-
-  expect(wwEditorEl.innerHTML).toContain(html);
-}
 
 beforeEach(() => {
   const editorInfo = createEditor();
@@ -68,7 +62,7 @@ describe('addRowToUp command', () => {
       </table>
     `;
 
-    assertWYSIWYGHTML(expected);
+    assertWYSIWYGHTML(editor, expected);
   });
 
   it('should add row to up and extend row-spanning cell', () => {
@@ -114,7 +108,7 @@ describe('addRowToUp command', () => {
       </table>
     `;
 
-    assertWYSIWYGHTML(expected);
+    assertWYSIWYGHTML(editor, expected);
   });
 
   it('should add row to up as many as the row-spanning count', () => {
@@ -167,7 +161,7 @@ describe('addRowToUp command', () => {
       </table>
     `;
 
-    assertWYSIWYGHTML(expected);
+    assertWYSIWYGHTML(editor, expected);
   });
 });
 
@@ -217,7 +211,7 @@ describe('addRowToDown command', () => {
       </table>
     `;
 
-    assertWYSIWYGHTML(expected);
+    assertWYSIWYGHTML(editor, expected);
   });
 
   it('should add row to down and not extend row-spanning cell', () => {
@@ -263,7 +257,7 @@ describe('addRowToDown command', () => {
       </table>
     `;
 
-    assertWYSIWYGHTML(expected);
+    assertWYSIWYGHTML(editor, expected);
   });
 
   it('should add row to down as many as the row-spanning count', () => {
@@ -316,6 +310,6 @@ describe('addRowToDown command', () => {
       </table>
     `;
 
-    assertWYSIWYGHTML(expected);
+    assertWYSIWYGHTML(editor, expected);
   });
 });

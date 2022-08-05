@@ -1,4 +1,4 @@
-import { Mark as ProsemirrorMark, DOMOutputSpecArray } from 'prosemirror-model';
+import { Mark as ProsemirrorMark, DOMOutputSpec } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 
 import Mark from '@/spec/mark';
@@ -29,7 +29,7 @@ export class Code extends Mark {
           },
         },
       ],
-      toDOM({ attrs }: ProsemirrorMark): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorMark): DOMOutputSpec {
         return [attrs.rawHTML || 'code', getCustomAttrs(attrs)];
       },
     };

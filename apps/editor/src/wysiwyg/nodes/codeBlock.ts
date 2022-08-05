@@ -1,4 +1,4 @@
-import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import { ProsemirrorNode, DOMOutputSpec } from 'prosemirror-model';
 import { setBlockType, Command } from 'prosemirror-commands';
 
 import { addParagraph } from '@/helper/manipulation';
@@ -40,7 +40,7 @@ export class CodeBlock extends NodeSchema {
           },
         },
       ],
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         return [
           attrs.rawHTML || 'pre',
           ['code', { 'data-language': attrs.language, ...getCustomAttrs(attrs) }, 0],
@@ -60,7 +60,7 @@ export class CodeBlock extends NodeSchema {
       const { view } = this.context;
 
       if (view!.endOfTextblock(direction) && $from.node().type.name === 'codeBlock') {
-        const lines = $from.parent.textContent.split('\n');
+        const lines: string[] = $from.parent.textContent.split('\n');
 
         const offset = direction === 'up' ? $from.start() : $from.end();
         const range =

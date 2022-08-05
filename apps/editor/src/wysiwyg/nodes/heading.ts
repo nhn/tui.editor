@@ -1,4 +1,4 @@
-import { Node as ProsemirrorNode, DOMOutputSpecArray } from 'prosemirror-model';
+import { ProsemirrorNode, DOMOutputSpec } from 'prosemirror-model';
 import { setBlockType } from 'prosemirror-commands';
 
 import NodeSchema from '@/spec/node';
@@ -41,7 +41,7 @@ export class Heading extends NodeSchema {
       group: 'block',
       defining: true,
       parseDOM,
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         return [`h${attrs.level}`, getCustomAttrs(attrs), 0];
       },
     };

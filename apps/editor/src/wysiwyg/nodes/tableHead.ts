@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpec, ProsemirrorNode } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
 import {
@@ -20,7 +20,7 @@ export class TableHead extends NodeSchema {
         ...getDefaultCustomAttrs(),
       },
       parseDOM: [createDOMInfoParsedRawHTML('thead')],
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         return ['thead', getCustomAttrs(attrs), 0];
       },
     };

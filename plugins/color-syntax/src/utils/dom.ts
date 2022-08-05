@@ -11,3 +11,15 @@ export function findParentByClassName(el: HTMLElement, className: string) {
 
   return currentEl;
 }
+
+export function removeProseMirrorHackNodes(html: string) {
+  const reProseMirrorImage = /<img class="ProseMirror-separator" alt="">/g;
+  const reProseMirrorTrailingBreak = / class="ProseMirror-trailingBreak"/g;
+
+  let resultHTML = html;
+
+  resultHTML = resultHTML.replace(reProseMirrorImage, '');
+  resultHTML = resultHTML.replace(reProseMirrorTrailingBreak, '');
+
+  return resultHTML;
+}

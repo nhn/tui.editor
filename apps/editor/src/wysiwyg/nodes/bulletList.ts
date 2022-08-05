@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpec, ProsemirrorNode } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
 import { getWwCommands } from '@/commands/wwCommands';
@@ -25,7 +25,7 @@ export class BulletList extends NodeSchema {
         ...getDefaultCustomAttrs(),
       },
       parseDOM: [createDOMInfoParsedRawHTML('ul')],
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         return ['ul', getCustomAttrs(attrs), 0];
       },
     };

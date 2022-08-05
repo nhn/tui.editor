@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, ProsemirrorNode } from 'prosemirror-model';
+import { DOMOutputSpec, ProsemirrorNode } from 'prosemirror-model';
 import { wrapIn } from 'prosemirror-commands';
 
 import NodeSchema from '@/spec/node';
@@ -24,7 +24,7 @@ export class BlockQuote extends NodeSchema {
       content: 'block+',
       group: 'block',
       parseDOM: [createDOMInfoParsedRawHTML('blockquote')],
-      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpecArray {
+      toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         return ['blockquote', getCustomAttrs(attrs), 0];
       },
     };

@@ -86,10 +86,8 @@ describe('WysiwygEditor', () => {
       wwe.setPlaceholder('placeholder text');
 
       assertToContainHTML(oneLineTrim`
-        <p>
+
           <span class="placeholder ProseMirror-widget">placeholder text</span>
-          <br>
-        </p>
       `);
     });
 

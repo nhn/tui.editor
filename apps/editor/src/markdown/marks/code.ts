@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray, Mark as ProsemirrorMark } from 'prosemirror-model';
+import { DOMOutputSpec, Mark as ProsemirrorMark } from 'prosemirror-model';
 import { EditorCommand } from '@t/spec';
 import { clsWithMdPrefix } from '@/utils/dom';
 import Mark from '@/spec/mark';
@@ -19,7 +19,7 @@ export class Code extends Mark {
         end: { default: false },
         marked: { default: false },
       },
-      toDOM(mark: ProsemirrorMark): DOMOutputSpecArray {
+      toDOM(mark: ProsemirrorMark): DOMOutputSpec {
         const { start, end, marked } = mark.attrs;
         let classNames = 'code';
 

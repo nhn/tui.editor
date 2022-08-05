@@ -1,6 +1,6 @@
-import { Node as ProsemirrorNode, NodeType, NodeRange, Fragment, Slice } from 'prosemirror-model';
+import { ProsemirrorNode, NodeType, NodeRange, Fragment, Slice } from 'prosemirror-model';
 import { ReplaceAroundStep, canSplit, liftTarget } from 'prosemirror-transform';
-import { Transaction, Selection } from 'prosemirror-state';
+import { Transaction, Selection, EditorState } from 'prosemirror-state';
 import { Command } from 'prosemirror-commands';
 
 import { findListItem, isInListNode } from '@/wysiwyg/helper/node';
@@ -255,7 +255,7 @@ export function toggleTask(): Command {
 }
 
 export function sinkListItem(listItem: NodeType): Command {
-  return ({ tr, selection }, dispatch) => {
+  return ({ tr, selection }: EditorState, dispatch) => {
     const { $from, $to } = selection;
     const range = $from.blockRange(
       $to,
@@ -375,7 +375,7 @@ function liftOutOfList(tr: Transaction, range: NodeRange) {
 }
 
 export function liftListItem(listItem: NodeType): Command {
-  return ({ tr, selection }, dispatch) => {
+  return ({ tr, selection }: EditorState, dispatch) => {
     const { $from, $to } = selection;
     const range = $from.blockRange(
       $to,

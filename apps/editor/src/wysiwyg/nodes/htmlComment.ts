@@ -1,4 +1,4 @@
-import { DOMOutputSpecArray } from 'prosemirror-model';
+import { DOMOutputSpec } from 'prosemirror-model';
 import { exitCode } from 'prosemirror-commands';
 
 import NodeSchema from '@/spec/node';
@@ -17,7 +17,7 @@ export class HTMLComment extends NodeSchema {
       code: true,
       defining: true,
       parseDOM: [{ preserveWhitespace: 'full' as const, tag: 'div[data-html-comment]' }],
-      toDOM(): DOMOutputSpecArray {
+      toDOM(): DOMOutputSpec {
         return ['div', { 'data-html-comment': 'true' }, 0];
       },
     };

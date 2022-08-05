@@ -28,7 +28,7 @@ export default class ToWwConvertorState {
     this.schema = schema;
     this.convertors = convertors;
     this.stack = [{ type: this.schema.topNodeType, attrs: null, content: [] }];
-    this.marks = Mark.none;
+    this.marks = Mark.none as Mark[];
   }
 
   top() {
@@ -57,11 +57,11 @@ export default class ToWwConvertorState {
   }
 
   openMark(mark: Mark) {
-    this.marks = mark.addToSet(this.marks);
+    this.marks = mark.addToSet(this.marks) as Mark[];
   }
 
   closeMark(mark: MarkType) {
-    this.marks = mark.removeFromSet(this.marks);
+    this.marks = mark.removeFromSet(this.marks) as Mark[];
   }
 
   addNode(type: NodeType, attrs: Attrs, content: Node[]) {
@@ -82,7 +82,7 @@ export default class ToWwConvertorState {
 
   closeNode() {
     if (this.marks.length) {
-      this.marks = Mark.none;
+      this.marks = Mark.none as Mark[];
     }
 
     const { type, attrs, content } = this.stack.pop() as StackItem;
