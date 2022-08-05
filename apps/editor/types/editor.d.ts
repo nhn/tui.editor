@@ -2,6 +2,8 @@ import { Schema, NodeSpec, MarkSpec, Fragment } from 'prosemirror-model';
 import { EditorView, Decoration, DecorationSet } from 'prosemirror-view';
 import { EditorState, Plugin, PluginKey, Selection, TextSelection } from 'prosemirror-state';
 import { undoInputRule, InputRule, inputRules } from 'prosemirror-inputrules';
+import { keymap } from 'prosemirror-keymap';
+import { Editor } from '@t/index';
 
 import {
   HTMLConvertor,
@@ -122,6 +124,7 @@ export interface PluginContext {
   eventEmitter: Emitter;
   usageStatistics?: boolean;
   i18n: I18n;
+  instance: Editor | Viewer;
   pmState: {
     Plugin: typeof Plugin;
     PluginKey: typeof PluginKey;
@@ -135,10 +138,26 @@ export interface PluginContext {
     InputRule: typeof InputRule;
     undoInputRule: typeof undoInputRule;
   };
+  pmKeymap: {
+    keymap: typeof keymap;
+  };
 }
 
 export type PluginFn = (context: PluginContext, options?: any) => PluginInfo | null;
 export type EditorPlugin = PluginFn | [PluginFn, any];
+type ContextInfo = {
+  eventEmitter: Emitter;
+  usageStatistics: boolean;
+  instance: Editor | Viewer;
+};
+
+export type EditorPluginInfo = ContextInfo & {
+  plugin: EditorPlugin;
+};
+
+export type EditorPluginsInfo = ContextInfo & {
+  plugins: EditorPlugin[];
+};
 
 export interface EditorOptions {
   el: HTMLElement;

@@ -2,21 +2,34 @@ import isArray from 'tui-code-snippet/type/isArray';
 import { Plugin, PluginKey, Selection, TextSelection } from 'prosemirror-state';
 import { inputRules, InputRule, undoInputRule } from 'prosemirror-inputrules';
 import { Decoration, DecorationSet } from 'prosemirror-view';
+import { keymap } from 'prosemirror-keymap';
 import { Fragment } from 'prosemirror-model';
 import i18n from '@/i18n/i18n';
 import { deepMergedCopy } from '@/utils/common';
 
-import { EditorPlugin } from '@t/editor';
-import { Emitter } from '@t/event';
+import { EditorPluginInfo, EditorPluginsInfo } from '@t/editor';
 import { PluginInfoResult } from '@t/plugin';
 import { mixinTableOffsetMapPrototype } from '@/wysiwyg/helper/tableOffsetMap';
 
-function execPlugin(plugin: EditorPlugin, eventEmitter: Emitter, usageStatistics: boolean) {
+function execPlugin(pluginInfo: EditorPluginInfo) {
+  const { plugin, eventEmitter, usageStatistics, instance } = pluginInfo;
+
   const pmState = { Plugin, PluginKey, Selection, TextSelection };
   const pmView = { Decoration, DecorationSet };
   const pmModel = { Fragment };
   const pmRules = { InputRule, inputRules, undoInputRule };
-  const context = { eventEmitter, usageStatistics, pmState, pmView, pmModel, pmRules, i18n };
+  const pmKeymap = { keymap };
+  const context = {
+    eventEmitter,
+    usageStatistics,
+    instance,
+    pmState,
+    pmView,
+    pmModel,
+    pmRules,
+    pmKeymap,
+    i18n,
+  };
 
   if (isArray(plugin)) {
     const [pluginFn, options = {}] = plugin;
@@ -27,16 +40,19 @@ function execPlugin(plugin: EditorPlugin, eventEmitter: Emitter, usageStatistics
   return plugin(context);
 }
 
-export function getPluginInfo(
-  plugins: EditorPlugin[],
-  eventEmitter: Emitter,
-  usageStatistics: boolean
-) {
+export function getPluginInfo(pluginsInfo: EditorPluginsInfo) {
+  const { plugins, eventEmitter, usageStatistics, instance } = pluginsInfo;
+
   eventEmitter.listen('mixinTableOffsetMapPrototype', mixinTableOffsetMapPrototype);
 
   return (plugins ?? []).reduce<PluginInfoResult>(
     (acc, plugin) => {
-      const pluginInfoResult = execPlugin(plugin, eventEmitter, usageStatistics);
+      const pluginInfoResult = execPlugin({
+        plugin,
+        eventEmitter,
+        usageStatistics,
+        instance,
+      });
 
       if (!pluginInfoResult) {
         throw new Error('The return value of the executed plugin is empty.');

@@ -183,11 +183,12 @@ class ToastUIEditorCore {
 
     const linkAttributes = sanitizeLinkAttribute(this.options.linkAttributes);
 
-    this.pluginInfo = getPluginInfo(
-      this.options.plugins,
-      this.eventEmitter,
-      this.options.usageStatistics
-    );
+    this.pluginInfo = getPluginInfo({
+      plugins: this.options.plugins,
+      eventEmitter: this.eventEmitter,
+      usageStatistics: this.options.usageStatistics,
+      instance: this,
+    });
     const {
       toHTMLRenderers,
       toMarkdownRenderers,
