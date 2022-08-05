@@ -53,6 +53,7 @@ export class Link extends Mark {
         attrs.rawHTML || 'a',
         {
           href: escapeXml(attrs.linkUrl),
+          // @ts-ignore
           ...(this.linkAttributes as DOMOutputSpec),
           ...getCustomAttrs(attrs),
         },
