@@ -1,4 +1,4 @@
-import { NodeType, MarkType, Schema, Node as ProsemirrorNode, Mark } from 'prosemirror-model';
+import { NodeType, MarkType, Schema, ProsemirrorNode, Mark } from 'prosemirror-model';
 import { MdNode, MdNodeType, RendererOptions, HTMLToken, MdPos } from './toastmark';
 import { WwNodeType, WwMarkType } from './wysiwyg';
 

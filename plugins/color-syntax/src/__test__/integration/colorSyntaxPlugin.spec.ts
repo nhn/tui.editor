@@ -2,6 +2,7 @@ import Editor from '@toast-ui/editor';
 import colorPicker from 'tui-color-picker';
 import { oneLineTrim } from 'common-tags';
 import colorSyntaxPlugin from '@/index';
+import { removeProseMirrorHackNodes } from '@/utils/dom';
 
 function removeDataAttr(html: string) {
   return html
@@ -16,7 +17,9 @@ describe('colorSyntax', () => {
   function assertWwEditorHTML(html: string) {
     const wwEditorEl = editor.getEditorElements().wwEditor;
 
-    expect(wwEditorEl).toContainHTML(html);
+    const wwEditorHTML = removeProseMirrorHackNodes(wwEditorEl.outerHTML);
+
+    expect(wwEditorHTML).toContain(html);
   }
 
   function assertMdPreviewHTML(html: string) {
