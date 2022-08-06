@@ -81,7 +81,7 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
 
 class MyComponent extends React.Component {
-  editorRef = React.createRef();
+  editorRef = React.useRef();
 
   handleClick = () => {
     this.editorRef.current.getInstance().exec('Bold');
@@ -114,7 +114,7 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor } from '@toast-ui/react-editor';
 
 class MyComponent extends React.Component {
-  editorRef = React.createRef();
+  editorRef = React.useRef();
 
   handleClickButton = () => {
     this.editorRef.current.getRootElement().classList.add('my-editor-root');
