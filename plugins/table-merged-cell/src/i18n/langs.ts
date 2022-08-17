@@ -168,4 +168,12 @@ export function addLangs(i18n: I18n) {
     'Cannot paste row merged cells into the table header':
       'Ne mogu zaljepiti redak spojenih ćelija u zaglavlje tablice',
   });
+
+  i18n.setLanguage(['vi', 'vi-VN'], {
+    'Merge cells': 'Gộp ô',
+    'Split cells': 'Tách ô',
+    'Cannot change part of merged cell': 'Không thể thay đổi phần gộp ô.',
+    'Cannot paste row merged cells into the table header':
+        'Không thể dán các ô đã hợp nhất hàng vào tiêu đề bảng.',
+  });
 }

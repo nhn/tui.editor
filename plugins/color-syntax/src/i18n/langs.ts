@@ -81,6 +81,10 @@ export function addLangs(i18n: I18n) {
     'Text color': 'Колір тексту',
   });
 
+  i18n.setLanguage(['vi', 'vi-VN'], {
+    'Text color': 'Màu chữ',
+  });
+
   i18n.setLanguage('zh-CN', {
     'Text color': '文字颜色',
   });
