@@ -20,6 +20,11 @@ export class TableBody extends NodeSchema {
           tag: 'tbody',
           getAttrs(dom: Node | string) {
             const rows = (dom as HTMLElement).querySelectorAll('tr');
+
+            if (!rows.length) {
+              return false;
+            }
+
             const columns = rows[0].children.length;
             const rawHTML = (dom as HTMLElement).getAttribute('data-raw-html');
 
