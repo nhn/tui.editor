@@ -263,15 +263,3 @@ export function assign(targetObj: Record<string, any>, obj: Record<string, any> 
 export function getSortedNumPair(valueA: number, valueB: number) {
   return valueA > valueB ? [valueB, valueA] : [valueA, valueB];
 }
-
-export function isStartWithSpace(text: string) {
-  const reStartWithSpace = /^\s(\S*)/g;
-
-  return reStartWithSpace.test(text);
-}
-
-export function isEndWithSpace(text: string) {
-  const reEndWithSpace = /(\S*)\s$/g;
-
-  return reEndWithSpace.test(text);
-}
