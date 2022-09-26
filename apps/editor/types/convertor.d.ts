@@ -114,7 +114,7 @@ export type ToMdNodeTypeConvertorMap = Partial<Record<WwNodeType, ToMdNodeTypeCo
 type ToMdMarkTypeConvertor = (
   nodeInfo?: MarkInfo,
   entering?: boolean,
-  betweenSpace?: boolean
+  nonSpecEmphasis?: boolean
 ) => ToMdConvertorReturnValues & ToMdMarkTypeOption;
 
 export type ToMdMarkTypeConvertorMap = Partial<Record<WwMarkType, ToMdMarkTypeConvertor>>;
@@ -128,7 +128,7 @@ interface ToMdConvertorContext {
 type ToMdConvertor = (
   nodeInfo: NodeInfo | MarkInfo,
   context: ToMdConvertorContext,
-  betweenSpace?: boolean
+  nonSpecEmphasis?: boolean
 ) => ToMdConvertorReturnValues;
 
 export type ToMdConvertorMap = Partial<Record<WwNodeType | MdNodeType, ToMdConvertor>>;

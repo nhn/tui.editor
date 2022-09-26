@@ -590,7 +590,8 @@ describe('Convertor', () => {
         | <ul><li>nested<ul><li>nested</li></ul></li></ul> |
         | <ul><li>nested<ul><li>nested</li><li>nested</li></ul></li></ul> |
         | <ol><li>mix**ed**<ul><li>**mix**ed</li></ul></li></ol> |
-        | <ol><li>mix<i>ed</i><ul><li><strong>mix</strong>ed</li></ul></li></ol> |
+        | <ol><li>mix*e*d<ul><li>*mix*ed</li></ul></li></ol> |
+        | <ol><li>mix<em>ed</em><ul><li><strong>mix</strong>ed</li></ul></li></ol> |
         | foo<ul><li>bar</li></ul>baz |
         | ![altText](imgUrl) **mixed**<ul><li>[linkText](linkUrl) mixed</li></ul> |
       `;
@@ -602,8 +603,9 @@ describe('Convertor', () => {
         | <ol><li>ordered</li></ol> |
         | <ul><li>nested<ul><li>nested</li></ul></li></ul> |
         | <ul><li>nested<ul><li>nested</li><li>nested</li></ul></li></ul> |
-        | <ol><li>mix<strong>ed</strong><ul><li><strong>mix</strong>ed</li></ul></li></ol> |
-        | <ol><li>mix<i>ed</i><ul><li><strong>mix</strong>ed</li></ul></li></ol> |
+        | <ol><li>mix**ed**<ul><li>**mix**ed</li></ul></li></ol> |
+        | <ol><li>mix*e*d<ul><li>*mix*ed</li></ul></li></ol> |
+        | <ol><li>mix<em>ed</em><ul><li><strong>mix</strong>ed</li></ul></li></ol> |
         | foo<ul><li>bar</li></ul>baz |
         | ![altText](imgUrl) **mixed**<ul><li>[linkText](linkUrl) mixed</li></ul> |
       `;
@@ -1075,28 +1077,81 @@ describe('Convertor', () => {
     });
   });
 
-  it('should convert by using HTML tag when delimiter is not preceded an alphanumeric', () => {
-    const wwNodeJson = {
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          content: [
-            {
-              type: 'text',
-              marks: [{ type: 'strong' }],
-              text: '"test"',
-            },
-            { type: 'text', text: 'a' },
-          ],
-        },
-      ],
-    };
-    const wwNode = Node.fromJSON(schema, wwNodeJson);
+  describe('emphasis that starts/ends with punctuation', () => {
+    it('should convert by using HTML tag when not preceded by whitespace or punctuation', () => {
+      const wwNodeJson = {
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              { type: 'text', text: 'a' },
+              {
+                type: 'text',
+                marks: [{ type: 'emph' }],
+                text: '"test"',
+              },
+            ],
+          },
+        ],
+      };
+      const wwNode = Node.fromJSON(schema, wwNodeJson);
 
-    const result = convertor.toMarkdownText(wwNode);
+      const result = convertor.toMarkdownText(wwNode);
 
-    expect(result).toBe(`<strong>"test"</strong>a`);
+      expect(result).toBe(`a<em>"test"</em>`);
+    });
+
+    it('should convert by using HTML tag when not succeeded by whitespace or punctuation', () => {
+      const wwNodeJson = {
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'text',
+                marks: [{ type: 'strong' }],
+                text: '"test"',
+              },
+              { type: 'text', text: 'a' },
+            ],
+          },
+        ],
+      };
+      const wwNode = Node.fromJSON(schema, wwNodeJson);
+
+      const result = convertor.toMarkdownText(wwNode);
+
+      expect(result).toBe(`<strong>"test"</strong>a`);
+    });
+
+    it('should not convert by using HTML tag when preceded by whitespace', () => {
+      const markdown =
+        'test **"test"**';
+      const expected =
+        'test **"test"**';
+
+      assertConverting(markdown, expected);
+    });
+
+    it('should not convert by using HTML tag when preceded by punctuation', () => {
+      const markdown =
+        'test,**"test"**';
+      const expected =
+        'test,**"test"**';
+
+      assertConverting(markdown, expected);
+    });
+
+    it('should not convert by using HTML tag when inside another emphasis', () => {
+      const markdown =
+        '**test*test***';
+      const expected =
+        '**test*test***';
+
+      assertConverting(markdown, expected);
+    });
   });
 
   it('should convert empty line between lists of wysiwig to <br>', () => {

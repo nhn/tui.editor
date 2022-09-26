@@ -264,14 +264,34 @@ export function getSortedNumPair(valueA: number, valueB: number) {
   return valueA > valueB ? [valueB, valueA] : [valueA, valueB];
 }
 
-export function isStartWithSpace(text: string) {
-  const reStartWithSpace = /^\s(\S*)/g;
+const reStartWithSpaceOrPunct = /^[\s\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-./:;<=>?@[\]^_`{|}~]/;
 
-  return reStartWithSpace.test(text);
+export function isStartWithSpaceOrPunct(text?: string) {
+  if (!text) return true;
+
+  return reStartWithSpaceOrPunct.test(text);
 }
 
-export function isEndWithSpace(text: string) {
-  const reEndWithSpace = /(\S*)\s$/g;
+const reEndWithSpaceOrPunct = /[\s\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-./:;<=>?@[\]^_`{|}~]$/;
 
-  return reEndWithSpace.test(text);
+export function isEndWithSpaceOrPunct(text?: string) {
+  if (!text) return true;
+
+  return reEndWithSpaceOrPunct.test(text);
+}
+
+const reStartWithPunct = /^[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-./:;<=>?@[\]^_`{|}~]/;
+
+export function isStartWithPunct(text?: string) {
+  if (!text) return false;
+
+  return reStartWithPunct.test(text);
+}
+
+const reEndWithPunct = /[\u2000-\u206F\u2E00-\u2E7F\\'!"#$%&()*+,\-./:;<=>?@[\]^_`{|}~]$/;
+
+export function isEndWithPunct(text?: string) {
+  if (!text) return false;
+
+  return reEndWithPunct.test(text);
 }

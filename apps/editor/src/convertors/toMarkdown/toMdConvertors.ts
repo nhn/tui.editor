@@ -208,11 +208,11 @@ export const toMdConvertors: ToMdConvertorMap = {
     };
   },
 
-  strong({ node }, { entering }, betweenSpace) {
+  strong({ node }, { entering }, nonSpecEmphasis) {
     const { rawHTML } = node.attrs;
     let delim = '**';
 
-    if (!betweenSpace) {
+    if (nonSpecEmphasis) {
       delim = entering ? '<strong>' : '</strong>';
     }
 
@@ -222,11 +222,11 @@ export const toMdConvertors: ToMdConvertorMap = {
     };
   },
 
-  emph({ node }, { entering }, betweenSpace) {
+  emph({ node }, { entering }, nonSpecEmphasis) {
     const { rawHTML } = node.attrs;
     let delim = '*';
 
-    if (!betweenSpace) {
+    if (nonSpecEmphasis) {
       delim = entering ? '<em>' : '</em>';
     }
 
@@ -236,11 +236,11 @@ export const toMdConvertors: ToMdConvertorMap = {
     };
   },
 
-  strike({ node }, { entering }, betweenSpace) {
+  strike({ node }, { entering }, nonSpecEmphasis) {
     const { rawHTML } = node.attrs;
     let delim = '~~';
 
-    if (!betweenSpace) {
+    if (nonSpecEmphasis) {
       delim = entering ? '<del>' : '</del>';
     }
 
@@ -368,7 +368,7 @@ function createMarkTypeConvertors(convertors: ToMdConvertorMap) {
   const markTypes = Object.keys(markTypeOptions) as WwMarkType[];
 
   markTypes.forEach((type) => {
-    markTypeConvertors[type] = (nodeInfo, entering, betweenSpace) => {
+    markTypeConvertors[type] = (nodeInfo, entering, nonSpecEmphasis) => {
       const markOption = markTypeOptions[type];
       const convertor = convertors[type];
 
@@ -378,7 +378,7 @@ function createMarkTypeConvertors(convertors: ToMdConvertorMap) {
       // the converter is called without parameters.
       const runConvertor = convertor && nodeInfo && !isUndefined(entering);
       const params = runConvertor
-        ? convertor!(nodeInfo as MarkInfo, { entering }, betweenSpace)
+        ? convertor!(nodeInfo as MarkInfo, { entering }, nonSpecEmphasis)
         : {};
 
       return { ...params, ...markOption };

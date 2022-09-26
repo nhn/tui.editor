@@ -1,6 +1,14 @@
 import { Node, Mark } from 'prosemirror-model';
 
-import { includes, escape, last, isEndWithSpace, isStartWithSpace } from '@/utils/common';
+import {
+  includes,
+  escape,
+  last,
+  isStartWithSpaceOrPunct,
+  isEndWithSpaceOrPunct,
+  isStartWithPunct,
+  isEndWithPunct,
+} from '@/utils/common';
 
 import { WwNodeType, WwMarkType } from '@t/wysiwyg';
 import {
@@ -10,7 +18,6 @@ import {
   FirstDelimFn,
   InfoForPosSync,
 } from '@t/convertor';
-import { DEFAULT_TEXT_NOT_START_OR_END_WITH_SPACE } from '@/utils/constants';
 
 export default class ToMdConvertorState {
   private readonly nodeTypeConvertors: ToMdNodeTypeConvertorMap;
@@ -50,27 +57,39 @@ export default class ToMdConvertorState {
     return /(^|\n)$/.test(this.result);
   }
 
-  private isBetweenSpaces(parent: Node, index: number) {
+  private isNonSpecEmphasis(parent: Node, index: number) {
     const { content } = parent;
 
-    const isFrontNodeEndWithSpace =
-      index === 0 ||
-      isEndWithSpace(content.child(index - 1).text ?? DEFAULT_TEXT_NOT_START_OR_END_WITH_SPACE);
+    if (
+      index !== 0 &&
+      isStartWithPunct(content.child(index).text) &&
+      !isEndWithSpaceOrPunct(content.child(index - 1).text)
+    ) {
+      return true;
+    }
 
-    const isRearNodeStartWithSpace =
-      index >= content.childCount - 1 ||
-      isStartWithSpace(content.child(index + 1).text ?? DEFAULT_TEXT_NOT_START_OR_END_WITH_SPACE);
+    if (
+      index !== content.childCount - 1 &&
+      isEndWithPunct(content.child(index).text) &&
+      !isStartWithSpaceOrPunct(content.child(index + 1).text)
+    ) {
+      return true;
+    }
 
-    return isFrontNodeEndWithSpace && isRearNodeStartWithSpace;
+    return false;
   }
 
   private markText(mark: Mark, entering: boolean, parent: Node, index: number) {
     const convertor = this.getMarkConvertor(mark);
 
     if (convertor) {
-      const betweenSpace = this.isBetweenSpaces(parent, entering ? index : index - 1);
+      const nonSpecEmphasis = this.isNonSpecEmphasis(parent, entering ? index : index - 1);
 
-      const { delim, rawHTML } = convertor({ node: mark, parent, index }, entering, betweenSpace);
+      const { delim, rawHTML } = convertor(
+        { node: mark, parent, index },
+        entering,
+        nonSpecEmphasis
+      );
 
       return (rawHTML as string) || (delim as string);
     }
