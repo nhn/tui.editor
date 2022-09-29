@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/vue-editor",
-  "version": "3.2.0",
+  "version": "3.2.1",
   "description": "TOAST UI Editor for Vue",
   "main": "dist/toastui-vue-editor.js",
   "module": "dist/esm/index.js",
