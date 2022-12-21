@@ -47,10 +47,10 @@ class DropdownToolbarButtonComp extends Component<Props, State> {
     return { ...rect, left: null, right: 10 };
   }
 
-  private handleClickDocument = ({ target }: MouseEvent) => {
+  private handleClickDocument = (ev: MouseEvent) => {
     if (
-      !closest(target as HTMLElement, `.${cls('dropdown-toolbar')}`) &&
-      !closest(target as HTMLElement, '.more')
+      !closest(ev.composedPath()[0] as HTMLElement, `.${cls('dropdown-toolbar')}`) &&
+      !closest(ev.composedPath()[0] as HTMLElement, '.more')
     ) {
       this.setState({ showDropdown: false, dropdownPos: null });
     }
