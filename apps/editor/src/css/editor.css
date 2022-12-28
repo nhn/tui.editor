@@ -881,7 +881,6 @@
 @media only screen and (max-width: 480px) {
   .toastui-editor-popup {
     max-width: 300px;
-    margin-left: -150px;
   }
 
   .toastui-editor-dropdown-toolbar {
