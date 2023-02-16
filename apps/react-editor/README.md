@@ -84,7 +84,7 @@ class MyComponent extends React.Component {
   editorRef = React.createRef();
 
   handleClick = () => {
-    this.editorRef.current.getInstance().exec('Bold');
+    this.editorRef.current.getInstance().exec('bold');
   };
 
   render() {

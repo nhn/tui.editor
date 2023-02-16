@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/react-editor",
-  "version": "3.2.0",
+  "version": "3.2.2",
   "description": "TOAST UI Editor for React",
   "files": [
     "dist",
@@ -35,6 +35,6 @@
     "react-dom": "^17.0.1"
   },
   "dependencies": {
-    "@toast-ui/editor": "^3.2.0"
+    "@toast-ui/editor": "^3.2.1"
   }
 }
