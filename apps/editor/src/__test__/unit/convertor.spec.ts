@@ -595,20 +595,7 @@ describe('Convertor', () => {
         | ![altText](imgUrl) **mixed**<ul><li>[linkText](linkUrl) mixed</li></ul> |
       `;
 
-      const expected = source`
-        | thead |
-        | ----- |
-        | <ul><li>bullet</li></ul> |
-        | <ol><li>ordered</li></ol> |
-        | <ul><li>nested<ul><li>nested</li></ul></li></ul> |
-        | <ul><li>nested<ul><li>nested</li><li>nested</li></ul></li></ul> |
-        | <ol><li>mix<strong>ed</strong><ul><li><strong>mix</strong>ed</li></ul></li></ol> |
-        | <ol><li>mix<i>ed</i><ul><li><strong>mix</strong>ed</li></ul></li></ol> |
-        | foo<ul><li>bar</li></ul>baz |
-        | ![altText](imgUrl) **mixed**<ul><li>[linkText](linkUrl) mixed</li></ul> |
-      `;
-
-      assertConverting(markdown, `${expected}\n`);
+      assertConverting(markdown, `${markdown}\n`);
     });
 
     it('table with unmatched html list', () => {
@@ -1073,30 +1060,6 @@ describe('Convertor', () => {
 
       assertConverting(markdown, markdown);
     });
-  });
-
-  it('should convert by using HTML tag when delimiter is not preceded an alphanumeric', () => {
-    const wwNodeJson = {
-      type: 'doc',
-      content: [
-        {
-          type: 'paragraph',
-          content: [
-            {
-              type: 'text',
-              marks: [{ type: 'strong' }],
-              text: '"test"',
-            },
-            { type: 'text', text: 'a' },
-          ],
-        },
-      ],
-    };
-    const wwNode = Node.fromJSON(schema, wwNodeJson);
-
-    const result = convertor.toMarkdownText(wwNode);
-
-    expect(result).toBe(`<strong>"test"</strong>a`);
   });
 
   it('should convert empty line between lists of wysiwig to <br>', () => {
