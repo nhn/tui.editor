@@ -402,7 +402,6 @@
 
 .toastui-editor-dropdown-toolbar {
   position: absolute;
-  height: 46px;
   z-index: 30;
   border-radius: 2px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
@@ -410,6 +409,7 @@
   background-color: #f7f9fc;
   display: -ms-flexbox;
   display: flex;
+  flex-wrap: wrap;
 }
 
 .toastui-editor-toolbar-item-wrapper {
@@ -880,7 +880,6 @@
 @media only screen and (max-width: 480px) {
   .toastui-editor-popup {
     max-width: 300px;
-    margin-left: -150px;
   }
 
   .toastui-editor-dropdown-toolbar {
