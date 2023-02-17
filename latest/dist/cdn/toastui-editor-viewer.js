@@ -1,6 +1,6 @@
 /*!
  * @toast-ui/editor
- * @version 3.2.1 | Thu Sep 29 2022
+ * @version 3.2.2 | Fri Feb 17 2023
  * @author NHN Cloud FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -12088,7 +12088,6 @@ var reHTMLTag = new RegExp("^" + constants_HTML_TAG, 'i');
 var constants_reBR = /<br\s*\/*>/i;
 var reHTMLComment = /<! ---->|<!--(?:-?[^>-])(?:-?[^-])*-->/;
 var constants_ALTERNATIVE_TAG_FOR_BR = '</p><p>';
-var DEFAULT_TEXT_NOT_START_OR_END_WITH_SPACE = 'a';
 
 // EXTERNAL MODULE: ../../node_modules/tui-code-snippet/type/isNull.js
 var type_isNull = __webpack_require__(934);
@@ -12316,14 +12315,6 @@ function common_assign(targetObj, obj) {
 }
 function getSortedNumPair(valueA, valueB) {
     return valueA > valueB ? [valueB, valueA] : [valueA, valueB];
-}
-function isStartWithSpace(text) {
-    var reStartWithSpace = /^\s(\S*)/g;
-    return reStartWithSpace.test(text);
-}
-function isEndWithSpace(text) {
-    var reEndWithSpace = /(\S*)\s$/g;
-    return reEndWithSpace.test(text);
 }
 
 ;// CONCATENATED MODULE: ./src/utils/dom.ts
