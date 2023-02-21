@@ -26,8 +26,8 @@ const MARGIN_FROM_RIGHT_SIDE = 20;
 export class Popup extends Component<Props, State> {
   private handleMousedown = (ev: MouseEvent) => {
     if (
-      !closest(ev.target as HTMLElement, `.${cls('popup')}`) &&
-      !closest(ev.target as HTMLElement, this.props.info.fromEl)
+      !closest(ev.composedPath()[0] as HTMLElement, `.${cls('popup')}`) &&
+      !closest(ev.composedPath()[0] as HTMLElement, this.props.info.fromEl)
     ) {
       this.props.hidePopup();
     }
