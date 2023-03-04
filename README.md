@@ -35,6 +35,7 @@
 | --- | --- |
 | [`@toast-ui/react-editor`](https://github.com/nhn/tui.editor/tree/master/apps/react-editor) | [React](https://reactjs.org/) wrapper component |
 | [`@toast-ui/vue-editor`](https://github.com/nhn/tui.editor/tree/master/apps/vue-editor) | [Vue](https://vuejs.org/) wrapper component |
+| [`ember-tui-editor`](https://github.com/evocount/ember-tui-editor) | [Ember.js](https://emberjs.com/) wrapper component |
 
 ### TOAST UI Editor's Plugins
 
