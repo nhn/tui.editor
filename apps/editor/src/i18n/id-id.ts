@@ -4,7 +4,7 @@
  */
 import Editor from '../editorCore';
 
-Editor.setLanguage(['en', 'en-US'], {
+Editor.setLanguage(['id', 'id-ID'], {
   Markdown: 'Markdown',
   WYSIWYG: 'WYSIWYG',
   Write: 'Tulis',
