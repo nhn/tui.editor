@@ -43,7 +43,7 @@
     "jest-serializer-html": "^7.0.0",
     "lerna": "^3.20.2",
     "mini-css-extract-plugin": "^2.5.3",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.3.2",
     "prettier": "^2.1.2",
     "resize-observer-polyfill": "^1.5.1",
     "rollup": "^2.52.0",
