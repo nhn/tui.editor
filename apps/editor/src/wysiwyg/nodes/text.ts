@@ -55,8 +55,8 @@ export class Text extends Node {
 
   keymaps() {
     return {
-      Tab: this.addSpaces(),
-      'Shift-Tab': this.removeSpaces(),
+      'Mod-Tab': this.addSpaces(),
+      'Mod-Shift-Tab': this.removeSpaces(),
     };
   }
 }

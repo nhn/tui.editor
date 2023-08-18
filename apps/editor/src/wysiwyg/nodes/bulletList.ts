@@ -49,8 +49,8 @@ export class BulletList extends NodeSchema {
     return {
       'Mod-u': bulletListCommand,
       'Mod-U': bulletListCommand,
-      Tab: indent(),
-      'Shift-Tab': outdent(),
+      'Mod-Tab': indent(),
+      'Mod-Shift-Tab': outdent(),
     };
   }
 }

@@ -56,8 +56,8 @@ export class OrderedList extends NodeSchema {
     return {
       'Mod-o': orderedListCommand,
       'Mod-O': orderedListCommand,
-      Tab: indent(),
-      'Shift-Tab': outdent(),
+      'Mod-Tab': indent(),
+      'Mod-Shift-Tab': outdent(),
     };
   }
 }
