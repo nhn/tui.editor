@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Use Node.js 15.x
         uses: actions/setup-node@v2.5.1
         with:

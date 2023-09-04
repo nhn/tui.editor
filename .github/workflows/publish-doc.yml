@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Use Node.js 15.x
         uses: actions/setup-node@v2.5.1
         with:
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Use Node.js 15.x
         uses: actions/setup-node@v2.5.1
         with:
@@ -46,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Use Node.js 15.x
         uses: actions/setup-node@v2.5.1
         with:
@@ -78,7 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [pre-check, test, plugin-test]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Check the package version
         id: check
         uses: PostHog/check-package-version@v2
@@ -113,7 +113,7 @@ jobs:
           git add latest/dist -f
           git stash --include-untracked
       - name: Checkout gh-pages
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           ref: gh-pages
       - name: Commit files
