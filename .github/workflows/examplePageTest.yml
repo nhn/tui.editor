@@ -10,7 +10,7 @@ jobs:
       WORKING_DIRECTORY: ./apps/editor
     steps:
       - name: checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: create config variable
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
