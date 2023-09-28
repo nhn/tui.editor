@@ -338,6 +338,14 @@ class ToastUIEditorCore {
   }
 
   /**
+   * Set setCode
+   * @param {string | undefined} code - code for I18N language
+   */
+  static setCode(code?: string) {
+    i18n.setCode(code);
+  }
+
+  /**
    * Set language
    * @param {string|string[]} code - code for I18N language
    * @param {object} data - language set
