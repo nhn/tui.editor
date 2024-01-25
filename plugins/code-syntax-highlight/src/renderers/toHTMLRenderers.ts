@@ -1,6 +1,7 @@
 import type { MdNode, CodeBlockMdNode } from '@toast-ui/editor';
 import type { HTMLToken } from '@toast-ui/toastmark';
 import { PrismJs } from '@t/index';
+import { escapeXml } from '@/utils/common';
 
 const BACKTICK_COUNT = 3;
 
@@ -17,6 +18,7 @@ export function getHTMLRenderers(prism: PrismJs) {
       }
 
       let content = node.literal!;
+      let contentEscaped = false;
 
       if (infoWords.length && infoWords[0].length) {
         const [lang] = infoWords;
@@ -28,8 +30,11 @@ export function getHTMLRenderers(prism: PrismJs) {
 
         if (registeredLang) {
           content = prism.highlight(node.literal!, registeredLang, lang);
+          contentEscaped = true;
         }
       }
+
+      content = contentEscaped ? content : escapeXml(content);
 
       return [
         { type: 'openTag', tagName: 'pre', classNames: preClasses },
