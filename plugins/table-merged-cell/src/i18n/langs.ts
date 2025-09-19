@@ -168,4 +168,13 @@ export function addLangs(i18n: I18n) {
     'Cannot paste row merged cells into the table header':
       'Ne mogu zaljepiti redak spojenih ćelija u zaglavlje tablice',
   });
+
+  i18n.setLanguage(['fa', 'fa-IR'], {
+    'Merge cells': 'ادغام خانه‌ها',
+    'Split cells': 'تقسیم خانه‌ها',
+    'Cannot change part of merged cell': 'نمی‌توان بخشی از سلول ادغام‌شده را تغییر داد.',
+    'Cannot paste row merged cells into the table header':
+      'نمی‌توان سلول‌های ادغام‌شده‌ی ردیف را در سربرگ جدول جای‌گذاری کرد.',
+  });
+
 }

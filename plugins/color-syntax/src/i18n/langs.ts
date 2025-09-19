@@ -88,4 +88,9 @@ export function addLangs(i18n: I18n) {
   i18n.setLanguage('zh-TW', {
     'Text color': '文字顏色',
   });
+
+  i18n.setLanguage('fa-IR', {
+    'Text color': 'رنگ متن',
+  });
+
 }
