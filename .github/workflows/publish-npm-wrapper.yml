@@ -1,112 +1,113 @@
+# @toast-ui/react-editor, @toast-ui/vue-editor를 npm 승인 대기열에 올린다 (npm staged publishing).
+# 래퍼는 메인 @toast-ui/editor가 npm에 공개된 뒤에 실행한다(의존 범위가 공개 버전을 가리켜야 함).
+#
+# npmjs.com 설정: 두 패키지 각각 Settings → Trusted Publisher
+#   GitHub Actions / nhn / tui.editor / publish-npm-wrapper.yml / Environment 비움
+#   Allowed actions 체크 없음 (stage publish만 허용)
 name: Wrapper Npm Publish
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: publish-wrapper
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
 jobs:
-  pre-check:
+  stage:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # npm Trusted Publishing(OIDC)
+    strategy:
+      # 한 래퍼가 실패해도 다른 래퍼는 계속 진행한다
+      fail-fast: false
+      matrix:
+        include:
+          - { dir: react-editor, build: react }
+          - { dir: vue-editor, build: vue }
+    env:
+      PACKAGE_DIRECTORY: apps/${{ matrix.dir }}
     steps:
-      - name: Checkout branch
-        uses: actions/checkout@v2
-      - name: Use Node.js 15.x
-        uses: actions/setup-node@v2.5.1
-        with:
-          node-version: '15.x'
-      - name: Install
+      - name: checkout branch
+        uses: actions/checkout@v4
+      - name: check package
+        id: package
         run: |
-          npm ci
-      - name: Eslint
-        run: |
-          npm run lint:all
-      - name: Check types
-        run: |
-          npm run test:types:all
+          NAME=$(node -p "require('./${PACKAGE_DIRECTORY}/package.json').name")
+          VERSION=$(node -p "require('./${PACKAGE_DIRECTORY}/package.json').version")
+          echo "name=${NAME}" >> "$GITHUB_OUTPUT"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v2
-      - name: Use Node.js 15.x
-        uses: actions/setup-node@v2.5.1
-        with:
-          node-version: '15.x'
-      - name: Install
-        run: |
-          npm ci
-      - name: Build
-        run: |
-          npm run build toastmark
-      - name: Toastmark unit, integration test
-        run: |
-          npm run test:ci toastmark
-      - name: Editor unit, integration test
-        run: |
-          npm run test:ci editor
+          # 재실행할 때 이미 공개된 래퍼는 실패시키지 않고 건너뛴다
+          if [ -n "$(npm view "${NAME}@${VERSION}" version 2>/dev/null)" ]; then
+            echo "::notice::${NAME}@${VERSION}은 이미 배포됐다. 이 패키지는 건너뛴다."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
 
-  plugin-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout branch
-        uses: actions/checkout@v2
-      - name: Use Node.js 15.x
-        uses: actions/setup-node@v2.5.1
-        with:
-          node-version: '15.x'
-      - name: Install
-        run: |
-          npm ci
-      - name: Build
-        run: |
-          npm run build toastmark
-          npm run build editor
-      - name: chart plugin unit, integration test
-        run: |
-          npm run test:ci chart
-      - name: color syntax plugin unit, integration test
-        run: |
-          npm run test:ci color
-      - name: code syntax highlighting plugin unit, integration test
-        run: |
-          npm run test:ci code
-      - name: table merged cell plugin unit, integration test
-        run: |
-          npm run test:ci table
-      - name: uml plugin unit, integration test
-        run: |
-          npm run test:ci uml
+          # Trusted Publishing은 repository.url이 이 저장소와 정확히 같아야 한다
+          node -e '
+            const pkg = require(`./${process.env.PACKAGE_DIRECTORY}/package.json`);
+            const url = typeof pkg.repository === "string" ? pkg.repository : (pkg.repository || {}).url || "";
+            const normalized = url.replace(/^git\+/, "").replace(/\.git$/, "");
+            const expected = `https://github.com/${process.env.GITHUB_REPOSITORY}`;
+            if (normalized !== expected) {
+              console.log(`::error::repository.url(${url})이 ${expected}와 다르다. provenance 검증에서 배포가 실패한다.`);
+              process.exit(1);
+            }
+          '
 
-  publish:
-    runs-on: ubuntu-latest
-    needs: [pre-check, test, plugin-test]
-    steps:
-      - uses: actions/checkout@v2
-      - name: Check the package version
-        id: check
-        uses: PostHog/check-package-version@v2
+          case "$VERSION" in
+            *-*)
+              echo "::error::프리릴리스 버전(${VERSION})은 latest로 배포하지 않는다."
+              exit 1
+              ;;
+          esac
+
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+      # 빌드는 Node 15에서만 된다
+      - name: use Node.js 15 (build)
+        if: steps.package.outputs.skip != 'true'
+        uses: actions/setup-node@v4
         with:
-          path: ./apps/editor/
-      - name: Use Node.js 15.x
-        uses: actions/setup-node@v2.5.1
-        with:
-          node-version: '15.x'
-          registry-url: https://registry.npmjs.org/
-      - name: Install
-        run: |
-          npm ci
-      - name: Build
+          node-version: '15'
+          cache: 'npm'
+      - name: npm ci
+        if: steps.package.outputs.skip != 'true'
+        run: npm ci
+      - name: build
+        if: steps.package.outputs.skip != 'true'
         run: |
           npm run build toastmark
           npm run build editor
-          npm run build react
-          npm run build vue
-      - name: Npm Publish(react)
-        working-directory: ./apps/react-editor
-        run: |
-          npm publish
+          npm run build ${{ matrix.build }}
+      # staged publishing은 Node 22.14+와 npm 11.15.0+가 필요하다
+      - name: use Node.js 24 (stage)
+        if: steps.package.outputs.skip != 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          registry-url: 'https://registry.npmjs.org'
+      - name: update npm
+        if: steps.package.outputs.skip != 'true'
+        run: npm install -g npm@^11.15.0
+      - name: npm stage publish
+        if: steps.package.outputs.skip != 'true'
+        working-directory: ${{ env.PACKAGE_DIRECTORY }}
+        run: npm stage publish
+      - name: write summary
+        if: steps.package.outputs.skip != 'true'
         env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
-      - name: Npm Publish(vue)
-        working-directory: ./apps/vue-editor
+          NAME: ${{ steps.package.outputs.name }}
+          VERSION: ${{ steps.package.outputs.version }}
         run: |
-          npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTH_TOKEN}}
+          {
+            echo "## ${NAME}@${VERSION} 승인 대기"
+            echo ""
+            echo "1. \`npm stage list ${NAME}\`로 stage-id를 확인한다."
+            echo "2. \`npm stage download <stage-id>\`로 tarball을 받아 검증한다."
+            echo "3. npmjs.com Staged Packages 탭 또는 \`npm stage approve <stage-id>\`로 승인한다. 2FA가 필요하다."
+          } >> "$GITHUB_STEP_SUMMARY"
