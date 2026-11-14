@@ -3,7 +3,7 @@ import { ProsemirrorNode, DOMOutputSpec } from 'prosemirror-model';
 import Node from '@/spec/node';
 
 import { EditorCommand } from '@t/spec';
-import { getDefaultCustomAttrs, getCustomAttrs } from '@/wysiwyg/helper/node';
+import { getDefaultCustomAttrs, getCustomAttrs, getSafeRawHTMLTag } from '@/wysiwyg/helper/node';
 
 const ROOT_BLOCK_DEPTH = 1;
 
@@ -22,7 +22,7 @@ export class ThematicBreak extends Node {
       parseDOM: [{ tag: 'hr' }],
       selectable: false,
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
-        return ['div', getCustomAttrs(attrs), [attrs.rawHTML || 'hr']];
+        return ['div', getCustomAttrs(attrs), [getSafeRawHTMLTag(attrs.rawHTML, ['hr'], 'hr')]];
       },
     };
   }

@@ -5,7 +5,7 @@ import Mark from '@/spec/mark';
 import { escapeXml } from '@/utils/common';
 import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 import { createTextNode } from '@/helper/manipulation';
-import { getCustomAttrs, getDefaultCustomAttrs } from '@/wysiwyg/helper/node';
+import { getCustomAttrs, getDefaultCustomAttrs, getSafeRawHTMLTag } from '@/wysiwyg/helper/node';
 
 import { EditorCommand } from '@t/spec';
 import { LinkAttributes } from '@t/editor';
@@ -50,7 +50,7 @@ export class Link extends Mark {
         },
       ],
       toDOM: ({ attrs }: ProsemirrorMark): DOMOutputSpec => [
-        attrs.rawHTML || 'a',
+        getSafeRawHTMLTag(attrs.rawHTML, ['a'], 'a'),
         {
           href: escapeXml(attrs.linkUrl),
           ...this.linkAttributes,

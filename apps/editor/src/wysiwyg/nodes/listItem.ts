@@ -3,6 +3,7 @@ import type { ProsemirrorNode, DOMOutputSpec } from 'prosemirror-model';
 
 import NodeSchema from '@/spec/node';
 import { splitListItem } from '@/wysiwyg/command/list';
+import { getSafeRawHTMLTag } from '@/wysiwyg/helper/node';
 
 export class ListItem extends NodeSchema {
   get name() {
@@ -37,7 +38,7 @@ export class ListItem extends NodeSchema {
         const { task, checked } = attrs;
 
         if (!task) {
-          return [attrs.rawHTML || 'li', 0];
+          return [getSafeRawHTMLTag(attrs.rawHTML, ['li'], 'li'), 0];
         }
 
         const classNames = ['task-list-item'];
@@ -47,7 +48,7 @@ export class ListItem extends NodeSchema {
         }
 
         return [
-          attrs.rawHTML || 'li',
+          getSafeRawHTMLTag(attrs.rawHTML, ['li'], 'li'),
           {
             class: classNames.join(' '),
             'data-task': task,

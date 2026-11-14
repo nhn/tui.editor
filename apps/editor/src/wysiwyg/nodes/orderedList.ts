@@ -5,7 +5,7 @@ import { getWwCommands } from '@/commands/wwCommands';
 import { changeList } from '@/wysiwyg/command/list';
 
 import { EditorCommand } from '@t/spec';
-import { getDefaultCustomAttrs, getCustomAttrs } from '@/wysiwyg/helper/node';
+import { getDefaultCustomAttrs, getCustomAttrs, getSafeRawHTMLTag } from '@/wysiwyg/helper/node';
 
 export class OrderedList extends NodeSchema {
   get name() {
@@ -37,7 +37,7 @@ export class OrderedList extends NodeSchema {
       ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         return [
-          attrs.rawHTML || 'ol',
+          getSafeRawHTMLTag(attrs.rawHTML, ['ol'], 'ol'),
           { start: attrs.order === 1 ? null : attrs.order, ...getCustomAttrs(attrs) },
           0,
         ];

@@ -2,7 +2,7 @@ import { Mark as ProsemirrorMark, DOMOutputSpec } from 'prosemirror-model';
 import { toggleMark } from 'prosemirror-commands';
 
 import Mark from '@/spec/mark';
-import { getCustomAttrs, getDefaultCustomAttrs } from '@/wysiwyg/helper/node';
+import { getCustomAttrs, getDefaultCustomAttrs, getSafeRawHTMLTag } from '@/wysiwyg/helper/node';
 
 import { EditorCommand } from '@t/spec';
 
@@ -32,7 +32,7 @@ export class Strike extends Mark {
       },
       parseDOM,
       toDOM({ attrs }: ProsemirrorMark): DOMOutputSpec {
-        return [attrs.rawHTML || 'del', getCustomAttrs(attrs)];
+        return [getSafeRawHTMLTag(attrs.rawHTML, ['s', 'del'], 'del'), getCustomAttrs(attrs)];
       },
     };
   }

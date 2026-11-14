@@ -108,3 +108,9 @@ export function getCustomAttrs(attrs: Record<string, any>) {
 
   return { ...htmlAttrs, class: classNames ? classNames.join(' ') : null };
 }
+
+export function getSafeRawHTMLTag(rawHTML: unknown, allowed: string[], fallback: string): string {
+  return typeof rawHTML === 'string' && includes(allowed, rawHTML.toLowerCase())
+    ? rawHTML
+    : fallback;
+}

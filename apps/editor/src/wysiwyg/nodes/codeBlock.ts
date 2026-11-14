@@ -4,7 +4,7 @@ import { setBlockType, Command } from 'prosemirror-commands';
 import { addParagraph } from '@/helper/manipulation';
 import { between, last } from '@/utils/common';
 import NodeSchema from '@/spec/node';
-import { getCustomAttrs, getDefaultCustomAttrs } from '@/wysiwyg/helper/node';
+import { getCustomAttrs, getDefaultCustomAttrs, getSafeRawHTMLTag } from '@/wysiwyg/helper/node';
 
 import { EditorCommand } from '@t/spec';
 
@@ -42,7 +42,7 @@ export class CodeBlock extends NodeSchema {
       ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         return [
-          attrs.rawHTML || 'pre',
+          getSafeRawHTMLTag(attrs.rawHTML, ['pre'], 'pre'),
           ['code', { 'data-language': attrs.language, ...getCustomAttrs(attrs) }, 0],
         ];
       },

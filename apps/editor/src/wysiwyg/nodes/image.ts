@@ -5,7 +5,7 @@ import { escapeXml } from '@/utils/common';
 import { sanitizeHTML } from '@/sanitizer/htmlSanitizer';
 
 import { EditorCommand } from '@t/spec';
-import { getCustomAttrs, getDefaultCustomAttrs } from '../helper/node';
+import { getCustomAttrs, getDefaultCustomAttrs, getSafeRawHTMLTag } from '../helper/node';
 
 export class Image extends NodeSchema {
   get name() {
@@ -43,7 +43,7 @@ export class Image extends NodeSchema {
       ],
       toDOM({ attrs }: ProsemirrorNode): DOMOutputSpec {
         return [
-          attrs.rawHTML || 'img',
+          getSafeRawHTMLTag(attrs.rawHTML, ['img'], 'img'),
           {
             src: escapeXml(attrs.imageUrl),
             ...(attrs.altText && { alt: attrs.altText }),
