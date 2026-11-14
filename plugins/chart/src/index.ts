@@ -59,6 +59,7 @@ const DEFAULT_DIMENSION_OPTIONS = {
   width: 'auto',
 };
 const RESERVED_KEYS = ['type', 'url'];
+const BLOCKED_KEYS = ['__proto__', 'prototype', 'constructor'];
 const chart = {
   bar: Chart.barChart,
   column: Chart.columnChart,
@@ -181,6 +182,10 @@ function createOptionKeys(keyString: string) {
     keys[0] = `${topKey}Axis`;
   }
 
+  if (keys.some((key) => inArray(key, BLOCKED_KEYS) >= 0)) {
+    return null;
+  }
+
   return keys;
 }
 
@@ -207,10 +212,17 @@ export function parseToChartOption(text: string) {
           }
 
           const keys = createOptionKeys(keyString);
+
+          if (!keys) {
+            return;
+          }
+
           let refOptions = options;
 
           keys.forEach((key, index) => {
-            refOptions[key] = refOptions[key] || (keys.length - 1 === index ? value : {});
+            if (!Object.prototype.hasOwnProperty.call(refOptions, key)) {
+              refOptions[key] = keys.length - 1 === index ? value : {};
+            }
             // should change the ref option object to assign nested property
             refOptions = refOptions[key];
           });

@@ -372,3 +372,40 @@ describe('setDefaultOptions', () => {
     expect(chartOptions.chart!.height).toBe(800);
   });
 });
+
+describe('parseToChartOption() ignores dangerous keys', () => {
+  afterEach(() => {
+    delete (Object.prototype as any).polluted;
+  });
+
+  it('should not pollute Object.prototype via __proto__ key', () => {
+    parseToChartOption(`
+          __proto__.polluted: true
+        `);
+    expect(({} as any).polluted).toBeUndefined();
+  });
+
+  it('should not pollute via nested __proto__ path', () => {
+    parseToChartOption(`
+          x.__proto__.polluted: true
+        `);
+    expect(({} as any).polluted).toBeUndefined();
+  });
+
+  it('should not pollute via constructor.prototype path', () => {
+    parseToChartOption(`
+          constructor.prototype.polluted: true
+        `);
+    expect(({} as any).polluted).toBeUndefined();
+  });
+
+  it('should drop the blocked line but keep a valid line', () => {
+    const options = parseToChartOption(`
+          __proto__.polluted: true
+          title: safe
+        `);
+
+    expect(({} as any).polluted).toBeUndefined();
+    expect(options).toEqual({ chart: { title: 'safe' } });
+  });
+});
