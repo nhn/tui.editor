@@ -2,7 +2,7 @@
   "name": "root",
   "private": true,
   "devDependencies": {
-    "@babel/core": "^7.8.3",
+    "@babel/core": "^8.1.2",
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/preset-env": "^7.8.3",
     "@rollup/plugin-commonjs": "^19.0.0",
