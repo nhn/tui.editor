@@ -12,7 +12,7 @@ jobs:
         with:
           path: ./apps/editor/
       - name: Cancel when unchanged
-        uses: andymckay/cancel-action@0.2
+        uses: andymckay/cancel-action@0.5
         if: steps.check.outputs.is-new-version == 'false'
 
   pre-check:
