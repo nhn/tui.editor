@@ -1,5 +1,9 @@
 # 📄 Documents
 
+> **⚠️ 이 프로젝트는 더 이상 유지보수하지 않습니다.**
+>
+> TOAST UI Editor는 지원이 종료됐고, 이 저장소는 보관(archive) 상태입니다. 새 기능과 버그 수정은 더 이상 배포하지 않습니다.
+
 ## 튜토리얼
 
 - [🚀 시작하기](https://github.com/nhn/tui.editor/blob/master/docs/ko/getting-started.md)

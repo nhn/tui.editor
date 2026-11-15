@@ -1,5 +1,9 @@
 # 📄 Documents
 
+> **⚠️ This project is no longer maintained.**
+>
+> TOAST UI Editor is deprecated, and this repository is archived. No new features or bug fixes will be released.
+
 * [한글 가이드](https://github.com/nhn/tui.editor/blob/master/docs/ko/README.md)
 
 ## Tutorials

@@ -1,5 +1,9 @@
 # TOAST UI Editor : Table Merged Cell Plugin
 
+> **⚠️ This project is no longer maintained.**
+>
+> TOAST UI Editor is deprecated, and this repository is archived. No new features or bug fixes will be released.
+
 > This is a plugin of [TOAST UI Editor](https://github.com/nhn/tui.editor/tree/master/apps/editor) to merge table columns.
 
 [![npm version](https://img.shields.io/npm/v/@toast-ui/editor-plugin-table-merged-cell.svg)](https://www.npmjs.com/package/@toast-ui/editor-plugin-table-merged-cell)

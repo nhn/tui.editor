@@ -1,5 +1,9 @@
 # ![TOAST UI Editor](https://uicdn.toast.com/toastui/img/tui-editor-bi.png)
 
+> **⚠️ This project is no longer maintained.**
+>
+> TOAST UI Editor is deprecated, and this repository is archived. No new features or bug fixes will be released.
+
 [![npm](https://img.shields.io/npm/v/@toast-ui/editor.svg)](https://www.npmjs.com/package/@toast-ui/editor)
 
 ## 🚩 Table of Contents
