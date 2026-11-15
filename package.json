@@ -61,7 +61,7 @@
     "vm": "^0.1.0",
     "vue-eslint-parser": "^8.2.0",
     "webpack": "^5.26.0",
-    "webpack-bundle-analyzer": "^4.4.0",
+    "webpack-bundle-analyzer": "^5.4.2",
     "webpack-cli": "^4.5.0",
     "webpack-dev-server": "^3.11.2",
     "webpack-glob-entry": "^2.1.1",
