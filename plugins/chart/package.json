@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/editor-plugin-chart",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "description": "TOAST UI Editor : Chart Plugin",
   "keywords": [
     "nhn",
@@ -47,7 +47,7 @@
     "stream-browserify": "^3.0.0"
   },
   "dependencies": {
-    "@toast-ui/chart": "^4.1.4"
+    "@toast-ui/chart": "^4.6.2"
   },
   "publishConfig": {
     "access": "public"
