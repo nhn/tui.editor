@@ -71,7 +71,7 @@ jobs:
       - name: checkout branch
         uses: actions/checkout@v4
       - name: use Node.js 15 (build toolchain)
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7.1.0
         with:
           node-version: '15'
           cache: 'npm'
@@ -89,7 +89,7 @@ jobs:
       - name: checkout branch
         uses: actions/checkout@v4
       - name: use Node.js 15 (build toolchain)
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7.1.0
         with:
           node-version: '15'
           cache: 'npm'
@@ -116,7 +116,7 @@ jobs:
         uses: actions/checkout@v4
       # 빌드는 Node 15에서만 된다. 상위 Node에서는 webpack이 ERR_OSSL_EVP_UNSUPPORTED로 실패한다.
       - name: use Node.js 15 (build)
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7.1.0
         with:
           node-version: '15'
           cache: 'npm'
@@ -128,7 +128,7 @@ jobs:
           npm run build editor
       # staged publishing은 Node 22.14+와 npm 11.15.0+가 필요하다
       - name: use Node.js 24 (stage)
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7.1.0
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'

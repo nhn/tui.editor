@@ -71,7 +71,7 @@ jobs:
       # 빌드는 Node 15에서만 된다
       - name: use Node.js 15 (build)
         if: steps.package.outputs.skip != 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7.1.0
         with:
           node-version: '15'
           cache: 'npm'
@@ -87,7 +87,7 @@ jobs:
       # staged publishing은 Node 22.14+와 npm 11.15.0+가 필요하다
       - name: use Node.js 24 (stage)
         if: steps.package.outputs.skip != 'true'
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7.1.0
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
