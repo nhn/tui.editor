@@ -179,8 +179,8 @@ export class Table extends Mark {
   keymaps() {
     return {
       Enter: this.extendTable(),
-      Tab: this.moveTableCell(true),
-      'Shift-Tab': this.moveTableCell(false),
+      'Mod-Tab': this.moveTableCell(true),
+      'Mod-Shift-Tab': this.moveTableCell(false),
     };
   }
 }

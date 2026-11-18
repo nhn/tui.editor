@@ -292,8 +292,8 @@ export class Paragraph extends Node {
 
   keymaps() {
     return {
-      Tab: this.indent(true)(),
-      'Shift-Tab': this.outdent(true)(),
+      'Mod-Tab': this.indent(true)(),
+      'Mod-Shift-Tab': this.outdent(true)(),
       'Mod-d': this.deleteLines(),
       'Mod-D': this.deleteLines(),
       'Alt-ArrowUp': this.moveUp(),

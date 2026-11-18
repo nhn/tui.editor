@@ -462,8 +462,8 @@ export class Table extends NodeSchema {
     const deleteCellContent = this.deleteCells();
 
     return {
-      Tab: this.moveToCell(Direction.RIGHT),
-      'Shift-Tab': this.moveToCell(Direction.LEFT),
+      'Mod-Tab': this.moveToCell(Direction.RIGHT),
+      'Mod-Shift-Tab': this.moveToCell(Direction.LEFT),
 
       ArrowUp: this.moveInCell(Direction.UP),
       ArrowDown: this.moveInCell(Direction.DOWN),
