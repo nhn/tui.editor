@@ -18,8 +18,14 @@
   "module": "dist/esm/",
   "exports": {
     ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/toastui-editor.js"
+      "import": {
+        "types": "./types/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./types/index.d.ts",
+        "default": "./dist/toastui-editor.js"
+      }
     },
     "./viewer": {
       "import": "./dist/esm/indexViewer.js",
